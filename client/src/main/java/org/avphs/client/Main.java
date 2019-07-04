@@ -8,6 +8,9 @@ public class Main {
     {
         var modules = CarModule.getInstances();
 
+        System.out.println(modules.size());
+
         modules.forEach(CarModule::update);
+        System.out.println("FINISHED");
     }
 }

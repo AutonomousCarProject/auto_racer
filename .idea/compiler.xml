@@ -12,6 +12,7 @@
         <module name="image" />
         <module name="detection" />
         <module name="client" />
+        <module name="jlink" />
       </profile>
     </annotationProcessing>
   </component>
