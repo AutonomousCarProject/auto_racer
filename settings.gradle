@@ -1,0 +1,8 @@
+rootProject.name = 'auto_racer'
+
+include 'core'
+include 'client'
+include 'image'
+include 'steering'
+include 'speed'
+include 'detection'
