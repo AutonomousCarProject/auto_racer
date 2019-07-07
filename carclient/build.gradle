@@ -1,9 +1,14 @@
 plugins {
     // Apply the java-library plugin to add support for Java Library
-    id 'java-library'
+    id 'application'
 }
 
-ext.moduleName = 'org.avphs.client'
+ext.moduleName = 'org.avphs.carclient'
+
+application {
+    // Define the main class for the application
+    mainClassName = 'org.avphs.carclient.CarStart'
+}
 
 repositories {
     // Use jcenter for resolving dependencies.
@@ -26,7 +31,7 @@ dependencies {
 sourceSets {
     main{
         java {
-            srcDir 'src/main/java/org.avphs.client'
+            srcDir 'src/main/java/org.avphs.carclient'
         }
     }
     test {

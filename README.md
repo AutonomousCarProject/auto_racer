@@ -1,4 +1,10 @@
-### How to set up Run Config
-* Under VM options, paste this line:
-    * --module-path mods -m org.avphs.client/org.avphs.client.Main
-* Set up Before build, set up gradle clean, and gradle jar to run. (In Run Config, at least for intellij)
+### How to set up Run Configs (Intellij IDEA)
+* Add new Gradle config
+    * Target the auto_racer gradle project
+    * Paste `clean build` into tasks (if `build` doesnt work for you try `jar`)
+* Java Application config
+    * Main class: `autoracer.yourclient.YourMainClass`
+    * Classpath of module: `org.avphs.yourclient.main`
+    * Under VM options, paste this line:
+        * `--module-path mods -m org.avphs.yourclient/org.avphs.yourclient.YourMainClass`
+    * Included clients are `carclient` and `traksim`
