@@ -3,7 +3,7 @@ plugins {
     id 'java-library'
 }
 
-ext.moduleName = 'org.avphs.client'
+ext.moduleName = 'org.avphs.window'
 
 repositories {
     // Use jcenter for resolving dependencies.
@@ -18,7 +18,6 @@ dependencies {
 
     implementation project(':core')
 
-
     // Use TestNG framework, also requires calling test.useTestNG() below
     testImplementation 'org.testng:testng:6.14.3'
 }
@@ -26,7 +25,7 @@ dependencies {
 sourceSets {
     main{
         java {
-            srcDir 'src/main/java/org.avphs.client'
+            srcDir 'src/main/java/org.avphs.window'
         }
     }
     test {
