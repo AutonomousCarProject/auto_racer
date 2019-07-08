@@ -7,4 +7,9 @@ public class SteeringModule implements CarModule {
     public void update() {
         System.out.println("Steering3");
     }
+
+    @Override
+    public void run() {
+        update();
+    }
 }

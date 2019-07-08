@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.ServiceLoader;
 import java.util.stream.Collectors;
 
-public interface CarModule {
+public interface CarModule extends Runnable {
 
     static List<CarModule> getInstances() {
         return ServiceLoader.load(CarModule.class)

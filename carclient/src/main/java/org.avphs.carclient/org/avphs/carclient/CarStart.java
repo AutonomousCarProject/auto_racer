@@ -3,6 +3,7 @@ package org.avphs.carclient;
 import org.avphs.client.CarClient;
 import org.avphs.core.CarModule;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -14,7 +15,8 @@ public class CarStart implements CarClient {
 
         var executorService = Executors.newFixedThreadPool(modules.size());
 
-        modules.forEach(executorService::submit);
+        modules.forEach(executorService::execute);
+
     }
 
     public static void main(String[] args) {

@@ -1,14 +1,9 @@
 plugins {
     // Apply the java-library plugin to add support for Java Library
-    id 'application'
+    id 'java-library'
 }
 
-ext.moduleName = 'org.avphs.carclient'
-
-application {
-    // Define the main class for the application
-    mainClassName = 'org.avphs.carclient.CarStart'
-}
+ext.moduleName = 'org.avphs.map'
 
 repositories {
     // Use jcenter for resolving dependencies.
@@ -22,7 +17,6 @@ dependencies {
     //api project(':core')
 
     implementation project(':core')
-    implementation project(':client')
 
 
     // Use TestNG framework, also requires calling test.useTestNG() below
@@ -32,7 +26,7 @@ dependencies {
 sourceSets {
     main{
         java {
-            srcDir 'src/main/java/org.avphs.carclient'
+            srcDir 'src/main/java/org.avphs.map'
         }
     }
     test {
