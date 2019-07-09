@@ -14,7 +14,7 @@ public class MapModule implements CarModule {
             ImageModule.class
         };
     }
-
+    //this is a test comment
     @Override
     public void init(CarModule... dependencies) {
         imageModule = (ImageModule) dependencies[0];
