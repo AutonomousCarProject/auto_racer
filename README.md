@@ -1,3 +1,5 @@
+Master: [![Build Status](https://travis-ci.com/AutonomousCarProject/auto_racer.svg?branch=master)](https://travis-ci.com/AutonomousCarProject/auto_racer)
+
 ### How to set up Run Configs (Intellij IDEA)
 * Add new Gradle config
     * Target the auto_racer gradle project
