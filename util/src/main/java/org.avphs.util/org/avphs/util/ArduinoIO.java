@@ -22,12 +22,11 @@
  * @author Colton Jelsema
  */
 package org.avphs.util;
-
-//import nojssc.SerialPort; // use this instead for working with TrackSim
+ // use this instead for working with TrackSim
 //                           // ..on a computer with no serial port.
 //import com.apw.Interfacing.SerialPort;
 
-import org.avphs.util.jssc.SerialPort;
+import org.avphs.util.nojssc.FakeSerialPort;
 import org.avphs.util.jssc.SerialPortException;
 
 public class ArduinoIO implements PWMController { // Adapted to Java from arduino.cs ... (FakeFirmata)
@@ -54,7 +53,7 @@ public class ArduinoIO implements PWMController { // Adapted to Java from arduin
 
 
     public ArduinoIO(Boolean useServos) { // outer class constructor..
-        surrealPort = useServos ? new SerialPort(CommPortNo) : new SerialPortDump(CommPortNo);
+        surrealPort = useServos ? new FakeSerialPort(CommPortNo) : new SerialPortDump(CommPortNo);
         System.out.println("new Arduino " + CommPortNo + " " + (surrealPort != null));
         digitalOutputData = new int[MAX_DATA_BYTES];
         Open();

@@ -10889,7 +10889,8 @@ public class TrakSim {
             MapIndex = null;
             TrakImages = null;
             LuminanceMap = null;
-            theList = HandyOps.ReadWholeTextFile(SceneFiName + ".txt");
+            // TODO FIX ME
+            theList = HandyOps.ReadWholeTextFile("trakSim/src/main/resources/" + SceneFiName + ".txt");
             if (theList.equals("")) {
                 break; // why = 1
             }
