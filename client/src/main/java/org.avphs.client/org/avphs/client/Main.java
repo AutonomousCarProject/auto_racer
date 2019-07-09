@@ -9,9 +9,8 @@ import java.util.concurrent.TimeUnit;
 
 public class Main {
     static List<CarModule> modules = CarModule.getInstances();
-    static int FPS = 30;
+    static int FPS = 15;
 
-    // FIXME: Badly written code, but it works. Rewrite just about everything in this class.
     public static void main(String[] args) {
 
         final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();

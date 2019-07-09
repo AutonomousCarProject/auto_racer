@@ -1,5 +1,6 @@
 rootProject.name = 'auto_racer'
 
+include 'util'
 include 'carclient'
 include 'camera'
 include 'trakSim'

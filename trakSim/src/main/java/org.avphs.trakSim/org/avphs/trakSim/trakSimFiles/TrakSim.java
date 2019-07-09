@@ -16,6 +16,9 @@
  */
 package org.avphs.trakSim.trakSimFiles;
 
+import org.avphs.util.ArduinoIO;
+import org.avphs.util.SimHookBase;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;

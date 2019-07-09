@@ -3,7 +3,7 @@ plugins {
     id 'java-library'
 }
 
-ext.moduleName = 'org.avphs.trakSim'
+ext.moduleName = 'org.avphs.util'
 
 repositories {
     // Use jcenter for resolving dependencies.
@@ -11,20 +11,12 @@ repositories {
     jcenter()
 }
 
-dependencies {
-    // Use TestNG framework, also requires calling test.useTestNG() below
-    implementation project(':client')
-    implementation project(':util')
-    testImplementation 'org.testng:testng:6.14.3'
-}
+dependencies {}
 
 sourceSets {
     main{
         java {
-            srcDir 'src/main/java/org.avphs.trakSim'
-        }
-        resources {
-            srcDir 'src/main/resources'
+            srcDir 'src/main/java/org.avphs.util'
         }
     }
     test {

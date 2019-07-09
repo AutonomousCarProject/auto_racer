@@ -16,7 +16,7 @@
  */
 package org.avphs.trakSim.trakSimFiles;
 
-import org.avphs.trakSim.fakefirm.Arduino;
+import org.avphs.util.ArduinoIO;
 
 import java.io.*;
 import java.text.DateFormat;
@@ -186,7 +186,7 @@ public class HandyOps { // first some useful debug logging ops..
      * @return The combined string
      */
     public static String PosTime(String before) {
-        return Arduino.FormatMillis(before, 0x80000000);
+        return ArduinoIO.FormatMillis(before, 0x80000000);
     } //~PosTime
 
     /**
@@ -213,8 +213,8 @@ public class HandyOps { // first some useful debug logging ops..
      * @return The time
      */
     public static int TimeSecs(boolean ms2) {
-        if (ms2) return Arduino.GetMills();
-        return Arduino.GetMills() / 1000;
+        if (ms2) return ArduinoIO.GetMills();
+        return ArduinoIO.GetMills() / 1000;
     } //~TimeSecs
 
     /**
