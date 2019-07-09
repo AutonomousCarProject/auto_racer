@@ -4,7 +4,7 @@ public class Straight extends RoadData {
 	float roadLength;
 
 	public Straight(float roadLength) {
-		this.roadLenght = roadLength;
+		this.roadLength = roadLength;
 	}
 
 }
