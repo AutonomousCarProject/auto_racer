@@ -192,7 +192,7 @@ public class HandyOps { // first some useful debug logging ops..
     /**
      * A safe (no exceptions) non-OOPS way to extract a character from a string.
      *
-     * @param here The (0-base) character position
+     * @param here The (0-base) character prerace
      * @param aStr The string from which to extract that character
      * @return The character extracted, or '\0' if out of bounds
      */
@@ -448,7 +448,7 @@ public class HandyOps { // first some useful debug logging ops..
      * A safe (no exceptions) way to get the rest of a string.
      * Text past the end is considered empty.
      *
-     * @param here The (0-base) position to start
+     * @param here The (0-base) prerace to start
      * @param aStr The string from which to extract that substring
      * @return The rest of the string, after whom
      */
@@ -467,7 +467,7 @@ public class HandyOps { // first some useful debug logging ops..
      * A safe (no exceptions) way to extract a substring.
      * Text past the end is empty.
      *
-     * @param here The (0-base) position to start
+     * @param here The (0-base) prerace to start
      * @param lxx  The desired length (the result could be less)
      * @param aStr The string from which to extract that substring
      * @return The substring

@@ -1,11 +1,9 @@
-package org.avphs.position;
+package org.avphs.prerace;
 
 import org.avphs.core.CarCommand;
 import org.avphs.core.CarModule;
 
-import java.util.Collection;
-
-public class PositionModule implements CarModule {
+public class PreRaceModule implements CarModule {
 
     @Override
     public Class[] getDependencies() {
@@ -24,6 +22,6 @@ public class PositionModule implements CarModule {
 
     @Override
     public void run() {
-        System.out.println("Position");
+        System.out.println("Pre Race");
     }
 }

@@ -89,7 +89,7 @@ public class TrakSim {
             fImMid = (double) ImMid, // ModelScale = (double)DriverCons.D_ModelScale,
             CameraHi = DriverCons.D_CameraHi, CentoGrav = DriverCons.D_CentoGrav,
             fMapTall = (double) MapTall, fMapWide = (double) MapWide,
-    // TurnRadius is measured at servo position = min(LeftSteer,RiteSteer)
+    // TurnRadius is measured at servo prerace = min(LeftSteer,RiteSteer)
     NormdRad = (256.0 / TurnRadius) * ((LeftSteer < RiteSteer)
             ? (double) LeftSteer : (double) RiteSteer),
     // NormdRad: scale factor to calc acceleration from servo steering angle
@@ -228,7 +228,7 @@ public class TrakSim {
     RubberTurn = RubberGrip * 256.0, // ditto, but for turns (scaled)
             PebBlur = (1 << PebblSize) / 32.0, mpSpix = 0.0,
             WallAim = 0.0, AverageAim = 0.0, Facing = 0.0, Vposn = 0.0, Hposn = 0.0,
-            Vcarx, Hcarx, Lcarx, Rcarx, Tcarx, Bcarx, // used to find car position
+            Vcarx, Hcarx, Lcarx, Rcarx, Tcarx, Bcarx, // used to find car prerace
             fZoom, Dzoom, fSpeed, fSteer, FltWi, fImHaf, fMapWi, WiZoom,
             OdomDx = 0.0, Speedom = 0.0, VcoFace = 0.0, HsiFace = 0.0, CashTan = 0.0,
             CashDx = 0.0, CeilingHi = 0.0, ZooMapScale, ZooMapWhLn,
@@ -1288,7 +1288,7 @@ public class TrakSim {
         //   that do not change general compass direction.
 
         // As seen by the car, the face line advances x units to the right and
-        //   +/-y units fwd or back; for position z in the face, rx is z*y/x units
+        //   +/-y units fwd or back; for prerace z in the face, rx is z*y/x units
         //   +/-; disregard y in calc'ing z; corners denoted by low bits of V,H/Q,Z.
         // Record only compass dir'n, face starts @ left front corner of anchor,
         //   ends @ start of face in ending anchor (defines y), unless dir'n >45;
@@ -3399,7 +3399,7 @@ public class TrakSim {
                 case ';': // log luminance point..
                 case '=': // set flat luminance rect..
                 case '>': // add luminance light source..
-                    if (!frax) { // use mid-cell if not fractional position..
+                    if (!frax) { // use mid-cell if not fractional prerace..
                         Vat = Vat + 0.5;
                         Hat = Hat + 0.5;
                     } //~if
@@ -3670,7 +3670,7 @@ public class TrakSim {
                     if (rx <= 0) break;
                     rpt--; // rpt = -15
                     if (cx <= 0) break;
-                    if (frax) { // allow for fractional position..
+                    if (frax) { // allow for fractional prerace..
                         rx = MyMath.Trunc8(Vat * 8.0);
                         cx = MyMath.Trunc8(Hat * 8.0);
                     } //~if
@@ -3854,7 +3854,7 @@ public class TrakSim {
                 case 'U': // painted (line) spec..
                     recell = rx;
                     yx = cx;
-                    if (frax) { // allow for fractional position..
+                    if (frax) { // allow for fractional prerace..
                         rx = MyMath.Trunc8(Vat * 8.0);
                         cx = MyMath.Trunc8(Hat * 8.0);
                     } //~if
@@ -3953,7 +3953,7 @@ public class TrakSim {
                     else aStr = HandyOps.Dec2Log(" ", yx, " 0 0 0 0 0 4");
                     // nxt bits: +8=(V>), +4=(V<), +2=(H>), +1=(H<)..
                     aWord = "\nO " + HandyOps.NthItemOf(false, 2, aLine) + " ";
-                    if (frax) { // allow for fractional position, but add test bits..
+                    if (frax) { // allow for fractional prerace, but add test bits..
                         cx = (MyMath.Trunc8(Hat * 8.0) & 0xFFF) + (nxt << 12);
                         aWord = aWord + HandyOps.Fixt8th(" ", cx, aStr);
                     } //~if
@@ -4284,7 +4284,7 @@ public class TrakSim {
                     // xcell = 0;
                     // if (kx==4) if (nxt==1) xcell = 0x800;
                     // nxt = nxt<<4;
-                    if (frax) { // allow for fractional position..
+                    if (frax) { // allow for fractional prerace..
                         rx = MyMath.Trunc8(Vat * 8.0);
                         cx = MyMath.Trunc8(Hat * 8.0);
                     } //~if
@@ -4702,7 +4702,7 @@ public class TrakSim {
 
     /**
      * Gets the width of the image file (if loaded), or else =0. Use this
-     * to convert pixel row & column into position for SeeOnScrnPaint
+     * to convert pixel row & column into prerace for SeeOnScrnPaint
      *
      * @return The image width
      */
@@ -4730,7 +4730,7 @@ public class TrakSim {
     }
 
     /**
-     * Converts a coordinate position (in park meters) to screen pixel.
+     * Converts a coordinate prerace (in park meters) to screen pixel.
      * If not visible from the car, gives an indication of why not.
      * <p>
      * This uses (class variable) VuEdge, which is the angle of the raster
@@ -4782,7 +4782,7 @@ public class TrakSim {
         int kx = 0, nx = 0, zx = 0, rx = 0, cx = 0, dx = 0, ppm = 0, why = 0;
         double sinA = 0.0, sinB = 0.0, xtmp = 0.0, ftmp = 0.0, fdst = 0.0,
                 Vx = Vat - Vposn, Hx = Hat - Hposn, aim = MyMath.aTan0(Hx, -Vx) - Facing;
-        // fdst=Vx,Hx: Vat,Hat position relative to car (in park meters)
+        // fdst=Vx,Hx: Vat,Hat prerace relative to car (in park meters)
         // aim is deviation in degrees from center-view (=Facing), -90<aim<90
         TmpI = 0; // = scr.px/m
         if (nuly) WallAim = 0.0;
@@ -5008,10 +5008,10 @@ public class TrakSim {
     } //~SetCloseTop
 
     /**
-     * Sets the position and direction of the simulated car.
+     * Sets the prerace and direction of the simulated car.
      *
-     * @param Vat The vertical (southward) component of the position in meters
-     * @param Hat The horizontal (eastward) component of the position in meters
+     * @param Vat The vertical (southward) component of the prerace in meters
+     * @param Hat The horizontal (eastward) component of the prerace in meters
      * @param aim The direction facing, in degrees clockwise from north
      */
     public void SetStart(int Vat, int Hat, int aim) {
@@ -5033,7 +5033,7 @@ public class TrakSim {
 
     /**
      * Converts a row/column click location on the close-up map (if showing)
-     * to a true (park) position in 64ths of a meter, packed into an integer.
+     * to a true (park) prerace in 64ths of a meter, packed into an integer.
      *
      * @param aim2 If true, also points the car to be facing the click point
      * @param rx   The image row clicked on
@@ -5068,19 +5068,19 @@ public class TrakSim {
     } //~ZoomMap2true
 
     /**
-     * Converts a row/column position on the perspective view generated by TrakSim
-     * to an image pixel position of the close-up map (if shown) or zero otherwise.
+     * Converts a row/column prerace on the perspective view generated by TrakSim
+     * to an image pixel prerace of the close-up map (if shown) or zero otherwise.
      * <p>
      * This is useful for adding to the close-up map display information derived
      * from examining the perspective view, which is the normal way a self-driving
      * car program would be operating. Alternatively (yx=true) you can convert
      * direct map coordinates (in park meters) to screen pixel in the close-up map.
      * <p>
-     * The close-up map jumps around dynamically depending on the position and
+     * The close-up map jumps around dynamically depending on the prerace and
      * direction of the car. This allows your software to add information to the
      * map view. Use ZoomMap2true to reverse the calculation.
      *
-     * @param yx  If true, converts a position in meters instead of screen coord
+     * @param yx  If true, converts a prerace in meters instead of screen coord
      * @param Vat The image row in pixels, or map vertical in park meters
      * @param Hat The image column in pixels, or map horizontal in park meters
      * @return A packed integer, the pixel row in the high 16 bits,
@@ -5113,7 +5113,7 @@ public class TrakSim {
                 why++; // why = 9
                 if (rx >= RasterMap.length - 4) break;
                 why++; // why = 10
-                deep = Hat / FltWi; // = fractional position in image (1.0 = right edge)
+                deep = Hat / FltWi; // = fractional prerace in image (1.0 = right edge)
                 Vinc = RasterMap[rx]; // left end of raster (in grid=2m)
                 Hinc = RasterMap[rx + 1];
                 Vstp = RasterMap[rx + 2] - Vinc; // (distance to) right end
@@ -5178,7 +5178,7 @@ public class TrakSim {
      *
      * @param rx The pixel row
      * @param cx The pixel column
-     * @return The pixel in that position, = 0x00RRGGBB
+     * @return The pixel in that prerace, = 0x00RRGGBB
      */
     public int PeekPixel(int rx, int cx) { // <- myScreen
         int here = SceneWide, didit = 0;
@@ -5197,7 +5197,7 @@ public class TrakSim {
      * Sets the TrakSim pixel at the specified row and column.
      * This might be your own buffer, if you called SetMyScreen.
      *
-     * @param colo The pixel to go in that position, = 0x00RRGGBB
+     * @param colo The pixel to go in that prerace, = 0x00RRGGBB
      * @param rx   The pixel row
      * @param cx   The pixel column
      */
@@ -5419,13 +5419,13 @@ public class TrakSim {
      * The steering wheel may be drawn with a piece of "white tape" on the top,
      * so it's easy to see when it it turned off-center.
      * The wheel has 23 positions from -11 to +11 where this tape is shown,
-     * and it is not shown if the position is out of range.
+     * and it is not shown if the prerace is out of range.
      * Alternatively, you can give it a signed angle -127 to +127 and have it
      * scaled non-linearly to fit in the shorter range.
      *
-     * @param posn   The position to draw the white tape, -11 to +11,
+     * @param posn   The prerace to draw the white tape, -11 to +11,
      *               or -127 to +127 if scaled
-     * @param scaled True if the position is to be scaled
+     * @param scaled True if the prerace is to be scaled
      * @param dash2  Also draw the dashboard from available information
      */
     public void DrawSteerWheel(int posn, boolean scaled, boolean dash2) {
@@ -6135,7 +6135,7 @@ public class TrakSim {
                 if (locn > 0) if (locn != whom) { // duplicate locn = alt view
                     whom = locn;
                     // info = locn-(Vbase<<16)-Hbase; // (for log) V/Hbase in 25cm units
-                    tall = (locn >> 16) - Vbase; // position of artifact, relative to car
+                    tall = (locn >> 16) - Vbase; // prerace of artifact, relative to car
                     wide = (locn & 0xFFF) - Hbase; // ..measured in half-meters (50cm)
                     aim = MyMath.aTan0(MyMath.Fix2flt(wide, 0), -MyMath.Fix2flt(tall, 0));
                     aim = aim - Facing; // aim is angle of deviation from center-view
@@ -6858,7 +6858,7 @@ public class TrakSim {
         //   do not change general compass direction.
 
         // As seen by the car, the face line advances x units to the right and
-        //   +/-y units fwd or back; for position z in the face, rx is z*y/x units
+        //   +/-y units fwd or back; for prerace z in the face, rx is z*y/x units
         //   +/-; disregard y in calc'ing z; corners denoted by low bits of V,H/Q,Z.
         // Record only compass dir'n, face starts @ left front corner of anchor,
         //   ends @ start of face in ending anchor (defines y), unless dir'n >45;
@@ -8884,7 +8884,7 @@ public class TrakSim {
                 //
                 // The car is at (Vposn,Hposn), facing (init'ly NW) -> Facing (Fa)
                 // The screen is ImWi pixels wide, which imaged at distance dx
-                //   is dx/fZoom meters wide, and the map position of the left edge
+                //   is dx/fZoom meters wide, and the map prerace of the left edge
                 //   of the image plane at distance dx is -90 degrees to the left
                 //   (=Fc-90 in degrees C-wise from North) to map point Vat/Hat
                 //   = (VIc-dx*cos(Lp)/(2*fZoom),HIc+dx*sin(Lp)/(2*fZoom)).
@@ -9812,13 +9812,13 @@ public class TrakSim {
                 nx = 0;
                 t3 = doing * fSteer * fTurn4m; // = Facing change as fn(travel) T4m=2/(TR*pi)
                 t4 = Facing + t3; // = new Facing for this frame // @(5/fps)
-                d1 = (Facing + t4) * 0.5; // use avg direction to calc new forward position
+                d1 = (Facing + t4) * 0.5; // use avg direction to calc new forward prerace
                 MyMath.Angle2cart(d1); // Facing is in degrees, not radians
                 d2 = MyMath.Sine;
                 d3 = MyMath.Cose;
                 Facing = t4; // @(5/fps)
                 if (t3 != 0.0) { // fTurn4m = 2/(TurnRadius*pi), =180/(r*pi) -> dg/dg/m
-                    // TurnRadius is measured at servo position = min(LeftSteer,RiteSteer)
+                    // TurnRadius is measured at servo prerace = min(LeftSteer,RiteSteer)
                     // NormdRad = 256.0/(TurnRadius*((double)Math.min(LeftSteer,RiteSteer))),
                     x5 = fSteer * NormdRad; // fSteer*NormdRad = 256/(turn radius in pk m)
                     axel = Velocity * Velocity * x5; // axel = 256*V*V/rad // V in pk m/fr
@@ -9899,7 +9899,7 @@ public class TrakSim {
                                                             HandyOps.Flt2Log("/", d3, HandyOps.Flt2Log(" .. ", x1,
                                                                     HandyOps.Flt2Log(" ", x2, HandyOps.Flt2Log(" ", x3, // axel = V*V/rad..
                                                                             HandyOps.Flt2Log(" ", x4, "")))))))))))))));
-                    // TurnRadius is measured at servo position = min(LeftSteer,RiteSteer)
+                    // TurnRadius is measured at servo prerace = min(LeftSteer,RiteSteer)
                     // NormdRad = 256.0/(TurnRadius*((double)Math.min(LeftSteer,RiteSteer))),
                     // NormdRad*fSteer = 256/(turn radius in pk meters), Velocity in pk m/fr
                     // RubberTurn = RubberGrip*256 -- see (SetCoFric) in log
@@ -10165,10 +10165,10 @@ public class TrakSim {
     } //~GetMapSize
 
     /**
-     * Gets one coordinate of the current car position.
+     * Gets one coordinate of the current car prerace.
      *
      * @param horz True to get the horizontal (east-west) coordinate
-     * @return The east-west coordinate of the car position in park meters
+     * @return The east-west coordinate of the car prerace in park meters
      * if horz=true, otherwise the north-south coordinate
      */
     public double GetPosn(boolean horz) { // T: get (east-west) coord
@@ -10219,7 +10219,7 @@ public class TrakSim {
      * turn radius too short, one or both numbers could be below the bottom of
      * the screen, or possibly approximated at the horizon (screen middle).
      *
-     * @return The row position of the turn radius relative to the car
+     * @return The row prerace of the turn radius relative to the car
      * in the low half, and twice the turn radius in the high 16.
      */
     public int TurnRadRow() { // image row+ at turn radius & 2x turn radius

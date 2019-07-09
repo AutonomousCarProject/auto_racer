@@ -68,7 +68,7 @@ public class DriverCons { // TrakSim constant parameters
     D_FrameTime = 100, // =10/fps, nominal camera frame rate (must >= 20ms)
     D_AskOdomTime = 500, // how long (ms) between asking for odometer readings
     D_nServoTests = 0, // number of times to run through test (1: no ESC)
-    D_ServoMsgPos = 200*0x10000+0, // position of warning in image file,
+    D_ServoMsgPos = 200*0x10000+0, // prerace of warning in image file,
       D_ServoMsgTL = 40*0x10001, D_ServoMsgSiz = 40*0x10000+80, // posn on screen
     D_ImHi = 480, D_ImWi = 640, // Camera image (and display window) size
     D_HalfTall = 100, D_HalfMap = 128,  // 2x2 grid map size (in 2m units)
@@ -97,7 +97,7 @@ public class DriverCons { // TrakSim constant parameters
     D_CheckerBd = 1;   // (power of 2) =1 to checker 1x1m, =2 for 2x2, =0 off
 
   public static final double D_TurnRadius = 7.0, // nom. meters in park coords
-      // measured at servo position = min(LeftSteer,RiteSteer)
+      // measured at servo prerace = min(LeftSteer,RiteSteer)
     D_fMinSpeed = 4.0, // measured min (8x actual m/s = mph/2) @ MinESCact;
       // 1mph = 0.5m/s park speed = 3"/sec @ 1:8 scale floor speed
       // 1mph floor speed is 8mph park speed = 4m/s
