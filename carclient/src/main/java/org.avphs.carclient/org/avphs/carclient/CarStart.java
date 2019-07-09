@@ -1,22 +1,13 @@
 package org.avphs.carclient;
 
 import org.avphs.client.CarClient;
-import org.avphs.core.CarModule;
-
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import org.avphs.core.CarCore;
 
 public class CarStart implements CarClient {
 
-    public CarStart()
-    {
-        var modules = CarModule.getInstances();
-
-        var executorService = Executors.newFixedThreadPool(modules.size());
-
-        modules.forEach(executorService::execute);
-
+    public CarStart() {
+        var core = new CarCore();
+        core.init();
     }
 
     public static void main(String[] args) {

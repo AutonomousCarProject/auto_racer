@@ -1,4 +1,5 @@
 package org.avphs.core;
 
-public class CarCommand {
+public interface CarCommand {
+    void execute();
 }
