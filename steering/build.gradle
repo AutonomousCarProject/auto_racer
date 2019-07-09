@@ -40,3 +40,8 @@ test {
     // Use TestNG for unit tests
     useTestNG()
 }
+
+buildScan {
+    termsOfServiceUrl = 'https://gradle.com/terms-of-service'
+    termsOfServiceAgree = 'yes'
+}

@@ -31,6 +31,10 @@ test {
 }
 */
 
+plugins {
+    id 'com.gradle.build-scan' version '2.3'
+}
+
 subprojects {
     tasks.withType(Jar) {
         destinationDir = file("$rootDir/mods")
@@ -59,4 +63,9 @@ subprojects {
             }
         }
     }
+}
+
+buildScan {
+    termsOfServiceUrl = 'https://gradle.com/terms-of-service'
+    termsOfServiceAgree = 'yes'
 }
