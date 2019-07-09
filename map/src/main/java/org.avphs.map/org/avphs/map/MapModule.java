@@ -4,10 +4,6 @@ import org.avphs.core.CarCommand;
 import org.avphs.core.CarModule;
 import org.avphs.image.ImageModule;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-
 public class MapModule implements CarModule {
 
     private ImageModule imageModule;
