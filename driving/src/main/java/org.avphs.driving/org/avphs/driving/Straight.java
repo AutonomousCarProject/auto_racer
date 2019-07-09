@@ -12,5 +12,5 @@ public class Straight extends RoadData {
 
 		straightLen = (float)Math.sqrt((endX-startX)+(endY-startY));
 	}
-
 }
+
