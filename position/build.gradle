@@ -3,7 +3,7 @@ plugins {
     id 'java-library'
 }
 
-ext.moduleName = 'org.avphs.prerace'
+ext.moduleName = 'org.avphs.position'
 
 repositories {
     // Use jcenter for resolving dependencies.
@@ -26,7 +26,7 @@ dependencies {
 sourceSets {
     main{
         java {
-            srcDir 'src/main/java/org.avphs.prerace'
+            srcDir 'src/main/java/org.avphs.position'
         }
     }
     test {

@@ -1,3 +1,5 @@
+package org.avphs.image;
+
 interface ImageProcessingInterface {
     int[] getWallHeights();
     int[] getWallTypes();

@@ -1,4 +1,4 @@
-package org.avphs.racingline;
+package org.avphs.position;
 
 import org.avphs.core.CarCommand;
 import org.avphs.core.CarModule;
