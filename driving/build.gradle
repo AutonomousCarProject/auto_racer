@@ -3,7 +3,7 @@ plugins {
     id 'java-library'
 }
 
-ext.moduleName = 'org.avphs.steering'
+ext.moduleName = 'org.avphs.driving'
 
 repositories {
     // Use jcenter for resolving dependencies.
@@ -26,7 +26,7 @@ dependencies {
 sourceSets {
     main{
         java {
-            srcDir 'src/main/java/org.avphs.steering'
+            srcDir 'src/main/java/org.avphs.driving'
         }
     }
     test {
