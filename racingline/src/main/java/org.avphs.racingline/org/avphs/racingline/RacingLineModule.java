@@ -43,8 +43,7 @@ public class RacingLine
     public ArrayList<RacingLinePoint> RacingLinePointsList = new ArrayList();
     public RacingLinePoint[] RacingLinePoints;
 
-    public RacingLine()
-    {
+    public RacingLine() {
 
     }
 }
@@ -53,5 +52,34 @@ public class RacingLinePoint
 {
     float x, y, degree;
 
+    RacingLinePoint() {
+        setX(0);
+        setY(0);
+        setDegree(0);
+    }
+    RacingLinePoint(float x, float y) {
+        setX(x);
+        setY(y);
+        setDegree(0);
+    }
+    RacingLinePoint(float x, float y, float degree) {
+        setX(x);
+        setY(y);
+        setDegree(degree);
+    }
+
+    float getX() { return x; }
+    float getY() { return y; }
+    float getDegree() { return degree; }
+
+    void setX(float x) {
+        this.x = x;
+    }
+    void setY(float y) {
+        this.y = y;
+    }
+    void setDegree(float degree) {
+        this.degree = degree;
+    }
 
 }
