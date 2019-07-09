@@ -1,6 +1,6 @@
-module org.avphs.trakSim {
+module org.avphs.traksim {
     requires java.desktop;
     requires org.avphs.client;
     requires org.avphs.util;
-    exports org.avphs.trakSim.trakSimFiles;
+    exports org.avphs.traksim.trakSimFiles;
 }

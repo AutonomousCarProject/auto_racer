@@ -11,13 +11,13 @@
  *
  * SimCamera is based on fly2cam.FlyCamera, which is in the public domain.
  */
-package org.avphs.trakSimCamera;                                      // 2018 May 25
+package org.avphs.traksimcamera;                                      // 2018 May 25
 
 
 import org.avphs.camera.RealCamera;
-import org.avphs.trakSim.trakSimFiles.DriverCons;
-import org.avphs.trakSim.trakSimFiles.HandyOps;
-import org.avphs.trakSim.trakSimFiles.TrakSim;
+import org.avphs.traksim.trakSimFiles.DriverCons;
+import org.avphs.traksim.trakSimFiles.HandyOps;
+import org.avphs.traksim.trakSimFiles.TrakSim;
 
 /**
  * FlyCamera Simulator for TrakSim (but different name)

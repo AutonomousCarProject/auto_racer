@@ -1,7 +1,7 @@
 package org.avphs.traksimclient;
 
 import org.avphs.core.CarCore;
-import org.avphs.trakSimCamera.TrakSimCamera;
+import org.avphs.traksimcamera.TrakSimCamera;
 
 import javax.swing.*;
 import java.awt.*;

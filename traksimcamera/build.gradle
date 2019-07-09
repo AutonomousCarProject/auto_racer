@@ -3,7 +3,7 @@ plugins {
     id 'java-library'
 }
 
-ext.moduleName = 'org.avphs.trakSim'
+ext.moduleName = 'org.avphs.traksimcamera'
 
 repositories {
     // Use jcenter for resolving dependencies.
@@ -13,18 +13,15 @@ repositories {
 
 dependencies {
     // Use TestNG framework, also requires calling test.useTestNG() below
-    implementation project(':client')
-    implementation project(':util')
+    implementation project(':camera')
+    implementation project(':traksim')
     testImplementation 'org.testng:testng:6.14.3'
 }
 
 sourceSets {
     main{
         java {
-            srcDir 'src/main/java/org.avphs.trakSim'
-        }
-        resources {
-            srcDir 'src/main/resources'
+            srcDir 'src/main/java/org.avphs.traksimcamera'
         }
     }
     test {

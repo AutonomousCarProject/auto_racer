@@ -1,0 +1,1665 @@
+"Figure-8"
+-- Index: move one of these lines to the front to use that track (19July4)...
+"Figure-8"
+"MSB Garage (open)"
+"MSB Carpet (open)"
+"MSB Garage (L-trk)"
+"MSB Carpet (L-trk)"
+"Porto F1/10"
+"Turin F1/10"
+"Montreal F1/10"
+"U.Penn F1/10"
+"Brussels"
+"PSU Stairwell"
+"BruxEst"
+"PSU TestOval"
+"RoundRect"
+"Divided Highway"
+"MinimalSquare"
+"ShorTubeWall-45"
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+0x880070 0x14448333 0x34000E 180 12,2  "MSB Garage (L-trk)" -- 2019 July 4
+
+// L-track for testing on "MSB Garage" (file date: 2019 July 2)
+
+// Paved area about 40'x48' w/BB hoop on green wall to north,
+//  1st bay open to driveway (see neighbor fence * landscape);
+//  2nd & 3rd bays closed (3rd is concrete); plain wood south wall;
+//  east open to view of classroom bldg across grass.
+
+O 50 18 0 0 32 40 384^902 16 0 0 0 -- "box": uncomment & set coords
+
+// (Preliminary) Fill floor..
+F  1  1  64 55 0
+U 43  4 0 0 80 320 2^902 -- concrete floor in 3rd stall..
+U 53  4 0 0 80 320 2^902
+U  3 44 3 0 320 80 2^902 -- concrete walkway east of carport
+U 43 44 3 0 160 80 2^902
+-- F  4  2  62 43 1      -- asphalt part is "track" (so it pebbles)
+
+< 0x9B6537 -- BackWall color (unfinished wood)
+G  1 42 1/52 0 128 120 720^2 4 0! -- (fill gap northward)
+G  1 52  180 0 128 500 512^2 4 0 -- MSB garage view eastward
+G  1 52 20/52 0 128 180 512^2 4 0! -- (same thing in pieces)
+G 17 52 36/52 0 128 180 637^2 4 0!
+G 33 52 52/52 0 128 180 767^2 4 0!
+G 49 52  180 0 128 125 895^2 4 0
+G 65 58 270 0 128 150 720^2 4 0 -- (part of) same view southeastward
+H 64  2  43 3                      -- south wall, solid plain wood
+V  1  1  64 3                      -- solid plain wood behind west wall
+G 63  2 44/2 0 224 480 512^162 12 0! -- garage door as a wall segment..
+G 43  2 24/2 0 224 480 512^162 12 0!
+G 23  2 4/2 0 168 400 512^912 10 0! -- view west thru open garage door
+H  3  1  43 3                      -- solid plain wood behind north wall
+G  4  2 4/20 0 222 96 512^688 12 0* -- green north wall
+G  4 21 4/24 0 222 96 628^688 12 0! -- basketball hoop over green wall
+G  4 25 4/43 0 222 96 512^688 12 0* -- more green wall
+
+M0 23 44  90 0 400 38 974%^386 16 0 -- roof-bearing posts..
+M8 23 44 135 0 400 38 974%^386 16 0
+M1 23 44 180 0 400 38 974%^386 16 0
+M9 23 44 225 0 400 38 974%^386 16 0
+M2 23 44 270 0 400 38 974%^386 16 0
+M10 23 44 315 0 400 38 974%^386 16 0
+--M3 23 44 360 0 400 38 974%^386 16 0
+M11 23 44 45 0 400 38 974%^386 16 0
+
+M0 43 44  90 0 400 38 974%^386 16 0 -- (2nd post)
+M8 43 44 135 0 400 38 974%^386 16 0
+M1 43 44 180 0 400 38 974%^386 16 0
+M9 43 44 225 0 400 38 974%^386 16 0
+M2 43 44 270 0 400 38 974%^386 16 0
+M10 43 44 315 0 400 38 974%^386 16 0
+--M3 43 44 360 0 400 38 974%^386 16 0
+M11 43 44 45 0 400 38 974%^386 16 0
+
+M1 23 51 180 0 400 38 974%^386 16 0 -- outer round posts..
+M9 23 51 225 0 400 38 974%^386 16 0
+M2 23 51 270 0 400 38 974%^386 16 0
+M10 23 51 315 0 400 38 974%^386 16 0
+--M3 23 51 360 0 400 38 974%^386 16 0
+
+M1 43 51 180 0 400 38 974%^386 16 0 -- 2nd round post
+M9 43 51 225 0 400 38 974%^386 16 0
+M2 43 51 270 0 400 38 974%^386 16 0
+M10 43 51 315 0 400 38 974%^386 16 0
+--M3 43 51 360 0 400 38 974%^386 16 0
+
+// Outer tube-wall C-wise..
+G 38  4 27/4 0 54 140 301^260 32 0* -- (start straight is easier)
+D 26  4 360 8 0 54 140 301^260 32 0* -- (o) D8 -> 4,13
+D 18 13  90 8 0 54 140 301^260 32 0* -- (o) D8 -> 13,21
+C 27 21 180 7 0 54 140 301^260 32 0* -- (o) C7 -> 20,29
+D 34 29  90 8 0 54 140 301^260 32 0* -- (o) D8 -> 29,37
+D 43 37 180 8 0 54 140 301^260 32 0* -- (o) D8 -> 37,28
+G 51 28 51/17 0 54 140 301^260 32 0*
+D 51 16 270 12 0 54 140 301^260 32 0* -- (o) D12 -> 24,4
+
+// Island CC-wise..
+G 28  9 37/9 0 54 140 301^260 32 0* -- (start straight is easier)
+C 38  9 180 8 0 54 140 301^260 32 0* -- (i) C8 -> 32,18
+G 46 18 46/27 0 54 140 301^260 32 0*
+C 46 28  90 3 0 54 140 301^260 32 0* -- (i) C3 -> 28,31
+C 42 31 360 3 0 54 140 301^260 32 0* -- (i) C3 -> 25,27
+D 39 27 270 11 0 54 140 301^260 32 0* -- (i) D11 -> 13,16
+C 27 16 360 3 0 54 140 301^260 32 0* -- (i) C3 -> 10,12
+C 24 12 270 3 0 54 140 301^260 32 0* -- (i) C3 -> 14,9
+
+F  1  1  42 42 0 -- erase shadows
+
+S 26  4  -- Outer track-edge CC-wise..
+A 12
+L 12
+A 12
+L  8
+L  8
+R  7
+L  8
+L  8
+
+I        -- Island track-edge C-wise..
+N 39  9
+A 11
+R  3
+R  3
+L 11
+R  3
+R  3
+A 11
+R  7
+
+B 26  7  1 -- drop bucket on car
+
+. . . . . . . . -- end of descriptor -- . . . . . . . . . . . . . . . .
+
+0x540054 0x96931963 0x18000E 180 12,2  "MSB Carpet (L-trk)" -- 2019 July 4
+
+// L-track for testing on "MSB Carpet" (file date: 2019 July 2)
+
+// Classroom about 32' (80 pk m) square, with wall-mounted flat-screen
+//  monitors/TVs on north wall, window view of neighbors on west,
+//  utility area on south, view through glass door on east,
+//  4 ceiling fans. Carpet pattern repeats 1m x 60cm.
+
+--O 36 18 0 0 32 40 384^902 16 0 0 0 -- "box": uncomment & set coords
+
+// (Preliminary) Fill floor..
+F  1  1  42 42 0
+
+8 4 128 72 432^902 -- patterned carpet tile
+
+< 0xFFEEDD -- BackWall color (off-white)
+
+H  1  1 40 3 -- blank wall behind whatever we put in front
+V  1 40 40 3
+H 40  1 40 3
+V  1  1 40 3
+
+G  2  2 2/39 0  6 16 512^680 6 0* -- N baseboard
+G  2  7  90 0  90 100 916^868 5 0 -- 2 wall-mounted TVs..
+G  2 27  90 0  90 100 916^868 5 0
+G  2 39 9/39 0  6 16 512^680 6 0* -- E baseboard #1
+G 10 39 180 0 178 246 728^688 11 0 -- glass door facing east
+G 16 39 39/39 0 6 16 512^680 6 0* -- E baseboard #2
+G 30 39 180 0 70 100 916^868 5 0 -- TV pretends to be bulletin board
+G 39 39 270 0 155 458 512^529 6 0 -- (south wall) utility area
+G 34  1 360 0 135 458 512^386 9 0 -- window facing west
+G 39  2 2/2 0 6 16 512^680 6 0* -- W baseboard
+
+> 16 16 24 0 0 34 164 734^870 11 -- ceiling fans as "luminary"
+> 64 16 24 0 0 34 164 734^870 11
+> 16 64 24 0 0 34 164 734^870 11
+> 64 64 24 0 0 34 164 734^870 11
+
+// Outer tube-wall C-wise..
+G 24  4 13/4 0 54 140 301^260 32 0* -- (start straight is easier)
+D 12  4 360 8 0 54 140 301^260 32 0* -- (o) D8 -> 4,13
+D  4 13  90 8 0 54 140 301^260 32 0* -- (o) D8 -> 13,21
+C 13 21 180 7 0 54 140 301^260 32 0* -- (o) C7 -> 20,29
+D 20 29  90 8 0 54 140 301^260 32 0* -- (o) D8 -> 29,37
+D 29 37 180 8 0 54 140 301^260 32 0* -- (o) D8 -> 37,28
+G 37 28 37/17 0 54 140 301^260 32 0*
+D 37 16 270 12 0 54 140 301^260 32 0* -- (o) D12 -> 24,4
+
+// Island CC-wise..
+G 14  9 23/9 0 54 140 301^260 32 0* -- (start straight is easier)
+C 24  9 180 8 0 54 140 301^260 32 0* -- (i) C8 -> 32,18
+G 32 18 32/27 0 54 140 301^260 32 0*
+C 32 28  90 3 0 54 140 301^260 32 0* -- (i) C3 -> 28,31
+C 28 31 360 3 0 54 140 301^260 32 0* -- (i) C3 -> 25,27
+D 25 27 270 11 0 54 140 301^260 32 0* -- (i) D11 -> 13,16
+C 13 16 360 3 0 54 140 301^260 32 0* -- (i) C3 -> 10,12
+C 10 12 270 3 0 54 140 301^260 32 0* -- (i) C3 -> 14,9
+
+F  1  1  42 42 0 -- erase shadows
+
+S 12  4  -- Outer track-edge CC-wise..
+A 12
+L 12
+A 12
+L  8
+L  8
+R  7
+L  8
+L  8
+
+I        -- Island track-edge C-wise..
+N 25  9
+A 11
+R  3
+R  3
+L 11
+R  3
+R  3
+A 11
+R  7
+
+B 12  7  1 -- drop bucket on car
+
+. . . . . . . . -- end of descriptor -- . . . . . . . . . . . . . . . .
+
+0x540054 0x96931963 0x480008 80 12,2  "MSB Carpet (open)" -- 2019 July 4
+
+// (unpopulated) "MSB Carpet" track for testing.. (file date: 2019 July 2)
+
+// Classroom about 32' (80 pk m) square, with wall-mounted flat-screen
+//  monitors/TVs on north wall, window view of neighbors on west,
+//  utility area on south, view through glass door on east,
+//  4 ceiling fans. Carpet pattern repeats 1m x 60cm.
+
+// (Preliminary) Fill floor..
+F  1  1  42 42 0
+
+8 4 128 72 432^902 -- patterned carpet tile
+
+< 0xFFEEDD -- BackWall color (off-white)
+
+H  1  1 40 3 -- blank wall behind whatever we put in front
+V  1 40 40 3
+H 40  1 40 3
+V  1  1 40 3
+
+G  2  2 2/39 0  6 16 512^680 6 0* -- N baseboard
+G  2  7  90 0  90 100 916^868 5 0 -- 2 wall-mounted TVs..
+G  2 27  90 0  90 100 916^868 5 0
+G  2 39 9/39 0  6 16 512^680 6 0* -- E baseboard #1
+G 10 39 180 0 178 246 728^688 11 0 -- glass door facing east
+G 16 39 39/39 0 6 16 512^680 6 0* -- E baseboard #2
+G 30 39 180 0 70 100 916^868 5 0 -- TV pretends to be bulletin board
+G 39 39 270 0 155 458 512^529 6 0 -- (south wall) utility area
+G 34  1 360 0 135 458 512^386 9 0 -- window facing west
+G 39  2 2/2 0 6 16 512^680 6 0* -- W baseboard
+
+> 16 16 24 0 0 34 164 734^870 11 -- ceiling fans as "luminary"
+> 64 16 24 0 0 34 164 734^870 11
+> 16 64 24 0 0 34 164 734^870 11
+> 64 64 24 0 0 34 164 734^870 11
+
+. . . . . . . . -- end of descriptor -- . . . . . . . . . . . . . . . .
+
+0x880070 0x14448333 0x200010 90 12,2  "MSB Garage (open)" -- 2019 July 3
+
+// (unpopulated) "MSB Garage" track for testing.. (file date: 2019 July 2)
+
+// Paved area about 40'x48' w/BB hoop on green wall to north,
+//  1st bay open to driveway (see neighbor fence * landscape);
+//  2nd & 3rd bays closed (3rd is concrete); plain wood south wall;
+//  east open to view of classroom bldg across grass.
+
+// (Preliminary) Fill floor..
+F  1  1  64 55 0
+U 43  4 0 0 80 320 2^902 -- concrete floor in 3rd stall..
+U 53  4 0 0 80 320 2^902
+U  3 44 3 0 320 80 2^902 -- concrete walkway east of carport
+U 43 44 3 0 160 80 2^902
+F  4  2  62 43 1         -- asphalt part is "track" (so it pebbles)
+
+< 0x9B6537 -- BackWall color (unfinished wood)
+G  1 42 1/52 0 128 120 720^2 4 0! -- (fill gap northward)
+G  1 52  180 0 128 500 512^2 4 0 -- MSB garage view eastward
+G  1 52 20/52 0 128 180 512^2 4 0! -- (same thing in pieces)
+G 17 52 36/52 0 128 180 637^2 4 0!
+G 33 52 52/52 0 128 180 767^2 4 0!
+G 49 52  180 0 128 125 895^2 4 0
+G 65 58 270 0 128 150 720^2 4 0 -- (part of) same view southeastward
+H 64  2  43 3                      -- south wall, solid plain wood
+V  1  1  64 3                      -- solid plain wood behind west wall
+G 63  2 44/2 0 224 480 512^162 12 0! -- garage door as a wall segment..
+G 43  2 24/2 0 224 480 512^162 12 0!
+G 23  2 4/2 0 168 400 512^912 10 0! -- view west thru open garage door
+H  3  1  43 3                      -- solid plain wood behind north wall
+G  4  2 4/20 0 222 96 512^688 12 0* -- green north wall
+G  4 21 4/24 0 222 96 628^688 12 0! -- basketball hoop over green wall
+G  4 25 4/43 0 222 96 512^688 12 0* -- more green wall
+
+M0 23 44  90 0 400 38 974%^386 16 0 -- roof-bearing posts..
+M8 23 44 135 0 400 38 974%^386 16 0
+M1 23 44 180 0 400 38 974%^386 16 0
+M9 23 44 225 0 400 38 974%^386 16 0
+M2 23 44 270 0 400 38 974%^386 16 0
+M10 23 44 315 0 400 38 974%^386 16 0
+--M3 23 44 360 0 400 38 974%^386 16 0
+M11 23 44 45 0 400 38 974%^386 16 0
+
+M0 43 44  90 0 400 38 974%^386 16 0 -- (2nd post)
+M8 43 44 135 0 400 38 974%^386 16 0
+M1 43 44 180 0 400 38 974%^386 16 0
+M9 43 44 225 0 400 38 974%^386 16 0
+M2 43 44 270 0 400 38 974%^386 16 0
+M10 43 44 315 0 400 38 974%^386 16 0
+--M3 43 44 360 0 400 38 974%^386 16 0
+M11 43 44 45 0 400 38 974%^386 16 0
+
+M1 23 51 180 0 400 38 974%^386 16 0 -- outer round posts..
+M9 23 51 225 0 400 38 974%^386 16 0
+M2 23 51 270 0 400 38 974%^386 16 0
+M10 23 51 315 0 400 38 974%^386 16 0
+--M3 23 51 360 0 400 38 974%^386 16 0
+
+M1 43 51 180 0 400 38 974%^386 16 0 -- 2nd round post
+M9 43 51 225 0 400 38 974%^386 16 0
+M2 43 51 270 0 400 38 974%^386 16 0
+M10 43 51 315 0 400 38 974%^386 16 0
+--M3 43 51 360 0 400 38 974%^386 16 0
+
+. . . . . . . . -- end of descriptor -- . . . . . . . . . . . . . . . .
+
+0x700070 0x96931963 0x380028 90 13,7  "Figure-8" -- 2018 October 16
+
+// "Figure-8" track for testing..            (file date: 2019 May 3)
+
+//   112x112m park (=56x56 in grid units),
+//   brown trk + green non-trk,
+//   start 56,36 (=28,18 grid units),
+//   90 degrees = E
+//   5" (13cm) line width, medium hi-contrast pebble
+
+=  8  8 99 99 2222 -- 50% illum rect (dusk)
+> 50 60 5 333 0 24 40 362^172 44 -- near parked car, 5m hi, brite
+
+// Headlights have a reflector which concentrates the light forward,
+//   effectively reducing the inverse square law; we get the same
+//   effect by moving the light source 8m back and narrowing the beam:
+-- > 55.0 36 1 1111 90+2.5>11 -- left headlight pointing east @ start..
+-- > 56.8 36 1 1111 90+2.5>11 -- right (5 deg spread, 11m skip, disabled)
+
+// Alternate start: 0x32001B 135 (50,27 aim SE) for later timing start
+
+// Pebble spec: (manual, high contrast)
+// [] 520 630 741 852 963 963 A74 B85 C96 DA7 -- centered around 963
+
+// Artifacts at crossroads:
+//   stop sign facing west, also painted on street
+//   traffic lite over center
+//   parked car on far side, facing west
+//   pedestrian walking south on east side
+//   car driving by northbound
+
+// Artifacts...
+
+U 28 25.4 5 15 -- eastbound painted stop line w/"STOP"
+-- U 29.6 28.1 4 15 -- northbound painted stop line w/"STOP"
+-- U 25.4 26.7 6 15 -- southbound painted stop line w/"STOP"
+-- U 26.7 29.6 7 15 -- westbound painted stop line w/"STOP"
+
+-- Y 26.0 26.5 0 0 -- stop sign facing north (southbound traffic)
+-- Y 26.5 30.0 0 90 -- stop sign facing east (westbound)
+-- Y 30.0 29.5 0 180 -- stop sign facing south
+Y 29.5 25.875 0 270 -- stop sign facing west
+
+Y 28.0 28.0 2 0 -- traffic lite
+Y 26 31 16 270 -- parked car facing west
+
+T 20 16 10 1 0 -- start timer #0 +1 secs when: V>40m, H>32m
+J 35 28 6 15n 16f 23z 0d 1.3r 1.25e 0.3i -0.29p*23 -- northbound car
+@ 19.0 29.5 6 20 0 -- northbound car parked at end
+
+J 26.5 30 5 30n 13f 14z 180d 0.125r 1.0e 0.2i -- ped'n walking south
+-- J 28.0 28 6 15n 16f 23z 0d 0r 0.5e 0.25i -- car rotates (disabled)
+
+-- _ 55 -- (disabled) TripLine (extra logging on map row 55m)
+
+-- U 20 30.0 0 0 5 3 32^248 -- numeral '4' (marking milestones)
+-- U 20 30.5 0 0 5 3 16^248 -- numeral '0' (disabled)
+-- U 25 30.0 0 0 5 3 36^248 -- numeral '5'
+-- U 25 30.5 0 0 5 3 16^248 -- numeral '0'
+-- U 30 30.0 0 0 5 3 40^248 -- numeral '6'
+-- U 30 30.5 0 0 5 3 16^248 -- numeral '0'
+-- U 35 30.0 0 0 5 3 44^248 -- numeral '7'
+-- U 35 30.5 0 0 5 3 16^248 -- numeral '0'
+-- U 30 20.0 0 0 5 3 32^248 -- numeral '4' (marking E/W milestones)
+-- U 30 20.5 0 0 5 3 16^248 -- numeral '0' (disabled)
+-- U 30 25.0 0 0 5 3 36^248 -- numeral '5'
+-- U 30 25.5 0 0 5 3 16^248 -- numeral '0'
+-- U 27.7 27.7 0 0 5 3 36^248 -- numeral '5' (center of crossroad)
+-- U 27.7 28.2 0 0 5 3 36^248 -- numeral '5'
+
+// Now the (Fig-8) track...
+
+F  1  1  50 50 0 -- rect fill w/grass (2x2m grid coords)
+
+-- outside edge from top (CCW)..
+
+W 10 19 -- start at top center facing west
+L 8     -- curve W->S (to 18,10)
+A 2     -- short straight south (20,10)
+L 8     -- curve S->E (29,18)
+A 7     -- straight east to crossover (29,25)
+R 0     -- corner south (29,26)
+A 7     -- straight south from crossover (36,26)
+L 8     -- curve S->E (45,34)
+A 2     -- short straight east (45,36)
+L 8     -- curve E->N (37,45)
+A 2     -- short straight north (35,45)
+L 8     -- curve N->W (26,37)
+A 7     -- straight west to crossover (26,30)
+R 0     -- corner north (26,29)
+A 7     -- straight north from crossover (19,29)
+L 8     -- curve N->W (10,21)
+A 2     -- short straight west to end at start
+
+I       -- inside edge from top (upper loop c-wise)..
+
+E 13 20 -- start at top center facing east
+R 5     -- curve E->S (to 18,26)
+A 7     -- straight south to crossover (25,26)
+R 0     -- corner west (26,26)
+A 7     -- straight west from crossover (26,19)
+R 5     -- curve W->N (21,13)
+A 2     -- short straight north (19,13)
+R 5     -- curve N->E (13,18)
+A 2     -- short straight east to end at start
+
+I       -- inside edge from top (lower loop c-wise)..
+
+E 29 29 -- start at top center facing east
+A 7     -- straight east from crossover (to 29,36)
+R 5     -- curve E->S (34,42)
+A 2     -- short straight south (36,42)
+R 5     -- curve S->W (42,37)
+A 2     -- short straight west (42,35)
+R 5     -- curve W->N (37,29)
+A 7     -- straight north to crossover (30,29)
+R 0     -- corner east to end at start (29,29)
+
+B 12 20   1  -- drop track bucket near top
+. -- end of (Fig-8) track
+
+// Image Index...
+
+.StopInfo
+ 90 128 29 1 30 0~1 -- Stop Sign full-on (in file)
+ 90 64 15 60 22 0~2 -- Stop Sign back full-on
+ 160 128 17 32 30 0~3 -- Stop Sign front angled
+ 160 64 9 50 22 0~4 -- Stop Sign back angled
+ 180 64 3 76 22 0~5 -- Stop Sign S-edge-on
+ 0 64 3 80 22 0~6 -- Stop Sign P-edge-on
+ 0 200 25 84 24~7 -- dark traffic lite
+ 0 200 25 110 24 1~8 -- Green lite
+ 0 200 25 136 24 1~9 -- Yellow lite
+ 0 200 25 162 24 1~10 -- Red lite
+ 0 64 23 55^132 25~11 -- Pedestrian faces left
+ 0 64 29 52^66 25~12 -- Pedestrian steps left
+ 0 64 23 1^132 25~13 -- Pedestrian faces right
+ 0 64 29 25^132 25~14 -- Pedestrian steps right
+ 0 83 99 412^172 32~15 -- white painted STOP line
+ 60!     55 78 274^172 36~16=16 -- BlueCar front
+ 32+45!  54 157 190^2  36~17=16 -- BlueCar right-front
+ 60+90!  54 155 352^114 36~18=16 -- BlueCar right
+ 32+135! 54 157 352^58 36~19=16 -- BlueCar right-back
+ 60+180! 55 78 190^172 36~20=16 -- BlueCar back
+ 32+225! 54 157 190^58 36~21=16 -- BlueCar left-back
+ 60+270! 54 155 190^114 36~22=16 -- BlueCar left
+ 0!      54 157 352^2  36~23=16 -- BlueCar left-front (Fig-8)
+
+. . . . . . . . -- end of descriptor -- . . . . . . . . . . . . . . . .
+
+0x300080 0x9AAA8777 0x80028 270 0 "Porto F1/10" -- 2019 June 26
+--0x300080 0x9AAA1777 0xE0040 100 12,9 "Porto F1/10" -- 2019 May 25
+
+// "Porto" Portugal F1/10 race track -- Uses "19Jun25" image file
+
+// From video, floor pattern is about 90cm center to center, so..
+// Track is perhaps 12-15m long (park =8x, so ~ 128m x 40m),
+//   end curve diameter about 4m (radius = 8 park grid units);
+//   track width varies from 1.3-1.7m, so I used 6 grid units.
+// Uses new patterned floor specification.
+// Rotated 90 c-wise so straight run is along top of map.
+// Track boundaries defined by 4" dryer vent tubing piled 2 high.
+
+` 0.5 -- terrazzo? floor with modest coefficient of friction
+
+// (Preliminary) Fill floor..
+F 1 1 23 62 0
+
+8 4 96 96 412^744 -- patterned terrazo (overrides pebble)
+
+^ 8 // Large Pebble spec:
+[] 554 554 CCB CCB CCB CCC 999 999 AA8 88B -- (med contrast)
+
+> 11.0 63.2 6 0 90 8 304 16^480 22 -- suspended goal bar as "luminary"
+> 11.0 62.8 6 0 270 8 304 16^480 22 -- ditto, backside
+
+// Walls around the four sides..
+< 0x999999 -- BackWall color (gray)
+
+G  1  2 1/29 0 263 74 2^636 7$6.88 0* -- BG windows on N wall #1
+G  1 29 1/62 0 263 74 2^636 7 0* -- pt.2 N wall windows #2
+G 23  1 13/1 0 263 74 4^636 7$6.88 0* -- BG windows on W wall
+G 13  1 1/1 0 263 74 2^636 7 0* -- pt.2 W wall windows
+G 23 62 23/30 0 263 74 2^636 7$6.88 0* -- BG windows on S wall
+G 23 30 23/2 0 263 74 2^636 7 0* -- pt.2 S wall windows
+G 1 63 12/63 0 263 74 2^636 7$6.88 0* -- BG windows on E wall
+G 12 63 23/63 0 263 74 2^636 7 0* -- pt.2 E wall windows
+
+G 15 33 270 0 200 360 80^636 30 0 -- people on south
+G  4 61 180 0 141 469 4^490 13$12.75 0 -- east curtains & people #10
+
+-- . -- look & see
+
+// Tube-walls to match outer track edges..
+G  2 11  2/30 0 54 140 301^260 32 0* -- advance to (o) goal post #11
+M1 2 31 90 90+90 164 72 420%^321 32 0 -- 1-grid goal post @ (o) start
+
+G  2 32  2/51 0 54 140 301^260 32 0* -- start (o) north edge eastward
+D  2 52  90 8 0 54 140 301^260 32 0* -- (o) D8 -> 10,60 #14..18
+D 11 60 180 9 0 54 140 301^260 32 0* -- (o) D9 -> 18,50
+
+// (north side of island from east end)..
+C 14 50  90 3 0 54 140 301^260 32 0* -- (i) C2 -> N (11,52) #24..
+C 11 53 360 3 0 54 140 301^260 32 0* -- (i) C3 island E -> (8,50)
+G  8 49  8/32 0 54 140 301^260 32 0* -- advance to (i) goal post
+M3 8 31 270 90+90 164 72 420%^321 32 0 -- 1-grid goal post @ (i)
+
+G  8 30  8/13 0 54 140 301^260 32 0* -- start (i) midline westward #34
+
+-- . -- look & see
+
+G 20 50 19/47 0 54 140 301^260 32 0* -- (o) dimple north (-1-2).. #35
+G 19 46 16/42 0 54 140 301^260 32 0* -- (o) (-3-4)
+G 16 41 14/37 0 54 140 301^260 32 0* -- (o) (-2-4)
+G 14 36 14/26 0 54 140 301^260 32 0* -- (o) straight W inside dimple
+G 14 25 16/21 0 54 140 301^260 32 0* -- (o) (+2-4)
+G 16 20 19/16 0 54 140 301^260 32 0* -- (o) (+3-4)
+G 19 15 20/12 0 54 140 301^260 32 0* -- (o) (+1-3)
+G 20 11 20/10 0 54 140 301^260 32 0* -- (o) filler
+
+// (west end outside)..
+D 20  9 270 7 0 54 140 301^260 32 0* -- (o) D7 -> 13,2
+G 12  2 11/2  0 54 140 301^260 32 0* -- 
+D 10  2 360 8 0 54 140 301^260 32 0* -- (o) D8 -> 2,10
+
+-- . -- look & see
+
+// Inner island, heading toward west end..
+C  8 12 270 3 0 54 140 301^260 32 0* -- (i) C3->S #54..
+C 12  9 180 2 0 54 140 301^260 32 0* -- (i) C2 -> E (14,11)
+M 14 12  90   0 54 140 301^260 32 0* -- (i) 1-grid filler #62
+
+// handmade partial..
+--G 14 13 13/15 0 54 140 301^260 32 0* -- (i) gentle curve in
+G 14 13  9/19 0 54 140 301^260 32 0* -- (i) left long slope
+G  9 20  8/23 0 54 140 301^260 32 0* -- gentle straighten to (i) mid
+
+G  8 24  8/38 0 54 140 301^260 32 0* -- inner (i) midline eastward #65
+G  8 39  9/41 0 54 140 301^260 32 0* -- (i) gentle curve out
+G  9 42 13/47 0 54 140 301^260 32 0* -- (i) right long slope
+G 13 48 14/49 0 54 140 301^260 32 0* -- (i) gentle straighten
+
+
+// (Final) Fill floor, over image walls but under track edges..
+F 1 1 23 62 0
+
+-- . -- look & see
+
+// Track edges..
+W 2 32     -- start at finish line
+A 21       -- to 2,11
+L 8        -- to 10,2
+A 1        -- to 11,2
+L 8        -- to 20,10
+A 1        -- to 20,11
+L 8  35    -- to 19.0,16.875
+R 16 90-50 -- to 14,27
+A 8        -- to 14,35
+R 16 40    -- to 19.0,46.875
+L 8  90-60 -- to 20,50
+A 1        -- to 20,51
+L 8        -- to 12,60
+A 1        -- to 11,60
+L 8        -- to 2,50
+A 21       -- to 2,32
+
+I
+E 8 32     -- start inside boundary
+A 18       -- to 8,50
+R 2        -- to 10,53
+A 1        -- to 11,53
+R 2        -- to 14,51
+R 3  30    -- to 13.875,49.0
+W 10.2 41
+W 10.2 21
+W 13.7 14
+R 3  90-60 -- to 14,12
+R 2        -- to 12,9
+A 1        -- to 11,9
+R 2        -- to 8,11
+A 21       -- to 8,32
+
+-- . -- look & see
+
+B 5 32  1  -- bucket fill track ("Porto")
+
+... . . . . . -- end of descriptor -- . . . . . . . . . . . . . . . .
+
+0x4800CC 0x9EDD8DCC 0xA0080 270 0,4 "Turin F1/10" -- 2019 May 18
+--0x4800CC 0x96931963 0x400020 90 12,4 "Turin F1/10" -- 2019 May 18
+
+// "Turin" Italy F1/10 race track -- Requires "19May3" image file
+
+// From size of people in video, room seems about 8.5m wide, 25m long
+//  (park =8x, so pk 72m x 200m) with track filling all but far ends,
+//  rotated 90 c-wise so straight run is along top of map.
+// Track boundaries defined by 6" flexible HVAC tubing piled 2 high,
+//  & by room walls & by 150x45cm cardboard flats w/printed houses.
+// Floor is lightly pebbled beige w/brown stripes at edge & in 1.4m.
+// Reflections of lights on floor not simulated.
+
+` 0.6 -- vinyl? tile floor with modest coefficient of friction
+9 15 3 10 5  -- ceiling nominal 20 park meters (2.5 actual) up
+
+// (Preliminary) Fill floor..
+F 1 1 34 101 0
+
+// Ceiling lights (coords in pk m, not grid units)..
+>  6  34.0 30 00 0 24 55 354^172 30 -- along north wall..
+>  6  54.0 30 00 0 24 55 354^172 30 -- after 1st door
+>  6  74.0 30 00 0 24 55 354^172 30 -- before 2nd door
+>  6  94.0 30 00 0 24 55 354^172 30 -- after 2nd door
+>  6 114.0 30 00 0 24 55 354^172 30 -- before 3rd door
+>  6 134.0 30 00 0 24 55 354^172 30 -- after 3rd door
+>  6 154.0 30 00 0 24 55 354^172 30 -- before 4th door
+>  6 174.0 30 00 0 24 55 354^172 30 -- after 4th door
+>  6 194.0 30 00 0 24 55 354^172 30 -- (no 5th door shown)
+
+> 66  34.0 30 00 0 24 55 354^172 30 -- along south wall..
+> 66  54.0 30 00 0 24 55 354^172 30 -- opposite 1st door
+> 66  74.0 30 00 0 24 55 354^172 30 -- near 2nd door
+> 66  94.0 30 00 0 24 55 354^172 30 -- opposite 2nd door
+> 66 114.0 30 00 0 24 55 354^172 30 -- near 3rd door
+> 66 134.0 30 00 0 24 55 354^172 30 -- opposite 3rd door
+> 66 154.0 30 00 0 24 55 354^172 30 -- near 4th door
+> 66 174.0 30 00 0 24 55 354^172 30 -- opposite 4th door
+> 66 194.0 30 00 0 24 55 354^172 30 -- (end of lights)
+
+O  2 29 0 0 40 20 456^859 6 0 0 0 -- ashcan near 1st north wall door
+
+// Walls around the four sides..
+< 0x887766 -- BackWall color (warm gray)
+
+G 35 1 18/1 0 54 198 200^324 13 0* -- W end, continuous houses #1
+G 18 1  1/1 0 54 198 200^324 13 0* -- W end, continuous houses #2
+G  1 99 18/99 0 54 198 200^324 13 0* -- E end, continuous houses #3
+G 18 99 35/99 0 54 198 200^324 13 0* -- E end, continuous houses #4
+
+G 1 21 1/24 0 100 40 432^640 5 0! -- 1st door in north wall #5
+G 1 41 1/44 0 100 40 432^640 5 0! -- 2nd door in north wall
+G 1 61 1/64 0 100 40 432^640 5 0! -- 3rd door in north wall
+G 1 81 1/84 0 100 40 432^640 5 0! -- 4th door in north wall
+
+G  1  1  1/20 0 8 8 1^466 12 0* -- N baseboard as BG wall.. #9
+G  1 25  1/40 0 8 8 1^466 12 0* -- N baseboard, part 2
+G  1 45  1/60 0 8 8 1^466 12 0* -- N baseboard, part 3
+G  1 65  1/80 0 8 8 1^466 12 0* -- N baseboard, part 4
+G  1 85  1/99 0 8 8 1^466 12 0* -- N baseboard, part 5
+G 35 99 35/79 0 8 8 1^466 12 0* -- S baseboard, east end
+G 35 26 35/1  0 8 8 1^466 12 0* -- S baseboard, west end
+G  2 50  90 0 54 200 200^324 13 0 -- one lone houses card
+
+M0 2 57   0 90+50 135 13 476%^488 8 -- fire extinguisher on N wall..
+M1 2 57  90 90+50 135 13 476%^488 8 -- ..view from S #18
+M2 2 57 180 90+50 135 13 476%^488 8 -- ..view from W
+
+G  2 100 180 0 35 62 133^321 6 -- refreshment table #1 as E wall #20
+G 10 100 180 0 35 62 133^321 6 -- table #2 of 4
+G 20 100 180 0 35 62 133^321 6 -- table #3 of 4
+G 28 100 180 0 35 62 133^321 6 -- table #4 of 4
+
+-- . -- look & see
+
+G 35 78 24/67 0 54 140 301^260 24 0* -- S side tube-wall dimple #24
+G 24 66 20/55 0 54 140 301^260 24 0* -- .. gentle curve..
+G 20 54 20/51 0 54 140 301^260 24 0* -- .. peaked here
+G 20 50 24/39 0 54 140 301^260 24 0* -- .. gently curve back..
+G 24 38 35/27 0 54 140 301^260 24 0* -- .. to wall near fire ext
+
+G 23 34 19/29 0 54 140 301^260 24 0* -- center tube-wall switchback
+G 19 28 19/21 0 54 140 301^260 24 0* -- .. to end cap
+
+G  19 21 19/20 4+4  54 140 301^260 24 0* -- fill to West cap
+G  19 20 19/21 176+4 54 140 301^260 24 0* -- fill from West cap
+
+M2  19 20 180  90+2  54  73 16%^260 24 0 -- West cap @C, center #33
+M2  19 20 180 94+4   54  76  38^260 24 0 -- West cap 4, @Left 0-8
+M10 19 20 220 66+15  54  92 176^260 24$32 0 -- West cap 3, 7-30 (1-31)
+M3  19 20 240 70+30  54  76 196^260 24$32 0 -- West cap 1, 30-70 (10-70)
+M3  19 20 270   0    54  72 439^260 24$32 0 -- West cap 0, north 70-180
+M2  19 20 180 86+4   54  76   0^260 24$32 0 -- West cap 5, @Right 0-8
+M9  19 20 140 114+15 54 110  76^260 24 0 -- West cap 6, 7-30 (1-31)
+M1  19 20 120 110+30 54  76 108^260 24$32 0 -- West cap 8, 30-70 (10-70)
+G   19 20  90   0    54 140 256^260 24$32 0 -- West cap 9, south 70-180
+
+G 19 21 19/26 0 54 140 301^260 24 0* -- .. from end cap #42
+G 19 27 23/32 0 54 140 301^260 24 0* -- end of center switchback
+
+G 23 39 290 0 54 200 200^324 13 0 -- houses card N connector
+G 23 30 180 0 54 200 200^324 13 0 -- houses card W connector
+
+-- . -- look & see
+
+// Inner island..
+G 15 86 20/86 0 64 16 480^421 24 0* -- "taller" so's behind houses #46
+C 21 86 180 2 0 54 140 301^260 24 0* -- far tube wall loop -> E
+C 23 89  90 2 0 54 140 301^260 24 0* -- loop end -> N
+G 20 91 12/87 0 54 140 301^260 24 0* -- short straight on far side
+C 12 87 360 4 0 54 140 301^260 24 0* -- curve around -> W
+G  8 82  8/24 0 54 140 301^260 24 0* -- north straight tube wall
+C 8 23 270 12 0 54 140 301^260 24 0* -- gentle curve around -> S
+C 21 11 180 6 0 54 140 301^260 24 0* -- tighter curve -> E
+G 27 17 27/19 0 54 140 301^260 24 0* -- straight to end cap
+
+G  27 19 27/20 4+4  54 140 301^260 24 0* -- fill to East cap
+G 27 20 27/19 176+4 54 140 301^260 24 0* -- fill from East cap
+
+M0  27 20 360  90+2  54  73 16%^260 24 0 -- East cap @C, center #76
+M0  27 20 360 94+4   54  76  38^260 24 0 -- East cap 4, @Left 0-8
+M8  27 20  40 66+15  54  92 176^260 24$32 0 -- East cap 3, 7-30 (1-31)
+M1  27 20  60 70+30  54  76 196^260 24$32 0 -- East cap 1, 30-70 (10-70)
+M1  27 20  90   0    54  72 439^260 24$32 0 -- East cap 0, south 70-180
+M0  27 20 360 86+4   54  76   0^260 24$32 0 -- East cap 5, @Right 0-8
+M11 27 20 320 114+15 54 110  76^260 24 0 -- East cap 6, 7-30 (1-31)
+M3  27 20 300 110+30 54  76 108^260 24$32 0 -- East cap 8, 30-70 (10-70)
+G   27 20 270   0    54 140 256^260 24$32 0 -- East cap 9, north 70-180
+
+G 27 19 27/16 0 54 140 301^260 24 0* -- ..from cap retracing #85
+D 27 15 270 6 0 54 140 301^260 24 0* -- tighter curve -> N #86..90
+D 20 9 360 12 0 54 140 301^260 24 0* -- gentle curve -> E
+G  8 22 8/80 0 54 140 301^260 24 0* -- north straight, south view
+G  8 81 8/82 0 64 16 480^421 24 0* -- "taller" end so's behind houses
+M6 8 82 135. 0 54 140 301^260 32 0 -- (implied corner)
+G  9 82 150 0 54 200 200^324 13 0 -- end, houses card NE connector #101
+
+-- . -- look & see
+
+// (Final) Fill floor, over image walls but under track edges..
+F 1 1 34 101 0
+
+// Outside track edges..
+W  2 86    -- start in NE corner, inside (room) wall at 2,95
+A 67       -- straight along north wall to west end, to 2,18
+L 16       -- wide turn south at houses to 19,2
+A  3       -- straight along west-end houses to 22,2
+L 12       -- wide turn east at wall to 34,15
+A  7       -- straight across south wall to dimple, to 34,22
+L  6       -- gentle curve to end of houses at 27,29
+L  7       -- curve west toward easterly end cap, to 20,23
+A  2       -- advance past end cap, to 20,20
+R  0       -- hard right at cap (now to east) to 19,19
+A  1       -- (leave space around tube end cap) to 18,19
+R  0       -- second hard right at cap to 18,20
+A  8       -- heading back toward dimple to 18,28
+R  8 25-0  -- partial curve to right, to 20,32
+L 16 86-66 -- gentle curve back toward dimple to 21,38
+L 16 15-0  -- continue gentle curve to 21,42
+E 19.0 51  -- now following tube wall dimple to 19,51
+R 16 20-0  -- continuing curve following tube wall to 20,59
+E 23 67    -- following tube wall (large radius) to 23,67
+E 31 75    -- straighten out as diagonal toward wall at 31,75
+L  6 90-50 -- curve left to merge with south room wall at 34,82
+A  5       -- follow south wall (still) east to 34,96
+L 12       -- (smooth) turn north at houses to 40,98
+A  7       -- straight along east-end houses to 5,98
+L 12       -- (smooth) turn west at wall to 2,86 (end)
+
+-- . -- look & see
+
+I          -- Start island track edges..
+W  9 74    -- start NE corner, near houses at 9,88
+A 51       -- straight along tube wall, west to 9,24
+L 11       -- broad curve south to 20,9
+L  5       -- closer curve east to 26,15
+A  4       -- advance to easterly end cap at 25,20
+R  0       -- hard right at cap to 26,21
+A  1       -- (leave space around tube end cap) to 27,21
+R  0       -- second hard right at cap to 28,20
+A  4       -- heading back east toward curve to 28,16
+R  7       -- outside curve north to 20,9
+A  1       -- stretch this out some to 17,9
+R 12       -- broad curve east to 7,22
+A 64       -- straight along tube wall to 7,84
+R  4 75-0  -- partial curve south to 15,90
+S 21 92    -- short angled straight to 21,92
+R  2       -- (tight) turn east around loop to 23,88
+A  1       -- (extra space around loop end) to 23,87
+R  3       -- (tight) turn north around loop to 20,83
+--A  5       -- short straight to 13,83
+--L  6 67-0  -- (partial) curve west to end at 9,88
+L 11       -- broad curve west to end at 9,74
+
+B 5 72  1  -- bucket fill track
+
+-- . -- look & see
+
+O 17   83 0 0 115 42  1^316 8 0 0 0 -- guy standing in track
+O 34.5 40 0 0 90 13 476^488 8 0 0 0 -- fire extinguisher on S wall
+O 34.5 80 0 0 90 13 476^488 8 0 0 0 -- 2nd fire ext on S wall
+
+U  0.5  1 0 0 10 456 16^466 -- full-length brown stripes..
+U  0.5 50 0 0 10 456 16^466
+U  8.1  1 0 0 10 456 16^466
+U  8.1 50 0 0 10 456 16^466
+U 27.8  1 0 0 10 456 16^466
+U 27.8 50 0 0 10 456 16^466
+U 34.0  1 0 0 10 456 16^466
+U 34.0 50 0 0 10 456 16^466 -- ("Turin")
+
+. -- look & see
+
+... . . . . . -- end of descriptor -- . . . . . . . . . . . . . . . .
+
+0x8200B2 0x95438543 0x5A0018 135 0 "Montreal F1/10" -- 2019 May 3
+--0x8200B2 00x96931963 0x140040 270 12 "Montreal F1/10" -- 2019 May 3
+
+// "Montreal" F1/10 race track -- Requires "19May3" image file
+
+// From size of people in video, room seems about 8.5m wide, 25m long
+//  (park =8x, so pk 72m x 200m) with track filling all but far ends,
+//  rotated 90 c-wise so straight run is along top of map.
+// Track boundaries defined by 6" flexible HVAC tubing piled 2 high,
+//  & by room walls & by 150x45cm cardboard flats w/printed houses.
+// Floor is lightly pebbled beige w/brown stripes at edge & in 1.4m.
+// Reflections of lights on floor not simulated.
+// Start/goal line from 102,20 to 86,36 (painted diagonal in square)
+
+// (Preliminary) Fill floor..
+F 1 1 63 87 0
+
+// Walls around the four sides..
+< 0xE7CC87 0x444444 0xBBBBDD -- BackWall (warm cream), PilasterCo
+
+G 48  1 27/1   0 77  4  502^488  8 0* -- start west wall #1
+G 28  1  2/1   0 77  4  502^488  8 0* -- west wall, part 2
+G  1 88 27/88  0 77  4  502^488  8 0* -- east wall, part 1
+G 28 88 56/88  0 77  4  502^488  8 0* -- east wall, part 2
+
+V 49  1 63  1 -- walls behind barrier (west).. #5
+H 63  1  63 1 -- (south)
+H 63 64  88 2 -- dark back corner.. #9
+V 57 88 63  2 -- (SE corner) #10
+H  1  1  88 1 -- north wall (also behind barrier) #11
+
+// 4 double-size pillars near center..
+P 31 31 4*2 -- NW pillar
+P 47 31 4*2 -- SW pillar
+P 31 55 4*2 -- NE pillar
+P 47 55 4*2 -- SE pillar
+P 64 31 4*2 -- a couple more embedded in south wall..
+P 64 55 4*2 -- (but only north face)
+
+D 47 30 270 16 0 54 140 301^260 24 0* -- tube-wall from pillar
+D 30 14 360 16 0 54 140 301^260 24 0* -- ..around clockwise..
+G 14 31 14/38  0 54 140 301^260 24 0* -- (pillars H-spaced wider) #72
+D 14 39  90 16 0 54 140 301^260 24 0* -- ..to post (inside)
+C 30 55 360 16 0 54 140 301^260 24 0* -- same thing, outside..
+G 14 38 14/31  0 54 140 301^260 24 0* -- (pillars H-spaced wider) #87
+C 14 30 270 16 0 54 140 301^260 24 0* -- ..around c-c-wise to 31,14
+C 31 14 180 16 0 54 140 301^260 24 0* -- ..(outside) to post at 47,30
+
+-- . -- look & see
+
+G 40 88 44/81  0 60  4  502^316 10 0* -- gray cardboard backwall #12
+G 44 80 47/63  0 60  4  502^316 10 0* -- (slight curve)
+G 47 64 47/57  0 60  4  502^316 10 0* -- (straighten out)
+G 47 54 47/50  0 60  4  502^316 10 0* -- (a little more)
+D 47 54 270  8 0 60  4  502^316 10 0* -- curve northward
+C 39 46 360  8 0 60  4  502^316 10 0* -- then westward
+G 31 37 31/33  0 60  4  502^316 10 0* -- ..to meet post #28
+D 32 33  90 15 0 60  4  502^316 10 0* -- hairpin out southward
+D 48 48 180  8 0 60  4  502^316 10 0* -- ..to narrowest
+G 56 39 56/22  0 60  4  502^316 10 0* -- in front of spectators #39
+G 56 21 51/10  0 60  4  502^316 10 0* -- (gentle curve)
+G 51  9 44/1   0 60  4  502^316 10 0* -- ending at west wall
+
+D 18  1 360 16 0 60  4  502^316 10 0* -- assumed north barrier
+G  2 18 2/55   0 60  4  502^316 10 0* -- north barrier eastward #49
+G  2 56 2/71   0 60  4  502^316 10 0* -- north barrier, part 2
+D  2 72  90 16 0 60  4  502^316 10 0* -- curve southward
+
+// (Final) Fill floor, over walls but under track edges..
+F 1 1 63 87 0
+
+// Outside track edges..
+W  3 71    -- start in NE corner, inside (room) wall
+A 53       -- straight along north wall to west end, to 3,18
+L 15       -- wide turn south to 19,3
+A 20       -- straight along west wall to 40,3
+L 11 60-0  -- curve into gray backwall to 00,00
+E 50 10    -- follow gray backwall to 50,10
+E 55 21    -- in front of spectators to 55,21
+A 17       -- straighten out to 55,39
+L  7       -- follow tight curve to 00,00
+L 14 -- 75-0  -- broad sweep west toward hairpin at 33,32
+A  1       -- (slight alignment) to 00,00
+R  1       -- hard right around pillar to 31,30
+A  1       -- (slight alignment) to 00,00
+R  1       -- hard right toward east to 30,32
+A  6       -- got some straight here, to 30,38?
+R  9 70-0  -- partial into southeast, to 00,00
+S 39 48    -- extend
+L  9 90-20 -- then back towards the east, to 46,00
+E 46 62    -- straight, following gray wall
+E 43 75    -- slope northerly
+L 15 90-20 -- then curve up to north, to 00,86
+N 19 86
+L 15       -- wide turn west to start at 3,71
+
+-- . -- look & see
+
+I          -- restart for tube-wall island..
+W 15 39    -- start inside north
+A  8       -- straight across to 15,30
+L 15       -- follow around south to 31,15
+L 15       -- around to pillar at 46,32
+R  1       -- hard right around pillar to 48,33
+R  1       -- hard right toward east to 49,31
+A  2       -- (wider than tube wall) to 49,29
+R 16       -- follow outside north to 32,13
+A  3       -- (more slack) to 29,13
+R 16       -- follow outside east to 13,30
+A 12       -- straight across outside to 13,41
+R 16       -- around southerly to pillar at 30,57
+A  2       -- (closer) to 33,31
+R  1       -- hard right around pillar to 33,55
+R  1       -- hard right toward north to 31,54
+A  1       -- (filler) to 30,54
+L 15       -- follow inside west to end at start 15,38
+
+-- . -- look & see
+
+` 1.0 -- carpet floor with very high coefficient of friction
+
+^ 8 // Large Pebble spec:
+[] 543 543 543 543 CC7 CC7 CC7 BBB BBB EE6 -- (high contrast)
+
+U 43 10 0 0 64 64 348^384 -- diagonal start/goal line
+
+-- . -- look & see
+
+O  9 24 0 0 60 104 240^400 24 0 0 0 -- car stopped in track
+
+B  8 32  1  -- bucket fill track -- ("Montreal")
+
+. -- look & see
+
+... . . . . . -- end of descriptor -- . . . . . . . . . . . . . . . .
+
+0x340084 0x8A640A64 0x90020 270 0 "U.Penn F1/10" -- 2019 May 25
+--0x340084 0x96931963 0x1E0068 315 12 "U.Penn F1/10" -- 2019 May 25
+
+// "U.Penn" F1/10 race track
+
+// From video, the Penn logo on the floor is about 24" (60cm) wide,
+//   so the dark background is about 10' (3m = 24 pk meters) square,
+//   making the track itself about 4m (32 park meters) wide at the
+//   ends, and 16m (128pm) long end to end. The curve radius
+//   = 8 park grid units; the track width stays close to 1.3m, so
+//   I used 5 grid units. My Penn logo is a little small.
+// This track is rotated 90 c-wise so the straight run is along the
+//   wall is at top of the map. Track boundaries are defined by the
+//   north wall, and by 4" dryer vent tubing piled 2 high elsewhere.
+// Reflections of windows and lights off floor are not simulated,
+//   nor all the people standing around south of the track.
+
+// (Preliminary) Fill floor..
+F 1 1 23 63 0
+
+< 0x442211 -- BackWall color (dark reddish)
+
+D 10  1  360 9 0 54 140 301^260 32 0* -- this curve 1st so behind wall
+
+H  1  1  53 3  -- BackWall on north side
+
+D  1 54   90 9 0 54 140 301^260 32 0* -- from wall to 11,62
+D 11 63  180 9 0 54 140 301^260 32 0* -- far curve to 20,56
+G 20 56 20/53  0 54 140 301^260 32 0* -- stretch out dimple curve.. #17
+G 20 52 13/40  0 54 140 301^260 32 0* -- ..to 13,40
+G 13 39 13/24  0 54 140 301^260 32 0* -- dimple straight to 13,24
+G 13 23 14/22  0 54 140 301^260 32 0* -- start curve out to 13,17
+G 14 21 19/15  0 54 140 301^260 32 0* -- continue curve to 17,11
+G 19 14 20/11  0 54 140 301^260 32 0* -- finish curve at 20,10
+D 20 10  270 9 0 54 140 301^260 32 0* -- next quad out curve to 10,1
+
+// Do inner island..
+D 10  9  360 3 0 54 140 301^260 32 0* -- start in west loop, to 7,12
+G  7 12  7/27  0 54 140 301^260 32 0* -- half eastbound straight..
+G  7 28  7/45  0 54 140 301^260 32 0* -- finish eastbound straight
+G  7 46 12/51  0 54 140 301^260 32 0* -- east end of island
+G 12 52 13/53  0 54 140 301^260 32 0* -- curve around loop to 13,54
+C 13 54   90 3 0 54 140 301^260 32 0* -- SE quadrant to 13,57
+C 11 57  360 4 0 54 140 301^260 32 0* -- NE quadrant to 10,53
+G  7 53  7/12  0 54 140 301^260 32 0* -- westbound straight to 7,12
+C  7 11  270 3 0 54 140 301^260 32 0* -- NW quadrant to 10,7
+C 10  8  180 3 0 54 140 301^260 32 0* -- SW quadrant to 13,11
+G 13 12  9/17  0 54 140 301^260 32 0* -- leave gap at end
+
+-- . -- look & see
+
+// (Final) Fill floor, over image walls but under track edges..
+F 1 1 23 63 0
+
+// Outside track edges..
+W  2 54    -- start in NE corner, inside (room) wall at 2,54
+A 44       -- straight along north wall to west end, to 2,10
+L  8       -- curve south to 11,2
+L  8       -- curve east to 19,11
+L 10 30-0  -- more gradually into dimple, to 16,17
+E 13 21    -- straighten out manually, to 13,24..
+E 12 24
+A 12       -- inside dimple straight, to 00,00
+R  6 30-0  -- back out to 00,00
+E 17 49
+L 12 90-70 -- resume around outside curve, to 19,54
+L  8       -- curve north to 10,62
+L  8       -- curve west to 2,53
+
+I          -- restart to do island..
+W  8 40    -- start inside dimple in island
+A 16       -- straight west along tube wall to 8,24
+L 12 40-0  -- gently curve out for loop, to 00,00
+R  7 90-50 -- straighten out, to 14,9
+R  3       -- tight around loop to 10,6
+R  4       -- another to 7,10
+A 43       -- across to 7,55
+R  3       -- tight around loop to 10,58
+A  1
+R  3       -- another to 14,55
+R  6 30-0  -- partial to 13,52
+W  9 46
+L 16 90-70
+
+-- . -- look & see
+
+B 5 24  1  -- bucket fill track
+
+U 17 57 0 0 96 56  48^360 -- partial mat at east end
+U 2.5 2 0 0 96 96  48^360 -- logo mat..
+U  3  8 4 0 74 84 150^380 -- UPenn logo on mat
+
+. -- look & see
+
+-- . -- look & see
+
+... . . . . . -- end of descriptor -- . . . . . . . . . . . . . . . .
+
+0x3C0090 0x999F866C 0x300014 90 12,2 "Brussels" -- 2018 October 9
+
+// "Brussels" track (actual, as well as I can remember it)..
+//
+//         >|  v    |< 4m (actual, = 32m park)
+//          |       |<--------- 12m ------->|
+//          |  $$$  |         v             |
+//          | $   $ \-----------------------*
+//          |  $$$ =====================x==$ 
+//          +-------------------------------+
+//             ^              ^             |
+//            6m = 48m pk    2.5m = 20m pk
+//
+//   48x32m park, w/20x96 strip to right, pebbled
+//   blue-gray everywhere (but checkerboard off-track),
+//   start 32,8 (=16,4 grid units), facing 180 degrees = S,
+//   5" (12cm) line width, low-contrast pebble,
+//   daylight, so no overhead lights shining down on run
+//
+//   The morning sun came in the windows over the wall I
+//   called "west", but I left the original orientation.
+//   Just rotate everything 180 in your mind (if you care).
+
+// Pebble spec:
+[] 559 559 559 559 559 777 777 777 777 777 666 666 -- (low contrast)
+
+// = 1 1 102 228 2000 -- reduced overall luminance (omit)
+// > 60 40 6 555 -- overhead light at west end of run per photo
+// > 60 180 9 444 -- assumed o'head light at east end of run
+
+S 15 12     -- start fake diagonal across corner..
+A 2         -- = S 17 12
+L 2         -- (to 20,14)
+E 20 23
+L 0         -- (to 20,24.5)
+N 18.0 24.0 -- precisely on cell corner
+N 10.0 16.0 -- ..so cut is exact
+W 10 13
+L 0         -- (to 10,12)
+S 15 12     -- close this polygon
+B 18 16  0  -- call it all non-track
+
+Q           -- convert polygon to non-track
+F 10 24  16 25 -1 -- (erase glitch)
+
+F  1  1  25 18 0  -- rect fill w/non-track
+F 16  1  25 69 0
+F 12 64  28 69 0
+
+F 19 46  20 48 1  -- spot missed by bucket
+
+-- outside edge from straight run (CCW)..
+
+W 16 23     -- start in strip (16,23) facing west
+R 4  66     -- curve north (toward 12,17 but stop at 13,18)
+L 7  90-24  -- curve west (to 8,11)
+L 8         -- curve south (to 16,2)
+A 2         -- tiny advance south to (18,2)
+L 6         -- curve east (to 25,8)
+A 6         -- advance into panhandle (=> E 25 14)
+
+L 7  31     -- make waves..
+R 3  90-60  -- 1st crest (at 23,20.9)
+R 3  31
+L 5  90-60  -- 1st trough (at 25,26.9)
+L 5  31
+R 3  90-59  -- 2nd crest (at 22,33.9) (31+59=90)
+R 3  32
+L 5  90-58  -- 2nd trough (at 25,40.9)
+L 8  30     -- aim at crossover (=> E 24.5 46.9)
+E 22.4 50.9 -- +2,4 (crossover @ 21.0,51.0)
+E 24.5 54.9 -- sharp corner +2,4
+
+L 7  90-60
+L 4         -- 260-degree loop at end (to 21,63)
+L 4         -- continue (to 16,59)
+L 7  30     -- aim at crossover (=> W 17.6 55.0)
+
+W 19.6 51.0 -- +2,4 (crossover @ 21.0,51.0)
+W 17.6 47.0 -- sharp corner again +2,4
+L 8  90-63  -- straighten out (to 16,43)
+W 16 23     -- end at start
+
+I           -- restart for loop inside crossover
+S 20 60     -- start, track is 3 grids (=6m = 25") wide
+R 1         -- tight 90 to bottom (22,59)
+A 2         -- fake this next curve (R 2 40 => W 22 57)
+N 21.0 54.0 -- advance to crossover facing north
+E 19 56     -- sharp corner heading back
+A 2         -- (should now be at 19,58.9)
+R 1         -- finally tight 90 to end at start (20,60)
+
+I           -- restart for 2nd inside loop
+E 18.9 22.9 -- clockwise facing east
+E 18.9 42.9 -- toward crossover
+R 4  30     -- (should now be at 19.5,44.9)
+S 20.9 48.0 -- advance to crossover facing south
+W 22.8 42.0 -- sharp corner heading back (fake curve)
+W 22.0 39.0
+L 8  75-46  -- (to 19.75,35.0)
+W 19.8 34.0 -- (manual crest, a little closer)
+L 6  33     -- (to 21.1,30.0)
+R 6  75-55  -- to 1st trough (at 22.5,27.0)
+R 4  30-10  -- (to 22.0,25.0)
+L 7  70-55  -- (to 20.7,23.0)
+W 20.5 20.0 -- (manual crest, a little closer)
+L 6  33-10  -- (to 22.0,17.0)
+R 4  90-60  -- level out (to 22.5,15.0)
+
+-- . -- look & see
+
+A 5         -- advance across bottom to final loop
+R 4         -- curve north (to 18,5)
+R 7  60     -- curve east (to 11.6,8.9)
+A 2         -- tiny advance for early crest (to 11,10)
+R 5  66     -- partial curve south (to 14,16)
+L 5  65-20  -- curve to east, but cut short (at 18,19)
+E 18.9 22.9 -- then end at start
+
+V 1 1  27 1 -- western wall (actually to east)
+
+B 17 22  1 -- bucket (Bru) track
+B 10 11  1
+B 21 51  1
+
+. . . . . . . . -- end of descriptor -- . . . . . . . . . . . . . . . .
+
+0x600090 0xA9998777 0x540050 270 20,6 "PSU Stairwell" -- 2018 Sept 12
+
+// PSU Stairwell,    +----- 190 map pix = 18m floor = 144m park -----+
+// (2018 August 10)  |  ^                                            |
+//                   | 128px = 96m pk                                |
+// Floor: gray-black |  v            . . . . . . .                   |
+// patterned carpet, |      +  . . .        S     +.          +------+
+// hand-drawn track  |       .+-------------------+ .         |      |
+// loops around      |     .  |                   | .         |  E   |
+// stair structure,  |     .  |                   |  .        |      |
+// 1" taped lines    |    .   |                   |  .  *     +------+
+// (=20cm park).     |    .   |                      .        |      |
+//                   |    .   |                      .        |  E   |
+// Start at 84,80 W  |    .   +-------------------+ .         |      |
+// (=42,40 grid)     |     .+          . . . . . .+       +---+------+
+//                   |   *   . . . . .                    |
+//                   |                                    |
+//                   +------------------------------------+
+//
+// Floor plan here: https://www.pdx.edu/floorplans/buildings/eb
+
+// Pebble spec:
+[] 111 111 111 111 111 666 666 666 666 666 -- (high contrast)
+[] 111 111 111 333 333 333 333 666 666 666 -- (more realistic)
+
+=  1  1 95 138 2666 -- reduced luminance for more dynamic range
+= 24 25 84 101 2444 -- soft-edge shadow under the stairs..
+= 25 26 83 100 2222
+= 26 27 82  99 2000
+> 50 110 10 666     -- more light near elevators
+> 88  16  6 444     -- brighter light over far corner (table)
+
+] 0xFFFFCC -- masking tape lines
+
+F 1 1 15 71 0 -- rect fill w/floor (2x2m grid coords)..
+F 1 1 36 62 0
+F 1 1 47 58 0
+
+H  1  1  69 1 -- perimeter walls..
+H 47  1  59 1
+V 36 59 47  1
+H 36 59  63 1
+V 15 63 36  1
+H 15 63  69 1
+
+Y 9 40 0 270 -- stop sign facing west
+
+E 45 24  -- C-cwise around outside..
+E 45 28
+E 43 32  -- (intentional) slight jog
+A 16     -- to 43 48
+L 8      -- to 35 57
+N 14 54
+L 8      -- to 5 46
+W 8  17
+L 8      -- to 16 8
+S 36  6
+L 8      -- to 45 14
+E 45 24  -- end at start
+
+I        -- inside edge c-wise..
+W 42 24
+A 9      -- to 42 15
+R 5      -- to 37 9
+N 17 11
+R 5      -- to 11 16
+E 8 45
+R 5      -- to 12 51
+S 34 54
+R 5      -- to 40 49
+A 17     -- to 40 32
+W 42 28  -- slight jog
+W 42 24  -- end at start
+
+B 44 24   1  -- drop track bucket near start
+
+V 16 18 37 1 -- wall = stairs
+H 16 18 44 1
+H 37 18 44 1
+
+. -- end of (Stairwell) track
+
+0x6800E6 0x988F833F 0x200008 180 12,2 "BruxEst" -- 2018 Sep 12, rev
+
+// "BruxEst" test track (just a guess, before we went to Brussels)..
+//       v
+//    +-------+
+//    |  $$$  |
+//   >| $   $ |< 5m (actual, = 40m park)
+//    | $   $ |
+//    | $   $ |<------------ 18m ----------->|    5m   |
+//    | $   $ |    v                         |    v    |
+//    | $   $ *------------------------------*. . . . .|
+//    |  $$$ ================================== $$$    |
+//    +--------------------------------------+ $   $   |
+//       ^         ^                         | $   $   |
+//      9.5m      2.5m = 20m pk        5.5m >|  $$$    |<
+//                                  = 44m pk |. . . . .|
+//                                           |    ^    |
+//
+//   76x40m park, w/20x144 strip to right, 44m more open
+//   blue everywhere (but checkerboard off-track),
+//   start 32,8 (=16,4 grid units), facing 180 degrees = S,
+//   5" (12cm) line width, low-contrast pebble,
+//   overhead lights shining down on ends of narrow run
+
+= 1 1 102 228 2000 -- reduced overall luminance
+> 60 40 6 555 -- overhead light at west end of run per photo
+> 60 180 9 444 -- assumed o'head light at east end of run
+
+F  1  1  38  20 0 -- rect fill w/non-track (2x2m grid coords)
+F 29  1  38 114 0
+F 16 93  51 114 0
+
+V  1  1  51     1 -- western wall
+
+-- outside edge from top (CCW)..
+
+W  2 11  -- start in (2,11) facing west
+L 8      -- curve to south (to 10,2)
+A 18     -- advance south to (28,2)
+L 8      -- curve to east (37,10)
+L 8      -- curve to north to (29,19)
+A 18     -- .. then advance north (11,19)
+L 8      -- curve to west = start (2,11)
+
+I -- inside edge from top (upper loop c-wise)..
+
+E  5 10  -- start in (5,11) facing east
+R 5      -- curve to south (to 11,16)
+A 18     -- advance south to (29,16)
+R 5      -- curve to west (34,10)
+R 5      -- curve to north (28,5)
+A 18     -- advance north (10,5)
+R 5      -- curve to east = start (5,11)
+
+I -- optional longer route out dogleg to crossover..
+
+-- Dashed yellow line from 34,24 to 34,74
+
+U 34 25 4 0 11 160 192^235 -- 5m yellow stripe
+U 34 30 4 0 11 160 192^235
+U 34 35 4 0 11 160 192^235
+U 34 40 4 0 11 160 192^235
+U 34 45 4 0 11 160 192^235
+U 34 50 4 0 11 160 192^235
+U 34 55 4 0 11 160 192^235
+U 34 60 4 0 11 160 192^235
+U 34 65 4 0 11 160 192^235
+U 34 70 4 0 11 160 192^235
+
+F 32 60  37 62 1 -- block recursive fill near halfway
+
+F 35 10  36 20 0 -- erase merge in oval
+F 34 13  35 20 0
+F 33 15  34 20 0
+F 31 16  33 20 0
+F 30 17  35 20 0
+F 29 18  30 19 0
+
+E 37 10  -- start at bottom of oval..
+A 91     -- advance east into main corridor (37,101)
+R 5      -- curve to south (to 43,106)
+R 5      -- curve to west (48,100)
+R 5      -- curve to north (42,95)
+A 5      -- advance north (37,95)
+L 8      -- curve to west (28,87)
+W 31 69  -- merge into 2-lane (31,69)
+A 44     -- 88m (11m actual) of 2-lane (to 31,25)
+R 5      -- merge back north into oval (25,19)
+
+I -- inside edge at crossover (c-wise)..
+
+E 32 86  -- start at top of curve (32,86)
+A 1      -- 
+R 5      -- curve south to (38,92)
+A 5      -- advance extra (42,92)
+L 8      -- curve to east (51,100)
+L 8      -- curve to north to (43,109)
+L 8      -- curve to west (34,101)
+A 26     -- advance to divide (34,75)
+N 34 74  -- angle to north
+E 33 77  -- sharp angle back (34,77)
+E 32 86  -- diagonal return to start
+
+I -- fix crossover, add corners
+
+F 35 90  36 97 0
+F 34 92  35 96 0
+F 37 93  38 97 0
+
+E 37 92  -- SW corner..
+R 0
+A 2
+
+I
+N 40 96  -- SE corner..
+A 2
+R 0
+A 2
+
+I
+W 34 97  -- NE corner..
+A 1
+N 34 95
+
+I
+E 33 90  -- NW corner..
+S 33 91
+W 34 91
+
+I -- inside edge at loop/divide..
+
+W 34 23  -- start facing west (34,23)
+N 34 18  -- west to oval (34,17)
+E 32 18  -- short diagonal (33,18)
+S 33 23  -- short diagonal (32,20)
+W 34 23  -- arrive at start
+
+B  3 11 1 -- bucket (Brx) track
+B 33 64 1
+
+. . . . . . . . -- end of descriptor -- . . . . . . . . . . . . . . . .
+
+0x4000FF 0x1AAA0999 0x12003C 60 15 "PSU TestOval" -- 2018 May 7, rev
+
+// (This location didn't work, the polished concrete had reflections)
+
+// Concrete floor; alt color: 0x96961966 = reddish track, greenish off
+
+// PSU TestOval..   +---- 350 map pix = 32m floor = 256m park ----+
+// (north hallway   |                                             |
+//  off EB atrium)  |            <88px=66m>                     ^ |
+// (108pix=32'=10m) |            +--------+              54px = 40m pk
+//  48x255m park    |< 96px=68m >|   ^    | +--------+          v |
+//  (=24x127 grid)  |            |22p=20m +=+   ^    |            |
+//  =16x100' floor  + .. . .. .. +  =7.5'    32p=22m +- 64px=46m -+
+//
+// Adapted from plan here: https://www.pdx.edu/floorplans/buildings/eb
+//
+// Start 18,60 (=9,30 grid), 60 degs = ENE, 6" park (3/4" floor) lines
+
+F 1 1 29 34 0 -- rect fill w/floor (2x2m grid coords)..
+F 1 1 11 124 0
+F 1 64 20 68 0
+F 1 68 15 101 0
+F 1 96 22 126 0
+
+= 2 72 6 144 5555 -- rectangular glare from north window (18 Sep 12)
+= 5 133 13 250 4444 -- rectangular glare from east glass doors
+
+-- U 7.25 50 5 0 99 83 412^172 -- (disabled) eastbound painted stop line
+
+V 11 34  30  5 -- (double) white N-S wall
+H 11 34   63 5 -- ditto, E-W wall
+V 11 63  30  5
+V 14 68  19  5
+H 14 68   95 5
+V 14 95  20  5
+H 22 95  126 5
+H 10 122 127 1 -- exit divider wall?
+H 20 65   67 2 -- recessed door
+H 22 97   99 2 -- flat door
+H 22 101 103 2
+
+P 9 126
+
+P 1  1      -- dark columns in glass wall to north..
+P 21 1
+P 1 20
+P 1 26
+P 1 56
+P 1 62
+P 1 88
+P 1 92
+P 1 126
+
+-- Do outside track edge first..
+
+W 2 17 -- start in 2,17 facing west
+L 8    -- curve to south (to 10,8)
+A 5    -- advance south extra, to make room for return (15,8)
+L 8    -- curve to east (24,16)
+A 3    -- short straight (24,18)
+L 8    -- curve to north (16,27)
+A 1    -- even shorter straight (15,27)
+R 5    -- curve to east (9,32)
+A 62   -- advance east to other end of hall (9,95)
+E 10 98 -- 1st segment of R 5 curve to south (+1,+3)
+E 19 105 -- 2nd seg't merged w/2nd seg of.. (+7,+7)
+E 20 109 -- 3rd segment of L 8 curve to east (+1,+4)
+A 2    -- short straight (20,111)
+L 8    -- curve to north (12,120)
+A 1    -- tiny advance north (11,120)
+L 8    -- curve to west (2,112)
+A 95   -- advance west to start (2,17)
+
+I -- Now the inside track edge..
+
+E 5 16 -- start in 5,17 facing east
+A 95   -- advance east to other end of hall (5,111)
+R 5    -- curve to south (to 10,118)
+A 1    -- tiny advance south to (11,118)
+R 5    -- curve to west (17,113)
+A 2    -- short straight west (17,111)
+W 16 107 -- 1st segment of R 5 curve to north (-1,-3)
+W 7 100 -- 2nd seg't merged w/2nd seg of.. (-9,-7)
+W 6 96 -- 3rd segment of L 8 curve to west (+1,+4)
+A 63   -- advance west to other end of hall (6,33)
+L 8    -- curve to south (to 14,24)
+A 1    -- very short straight (15,24)
+R 5    -- curve to west (24,16)
+A 2    -- short straight west (24,14)
+R 5    -- curve to north (16,8)
+A 5    -- longer straight (15,8)
+R 5    -- curve to east, ending at start (6?,17)
+
+B 3 55 1 -- bucket track drop in westbound (TestOval) lane
+B 12 102 1 -- (otherwise might miss diagonal)
+
+. . . . . . . . -- end of descriptor -- . . . . . . . . . . . . . . . .
+
+0x400040 0x96931963 0x60020 270 5 "RoundRect" -- 2018 October 9
+
+// Simple rounded rectangle track..
+
+//   64x64m park (=32x32 in grid units),
+//   brown trk + green non-trk + checkerboard,
+//   start 6,32 (=3,16 grid units),
+//   270 degrees = W
+//   5" (12.5cm) line width
+
+F  1  1  31 31 0 -- rect fill w/grass
+
+-- outside edge from top (CCW)..
+
+W 1 10 -- start outer perimeter facing west 
+L 8    -- curve south to 9,1 
+A 13   -- advance to 22,1 
+L 8    -- curve east to 31,9 
+A 13   -- advance to 31,22 
+L 8    -- curve north to 23,31 
+A 13   -- advance to 10,31 
+L 8    -- curve west to 1,23 
+A 13   -- advance to 1,10 = start 
+
+I      -- new track edge 
+E 4 9  -- start inner circuit facing east 
+A 13   -- advance to 4,22 
+R 5    -- curve south to 9,28 
+A 13   -- advance to 22,28 
+R 5    -- curve west to 28,23 
+A 13   -- advance to 28,10 
+R 5    -- curve north to 23,4 
+A 13   -- advance to 10,4 
+R 5    -- curve east to 4,9 = start
+
+B 2 20 1 -- drop track bucket near car position
+.        -- end of (RR) track
+
+. . . . . . . . -- end of descriptor -- . . . . . . . . . . . . . . . .
+
+0x300020 0x96931963 0x24000C 0 16 "Divided Highway" -- 2018 Apr 26,rev
+
+// Divided Highway..
+
+// 48x32m park, brown trk + green non-trk, start 36,12; 0 degrees = N
+// =24x16 in grid,                    =18,6 grid (middle, facing divide)
+
+F  1  1  23 12 0 -- rect fill w/grass (2x2m grid coords)
+
+U 16.0 5.9 7 0 160 11 192^235 -- 5m yellow stripe
+U 21.0 5.9 5 0 160 11 192^242 -- 2nd yellow stripe (see doc)
+
+N 23  8 -- init somewhere in the south (near south edge)
+N 17  8 -- straight north (2-lane)
+N 12  9 -- veer off to right to make room for divider
+N  2  9 -- continue straight north again
+
+L 0     -- cap off lane..
+A 2
+L 0
+
+S 11  6 -- south on west (inside) edge of northbound lane
+W 14  6 -- slight diagonal west, to divider end
+X 1     -- required to pass close to previous diagonal track run
+N 12  5 -- return north on east (inside) southbound lane
+N  2  5 -- continue straight north
+
+L 0     -- cap off lane..
+A 2
+L 0
+
+S 11  2 -- south on west (outside) edge of southbound lane
+S 16  3
+S 22  3
+
+L 0     -- cap off bottom (so fill is limited to track)..
+A 4
+L 0
+
+B 20 5 1 -- bucket fill near (DivHi) bottom
+
+. . . . . . . . -- end of descriptor -- . . . . . . . . . . . . . . . .
+
+0x200020 0x96931963 0x0C000F 300 16 "MinimalSquare" -- 2018 April 12
+
+// This ridiculous track shows fractional edges for sharp corners
+
+// 32x32m park, brown trk + green non-trk, start 12,15; 300 degrees = WNW
+// =16x16 in grid,    (MinimalSquare)            =6,7.5 grid
+
+F  1 1  9 9 0 -- rect fill w/grass (2x2m grid coords)
+
+X 22 -- disable overstrike prevention
+
+E 3.9 3.9 -- init inside east at top left
+E 3.9 4.9 -- across top
+S 3.9 5.0 -- sharp right turn
+S 4.9 5.0 -- down right
+W 5.0 5.0 -- sharp right turn
+W 5.0 4.0 -- across bottom
+N 5.0 3.9 -- sharp right turn
+N 4.0 3.9 -- up left
+E 3.9 3.9 -- sharp right turn & end
+
+F 2 2 3 3 1 -- fill corners with track..
+F 2 5 3 6 1
+F 5 5 6 6 1
+F 5 2 6 3 1
+
+W 2.9 6.0 -- init outside west at top right
+W 2.9 3.0 -- across top
+S 2.9 2.9 -- sharp left turn (doesn't work, but smash later)
+S 5.9 2.9 -- down left
+E 6.0 2.9 -- sharp left turn
+E 6.0 5.9 -- across bottom
+N 6.0 6.0 -- sharp left turn (doesn't work, but smash later)
+N 3.0 6.0 -- up right
+W 2.9 6.0 -- sharp left turn & end
+
+F 6 6 7 7 0 -- erase (MinSqu) corner glitches..
+F 1 1 2 2 0
+F 6 1 7 2 0
+F 1 6 2 7 0
+
+. . . . . . . . -- end of descriptor -- . . . . . . . . . . . . . . . .
+
+U 00 00 0 0 5 3 16^248 -- numeral '0'
+U 00 00 0 0 5 3 20^248 -- numeral '1'
+U 00 00 0 0 5 3 24^248 -- numeral '2'
+U 00 00 0 0 5 3 28^248 -- numeral '3'
+U 00 00 0 0 5 3 32^248 -- numeral '4'
+U 00 00 0 0 5 3 36^248 -- numeral '5'
+U 00 00 0 0 5 3 40^248 -- numeral '6'
+U 00 00 0 0 5 3 44^248 -- numeral '7'
+U 00 00 0 0 5 3 48^248 -- numeral '8'
+U 00 00 0 0 5 3 52^248 -- numeral '9'
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+0x200020 0x96931963 0x140006 45 13,7  "ShorTubeWall-45" -- 2019 March 8
+0x200020 0x96931963 0x180012 360 13,7  "ShorTubeWall-so" -- 2019 March 8
+
+// "Short Tube Wall" track to illustrate trig..
+
+// Fill floor..
+F 1 1 14 14 0
+
+G  4 7 4/11 0 54 140 301^260 32 0*
+
+... . . . . . -- end of descriptor -- . . . . . . . . . . . . . . . .
+
