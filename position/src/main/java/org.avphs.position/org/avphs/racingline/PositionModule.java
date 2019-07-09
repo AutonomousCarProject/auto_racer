@@ -24,4 +24,12 @@ public class PositionModule implements CarModule {
     public void run() {
         System.out.println("Position");
     }
+    
+    public int[] getPosition(){ //returns the (x,y) of the car in the map
+        return [0,0];
+    }
+    
+    public double getDirection(){ //returns the direction of the car in degrees
+        return 0.0;
+    }
 }
