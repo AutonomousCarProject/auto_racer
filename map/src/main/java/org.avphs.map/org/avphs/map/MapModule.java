@@ -8,6 +8,8 @@ public class MapModule implements CarModule {
 
     private ImageModule imageModule;
 
+    private Map map = new Map();
+
     @Override
     public Class[] getDependencies() {
         return new Class[] {
@@ -30,4 +32,8 @@ public class MapModule implements CarModule {
     public void run() {
         System.out.println("Map");
     }
+
+    public Map getMap(){return map;}
+
+
 }
