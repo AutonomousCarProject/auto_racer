@@ -1,17 +1,10 @@
 package org.avphs.core;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.PriorityQueue;
 import java.util.Queue;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
-import java.util.function.IntFunction;
-
-import static java.util.stream.Collectors.toCollection;
-import static java.util.stream.Collectors.toList;
 
 public class CarCore {
     private final int FPS = 30;
@@ -23,21 +16,21 @@ public class CarCore {
         var executorService = Executors.newScheduledThreadPool(modules.size());
 
         modules.forEach(m -> {
-            var deps = m.getDependencies();
+            var tempDeps = m.getDependencies();
             CarModule[] mods = {};
-            if (deps != null && !deps.isEmpty()) {
-                var temp = modules.stream().filter(x -> deps.contains(x.getClass())).toArray();
-                mods = Arrays.copyOf(temp, temp.length, CarModule[].class);
+            if (tempDeps != null) {
+                var deps = Arrays.asList(tempDeps);
+                if (!deps.isEmpty()) {
+                    var temp = modules.stream().filter(x -> deps.contains(x.getClass())).toArray();
+                    mods = Arrays.copyOf(temp, temp.length, CarModule[].class);
+                }
             }
             m.init(mods);
         });
         modules.forEach(m -> executorService.scheduleAtFixedRate(m, 0, Math.round(1000 / FPS), TimeUnit.MILLISECONDS));
 
-        run();
-    }
-
-    private void run() {
         while (true) {
+            modules.forEach(m -> commandQueue.addAll(Arrays.asList(m.commands())));
             if (commandQueue.peek() != null) {
                 commandQueue.poll().execute();
             }

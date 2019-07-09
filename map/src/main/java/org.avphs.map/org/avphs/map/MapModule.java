@@ -1,5 +1,6 @@
 package org.avphs.map;
 
+import org.avphs.core.CarCommand;
 import org.avphs.core.CarModule;
 import org.avphs.image.ImageModule;
 
@@ -12,10 +13,10 @@ public class MapModule implements CarModule {
     private ImageModule imageModule;
 
     @Override
-    public Collection<Class> getDependencies() {
-        return Arrays.asList(new Class[] {
-                ImageModule.class
-        });
+    public Class[] getDependencies() {
+        return new Class[] {
+            ImageModule.class
+        };
     }
 
     @Override
@@ -25,12 +26,12 @@ public class MapModule implements CarModule {
     }
 
     @Override
-    public void update() {
-        System.out.println("Map");
+    public CarCommand[] commands() {
+        return null;
     }
 
     @Override
     public void run() {
-        update();
+        System.out.println("Map");
     }
 }

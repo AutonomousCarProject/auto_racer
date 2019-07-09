@@ -1,5 +1,6 @@
 package org.avphs.speed;
 
+import org.avphs.core.CarCommand;
 import org.avphs.core.CarModule;
 
 import java.util.Collection;
@@ -7,7 +8,7 @@ import java.util.Collection;
 public class SpeedModule implements CarModule {
 
     @Override
-    public Collection<Class> getDependencies() {
+    public Class[] getDependencies() {
         return null;
     }
 
@@ -17,12 +18,12 @@ public class SpeedModule implements CarModule {
     }
 
     @Override
-    public void update() {
-        System.out.println("Speed");
+    public CarCommand[] commands() {
+        return null;
     }
 
     @Override
     public void run() {
-        update();
+        System.out.println("Speed");
     }
 }
