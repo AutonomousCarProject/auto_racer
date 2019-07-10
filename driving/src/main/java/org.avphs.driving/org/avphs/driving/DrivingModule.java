@@ -34,10 +34,13 @@ public class DrivingModule implements CarModule {
     private RacingLine racingline;
     private ArrayList<RoadData> roadData;
     private VectorPoint currentPos;
+    private RoadData currentSegment;
+    private RoadData nextSegment;
 
     public DrivingModule(RacingLine racingLine){
         this.racingline = racingLine;
         roadData = new ArrayList<RoadData>();
+        analyzeRacingLine(racingLine);
     }
 
     public DrivingModule(){
@@ -45,7 +48,8 @@ public class DrivingModule implements CarModule {
     }
 
     public void analyzeRacingLine(RacingLine input){
-
+        ArrayList<RacingLinePoint> racingLinePoints = new ArrayList<RacingLinePoint>();
+        //racingLine.getRacingLinePoints();
     }
 
     public void setCurrentPos(VectorPoint input){
@@ -57,11 +61,13 @@ public class DrivingModule implements CarModule {
     }
     
     public int getDirection(){ //returns the direction of the car from 0 to 180
-        return 0;
+        Steering steer = new Steering(currentPos, currentSegment, nextSegment);
+        return steer.getAngle();
     }
 
     public int getThrottle() { //returns the throttle of the car from 0 to 180
-        return 0;
+        Speed speed = new Speed(currentPos, currentSegment, nextSegment);
+        return speed.getThrottle();
     }
 
 }
