@@ -7,6 +7,7 @@ public class Speed {
     //private int targetSpeed;
     //private boolean isStraight;
     private int speedChange;    //negative = slow down, positive = speed up
+    private int brakeDist;
     private int max_speed;
     private VectorPoint currentPos;
     private RoadData currentSegment;
@@ -16,14 +17,14 @@ public class Speed {
         this.currentPos = currentPos;
         this.currentSegment = currentSegment;
         this.nextSegment = nextSegment;
-        
+
     }
 
     public void newSegment(RoadData newNextSeg){
         currentSegment = nextSegment;
         nextSegment = newNextSeg;
         speedChange = getTargetSpeedSegment(nextSegment) - getTargetSpeedSegment(currentSegment);
-        
+        brakeDist = 0;
     }
 
     public int getThrottle(){
