@@ -32,20 +32,20 @@ public class DrivingModule implements CarModule {
     }
 
     private RacingLine racingline;
-    private RefinedRacingLine refinedRacingLine;
-    private VectorPoint currerntPos;
+    private ArrayList<RoadData> roadData;
+    private VectorPoint currentPos;
 
     public DrivingModule(RacingLine racingLine, VectorPoint currentPos){
         this.racingline = racingLine;
-        this.currerntPos = currentPos;
+        this.currentPos = currentPos;
     }
 
     public DrivingModule(){
 
     }
 
-    public RefinedRacingLine analyzeRacingLine(RacingLine input){
-        return new RefinedRacingLine(new ArrayList<RoadData>(), new VectorPoint(0.0,0.0));
+    public void analyzeRacingLine(RacingLine input){
+
     }
 
     public VectorPoint getPosition(){ //returns the (x,y) of the car in the map
