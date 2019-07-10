@@ -1,11 +1,5 @@
 package org.avphs.racingline;
 
-<<<<<<< HEAD
-=======
-import org.java.ArrayList;
-import java.lang.Math;
-
->>>>>>> Started implementing getMiddle
 import org.avphs.core.CarCommand;
 import org.avphs.core.CarCommandType;
 import org.avphs.core.CarModule;
@@ -15,7 +9,6 @@ import org.avphs.core.CarModule;
 public class RacingLineModule implements CarModule {
     private ArrayList<WallPoint> outerWall = new ArrayList<WallPoint>();
     private ArrayList<WallPoint> innerWall = new ArrayList<WallPoint>();
-    private ArrayList<WallPoint> centerPoints = new ArrayList<WallPoint>();
     private boolean[][] map;
     private boolean[][] visited;
     private boolean[][] added;
@@ -42,12 +35,9 @@ public class RacingLineModule implements CarModule {
     private int[] dx = {-1, 0, 1, 0};
     private int[] dy = {0, 1, 0, -1};
 
-<<<<<<< HEAD
     //region Overrides
-=======
-    //region Overides
->>>>>>> Started implementing getMiddle
     @Override
+
     public Class[] getDependencies() {
         return null;
     }
@@ -93,16 +83,10 @@ public class RacingLineModule implements CarModule {
         return null;
     }
 <<<<<<< HEAD
-<<<<<<< HEAD
 =======
-=======
-    //endregion
->>>>>>> Started implementing getMiddle
 
-    //region Middle Line
     private void getMiddleLine() {
         getWalls();
-        getMiddleLine();
     }
 
     private void getWalls() {
@@ -140,38 +124,9 @@ public class RacingLineModule implements CarModule {
             }
         }
     }
-
-    private void getMiddleLine() {
-        for (int i = 0; i < innerWall.length; i++){
-            for (int j = 0; j < outerWall.length; j++) {
-                
-            }
-        }
-    }
-
-    private float distanceBetweenPoints(WallPoint start, WallPoint end) {
-        int x = Math.abs(end.x - start.x);
-        int y = Math.abs(end.y - start.y);
-        float h = Math.sqrt(x * x + y * y);
-        return h;
-    }
-
-    //endregion
 }
 >>>>>>> Added floodfill for inner and outer walls
 
-<<<<<<< HEAD
-=======
-    //region Classes
-/**
- * <p>This class represents a racing line. It contains an array of points which represent the line.</p>
- *
- * @see RacingLinePoint
- */
-public class RacingLine {
-    private ArrayList<RacingLinePoint> RacingLinePointsList = new ArrayList<RacingLinePoint>();
-    private RacingLinePoint[] RacingLinePoints;
->>>>>>> Started implementing getMiddle
 
 
     public class RacingLine {
@@ -243,8 +198,4 @@ private class WallPoint {
         y = _y;
     }
 }
-<<<<<<< HEAD
 >>>>>>> Added floodfill for inner and outer walls
-=======
-//endregion
->>>>>>> Started implementing getMiddle

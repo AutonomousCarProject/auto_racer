@@ -1,21 +1,14 @@
 package org.avphs.racingline;
 
-<<<<<<< HEAD
-=======
 import org.java.ArrayList;
-import java.lang.Math;
 
->>>>>>> Started implementing getMiddle
 import org.avphs.core.CarCommand;
-import org.avphs.core.CarCommandType;
 import org.avphs.core.CarModule;
+import RacingLinePoint;
 
-<<<<<<< HEAD
-=======
 public class RacingLineModule implements CarModule {
     private ArrayList<WallPoint> outerWall = new ArrayList<WallPoint>();
     private ArrayList<WallPoint> innerWall = new ArrayList<WallPoint>();
-    private ArrayList<WallPoint> centerPoints = new ArrayList<WallPoint>();
     private boolean[][] map;
     private boolean[][] visited;
     private boolean[][] added;
@@ -23,31 +16,9 @@ public class RacingLineModule implements CarModule {
     int length, width;
     private int[] dx = {-1, 0, 1, 0};
     private int[] dy = {0, 1, 0, -1};
->>>>>>> Added floodfill for inner and outer walls
 
-import java.util.ArrayList;
-
-
-import java.util.ArrayList;
-
-public class RacingLineModule implements CarModule {
-    private ArrayList<WallPoint> outerWall = new ArrayList<WallPoint>();
-    private ArrayList<WallPoint> innerWall = new ArrayList<WallPoint>();
-    private RacingLine center = new RacingLine();
-    private boolean[][] map;
-    private boolean[][] visited;
-    private boolean[][] added;
-    private boolean addToOuter;
-    private int length, width;
-    private int[] dx = {-1, 0, 1, 0};
-    private int[] dy = {0, 1, 0, -1};
-
-<<<<<<< HEAD
-    //region Overrides
-=======
-    //region Overides
->>>>>>> Started implementing getMiddle
     @Override
+
     public Class[] getDependencies() {
         return null;
     }
@@ -66,14 +37,12 @@ public class RacingLineModule implements CarModule {
     public void run() {
         System.out.println("Racing Line");
     }
-    //endregion
 
-    //region RacingLine
     /**
      * This method creates the racing line. This should be run before getRacingLine is called.
      *
      * @param map The map of the track represented by a 2d boolean array.
-
+     * @see RacingLine getRacingLine()
      */
     public void makeRacingLine(boolean[][] map) {
         this.map = map;
@@ -86,23 +55,15 @@ public class RacingLineModule implements CarModule {
      * Returns a RacingLine object that represents the racing line. Returns null if the racing line has not yet been created through makeRacingLine.
      *
      * @return A RacingLine object that contains an array of RacingLinePoint objects that represent the racing line.
-
+     * @see void makeRacingLine(boolean[][])
+     * @see RacingLine
      */
     public RacingLine getRacingLine() {
         System.out.println("RacingLine.getRacingLine not implemented");
-        return null;
     }
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
-    //endregion
->>>>>>> Started implementing getMiddle
 
-    //region Middle Line
     private void getMiddleLine() {
         getWalls();
-        getMiddleLine();
     }
 
     private void getWalls() {
@@ -140,29 +101,8 @@ public class RacingLineModule implements CarModule {
             }
         }
     }
-
-    private void getMiddleLine() {
-        for (int i = 0; i < innerWall.length; i++){
-            for (int j = 0; j < outerWall.length; j++) {
-                
-            }
-        }
-    }
-
-    private float distanceBetweenPoints(WallPoint start, WallPoint end) {
-        int x = Math.abs(end.x - start.x);
-        int y = Math.abs(end.y - start.y);
-        float h = Math.sqrt(x * x + y * y);
-        return h;
-    }
-
-    //endregion
 }
->>>>>>> Added floodfill for inner and outer walls
 
-<<<<<<< HEAD
-=======
-    //region Classes
 /**
  * <p>This class represents a racing line. It contains an array of points which represent the line.</p>
  *
@@ -171,68 +111,61 @@ public class RacingLineModule implements CarModule {
 public class RacingLine {
     private ArrayList<RacingLinePoint> RacingLinePointsList = new ArrayList<RacingLinePoint>();
     private RacingLinePoint[] RacingLinePoints;
->>>>>>> Started implementing getMiddle
 
+    public RacingLine() {
 
-    public class RacingLine {
-        public ArrayList<RacingLinePoint> RacingLinePointsList = new ArrayList<RacingLinePoint>();
-        public RacingLinePoint[] RacingLinePoints;
-
-        public RacingLine() {
-
-        }
     }
 
-    public class RacingLinePoint {
-        float x, y, degree;
-
-        RacingLinePoint() {
-            setX(0);
-            setY(0);
-            setDegree(0);
-        }
-
-        RacingLinePoint(float x, float y) {
-            setX(x);
-            setY(y);
-            setDegree(0);
-        }
-
-        RacingLinePoint(float x, float y, float degree) {
-            setX(x);
-            setY(y);
-            setDegree(degree);
-        }
-
-        float getX() {
-            return x;
-        }
-
-        float getY() {
-            return y;
-        }
-
-        float getDegree() {
-            return degree;
-        }
-
-        void setX(float x) {
-            this.x = x;
-        }
-
-        void setY(float y) {
-            this.y = y;
-        }
-
-        void setDegree(float degree) {
-            this.degree = degree;
-        }
-
+    public RacingLinePoint[] getRacingLinePoints() {
+        return RacingLinePoints;
     }
 }
 
-<<<<<<< HEAD
-=======
+public class RacingLinePoint {
+    private float x, y, degree;
+
+    public RacingLinePoint() {
+        setX(0);
+        setY(0);
+        setDegree(0);
+    }
+
+    public RacingLinePoint(float x, float y) {
+        setX(x);
+        setY(y);
+        setDegree(0);
+    }
+
+    public RacingLinePoint(float x, float y, float degree) {
+        setX(x);
+        setY(y);
+        setDegree(degree);
+    }
+
+    public float getX() {
+        return x;
+    }
+
+    public float getY() {
+        return y;
+    }
+
+    public float getDegree() {
+        return degree;
+    }
+
+    public void setX(float x) {
+        this.x = x;
+    }
+
+    public void setY(float y) {
+        this.y = y;
+    }
+
+    public void setDegree(float degree) {
+        this.degree = degree;
+    }
+
 }
 
 private class WallPoint {
@@ -243,8 +176,3 @@ private class WallPoint {
         y = _y;
     }
 }
-<<<<<<< HEAD
->>>>>>> Added floodfill for inner and outer walls
-=======
-//endregion
->>>>>>> Started implementing getMiddle
