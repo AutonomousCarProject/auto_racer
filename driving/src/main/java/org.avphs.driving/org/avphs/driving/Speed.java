@@ -12,9 +12,9 @@ public class Speed {
     private RefinedRacingLine roadData;
     private RoadData currentSegment;
     private RoadData nextSegment;
-    private int targetSpeed;
-    private boolean isStraight;
-    public Speed(RefinedRacingLine input, VectorPoint currentPos){
+
+    public Speed(RefinedRacingLine input, VectorPoint currentPos, RoadData currentSegment, RoadData nextSegment){
+
         roadData = input;
         this.currentPos = currentPos;
         this.currentSegment = currentSegment;
