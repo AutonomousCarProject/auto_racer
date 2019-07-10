@@ -20,7 +20,7 @@ public class RacingLineModule implements CarModule {
     private int[] dx = {-1, 0, 1, 0};
     private int[] dy = {0, 1, 0, -1};
 
-    //region Overides
+    //region Overrides
     @Override
     public Class[] getDependencies() {
         return null;
