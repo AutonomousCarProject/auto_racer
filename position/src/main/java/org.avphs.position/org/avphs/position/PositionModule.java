@@ -2,12 +2,16 @@ package org.avphs.position;
 
 import org.avphs.core.CarCommand;
 import org.avphs.core.CarModule;
+import org.avphs.image.ImageModule;
+import org.avphs.map.MapModule;
 
 public class PositionModule implements CarModule {
 
     @Override
     public Class[] getDependencies() {
-        return null;
+        return new Class[] {
+        	ImageModule.class, MapModule.class
+        };
     }
 
     @Override
