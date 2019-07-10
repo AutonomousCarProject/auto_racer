@@ -22,7 +22,6 @@ dependencies {
     //api project(':core')
 
     implementation project(':core')
-    implementation project(':client')
 
 
     // Use TestNG framework, also requires calling test.useTestNG() below
