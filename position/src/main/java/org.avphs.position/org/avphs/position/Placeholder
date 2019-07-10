@@ -1,6 +1,6 @@
 package org.avphs.position;
 
-public class NWAPWPlaceholder {
+public class Placeholder {
 
     private float[] position;
     private float direction; //in degrees
