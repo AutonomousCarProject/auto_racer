@@ -9,8 +9,10 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.awt.image.Raster;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
-public class TrakSimClient extends JFrame {
+public class TrakSimClient extends JFrame implements Runnable{
 
     private SimCamera traksim;
 
@@ -18,12 +20,15 @@ public class TrakSimClient extends JFrame {
 
     private JPanel panel;
 
-    private final int WINDOW_WIDTH = 640, WINDOW_HEIGHT = 480;
+    private final int WINDOW_WIDTH = 912, WINDOW_HEIGHT = 480;
 
     private ArduinoIO servos;
 
     public TrakSimClient() {
         displayImage = new BufferedImage(WINDOW_WIDTH, WINDOW_HEIGHT, BufferedImage.TYPE_INT_RGB);
+
+        var executor = Executors.newSingleThreadScheduledExecutor();
+        executor.scheduleAtFixedRate(this, 0, 1000/30, TimeUnit.MILLISECONDS);
 
         traksim = new SimCamera();
         traksim.connect(4);
@@ -66,18 +71,31 @@ public class TrakSimClient extends JFrame {
     }
 
     public int[] debayer(byte[] bayer) {
-        int[] rgb = new int[640 * 480 * 3];
-        ImageManipulation.convertToRGBRaster(bayer, rgb, 640, 480, (byte) 1);
+        int[] rgb = new int[WINDOW_WIDTH * WINDOW_HEIGHT ];
+        for(int i = 0; i < WINDOW_HEIGHT; i++){
+            for(int j = 0; j < WINDOW_WIDTH; j++){
+                int r = (int)bayer[2*(2*i*WINDOW_WIDTH+j)] & 0xFF;
+                int g = (int)bayer[2*(2*i*WINDOW_WIDTH+j)+1] & 0xFF;
+                int b = (int)bayer[2*((2*i+1)*WINDOW_WIDTH+j)+1] & 0xFF;
+                int pix = (r << 16) + (g << 8) + b;
+                rgb[i*WINDOW_WIDTH+j] = pix;
+            }
+        }
         return rgb;
     }
 
     public byte[] readCameraImage() {
-        byte[] temp = new byte[640 * 480 * 4];
-        if (traksim.nextFrame(temp)) {
+        byte[] temp = new byte[WINDOW_WIDTH * WINDOW_HEIGHT * 4];
+        if (traksim.nextFrame(temp))
+        {
             return temp;
         }
         return null;
     }
 
 
+    @Override
+    public void run() {
+        repaint();
+    }
 }

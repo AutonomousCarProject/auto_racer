@@ -1,10 +1,16 @@
 package org.avphs.core;
 
 public enum CarCommand {
-    DRIVE_COMMAND() {
+    ACCELERATE_COMMAND() {
         @Override
         public void execute() {
-            
+
+        }
+    },
+    STEER_COMMAND() {
+        @Override
+        public void execute() {
+
         }
     },
     STOP_COMMAND() {
@@ -13,13 +19,7 @@ public enum CarCommand {
 
         }
     },
-    TEST_COMMAND() {
-        @Override
-        public void execute() {
-
-        }
-    },
-    TEST_COMMAND_2() {
+    GET_IMAGE_COMMAND() {
         @Override
         public void execute() {
 
@@ -29,5 +29,6 @@ public enum CarCommand {
     public void execute() {
 
     }
+
 
 }
