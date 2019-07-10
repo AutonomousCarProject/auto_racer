@@ -42,7 +42,8 @@ public class NWAPWPlaceholder {
         position[1] += Math.sin(Math.toRadians(direction)) * movement;
     }
 
-    //DEPRECATED, TRACKSIM HAS THIS
+
+    //DEPRICATED, TRACKSIM HAS THIS
     private void updateSpinCount() {
         //prevSpins = GET SPIN COUNT
         prevSpins = 0; //temporary
