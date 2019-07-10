@@ -33,7 +33,7 @@ public class RacingLineModule implements CarModule {
      * This method creates the racing line. This should be run before getRacingLine is called.
      *
      * @param map The map of the track represented by a 2d boolean array.
-     * @see getRacingLine
+     * @see RacingLine getRacingLine()
      */
     public void makeRacingLine(boolean[][] map) {
         System.out.println("RacingLine.makeRacingLine not implemented");
@@ -43,64 +43,74 @@ public class RacingLineModule implements CarModule {
      * Returns a RacingLine object that represents the racing line. Returns null if the racing line has not yet been created through makeRacingLine.
      *
      * @return A RacingLine object that contains an array of RacingLinePoint objects that represent the racing line.
-     * @see makeRacingLine
+     * @see void makeRacingLine(boolean[][])
+     * @see RacingLine
      */
     public RacingLine getRacingLine() {
         System.out.println("RacingLine.getRacingLine not implemented");
     }
 }
 
+/**
+ * <p>This class represents a racing line. It contains an array of points which represent the line.</p>
+ *
+ * @see RacingLinePoint
+ */
 public class RacingLine {
-    public ArrayList<RacingLinePoint> RacingLinePointsList = new ArrayList<RacingLinePoint>();
-    public RacingLinePoint[] RacingLinePoints;
+    private ArrayList<RacingLinePoint> RacingLinePointsList = new ArrayList<RacingLinePoint>();
+    private RacingLinePoint[] RacingLinePoints;
 
     public RacingLine() {
 
     }
+
+    public RacingLinePoint[] getRacingLinePoints() {
+        return RacingLinePoints;
+    }
 }
 
 public class RacingLinePoint {
-    float x, y, degree;
+    private float x, y, degree;
 
-    RacingLinePoint() {
+    public RacingLinePoint() {
         setX(0);
         setY(0);
         setDegree(0);
     }
 
-    RacingLinePoint(float x, float y) {
+    public RacingLinePoint(float x, float y) {
         setX(x);
         setY(y);
         setDegree(0);
     }
 
-    RacingLinePoint(float x, float y, float degree) {
+    public RacingLinePoint(float x, float y, float degree) {
         setX(x);
         setY(y);
         setDegree(degree);
     }
 
-    float getX() {
+    public float getX() {
         return x;
     }
 
-    float getY() {
+    public float getY() {
         return y;
     }
 
-    float getDegree() {
+    public float getDegree() {
         return degree;
     }
 
-    void setX(float x) {
+    public void setX(float x) {
         this.x = x;
     }
 
-    void setY(float y) {
+    public void setY(float y) {
         this.y = y;
     }
 
-    void setDegree(float degree) {
+    public void setDegree(float degree) {
         this.degree = degree;
     }
 
