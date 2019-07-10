@@ -1,7 +1,8 @@
 module org.avphs.traksimclient {
     exports org.avphs.traksimclient;
     requires org.avphs.core;
-    requires java.desktop;
+    requires org.avphs.sbcio;
     requires org.avphs.traksim;
+    requires java.desktop;
     uses org.avphs.core.CarModule;
 }

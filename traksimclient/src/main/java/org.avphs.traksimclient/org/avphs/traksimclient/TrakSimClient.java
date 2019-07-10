@@ -1,6 +1,7 @@
 package org.avphs.traksimclient;
 
 import org.avphs.core.CarCore;
+import org.avphs.sbcio.fakefirm.ArduinoIO;
 import org.avphs.traksim.SimCamera;
 
 import javax.swing.*;
@@ -16,6 +17,8 @@ public class TrakSimClient extends JFrame {
     private JPanel panel;
 
     private final int WINDOW_WIDTH = 640, WINDOW_HEIGHT = 480;
+
+    private ArduinoIO servos;
 
     public TrakSimClient() {
 
