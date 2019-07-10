@@ -1,12 +1,9 @@
 package org.avphs.racingline;
 
-import java.util.ArrayList;
-import java.lang.Math;
-import java.util.HashSet;
-import java.util.Objects;
-
 import org.avphs.core.CarCommand;
 import org.avphs.core.CarModule;
+
+import java.util.ArrayList;
 
 public class RacingLineModule implements CarModule {
     private ArrayList<WallPoint> outerWall = new ArrayList<WallPoint>();
