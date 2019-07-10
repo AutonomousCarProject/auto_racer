@@ -1,11 +1,10 @@
 package org.avphs.racingline;
 
-import org.java.ArrayList;
+import java.util.ArrayList;
 import java.lang.Math;
 
 import org.avphs.core.CarCommand;
 import org.avphs.core.CarModule;
-import RacingLinePoint;
 
 public class RacingLineModule implements CarModule {
     private ArrayList<WallPoint> outerWall = new ArrayList<WallPoint>();
@@ -59,18 +58,19 @@ public class RacingLineModule implements CarModule {
      * Returns a RacingLine object that represents the racing line. Returns null if the racing line has not yet been created through makeRacingLine.
      *
      * @return A RacingLine object that contains an array of RacingLinePoint objects that represent the racing line.
-     * @see void makeRacingLine(boolean[][])
+     * @see //void makeRacingLine(boolean[][])
      * @see RacingLine
      */
     public RacingLine getRacingLine() {
         System.out.println("RacingLine.getRacingLine not implemented");
+        return null;
     }
     //endregion
 
     //region Middle Line
     private void getMiddleLine() {
         getWalls();
-        getMiddleLine();
+        calcMiddleLine();
     }
 
     private void getWalls() {
@@ -109,10 +109,12 @@ public class RacingLineModule implements CarModule {
         }
     }
 
-    private void getMiddleLine() {
-        for (int i = 0; i < innerWall.length; i++){
-            for (int j = 0; j < outerWall.length; j++) {
-                
+    private void calcMiddleLine() {
+        for (int i = 0; i < outerWall.size(); i++){
+            WallPoint closePoint = new WallPoint();
+            float dist = length + width;
+            for (int j = 0; j < innerWall.size(); j++) {
+                //if (distanceBetweenPoints(outerWall.get(i), innerWall.get(j)))
             }
         }
     }
@@ -120,20 +122,20 @@ public class RacingLineModule implements CarModule {
     private float distanceBetweenPoints(WallPoint start, WallPoint end) {
         int x = Math.abs(end.x - start.x);
         int y = Math.abs(end.y - start.y);
-        float h = Math.sqrt(x * x + y * y);
+        float h = (float)Math.sqrt(x * x + y * y);
         return h;
     }
 
     //endregion
 }
 
-    //region Classes
+//region Classes
 /**
  * <p>This class represents a racing line. It contains an array of points which represent the line.</p>
  *
  * @see RacingLinePoint
  */
-public class RacingLine {
+class RacingLine {
     private ArrayList<RacingLinePoint> RacingLinePointsList = new ArrayList<RacingLinePoint>();
     private RacingLinePoint[] RacingLinePoints;
 
@@ -146,7 +148,7 @@ public class RacingLine {
     }
 }
 
-public class RacingLinePoint {
+class RacingLinePoint {
     private float x, y, degree;
 
     public RacingLinePoint() {
@@ -193,9 +195,13 @@ public class RacingLinePoint {
 
 }
 
-private class WallPoint {
+class WallPoint {
     int x, y;
 
+    public WallPoint() {
+        x = 0;
+        y = 0;
+    }
     public WallPoint(int _x, int _y) {
         x = _x;
         y = _y;
