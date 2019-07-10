@@ -7,6 +7,9 @@ import org.avphs.map.MapModule;
 
 public class PositionModule implements CarModule {
 
+    private ImageModule imageModule;
+    private MapModule mapModule;
+
     @Override
     public Class[] getDependencies() {
         return new Class[] {
@@ -16,7 +19,8 @@ public class PositionModule implements CarModule {
 
     @Override
     public void init(CarModule... dependencies) {
-
+        imageModule = (ImageModule) dependencies[0];
+        mapModule = (MapModule) dependencies[1];
     }
 
     @Override
@@ -27,6 +31,7 @@ public class PositionModule implements CarModule {
     @Override
     public void run() {
         System.out.println("Position");
+
     }
     
     
