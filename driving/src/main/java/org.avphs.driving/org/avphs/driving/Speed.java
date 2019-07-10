@@ -4,6 +4,12 @@ package org.avphs.driving;
 import org.avphs.util.VectorPoint;
 
 public class Speed {
+    /* Currently, Speed will work like this:
+    * The constructor takes your current position, current segment, and next upcoming segment.
+    * Each frame, getThrottle will return the throttle that the wheels will run at.
+    * Each time the car moves to a new segment, newSegment will run, setting the next segment up.
+    */
+
     //private int targetSpeed;
     //private boolean isStraight;
     private int speedChange;    //negative = slow down, positive = speed up
@@ -24,7 +30,7 @@ public class Speed {
         currentSegment = nextSegment;
         nextSegment = newNextSeg;
         speedChange = getTargetSpeedSegment(nextSegment) - getTargetSpeedSegment(currentSegment);
-        brakeDist = 0;
+        brakeDist = 2;
     }
 
     public int getThrottle(){
