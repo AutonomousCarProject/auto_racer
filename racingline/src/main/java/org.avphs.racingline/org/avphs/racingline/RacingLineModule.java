@@ -1,6 +1,7 @@
 package org.avphs.racingline;
 
 import org.java.ArrayList;
+import java.lang.Math;
 
 import org.avphs.core.CarCommand;
 import org.avphs.core.CarModule;
@@ -10,6 +11,7 @@ public class RacingLineModule implements CarModule {
     private RacingLine racingLine;
     private ArrayList<WallPoint> outerWall = new ArrayList<WallPoint>();
     private ArrayList<WallPoint> innerWall = new ArrayList<WallPoint>();
+    private ArrayList<WallPoint> centerPoints = new ArrayList<WallPoint>();
     private boolean[][] map;
     private boolean[][] visited;
     boolean addToOuter;
@@ -17,8 +19,8 @@ public class RacingLineModule implements CarModule {
     private int[] dx = {-1, 0, 1, 0};
     private int[] dy = {0, 1, 0, -1};
 
+    //region Overides
     @Override
-
     public Class[] getDependencies() {
         return null;
     }
@@ -37,7 +39,9 @@ public class RacingLineModule implements CarModule {
     public void run() {
         System.out.println("Racing Line");
     }
+    //endregion
 
+    //region RacingLine
     /**
      * This method creates the racing line. This should be run before getRacingLine is called.
      *
@@ -61,9 +65,12 @@ public class RacingLineModule implements CarModule {
     public RacingLine getRacingLine() {
         System.out.println("RacingLine.getRacingLine not implemented");
     }
+    //endregion
 
+    //region Middle Line
     private void getMiddleLine() {
         getWalls();
+        getMiddleLine();
     }
 
     private void getWalls() {
@@ -100,8 +107,26 @@ public class RacingLineModule implements CarModule {
             }
         }
     }
+
+    private void getMiddleLine() {
+        for (int i = 0; i < innerWall.length; i++){
+            for (int j = 0; j < outerWall.length; j++) {
+                
+            }
+        }
+    }
+
+    private float distanceBetweenPoints(WallPoint start, WallPoint end) {
+        int x = Math.abs(end.x - start.x);
+        int y = Math.abs(end.y - start.y);
+        float h = Math.sqrt(x * x + y * y);
+        return h;
+    }
+
+    //endregion
 }
 
+    //region Classes
 /**
  * <p>This class represents a racing line. It contains an array of points which represent the line.</p>
  *
@@ -175,3 +200,4 @@ private class WallPoint {
         y = _y;
     }
 }
+//endregion
