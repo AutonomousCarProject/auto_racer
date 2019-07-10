@@ -42,11 +42,11 @@ public class PositionModule implements CarModule {
     }
     
     public float getDirection(){ //returns the direction of the car in degrees, always 0<= x <360
-        return 0;
+        return 0.0;
     }
     
     //DEPRECATED BECAUSE THIS EXISTS IN TRAKSIM
     public float getSpeed(){
-        return 0;
+        return 0.0;
     }
 }
