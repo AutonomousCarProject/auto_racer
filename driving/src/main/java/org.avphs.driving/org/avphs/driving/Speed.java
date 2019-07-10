@@ -8,12 +8,14 @@ public class Speed {
     float forceGrav;    //get from calibration
     int targetSpeed;
     boolean isStraight;
+    VectorPoint currentPos;
     private RoadData roadData;
-    public Speed(RoadData input){
+    public Speed(RoadData input, VectorPoint currentPos){
         roadData = input;
+        this.currentPos = currentPos;
     }
 
-    public int main(){
+    public int getThrottle(){
 
         if (isStraight){
             targetSpeed = getTargetSpeedForStraight((Straight)roadData);
