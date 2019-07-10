@@ -4,5 +4,6 @@ module org.avphs.traksimclient {
     requires org.avphs.sbcio;
     requires org.avphs.traksim;
     requires java.desktop;
+    requires org.avphs.image;
     uses org.avphs.core.CarModule;
 }
