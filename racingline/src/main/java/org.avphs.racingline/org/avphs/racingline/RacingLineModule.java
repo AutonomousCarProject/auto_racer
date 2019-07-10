@@ -9,7 +9,7 @@ import org.avphs.core.CarModule;
 public class RacingLineModule implements CarModule {
     private ArrayList<WallPoint> outerWall = new ArrayList<WallPoint>();
     private ArrayList<WallPoint> innerWall = new ArrayList<WallPoint>();
-    private ArrayList<WallPoint> centerPoints = new ArrayList<WallPoint>();
+    private RacingLine center = new RacingLine();
     private boolean[][] map;
     private boolean[][] visited;
     private boolean[][] added;
@@ -110,12 +110,19 @@ public class RacingLineModule implements CarModule {
     }
 
     private void calcMiddleLine() {
-        for (int i = 0; i < outerWall.size(); i++){
-            WallPoint closePoint = new WallPoint();
+        ArrayList<WallPoint> longer = outerWall.size() > innerWall.size() ? outerWall : innerWall;
+        ArrayList<WallPoint> shorter = outerWall.size() <= innerWall.size() ? outerWall : innerWall;
+        for (int i = 0; i < longer.size(); i++){
+            int closePoint = 0;
             float dist = length + width;
-            for (int j = 0; j < innerWall.size(); j++) {
-                //if (distanceBetweenPoints(outerWall.get(i), innerWall.get(j)))
+            for (int j = 0; j < shorter.size(); j++) {
+                float testDist = distanceBetweenPoints(longer.get(i), shorter.get(j));
+                if (testDist < dist) {
+                    closePoint = j;
+                    dist = testDist;
+                }
             }
+            center.addPoint(midPoint(longer.get(i), shorter.get(closePoint)));
         }
     }
 
@@ -126,6 +133,11 @@ public class RacingLineModule implements CarModule {
         return h;
     }
 
+    private RacingLinePoint midPoint(WallPoint outer, WallPoint inner) {
+        float aveX = (float)((float)(outer.x + inner.x) / 2.0);
+        float aveY = (float)((float)(outer.y + inner.y) / 2.0);
+        return new RacingLinePoint(aveX, aveY);
+    }
     //endregion
 }
 
@@ -146,6 +158,11 @@ class RacingLine {
     public RacingLinePoint[] getRacingLinePoints() {
         return RacingLinePoints;
     }
+
+    public void addPoint(RacingLinePoint newPoint) {
+        RacingLinePointsList.add(newPoint);
+    }
+
 }
 
 class RacingLinePoint {
