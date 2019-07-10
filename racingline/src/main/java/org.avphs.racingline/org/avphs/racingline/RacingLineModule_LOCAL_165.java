@@ -4,19 +4,6 @@ import org.avphs.core.CarCommand;
 import org.avphs.core.CarCommandType;
 import org.avphs.core.CarModule;
 
-<<<<<<< HEAD
-=======
-public class RacingLineModule implements CarModule {
-    private RacingLine racingLine;
-    private ArrayList<WallPoint> outerWall = new ArrayList<WallPoint>();
-    private ArrayList<WallPoint> innerWall = new ArrayList<WallPoint>();
-    private boolean[][] map;
-    private boolean[][] visited;
-    boolean addToOuter;
-    int length, width;
-    private int[] dx = {-1, 0, 1, 0};
-    private int[] dy = {0, 1, 0, -1};
->>>>>>> Added floodfill for inner and outer walls
 
 import java.util.ArrayList;
 
@@ -37,7 +24,6 @@ public class RacingLineModule implements CarModule {
 
     //region Overrides
     @Override
-
     public Class[] getDependencies() {
         return null;
     }
@@ -82,49 +68,6 @@ public class RacingLineModule implements CarModule {
         System.out.println("RacingLine.getRacingLine not implemented");
         return null;
     }
-<<<<<<< HEAD
-=======
-
-    private void getMiddleLine() {
-        getWalls();
-    }
-
-    private void getWalls() {
-        visited = new boolean[length][width];
-        addToOuter = true;
-        for (int i = 0; i < length; i++) {
-            for (int j = 0; j < width; j++) {
-                if (map[i][j] == false && visited[i][j] == false) {
-                    DFS(i, j);
-                    addToOuter = false;
-                }
-            }
-        }
-        addToOuter = false;
-    }
-
-    private void DFS(int x, int y) {
-        visited[x][y] = true;
-        for (int i = 0; i < 4; i++) {
-            int tx = x + dx[i];
-            int ty = y + dy[i];
-            if (tx >= 0 && <length && ty >= 0 && ty < width){
-                if (map[tx][ty] == true) {
-                    WallPoint newPoint = new WallPoint(tx, ty);
-                    if (addToOuter == true) {
-                        outerWall.add(newPoint);
-                    } else {
-                        innerWall.add(newPoint);
-                    }
-                }
-                if (visited[tx][ty] == false) {
-                    DFS(tx, ty);
-                }
-            }
-        }
-    }
-}
->>>>>>> Added floodfill for inner and outer walls
 
 
 
@@ -185,16 +128,3 @@ public class RacingLineModule implements CarModule {
     }
 }
 
-<<<<<<< HEAD
-=======
-}
-
-private class WallPoint {
-    int x, y;
-
-    public WallPoint(int _x, int _y) {
-        x = _x;
-        y = _y;
-    }
-}
->>>>>>> Added floodfill for inner and outer walls
