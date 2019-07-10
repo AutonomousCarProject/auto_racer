@@ -23,8 +23,6 @@ public class Speed {
         /*if (isStraight){
             //targetSpeed = getTargetSpeedForStraight((Straight)roadData);
             targetSpeed = max_speed;
-
-
             return 180;     //currently returning max throttle
         } else {
             //targetSpeed = getTargetSpeedForTurn((Turn)roadData);
@@ -45,6 +43,5 @@ public class Speed {
     private int getTargetSpeedNextSegment(RoadData input) {
         return 1;
     }
-
 }
 
