@@ -40,6 +40,10 @@ public class DrivingModule implements CarModule {
         this.currerntPos = currentPos;
     }
 
+    public DrivingModule(){
+
+    }
+
     public RefinedRacingLine analyzeRacingLine(RacingLine input){
         return new RefinedRacingLine(new ArrayList<RoadData>(), new VectorPoint(0.0,0.0));
     }
