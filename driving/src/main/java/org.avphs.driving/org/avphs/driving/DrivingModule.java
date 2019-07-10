@@ -2,6 +2,7 @@ package org.avphs.driving;
 
 import org.avphs.core.CarCommand;
 import org.avphs.core.CarModule;
+import org.avphs.util.VectorPoint;
 
 
 import java.util.Collection;
@@ -27,12 +28,15 @@ public class DrivingModule implements CarModule {
     public void run() {
         System.out.println("Driving");
     }
-    
-    public float[] getPosition(){ //returns the (x,y) of the car in the map
-        return new float[]{0,0};
+
+    //private RacingLine racingLine;
+
+
+    public VectorPoint getPosition(){ //returns the (x,y) of the car in the map
+        return new VectorPoint(0.0,0.0);
     }
     
-    public double getDirection(){ //returns the direction of the car in degrees
-        return 0.0;
+    public int getDirection(){ //returns the direction of the car in degrees
+        return 0;
     }
 }
