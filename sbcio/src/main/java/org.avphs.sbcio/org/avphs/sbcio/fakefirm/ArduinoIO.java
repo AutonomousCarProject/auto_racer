@@ -43,6 +43,10 @@ public class ArduinoIO implements PWMController { // Adapted to Java from arduin
   public static final int ANALOG_MESSAGE = 0xE0;
   public static final int FORCE_START = 0xFF;
 
+  //TODO probably remove, this is old DrDemo stuff
+  public static final int DEADMAN_MESSAGE = 0xFB;
+  //
+
   protected static final boolean SpeakEasy = true;
   protected static boolean PortOpened = false;
   protected static SimHookBase HookFunctions = null; // for extensions
@@ -63,7 +67,7 @@ public class ArduinoIO implements PWMController { // Adapted to Java from arduin
     surrealPort = new SerialPortSwapper(CommPortNo);
     System.out.println("new Arduino " + CommPortNo + " " + (surrealPort != null));
     digitalOutputData = new int[MAX_DATA_BYTES];
-    Open();
+    open();
   }
   // Implicit override
 
@@ -183,7 +187,7 @@ public class ArduinoIO implements PWMController { // Adapted to Java from arduin
    * @param pin second byte to be sent, commonly used to indicate pin
    * @param angle third byte to be send, commonly used for angle
    */
-  public void Write(int messageType, int pin, int angle) {
+  public void write(int messageType, int pin, int angle) {
     byte[] msg = new byte[3];
     msg[0] = (byte) (messageType); //Type of message. Likely unneeded
     msg[1] = (byte) (pin); //pin
@@ -211,17 +215,17 @@ public class ArduinoIO implements PWMController { // Adapted to Java from arduin
    * By default the port is opened when the object is first created.
    * <p>
    * Note that JSSC does not recover gracefully from a failure to close,
-   * so a subsequent Open() will fail until the system is rebooted.
+   * so a subsequent open() will fail until the system is rebooted.
    */
-  public void Open() {
-    if (SpeakEasy) System.out.println("F%%F/Open..");
+  public void open() {
+    if (SpeakEasy) System.out.println("F%%F/open..");
     if (PortOpened) {
       if (SpeakEasy) System.out.println("... " + CommPortNo + " is already open");
       return;
     } else try {
       PortOpened = surrealPort.openPort();
       surrealPort.setParams(57600, 8, 1, 0);
-      this.Write(0xFF, 0, 0); //Send startup message
+      this.write(0xFF, 0, 0); //Send startup message
     } catch (Exception ex) {
       System.out.println(ex);
     }
@@ -235,7 +239,7 @@ public class ArduinoIO implements PWMController { // Adapted to Java from arduin
    * Closes the serial port.
    * <p>
    * Note that JSSC does not recover gracefully from a failure to close,
-   * so a subsequent Open() will fail until the system is rebooted.
+   * so a subsequent open() will fail until the system is rebooted.
    */
   public void close() {
     if (SpeakEasy) System.out.println("F%%F/Close..");
@@ -256,11 +260,11 @@ public class ArduinoIO implements PWMController { // Adapted to Java from arduin
    *
    * @return         Formatted String prefix+hh:mm:ss.mmm
    */
-  public static String FormatMillis(String prefix, int now) {
+  public static String formatMillis(String prefix, int now) {
     int whom = 0;
     boolean more = false;
-    if (now==0x80000000) now = GetMills();
-    if (now<0) return FormatMillis(prefix + "-",-now);
+    if (now==0x80000000) now = getMills();
+    if (now<0) return formatMillis(prefix + "-",-now);
     if (now >= 3600000) { // convert to hours..
       whom = now/3600000;
       now = now-whom*3600000;
@@ -279,7 +283,7 @@ public class ArduinoIO implements PWMController { // Adapted to Java from arduin
     prefix = prefix + whom + ".";
     if (now<10) prefix = prefix + "00";
     else if (now<100) prefix = prefix + "0";
-    return prefix + now;} //~FormatMillis
+    return prefix + now;} //~formatMillis
 
 
   /**
@@ -287,7 +291,7 @@ public class ArduinoIO implements PWMController { // Adapted to Java from arduin
    *
    * @return         The number of milliseconds since program started.
    */
-  public static int GetMills() {
-    return (int)System.currentTimeMillis()-StartUpTimeMS;} //~GetMills
+  public static int getMills() {
+    return (int)System.currentTimeMillis()-StartUpTimeMS;} //~getMills
 
-}//~Open
+}//~open

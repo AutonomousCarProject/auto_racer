@@ -9864,7 +9864,7 @@ public class TrakSim {
             MapIndex = null;
             TrakImages = null;
             LuminanceMap = null;
-            theList = HandyOps.ReadWholeTextFile(SceneFiName+"txt");
+            theList = HandyOps.ReadWholeTextFile("traksim/src/main/resources/"+SceneFiName+"txt");
             if (theList == "") break; // why = 1
             why++; // why = 2
             if (HandyOps.CharAt(0,theList) == '\"') { // skip to named descriptor..

@@ -35,7 +35,7 @@ public class ArduinoModule implements CarModule {
 
 	@Override
 	public void init(CarModule[] dependencies) {
-		driveSys.Write(ArduinoIO.FORCE_START, 0, 0);
+		driveSys.write(ArduinoIO.FORCE_START, 0, 0);
 	}
 
 	@Override
@@ -48,6 +48,6 @@ public class ArduinoModule implements CarModule {
 		if (IOSettings.readMessages)
 			driveSys.digitalRead();
 
-		driveSys.Write(0, 0, 0);
+		driveSys.write(0, 0, 0);
 	}
 }

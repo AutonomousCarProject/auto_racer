@@ -188,7 +188,7 @@ public class HandyOps { // first some useful debug logging ops..
      * @return       The combined string
      */
     public static String PosTime(String before) {
-        return ArduinoIO.FormatMillis(before,0x80000000);} //~PosTime
+        return ArduinoIO.formatMillis(before,0x80000000);} //~PosTime
 
     /**
      * A safe (no exceptions) non-OOPS way to extract a character from a string.
@@ -213,8 +213,8 @@ public class HandyOps { // first some useful debug logging ops..
      * @return      The time
      */
     public static int TimeSecs(boolean ms2) {
-        if (ms2) return ArduinoIO.GetMills();
-        return ArduinoIO.GetMills()/1000;} //~TimeSecs
+        if (ms2) return ArduinoIO.getMills();
+        return ArduinoIO.getMills()/1000;} //~TimeSecs
 
     /**
      * A safe (no exceptions) way to extract an integer number from a string.
