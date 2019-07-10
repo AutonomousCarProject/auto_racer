@@ -36,6 +36,8 @@ public class DrivingModule implements CarModule {
     private VectorPoint currentPos;
     private RoadData currentSegment;
     private RoadData nextSegment;
+    private int angle = 90;
+    private int throttle = 90;
 
     public DrivingModule(RacingLine racingLine){
         this.racingline = racingLine;
@@ -61,13 +63,15 @@ public class DrivingModule implements CarModule {
     }
     
     public int getDirection(){ //returns the direction of the car from 0 to 180
-        Steering steer = new Steering(currentPos, currentSegment, nextSegment);
-        return steer.getAngle();
+        Steering steer = new Steering(currentPos, currentSegment);
+        angle = steer.getAngle();
+        return angle;
     }
 
     public int getThrottle() { //returns the throttle of the car from 0 to 180
         Speed speed = new Speed(currentPos, currentSegment, nextSegment);
-        return speed.getThrottle();
+        throttle = speed.getThrottle();
+        return throttle;
     }
 
 }

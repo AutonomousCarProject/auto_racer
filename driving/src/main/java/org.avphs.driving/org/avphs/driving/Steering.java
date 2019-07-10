@@ -6,17 +6,21 @@ public class Steering {
 
     private VectorPoint currentPos;
     private RoadData currentSegment;
-    private RoadData nextSegment;
 
 
-    public Steering(VectorPoint currentPos, RoadData currentSegment, RoadData nextSegment){
+    public Steering(VectorPoint currentPos, RoadData currentSegment){
         this.currentPos = currentPos;
         this.currentSegment = currentSegment;
-        this.nextSegment = nextSegment;
     }
 
 
     public int getAngle(){
+        if (currentSegment instanceof Straight){
+
+        } else {
+            
+        }
+
         return 180;
     }
 
