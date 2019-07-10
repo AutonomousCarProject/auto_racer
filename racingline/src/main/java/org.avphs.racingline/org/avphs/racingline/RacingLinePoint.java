@@ -23,6 +23,12 @@ public class RacingLinePoint {
         setDegree(degree);
     }
 
+    public float distanceToPoint(RacingLinePoint other) {
+        float diffx = x - other.x;
+        float diffy = y - other.y;
+        return (float) Math.sqrt(diffx * diffx + diffy * diffy);
+    }
+
     public float getX() {
         return x;
     }
