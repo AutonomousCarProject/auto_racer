@@ -3,25 +3,13 @@ package org.avphs.calibration;
 import org.avphs.core.CarCommand;
 import org.avphs.core.CarModule;
 
-public class CalibrationModule implements CarModule {
+public class CalibrationModule {
 
-    @Override
-    public Class[] getDependencies() {
-        return null;
-    }
+    public static final byte[][] SPEED_CHANGE_DISTS = {};
 
-    @Override
-    public void init(CarModule[] dependencies) {
+    public static final byte[][] MAX_SPEEDS = {};
 
-    }
+    //input x and y
+    public static final FishData[][] DEFISHER = {};
 
-    @Override
-    public CarCommand[] commands() {
-        return null;
-    }
-
-    @Override
-    public void run() {
-
-    }
 }
