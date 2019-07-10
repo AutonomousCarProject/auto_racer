@@ -21,6 +21,13 @@ public class Speed {
         this.nextSegment = nextSegment;
     }
 
+    public void newSegment(RoadData newNextSeg){
+        currentSegment = nextSegment;
+        nextSegment = newNextSeg;
+        speedChange = getTargetSpeedSegment(nextSegment) - getTargetSpeedSegment(currentSegment);
+        
+    }
+
     public int getThrottle(){
         /*if (isStraight){
             //targetSpeed = getTargetSpeedForStraight((Straight)roadData);
@@ -30,7 +37,6 @@ public class Speed {
             //targetSpeed = getTargetSpeedForTurn((Turn)roadData);
             return 1;
         }*/
-        speedChange = getTargetSpeedSegment(nextSegment) - getTargetSpeedSegment(currentSegment);
         return 180;     //returns max throttle for now
     }
 
