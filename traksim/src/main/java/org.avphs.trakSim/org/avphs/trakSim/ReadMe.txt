@@ -1,42 +1,37 @@
-TrackSim Distribution ReadMe (2018 May 9)...
+TrakSim ReadMe (Copyright 2019 July 4 Itty Bitty Computers)...
 
-TrackSim is an emulator program that pretends to be the steering and drive servos of a radio-controlled car with the radio receiver replaced by a LattePanda (LP) computer running Java on Winows 10 and connected to a PointGrey(Flir) Chameleon3 or FireFly camera pointed straight ahead, which TrackSim also simulates, using the same APIs in each case.
+TrakSim is an emulator program that pretends to be the steering and drive servos of a radio-controlled car with the radio receiver replaced by a LattePanda (LP) computer running Java on Winows 10 and connected to a PointGrey(Flir) Chameleon3 or FireFly camera pointed straight ahead, which TrakSim also simulates, using the same APIs in each case.
 
-TrackSim is designed to work with and simulate the hardware complement of the LattePanda (LP) computer, or in stand-alone mode on any Java-compatible computer in the absence of the LP hardware and attached car, which is its reason for existence. Develop on any computer, then deploy on an embedded LP in your car.
+TrakSim is designed to work with the hardware complement of the LattePanda (LP) computer where it is used to replace the radio receiver in a standard R/C model car, with user-written software to drive the car. It can also be used in stand-alone mode on any Java-compatible computer to simulate the LP system in the absence of the LP hardware and attached car, which is its reason for existence. Develop on any computer, then deploy on an embedded LP in your car.
 
-This program is released as Java source code for five packages, which you can run in any standard Java development environment. It is designed to work with the JavaSimpleSerialConnector (JSSC) serial port implementation available elsewhere, and with the PointGrey FLIR FlyCapture C-based DLLs (likewise), both of which are needed only in the LP when controlling the R/C car. Otherwise the five packages included in this distribution are sufficient. Each package is in its own containing folder:
+This program is released as Java source code which you can run in any standard Java development environment. It is designed to work with FakeFirmata (FF, included) to test your autonomous vehicle software apart from any controlled car, but also can be used in your car while controlling your car's servos. FF in turn works with the JavaSimpleSerialConnector serial port implementation (or any other compatible API) to send serial port commands to the Arduino daughter board included with the LattePanda computer. In a Java development environment other than LP, use package noJSSC (also included) to run the simulator as a stand-alone.
 
-Fly2cam
-
-This is a minor revision of the Java interface to the JNI (C-coded) DLL that accesses the Pt.Grey Chameleon3 or FireFly camera driver DLLs. FlyCamera.dll is included here, and its source code is in the subfolder FlyCamera. Additional supporting files and code are available in the original release (see link below).
-
-noJSSC
-
-This is a non-functional (stub) plug-compatible substitute for the JSSC API, which may be used in its place when running TrackSim in stand-alone mode on any computer, specifically other than the LP.
-
-FakeFirm
-
-This is a Java clone of the C# API released by LP for driving digitial outputs and servos. It is a slight upgrade of my original released on the LP website, so that it diverts a copy of the servo commands to TrackSim, so that TrackSim can properly respond to your self-driving code without you code knowing it. There is additional information in its own web page, accessible from the link below.
-
-APW3
-
-This package contains the source code for TrackSim and its supporting classes, mostly documented in the link below.
-
-Also included in this folder are three data files named "TrackImg.xxx" with one each of the suffix/file types ".txt" and ".tiff" and ".indx". The text and TIFF image files are optional, but the index file is a required default track definition resembling the PatsAcres go-kart track near Portland, but which you could replace with your own default as explained in the documentation. These three files must be in the Java project folder for TrackSim to see them.
-
-DriveDemo
-
-This is a JFrame window program designed to demonstrate how to use both TrackSim and the servo & camera interfaces simulated by TrackSim. You can plug your self-driving code into DriveDemo, or else replace it entirely with your own code. The goal is to release your own code with APW3 and DriveDemo completely removed, and your code supported only by the drivers in FakeFirm and Fly2cam (or else your own code replacements for them too).
+You can design your own tracks and add artifacts like stop signs, traffic lights, moving pedestrians and other vehicles for your simulated car to see and avoid, using the built-in API for that putpose.
 
 For complete documentation, see:
 
   http://www.IttyBittyComputers.com/APW2/TrackSim/TrackSim.htm
-  
+
+New This Release
+
+I added a tiled floor option to replicate a specific pattern on the track floor. Only the upload with a ReadMe dated today is current.
+
+I added a method Activate() to prevent TrakSim from using CPU time when running on an actual track with a live camera.
+
+I added track boundary walls compatible with the F1/10th race tracks, along with simulating the coefficient of friction and a driveshaft turns counter.
+
+I fixed some bugs that caused exceptions under certain circumstances, and added optional texture to the track to simulate carpets with variegated colors, and to vary the lighting across the park. I also added to the demonstration package code to show how to quickly posterize the pixels and find a few "blobs" of color which might represent traffic lights or stop signs, and timing loops to measure code speed. For a discussion on the additions, see:
+
+  http://www.IttyBittyComputers.com/BG/TechTopix9.htm#PostMortem
+
 License
-  
-All of my original source code in this implementation is released to the public domain. Like all software (whether you paid for it or not) there are no warranties, no promises. It worked for our project (so far), but if you have problems, it's not so complicated that you can't poke around and fix it yourself.
-  
+
+All of my original source code in this implementation is licensed to the public. Like all software (whether you paid for it or not) there are no warranties, no promises. It worked for our project (so far), but if you have problems, it's not so complicated that you can't poke around and fix it yourself.
+
 If you have questions, you can send me an email and I'll answer the best I can, but I may not have sufficient time or access to the necessary resources to test anything, so I cannot promise any particular improvements.
-  
+
 Tom Pittman
-TPittman@IttyBittyComputers.com
+(see IttyBittyComputers.com website for email contact)
+
+
+

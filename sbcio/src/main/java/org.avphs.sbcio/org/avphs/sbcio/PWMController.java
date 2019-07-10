@@ -1,4 +1,4 @@
-package org.avphs.util;
+package org.avphs.sbcio;
 
 /**
  * Interface dedicated to communication with motors and receiving information from hardware

@@ -17,8 +17,8 @@ dependencies {
     //api project(':core')
 
     implementation project(':core')
-    implementation project(':traksimcamera')
     implementation project(':camera')
+    implementation project(':traksim')
 
     // Use TestNG framework, also requires calling test.useTestNG() below
     testImplementation 'org.testng:testng:6.14.3'

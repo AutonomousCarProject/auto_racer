@@ -13,8 +13,9 @@ repositories {
 
 dependencies {
     // Use TestNG framework, also requires calling test.useTestNG() below
-    implementation project(':client')
-    implementation project(':util')
+    implementation project(':sbcio')
+    implementation project(':camera')
+
     testImplementation 'org.testng:testng:6.14.3'
 }
 

@@ -2,7 +2,7 @@
 
 // You also need FlyCapture2_C.dll + FlyCapture2.dll in your Java project folder
 
-package org.avphs.traksim.trakSimFiles; // (same API as fly0cam, same as 2017 Feb 27 but subclassable)
+package org.avphs.camera; // (same API as fly0cam, same as 2017 Feb 27 but subclassable)
 
 public class FlyCamera { // (in Java/fly2cam)
     public static final int FrameRate_15 = 3, FrameRate_30 = 4,

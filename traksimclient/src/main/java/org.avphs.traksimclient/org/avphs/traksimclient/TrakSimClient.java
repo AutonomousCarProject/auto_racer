@@ -1,7 +1,7 @@
 package org.avphs.traksimclient;
 
 import org.avphs.core.CarCore;
-import org.avphs.traksimcamera.TrakSimCamera;
+import org.avphs.traksim.SimCamera;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,7 +9,7 @@ import java.awt.image.BufferedImage;
 
 public class TrakSimClient extends JFrame {
 
-    private TrakSimCamera traksim;
+    private SimCamera traksim;
 
     private BufferedImage displayImage;
 
@@ -33,7 +33,7 @@ public class TrakSimClient extends JFrame {
         setVisible(true);
         add(panel);
 
-        traksim = new TrakSimCamera();
+        traksim = new SimCamera();
         traksim.connect(4);
         var core = new CarCore();
         core.init();
