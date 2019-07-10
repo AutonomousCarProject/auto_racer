@@ -10,7 +10,7 @@ public class Straight extends RoadData {
 		this.endX = endX;
 		this.endY = endY;
 
-		straightLen = (float)Math.sqrt((endX-startX)+(endY-startY));
+		straightLen = (float)Math.sqrt(Math.pow(endX - startX, 2.0) + Math.pow(endY - startY, 2.0));
 	}
 }
 
