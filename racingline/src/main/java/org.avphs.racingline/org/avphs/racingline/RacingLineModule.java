@@ -2,6 +2,8 @@ package org.avphs.racingline;
 
 import java.util.ArrayList;
 import java.lang.Math;
+import java.util.HashSet;
+import java.util.Objects;
 
 import org.avphs.core.CarCommand;
 import org.avphs.core.CarModule;
@@ -41,6 +43,7 @@ public class RacingLineModule implements CarModule {
     //endregion
 
     //region RacingLine
+
     /**
      * This method creates the racing line. This should be run before getRacingLine is called.
      *
@@ -112,7 +115,7 @@ public class RacingLineModule implements CarModule {
     private void calcMiddleLine() {
         ArrayList<WallPoint> longer = outerWall.size() > innerWall.size() ? outerWall : innerWall;
         ArrayList<WallPoint> shorter = outerWall.size() <= innerWall.size() ? outerWall : innerWall;
-        for (int i = 0; i < longer.size(); i++){
+        for (int i = 0; i < longer.size(); i++) {
             int closePoint = 0;
             float dist = length + width;
             for (int j = 0; j < shorter.size(); j++) {
@@ -129,19 +132,20 @@ public class RacingLineModule implements CarModule {
     private float distanceBetweenPoints(WallPoint start, WallPoint end) {
         int x = Math.abs(end.x - start.x);
         int y = Math.abs(end.y - start.y);
-        float h = (float)Math.sqrt(x * x + y * y);
+        float h = (float) Math.sqrt(x * x + y * y);
         return h;
     }
 
     private RacingLinePoint midPoint(WallPoint outer, WallPoint inner) {
-        float aveX = (float)((float)(outer.x + inner.x) / 2.0);
-        float aveY = (float)((float)(outer.y + inner.y) / 2.0);
+        float aveX = (float) ((float) (outer.x + inner.x) / 2.0);
+        float aveY = (float) ((float) (outer.y + inner.y) / 2.0);
         return new RacingLinePoint(aveX, aveY);
     }
     //endregion
 }
 
 //region Classes
+
 /**
  * <p>This class represents a racing line. It contains an array of points which represent the line.</p>
  *
@@ -163,6 +167,15 @@ class RacingLine {
         RacingLinePointsList.add(newPoint);
     }
 
+    public void sortPoints() {
+        ArrayList<RacingLinePoint> orderedRacingLine = new ArrayList<RacingLinePoint>();
+        HashSet<RacingLinePoint> remainingPoints = new HashSet<RacingLinePoint>(RacingLinePointsList);
+        orderedRacingLine.add(RacingLinePointsList.get(0));
+        remainingPoints.remove(RacingLinePointsList.get(0));
+        while(remainingPoints.size() > 0){
+
+        }
+    }
 }
 
 class RacingLinePoint {
@@ -210,6 +223,20 @@ class RacingLinePoint {
         this.degree = degree;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RacingLinePoint that = (RacingLinePoint) o;
+        return Float.compare(that.x, x) == 0 &&
+                Float.compare(that.y, y) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y);
+    }
+
 }
 
 class WallPoint {
@@ -219,6 +246,7 @@ class WallPoint {
         x = 0;
         y = 0;
     }
+
     public WallPoint(int _x, int _y) {
         x = _x;
         y = _y;
