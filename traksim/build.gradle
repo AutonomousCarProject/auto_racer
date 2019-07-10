@@ -3,7 +3,7 @@ plugins {
     id 'java-library'
 }
 
-ext.moduleName = 'org.avphs.traksimclient'
+ext.moduleName = 'org.avphs.traksim'
 
 repositories {
     // Use jcenter for resolving dependencies.
@@ -12,24 +12,20 @@ repositories {
 }
 
 dependencies {
-    // This dependency is exported to consumers, that is to say found on their compile classpath.
-    //api 'org.apache.commons:commons-math3:3.6.1'
-    //api project(':core')
-
-    implementation project(':core')
-    implementation project(':camera')
-    implementation project(':traksim')
-    implementation project(':image')
-    implementation project(':sbcio')
-
     // Use TestNG framework, also requires calling test.useTestNG() below
+    implementation project(':sbcio')
+    implementation project(':camera')
+
     testImplementation 'org.testng:testng:6.14.3'
 }
 
 sourceSets {
     main{
         java {
-            srcDir 'src/main/java/org.avphs.traksimclient'
+            srcDir 'src/main/java/org.avphs.traksim'
+        }
+        resources {
+            srcDir 'src/main/resources'
         }
     }
     test {

@@ -3,7 +3,7 @@ plugins {
     id 'java-library'
 }
 
-ext.moduleName = 'org.avphs.traksimclient'
+ext.moduleName = 'org.avphs.sbcio'
 
 repositories {
     // Use jcenter for resolving dependencies.
@@ -17,19 +17,19 @@ dependencies {
     //api project(':core')
 
     implementation project(':core')
-    implementation project(':camera')
-    implementation project(':traksim')
-    implementation project(':image')
-    implementation project(':sbcio')
 
     // Use TestNG framework, also requires calling test.useTestNG() below
     testImplementation 'org.testng:testng:6.14.3'
+
+    // https://mvnrepository.com/artifact/org.scream3r/jssc
+    implementation group: 'org.scream3r', name: 'jssc', version: '2.8.0'
+
 }
 
 sourceSets {
     main{
         java {
-            srcDir 'src/main/java/org.avphs.traksimclient'
+            srcDir 'src/main/java/org.avphs.sbcio'
         }
     }
     test {
@@ -42,4 +42,9 @@ sourceSets {
 test {
     // Use TestNG for unit tests
     useTestNG()
+}
+
+buildScan {
+    termsOfServiceUrl = 'https://gradle.com/terms-of-service'
+    termsOfServiceAgree = 'yes'
 }
