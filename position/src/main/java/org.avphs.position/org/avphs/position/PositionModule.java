@@ -36,6 +36,7 @@ public class PositionModule implements CarModule {
         return 0;
     }
     
+    //DEPRECATED BECAUSE THIS EXISTS IN TRAKSIM
     public float getSpeed(){
         return 0;
     }
