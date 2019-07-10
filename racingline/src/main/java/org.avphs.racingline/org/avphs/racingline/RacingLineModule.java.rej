@@ -1,0 +1,24 @@
+diff a/racingline/src/main/java/org.avphs.racingline/org/avphs/racingline/RacingLineModule.java b/racingline/src/main/java/org.avphs.racingline/org/avphs/racingline/RacingLineModule.java	(rejected hunks)
+@@ -174,17 +174,22 @@
+          return h;
+      }
+  
++     private RacingLinePoint midPoint(WallPoint outer, WallPoint inner) {
++         float aveX = (float)((float)(outer.x + inner.x) / 2.0);
++         float aveY = (float)((float)(outer.y + inner.y) / 2.0);
++         return new RacingLinePoint(aveX, aveY);
++     }
+      //endregion
+  }
+ +>>>>>>> Added floodfill for inner and outer walls
+  
+ +<<<<<<< HEAD
+ +<<<<<<< HEAD
+ +=======
+ +    //region Classes
+ +=======
+  //region Classes
+ +>>>>>>> Fixed error messages
+  /**
+   * <p>This class represents a racing line. It contains an array of points which represent the line.</p>
+   *
