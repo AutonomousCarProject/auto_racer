@@ -1,0 +1,12 @@
+diff a/settings.gradle b/settings.gradle	(rejected hunks)
+@@ -12,6 +12,10 @@
+ +<<<<<<< HEAD
+ +include 'sbcio'
+ +include 'racingline'
+++=======
++ include 'racingline'
++ include 'client'
+++>>>>>>> Fixed error messages
+  include 'position'
+ +include 'calibration'
+  include 'speed'

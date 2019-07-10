@@ -8,8 +8,13 @@ include 'traksim'
 include 'traksimclient'
 include 'core'
 include 'driving'
+<<<<<<< HEAD
 include 'sbcio'
 include 'racingline'
+=======
+include 'racingline'
+include 'client'
+>>>>>>> Fixed error messages
 include 'position'
 include 'calibration'
 include 'speed'
