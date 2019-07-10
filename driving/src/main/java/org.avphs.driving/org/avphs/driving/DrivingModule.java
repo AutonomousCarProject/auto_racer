@@ -35,17 +35,21 @@ public class DrivingModule implements CarModule {
     private ArrayList<RoadData> roadData;
     private VectorPoint currentPos;
 
-    public DrivingModule(RacingLine racingLine, VectorPoint currentPos){
+    public DrivingModule(RacingLine racingLine){
         this.racingline = racingLine;
-        this.currentPos = currentPos;
+        roadData = new ArrayList<RoadData>();
     }
 
     public DrivingModule(){
-
+        //This is the stupidest idea, having a "default constructor"
     }
 
     public void analyzeRacingLine(RacingLine input){
 
+    }
+
+    public void setCurrentPos(VectorPoint input){
+        currentPos = input;
     }
 
     public VectorPoint getPosition(){ //returns the (x,y) of the car in the map
