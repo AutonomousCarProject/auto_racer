@@ -32,13 +32,13 @@ public interface PWMController {
   }
   
   /**
-   * Write three byte-castable ints to the buffer
+   * write three byte-castable ints to the buffer
    * 
    * @param i First byte
    * @param j Second byte
    * @param k Third byte
    */
-  void Write(int i, int j, int k);
+  void write(int i, int j, int k);
   
   
   /**
