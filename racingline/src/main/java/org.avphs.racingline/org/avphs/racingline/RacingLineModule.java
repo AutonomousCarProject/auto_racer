@@ -108,7 +108,7 @@ public class RacingLineModule implements CarModule {
         for (int i = 0; i < 4; i++) {
             int tx = x + dx[i];
             int ty = y + dy[i];
-            if (tx >= 0 && <length && ty >= 0 && ty < width){
+            if (tx >= 0 && tx <length && ty >= 0 && ty < width){
                 if (map[tx][ty] == true) {
                     WallPoint newPoint = new WallPoint(tx, ty);
                     if (addToOuter == true) {
