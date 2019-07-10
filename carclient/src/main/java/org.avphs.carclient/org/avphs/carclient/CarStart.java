@@ -1,9 +1,8 @@
 package org.avphs.carclient;
 
-import org.avphs.client.CarClient;
 import org.avphs.core.CarCore;
 
-public class CarStart implements CarClient {
+public class CarStart {
 
     public CarStart() {
         var core = new CarCore();

@@ -44,7 +44,7 @@ subprojects {
             jcenter()
         }
 
-        targetCompatibility = '12'
+        //targetCompatibility = '12'
 
         if (project.hasProperty("moduleName")) {
             compileJava {

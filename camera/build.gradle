@@ -1,0 +1,35 @@
+plugins {
+    // Apply the java-library plugin to add support for Java Library
+    id 'java-library'
+}
+
+ext.moduleName = 'org.avphs.camera'
+
+repositories {
+    // Use jcenter for resolving dependencies.
+    // You can declare any Maven/Ivy/file repository here.
+    jcenter()
+}
+
+dependencies {
+    // Use TestNG framework, also requires calling test.useTestNG() below
+    testImplementation 'org.testng:testng:6.14.3'
+}
+
+sourceSets {
+    main{
+        java {
+            srcDir 'src/main/java/org.avphs.camera'
+        }
+    }
+    test {
+        java {
+            srcDir 'src/test/java'
+        }
+    }
+}
+
+test {
+    // Use TestNG for unit tests
+    useTestNG()
+}

@@ -3,8 +3,6 @@ package org.avphs.position;
 import org.avphs.core.CarCommand;
 import org.avphs.core.CarModule;
 
-import java.util.Collection;
-
 public class PositionModule implements CarModule {
 
     @Override
@@ -27,11 +25,19 @@ public class PositionModule implements CarModule {
         System.out.println("Position");
     }
     
-    public int[] getPosition(){ //returns the (x,y) of the car in the map
-        return [0,0];
+    
+    
+    //THE CODE BELOW IS TEMPORARY AND SUBJECT TO CHANGE PROBABLY VERY SOON
+    public float[] getPosition(){ //returns the (x,y) of the car (ideally synced with the map)
+        return new float[]{0,0};
     }
     
-    public double getDirection(){ //returns the direction of the car in degrees
-        return 0.0;
+    public float getDirection(){ //returns the direction of the car in degrees, always 0<= x <360
+        return 0;
+    }
+    
+    //DEPRECATED BECAUSE THIS EXISTS IN TRAKSIM
+    public float getSpeed(){
+        return 0;
     }
 }
