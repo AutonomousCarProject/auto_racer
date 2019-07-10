@@ -8,12 +8,12 @@ import org.avphs.core.CarModule;
 import RacingLinePoint;
 
 public class RacingLineModule implements CarModule {
-    private RacingLine racingLine;
     private ArrayList<WallPoint> outerWall = new ArrayList<WallPoint>();
     private ArrayList<WallPoint> innerWall = new ArrayList<WallPoint>();
     private ArrayList<WallPoint> centerPoints = new ArrayList<WallPoint>();
     private boolean[][] map;
     private boolean[][] visited;
+    private boolean[][] added;
     boolean addToOuter;
     int length, width;
     private int[] dx = {-1, 0, 1, 0};
@@ -75,6 +75,7 @@ public class RacingLineModule implements CarModule {
 
     private void getWalls() {
         visited = new boolean[length][width];
+        added = new boolean[length][width];
         addToOuter = true;
         for (int i = 0; i < length; i++) {
             for (int j = 0; j < width; j++) {
@@ -84,7 +85,6 @@ public class RacingLineModule implements CarModule {
                 }
             }
         }
-        addToOuter = false;
     }
 
     private void DFS(int x, int y) {
@@ -92,16 +92,17 @@ public class RacingLineModule implements CarModule {
         for (int i = 0; i < 4; i++) {
             int tx = x + dx[i];
             int ty = y + dy[i];
-            if (tx >= 0 && tx <length && ty >= 0 && ty < width){
-                if (map[tx][ty] == true) {
-                    WallPoint newPoint = new WallPoint(tx, ty);
+            if (tx >= 0 && tx < length && ty >= 0 && ty < width) {
+                if (map[tx][ty] == true && added[x][y] == false) {
+                    added[x][y] = true;
+                    WallPoint newPoint = new WallPoint(x, y);
                     if (addToOuter == true) {
                         outerWall.add(newPoint);
                     } else {
                         innerWall.add(newPoint);
                     }
                 }
-                if (visited[tx][ty] == false) {
+                if (map[tx][ty] == false && visited[tx][ty] == false) {
                     DFS(tx, ty);
                 }
             }
