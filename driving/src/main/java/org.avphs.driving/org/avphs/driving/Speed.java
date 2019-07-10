@@ -4,13 +4,11 @@ package org.avphs.driving;
 import org.avphs.util.VectorPoint;
 
 public class Speed {
-    float coefFric;     //get from calibration
-    float forceGrav;    //get from calibration
-    int targetSpeed;
-    boolean isStraight;
-    VectorPoint currentPos;
-    private RoadData roadData;
-    public Speed(RoadData input, VectorPoint currentPos){
+    private int targetSpeed;
+    private boolean isStraight;
+    private VectorPoint currentPos;
+    private RefinedRacingLine roadData;
+    public Speed(RefinedRacingLine input, VectorPoint currentPos){
         roadData = input;
         this.currentPos = currentPos;
     }
@@ -18,10 +16,9 @@ public class Speed {
     public int getThrottle(){
 
         if (isStraight){
-            targetSpeed = getTargetSpeedForStraight((Straight)roadData);
-            float forceFric = -1*forceGrav*coefFric;
+            //targetSpeed = getTargetSpeedForStraight((Straight)roadData);
         } else {
-            targetSpeed = getTargetSpeedForTurn((Turn)roadData);
+            //targetSpeed = getTargetSpeedForTurn((Turn)roadData);
 
         }
         return 1;
@@ -31,7 +28,9 @@ public class Speed {
         return 1;
     }
 
-    private int getTargetSpeedForTurn(Turn input) { return 1; }
+    private int getTargetSpeedForTurn(Turn input) {
+        return 1;
+    }
 
 }
 

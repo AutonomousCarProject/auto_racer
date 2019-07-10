@@ -29,14 +29,20 @@ public class DrivingModule implements CarModule {
         System.out.println("Driving");
     }
 
-    //private RacingLine racingLine;
+    public DrivingModule(){
 
+    }
 
     public VectorPoint getPosition(){ //returns the (x,y) of the car in the map
         return new VectorPoint(0.0,0.0);
     }
     
     public int getDirection(){ //returns the direction of the car in degrees
+        return 0;
+    }
+
+    public int getThrottle() {
+        //Speed speed = new Speed();
         return 0;
     }
 }
