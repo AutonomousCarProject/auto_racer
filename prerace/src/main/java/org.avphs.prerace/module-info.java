@@ -1,5 +1,6 @@
 module org.avphs.prerace {
     requires org.avphs.core;
+    requires org.avphs.image;
 
     exports org.avphs.prerace;
 
