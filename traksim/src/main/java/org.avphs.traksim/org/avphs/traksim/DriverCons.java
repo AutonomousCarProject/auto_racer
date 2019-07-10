@@ -51,7 +51,7 @@ public class DriverCons { // TrakSim constant parameters
           D_MapLogged = true, D_Mini_Log = false;
 
   public static final int
-          D_Qlog = 3, // Global log enabler (=0 kills most log, -1 enables all) bits:
+          D_Qlog = 0, // Global log enabler (=0 kills most log, -1 enables all) bits:
   //   +1: MapLogged enabled
   //   +2: mouseEntered/mouseClicked
   //   +4: "DrListen="
@@ -110,7 +110,7 @@ public class DriverCons { // TrakSim constant parameters
           D_Grav = 9.81*((double)D_ModelScale), // gravity, scaled to park meters
           D_CameraHi = 1.2;      // camera height above track in park meters
 
-  public static final String D_SceneFiName = "TrackImg.", // +"indx" -> map file
+  public static final String D_SceneFiName = "traksim/src/main/resources/TrackImg.", // +"indx" -> map file
           D_CaptureImageBase = "ScreenCapture_", // +".tiff" -> screen capture file
           PostCoNames = "W,Y,Gy,B,G,R,Bk", // log names for PosterColors
           D_RevDate = "2019 July 2";
