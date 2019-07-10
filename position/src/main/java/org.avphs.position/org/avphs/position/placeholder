@@ -1,3 +1,5 @@
+package org.avphs.position;
+
 public class NWAPWPlaceholder {
 
     private float[] position;
