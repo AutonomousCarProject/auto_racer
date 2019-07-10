@@ -9,16 +9,14 @@ public class Speed {
     private int speedChange;    //negative = slow down, positive = speed up
     private int max_speed;
     private VectorPoint currentPos;
-    private RefinedRacingLine roadData;
     private RoadData currentSegment;
     private RoadData nextSegment;
 
-    public Speed(RefinedRacingLine input, VectorPoint currentPos, RoadData currentSegment, RoadData nextSegment){
-
-        roadData = input;
+    public Speed(VectorPoint currentPos, RoadData currentSegment, RoadData nextSegment){
         this.currentPos = currentPos;
         this.currentSegment = currentSegment;
         this.nextSegment = nextSegment;
+        
     }
 
     public void newSegment(RoadData newNextSeg){
@@ -44,7 +42,7 @@ public class Speed {
         if (input instanceof Straight){
             return max_speed;
         } else {
-            return 0;
+            return 4;   //dummy value for now
         }
     }
 
