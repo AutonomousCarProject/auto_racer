@@ -3,9 +3,10 @@ package org.avphs.prerace;
 import org.avphs.core.CarCommand;
 import org.avphs.core.CarModule;
 import org.avphs.image.ImageModule;
-import org.avphs.map.MapModule;
 
 public class PreRaceModule implements CarModule {
+
+    private ImageModule imageModule;
 
     @Override
     public Class[] getDependencies() {
@@ -16,7 +17,7 @@ public class PreRaceModule implements CarModule {
 
     @Override
     public void init(CarModule... dependencies) {
-
+        imageModule = (ImageModule) dependencies[0];
     }
 
     @Override
