@@ -157,6 +157,7 @@ class Point {
 
 <<<<<<< HEAD
     WallPoint() {
+    public Point() {
 =======
     public Point() {
 >>>>>>> f54adf3cf29286b5b04677bc2be67248774dca64
@@ -166,6 +167,7 @@ class Point {
 
 <<<<<<< HEAD
     WallPoint(int _x, int _y) {
+    public Point(int _x, int _y) {
 =======
     public Point(int _x, int _y) {
 >>>>>>> f54adf3cf29286b5b04677bc2be67248774dca64
