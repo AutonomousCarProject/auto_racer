@@ -92,6 +92,9 @@ public class CalibrationModule {
     //input x and y
     private static final FishData[][] DEFISHER = reedFishData();
 
+    //
+    private static final short[] ANGLES = {};
+
     public static final FishData getFishData(short x, short y){
         return DEFISHER[x][y];
     }
@@ -102,7 +105,9 @@ public class CalibrationModule {
     public static final byte getSpeedChangeDist(byte floor, byte initSpeed, byte finalSpeed){
         return SPEED_CHANGE_DISTS[floor][initSpeed][finalSpeed];
     }
-    //public statuic final byte getAngles
+    public static final byte getAngles (short rad){
+        return ANGLES[rad];
+    }
 /*
     static class pulseListener implements UpdateListener{ //adds listener for pulse
         int prior; //previous pulse read
