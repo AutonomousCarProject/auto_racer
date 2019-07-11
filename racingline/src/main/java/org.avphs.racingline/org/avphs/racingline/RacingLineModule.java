@@ -71,6 +71,8 @@ public class RacingLineModule implements CarModule {
         public RacingLine() {
 
         }
+
+
     }
 
     public class RacingLinePoint {
@@ -119,7 +121,7 @@ public class RacingLineModule implements CarModule {
         }
 
     }
-}
+
     //endregion
 
     //region Middle Line
@@ -177,7 +179,7 @@ public class RacingLineModule implements CarModule {
                     dist = testDist;
                 }
             }
-            center.addPoint(midPoint(longer.get(i), shorter.get(closePoint)));
+           // center.addPoint(midPoint(longer.get(i), shorter.get(closePoint)));
         }
     }
 
@@ -194,20 +196,21 @@ public class RacingLineModule implements CarModule {
         return new RacingLinePoint(aveX, aveY);
     }
     //endregion
-}
 
-//region Classes
-class WallPoint {
-    int x, y;
 
-    public WallPoint() {
-        x = 0;
-        y = 0;
+    //region Classes
+    class WallPoint {
+        int x, y;
+
+        public WallPoint() {
+            x = 0;
+            y = 0;
+        }
+
+        public WallPoint(int _x, int _y) {
+            x = _x;
+            y = _y;
+        }
     }
-
-    public WallPoint(int _x, int _y) {
-        x = _x;
-        y = _y;
-    }
-}
 //endregion
+}
