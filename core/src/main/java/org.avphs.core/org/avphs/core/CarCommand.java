@@ -1,34 +1,24 @@
 package org.avphs.core;
 
-public enum CarCommand {
-    ACCELERATE_COMMAND() {
-        @Override
-        public void execute() {
+import java.util.Collection;
 
-        }
-    },
-    STEER_COMMAND() {
-        @Override
-        public void execute() {
+public class CarCommand {
+    public CarCommandType command;
+    public Object[] parameters;
 
-        }
-    },
-    STOP_COMMAND() {
-        @Override
-        public void execute() {
-
-        }
-    },
-    GET_IMAGE_COMMAND() {
-        @Override
-        public void execute() {
-
-        }
-    };
-
-    public void execute() {
-
+    public CarCommand(CarCommandType command, Object[] parameters) {
+        this.command = command;
+        this.parameters = parameters;
     }
 
+    public static CarCommand accelerate(boolean absolute, int angle) {
+        return new CarCommand(CarCommandType.ACCELERATE_COMMAND, new Object[] { absolute, angle });
+    }
+    public static CarCommand steer(boolean absolute, int angle) {
+        return new CarCommand(CarCommandType.STEER_COMMAND, new Object[] { absolute, angle });
+    }
+    public static CarCommand stop() {
+        return new CarCommand(CarCommandType.STOP_COMMAND, new Object[] { });
+    }
 
 }
