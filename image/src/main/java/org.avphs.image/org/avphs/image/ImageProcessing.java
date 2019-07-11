@@ -1,5 +1,7 @@
 package org.avphs.image;
 
+import java.util.EnumMap;
+
 interface ImageProcessingInterface {
     int[] getWallHeights();
     int[] getWallTypes();
@@ -8,6 +10,27 @@ interface ImageProcessingInterface {
 }
 
 public class ImageProcessing implements ImageProcessingInterface {
+
+    enum PosterColor {
+        RED(0xFF0000, (short)0),
+        GREEN(0x00FF00, (short)1),
+        BLUE(0x0000FF, (short)2),
+        CYAN(0x00FFFF, (short)3),
+        MAGENTA(0xFF00FF, (short)4),
+        YELLOW(0xFFFF00, (short)5),
+        BLACK(0, (short)6),
+        GREY1(0x333333, (short)7),
+        GREY2(0x666666, (short)8),
+        GREY3(0x999999, (short)9),
+        GREY4(0xCCCCCC, (short)10),
+        WHITE(0xFFFFFF, (short)11);
+        final int rgb;
+        final short code;
+        private PosterColor(int rgb, short code) {
+            this.rgb = rgb;
+            this.code = code;
+        }
+    }
 
     @Override
     public int[] getWallHeights() {
@@ -26,7 +49,6 @@ public class ImageProcessing implements ImageProcessingInterface {
 
     @Override
     public void loadImage() {
-
     }
 
     static int getRed(int rgb) {
@@ -65,7 +87,7 @@ public class ImageProcessing implements ImageProcessingInterface {
         }
     }
 
-    static int posterizePixel(int rgb, int dt) {
+    static PosterColor posterizePixel(int rgb, int dt) {
         int red = (rgb >> 16) & 0xFF;
         int green = (rgb >> 8) & 0xFF;
         int blue = (rgb) & 0xFF;
@@ -73,51 +95,57 @@ public class ImageProcessing implements ImageProcessingInterface {
         int rb = red - blue;
         int bg = blue - green;
         if(rg > dt && rb > dt) {
-            return 0xFF0000;
+            return PosterColor.RED;
         }
         else if (rg < -dt && bg < -dt) {
-            return 0x00FF00;
+            return PosterColor.GREEN;
         }
         else if (rb < -dt && bg > dt) {
-            return 0x0000FF;
+            return PosterColor.BLUE;
         }
         else if (rg < dt && rg > -dt && rb > dt && bg < -dt) {
-            return 0xFFFF00;
+            return PosterColor.YELLOW;
         }
         else if (rb < dt && rb > -dt && rg > dt && bg > dt) {
-            return 0xFF00FF;
+            return PosterColor.MAGENTA;
         }
         else if (bg < dt && bg > -dt && rg < -dt && rb < -dt ) {
-            return 0x00FFFF;
+            return PosterColor.CYAN;
         }
         else {
             int avg = (red + green + blue + green) >> 2;
             if(avg < 25) {
-                return 0;
+                return PosterColor.BLACK;
             }
             else if(avg < 76) {
-                return 0x333333;
+                return PosterColor.GREY1;
             }
             else if(avg < 127) {
-                return 0x666666;
+                return PosterColor.GREY2;
             }
             else if(avg < 178) {
-                return 0x999999;
+                return PosterColor.GREY3;
             }
             else if(avg < 229) {
-                return 0xCCCCCC;
+                return PosterColor.GREY4;
             }
             else {
-                return 0xFFFFFF;
+                return PosterColor.WHITE;
             }
 
         }
     }
 
-    static void posterizeImage(int[] rgbArray, int[] outArray, int diffThreshold) {
+    static void posterizeImage(int[] rgbArray, PosterColor[] outArray, int diffThreshold) {
         for(int i = rgbArray.length - 1; i >= 0; i --) {
             outArray[i] = posterizePixel(rgbArray[i], diffThreshold);
         }
 
+    }
+
+    static void PosterToRGB(PosterColor[] inArray, int[] outArray) {
+        for(int i = inArray.length - 1; i >= 0; i --) {
+            outArray[i] = inArray[i].rgb;
+        }
     }
 }
