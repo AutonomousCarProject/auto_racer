@@ -18,7 +18,7 @@ public class Steering {
         if (currentSegment instanceof Straight){
 
         } else {
-            
+
         }
 
         return 180;
