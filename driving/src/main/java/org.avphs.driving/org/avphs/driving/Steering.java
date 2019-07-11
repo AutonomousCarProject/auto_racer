@@ -21,9 +21,9 @@ public class Steering {
 
     public int getAngle(){
         if (currentSegment instanceof Straight){
-            
+            return 90;
         } else {
-
+            
         }
 
         return 180;
