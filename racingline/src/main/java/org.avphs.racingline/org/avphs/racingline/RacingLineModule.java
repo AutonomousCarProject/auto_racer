@@ -58,7 +58,7 @@ public class RacingLineModule implements CarModule {
      * Returns a RacingLine object that represents the racing line. Returns null if the racing line has not yet been created through makeRacingLine.
      *
      * @return A RacingLine object that contains an array of RacingLinePoint objects that represent the racing line.
-     * @see //void makeRacingLine(boolean[][])
+     * //@see void makeRacingLine(boolean[][])
      * @see RacingLine
      */
     public RacingLine getRacingLine() {
