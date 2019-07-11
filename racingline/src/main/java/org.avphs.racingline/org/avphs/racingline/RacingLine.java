@@ -8,16 +8,35 @@ import java.util.HashSet;
  *
  * @see RacingLinePoint
  */
-public class RacingLine {
-    private ArrayList<RacingLinePoint> RacingLinePointsList = new ArrayList<RacingLinePoint>();
+class RacingLine {
+    public ArrayList<RacingLinePoint> RacingLinePointsList = new ArrayList<RacingLinePoint>();
     private RacingLinePoint[] RacingLinePoints;
 
     public RacingLine() {
 
     }
 
+    public RacingLine(ArrayList<RacingLinePoint> pointsList) {
+        RacingLinePointsList = pointsList;
+    }
+
     public RacingLinePoint[] getRacingLinePoints() {
+        if (RacingLinePoints == null) {
+            RacingLinePoints = new RacingLinePoint[RacingLinePointsList.size()];
+            for (int i = 0; i < RacingLinePointsList.size(); i++) {
+                RacingLinePoints[i] = RacingLinePointsList.get(i);
+            }
+        }
         return RacingLinePoints;
+    }
+
+    public ArrayList<RacingLinePoint> getRacingLinePointsList() {
+        return RacingLinePointsList;
+    }
+
+    public void setRacingLinePointsList(ArrayList<RacingLinePoint> newLine) {
+        RacingLinePointsList = newLine;
+        RacingLinePoints = null;
     }
 
     public void addPoint(RacingLinePoint newPoint) {
@@ -45,4 +64,5 @@ public class RacingLine {
         }
         RacingLinePointsList = orderedRacingLine;
     }
+
 }

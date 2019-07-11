@@ -6,14 +6,15 @@ import java.lang.Math;
 
 import org.avphs.core.CarCommand;
 import org.avphs.core.CarModule;
-import java.util.ArrayList;
-import java.util.List;
+
+import java.util.*;
 
 
 public class RacingLineModule implements CarModule {
     private ArrayList<Point> outerWall = new ArrayList<Point>();
     private ArrayList<Point> innerWall = new ArrayList<Point>();
     private RacingLine center = new RacingLine();
+    private RacingLine bezierCurveLine = new RacingLine();
     private boolean[][] map;
     private boolean[][] visited;
     private boolean[][] added;
@@ -45,6 +46,7 @@ public class RacingLineModule implements CarModule {
     //endregion
 
     //region RacingLine
+
     /**
      * This method creates the racing line. This should be run before getRacingLine is called.
      *
@@ -56,7 +58,8 @@ public class RacingLineModule implements CarModule {
         rows = map.length;
         columns = map[0].length;
         getMiddleLine();
-        getRacingLine();
+        WindowCurve bezierCurve = new WindowCurve(center);
+        bezierCurveLine = new RacingLine(bezierCurve.getPoints());
     }
 
     /**
@@ -67,18 +70,18 @@ public class RacingLineModule implements CarModule {
      * @see RacingLine
      */
     public RacingLine getRacingLine() {
-        if(center == null){
+        if (bezierCurveLine == null) {
             System.out.println("Warning: Racing line has not yet been created. To create a racing line, run getMiddleLine");
         }
-        return center;
+        return bezierCurveLine;
     }
-    //endregion
+
     //region Middle Line
-    private RacingLine getMiddleLine() {
+    private void getMiddleLine() {
         getWalls();
         calcMiddleLine();
         center.sortPoints();
-        return center;
+        //deletePoints();
     }
 
     private void getWalls() {
@@ -103,7 +106,6 @@ public class RacingLineModule implements CarModule {
             Point currentPoint = states.remove();
             int x = currentPoint.x;
             int y = currentPoint.y;
-            visited[x][y] = true;
             for (int i = 0; i < 4; i++) {
                 int tx = x + dx[i];
                 int ty = y + dy[i];
@@ -118,27 +120,117 @@ public class RacingLineModule implements CarModule {
                         }
                     }
                     if (map[tx][ty] == false && visited[tx][ty] == false) {
-                        states.add(new Point(tx,ty));
+                        states.add(new Point(tx, ty));
+                        visited[tx][ty] = true;
                     }
                 }
             }
         }
     }
 
+    public static int floor(int num, int den) {
+        return (int) -Math.ceil((double) -num / den);
+    }
+
+    public static int ceiling(int num, int den) {
+        return (int) Math.ceil((double) num / den);
+    }
+
+    public int intersect(Point p1, Point p2) {
+        int num = 0;
+        int x1 = p1.x;
+        int y1 = p1.y;
+        int x2 = p2.x;
+        int y2 = p2.y;
+        boolean horizontal;
+        horizontal = (Math.abs(y2 - y1) <= Math.abs(x2 - x1));
+        if ((horizontal && x1 > x2) || (!horizontal && y1 > y2)) {
+            int swap = x2;
+            x2 = x1;
+            x1 = swap;
+            swap = y2;
+            y2 = y1;
+            y1 = swap;
+        }
+        if (horizontal) {
+            for (int j = x1; j <= x2; j++) {
+                int xstep = j - x1;
+                int ystep = (y2 - y1) * xstep;
+                int ya = floor(ystep, x2 - x1) + y1;
+                int yb = ceiling(ystep, x2 - x1) + y1;
+                if (j >= 0 && ya >= 0 && j < rows && ya < columns) {
+                    if (!map[j][ya]) {
+                        num++;
+                    }
+                }
+                if (j >= 0 && yb >= 0 && j < rows && yb < columns) {
+                    if (!map[j][yb]) {
+                        num++;
+                    }
+                }
+                if (num > 5)
+                    return 6;
+            }
+        } else {
+            for (int j = y1; j <= y2; j++) {
+                int ystep = j - y1;
+                int xstep = (x2 - x1) * ystep;
+                int xa = floor(xstep, y2 - y1) + x1;
+                int xb = ceiling(xstep, y2 - y2) + x1;
+                if (j >= 0 && xa >= 0 && j < rows && xa < columns) {
+                    if (!map[xa][j])
+                        num++;
+                }
+                if (j >= 0 && xb >= 0 && j < rows && xb < columns) {
+                    if (!map[xa][j])
+                        num++;
+                }
+                if (num > 5)
+                    return 6;
+            }
+        }
+        return num;
+    }
+
+    private void deletePoints() {
+        RacingLinePoint[] RacingLinePoints = center.getRacingLinePoints();
+        RacingLinePoint p1 = RacingLinePoints[0];
+        ArrayList<RacingLinePoint> compressedLine = new ArrayList<RacingLinePoint>();
+        compressedLine.add(RacingLinePoints[0]);
+        int index = 0;
+        for (int i = 1; i < RacingLinePoints.length; i++) {
+            RacingLinePoint p2 = RacingLinePoints[i];
+            Point q1 = new Point(Math.round(p1.getX()), Math.round(p1.getY()));
+            Point q2 = new Point(Math.round(p2.getX()), Math.round(p2.getY()));
+            int result = intersect(q1, q2);
+            if (result > 0 || index >= 30) {
+                System.out.println("HOLA " + i + " " + result);
+                p1 = RacingLinePoints[i - 1];
+                compressedLine.add(RacingLinePoints[i - 1]);
+                i--;
+                index = 0;
+            }
+            index++;
+        }
+        center.setRacingLinePointsList(compressedLine);
+    }
+
     private void calcMiddleLine() {
         ArrayList<Point> longer = outerWall.size() > innerWall.size() ? outerWall : innerWall;
         ArrayList<Point> shorter = outerWall.size() <= innerWall.size() ? outerWall : innerWall;
         for (int i = 0; i < longer.size(); i++) {
-            int closePoint = 0;
+            int closePoint = -1;
             float dist = rows + columns;
             for (int j = 0; j < shorter.size(); j++) {
                 float testDist = distanceBetweenPoints(longer.get(i), shorter.get(j));
-                if (testDist < dist) {
+                if (testDist < dist && intersect(longer.get(i), shorter.get(j)) <= 5) {
                     closePoint = j;
                     dist = testDist;
                 }
             }
-            center.addPoint(midPoint(longer.get(i), shorter.get(closePoint)));
+            if (closePoint >= 0) {
+                center.addPoint(midPoint(longer.get(i), shorter.get(closePoint)));
+            }
         }
     }
 
@@ -154,8 +246,8 @@ public class RacingLineModule implements CarModule {
         float aveY = (float) ((float) (outer.y + inner.y) / 2.0);
         return new RacingLinePoint(aveX, aveY);
     }
-    //endregion
 }
+
 
 //region Classes
 class Point {
@@ -171,6 +263,7 @@ class Point {
         y = _y;
     }
 }
+
 //--------------------------------------------
 class WindowCurve {
 
@@ -231,7 +324,7 @@ class Curve {
     private RacingLinePoint p2;
     private RacingLinePoint p3;
     private RacingLinePoint p4;
-    private double[] H = { 2, 1, -2, 1, -3, -2, 3, -1, 0, 1, 0, 0, 1, 0, 0, 0 };
+    private double[] H = {2, 1, -2, 1, -3, -2, 3, -1, 0, 1, 0, 0, 1, 0, 0, 0};
     public ArrayList<RacingLinePoint> allPoints = new ArrayList<RacingLinePoint>();
 
     public Curve() {
