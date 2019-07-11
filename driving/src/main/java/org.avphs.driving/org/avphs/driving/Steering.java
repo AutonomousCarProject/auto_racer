@@ -4,7 +4,7 @@ public class Steering {
 
     private VectorPoint currentPos;
     private RoadData currentSegment;
-
+    private short radius;
 
     public Steering(VectorPoint currentPos, RoadData currentSegment) {
         this.currentSegment = currentSegment;
@@ -21,8 +21,9 @@ public class Steering {
 
     public int getAngle(){
         if (currentSegment instanceof Straight){
-            
+            return 90;
         } else {
+            //radius = currentSegment.getRadius();
 
         }
 
