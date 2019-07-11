@@ -1,7 +1,6 @@
 package org.avphs.driving;
 
 public abstract class RoadData {
-
     float startX = 0;
     float startY = 0;
     float endX = 0;
