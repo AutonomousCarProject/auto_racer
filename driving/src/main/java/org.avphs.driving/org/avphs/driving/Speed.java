@@ -12,8 +12,8 @@ public class Speed {
     //private boolean isStraight;
     private int speedChange;    //negative = slow down, positive = speed up
     private int brakeDist;
-    private int MAX_SPEED;
-    private int MAX_HARD_BRAKE; //max throttle for braking w/o skidding
+    private final int MAX_SPEED;
+    private final int MAX_HARD_BRAKE; //max throttle for braking w/o skidding
     private VectorPoint currentPos;
     private RoadData currentSegment;
     private RoadData nextSegment;
