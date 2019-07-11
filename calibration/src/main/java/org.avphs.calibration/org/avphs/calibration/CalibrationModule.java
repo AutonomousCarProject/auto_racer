@@ -7,15 +7,23 @@ import org.avphs.core.CarModule;
 public class CalibrationModule {
 
     //input current speed and desired speed. get distance
-    public static final byte[][] SPEED_CHANGE_DISTS = {};
+    private static final byte[][][] SPEED_CHANGE_DISTS = {};
 
     //input floor type, radius of turn, get max velocity
-    public static final byte[][] MAX_SPEEDS = {};
+    private static final byte[][] MAX_SPEEDS = {};
 
     //input x and y
-    public static final FishData[][] DEFISHER = {};
+    private static final FishData[][] DEFISHER = {};
 
-
+    public static final FishData getFishData(short x, short y){
+        return DEFISHER[x][y];
+    }
+    public static final byte getMaxSpeed(byte floor, byte rad){
+        return MAX_SPEEDS[floor][rad];
+    }
+    public static final byte getSpeedChangeDist(byte floor, byte initSpeed, byte finalSpeed){
+        return SPEED_CHANGE_DISTS[floor][initSpeed][finalSpeed];
+    }
 /*
     static class pulseListener implements UpdateListener{ //adds listener for pulse
         int prior; //previous pulse read
