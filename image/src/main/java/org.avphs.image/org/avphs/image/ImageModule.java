@@ -25,7 +25,7 @@ public class ImageModule implements CarModule {
 
     @Override
     public void run() {
-        System.out.println("Image");
+
     }
 }
 
