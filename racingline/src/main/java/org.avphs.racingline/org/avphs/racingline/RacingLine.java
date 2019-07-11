@@ -45,4 +45,24 @@ public class RacingLine {
         }
         RacingLinePointsList = orderedRacingLine;
     }
+//    cos = adj over hype
+//    Math.acos adj over hyp
+    public void threePointAngle( RacingLinePoint [] allpoint ) {
+        int totalsize =  allpoint.length;
+        for (int i = 0 ; i < totalsize ; i++) {
+         allpoint[i].setDegree ((float)(((Math.atan2(allpoint[i+2].getY() - allpoint[i].getY(), allpoint[i+2].getX() - allpoint[i].getX()) -
+                    Math.atan2(allpoint[i+1].getY() - allpoint[i].getY(), allpoint[i+1].getX() - allpoint[i].getX())))));
+        }
+    }
+    public float averageAngle(RacingLinePoint [] allPoint) {
+        int allPointLength = allPoint.length;
+        int i = 0;
+        float averageAngle = 0;
+
+        for(i = 0; i <= allPointLength; i++) {
+            averageAngle += allPoint[i].getDegree();
+        }
+
+        return averageAngle;
+    }
 }
