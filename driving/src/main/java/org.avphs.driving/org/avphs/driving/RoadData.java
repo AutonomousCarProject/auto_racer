@@ -1,11 +1,11 @@
 package org.avphs.driving;
 
 public abstract class RoadData {
-    private float startX = 0;
-    private float startY = 0;
-    private float endX = 0;
-    private float endY = 0;
-    private short radius = 0;
+    protected float startX;
+    protected float startY;
+    protected float endX;
+    protected float endY;
+    protected short radius;
 
     public short getRadius(){
         return radius;
