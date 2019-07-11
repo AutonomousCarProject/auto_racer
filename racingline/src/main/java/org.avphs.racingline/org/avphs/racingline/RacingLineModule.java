@@ -155,22 +155,12 @@ public class RacingLineModule implements CarModule {
 class Point {
     int x, y;
 
-<<<<<<< HEAD
-    WallPoint() {
     public Point() {
-=======
-    public Point() {
->>>>>>> f54adf3cf29286b5b04677bc2be67248774dca64
         x = 0;
         y = 0;
     }
 
-<<<<<<< HEAD
-    WallPoint(int _x, int _y) {
     public Point(int _x, int _y) {
-=======
-    public Point(int _x, int _y) {
->>>>>>> f54adf3cf29286b5b04677bc2be67248774dca64
         x = _x;
         y = _y;
     }
