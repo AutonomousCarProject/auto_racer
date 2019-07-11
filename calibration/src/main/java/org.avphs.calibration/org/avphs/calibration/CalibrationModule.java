@@ -4,15 +4,28 @@ import org.avphs.core.CarCommand;
 import org.avphs.core.CarModule;
 
 public class CalibrationModule {
+    private static byte[][][] reedSpeedChangeDistData (){
+        byte[][][] data = new byte[][][]{};
+        return data;
+    }
 
+    private static byte[][] reedMaxSpeedData (){
+        byte[][] data = new byte[][]{};
+        return data;
+    }
+
+    private static FishData[][] reedFishData (){
+        FishData[][] data = new FishData[][]{};
+        return data;
+    }
     //input current speed and desired speed. get distance
-    private static final byte[][][] SPEED_CHANGE_DISTS = {};
+    private static final byte[][][] SPEED_CHANGE_DISTS = reedSpeedChangeDistData();
 
     //input floor type, radius of turn, get max velocity
-    private static final byte[][] MAX_SPEEDS = {};
+    private static final byte[][] MAX_SPEEDS = reedMaxSpeedData();
 
     //input x and y
-    private static final FishData[][] DEFISHER = {};
+    private static final FishData[][] DEFISHER = reedFishData();
 
     public static final FishData getFishData(short x, short y){
         return DEFISHER[x][y];
