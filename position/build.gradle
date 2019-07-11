@@ -17,6 +17,10 @@ dependencies {
     //api project(':core')
 
     implementation project(':core')
+    implementation project(':map')
+    implementation project(':image')
+    
+    
 
 
     // Use TestNG framework, also requires calling test.useTestNG() below
