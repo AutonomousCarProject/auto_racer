@@ -45,7 +45,7 @@ public class ImageProcessing implements ImageProcessingInterface {
         return blue + (green << 8) + (red << 16);
     }
 
-    static int posterizePixel(int rgb) {
+    static int posterizePixel(int rgb, int dt) {
         int red = (rgb >> 16) & 0xFF;
         int green = (rgb >> 8) & 0xFF;
         int blue = (rgb) & 0xFF;
@@ -95,9 +95,8 @@ public class ImageProcessing implements ImageProcessingInterface {
     }
 
     static void posterizeImage(int[] rgbArray, int[] outArray, int diffThreshold) {
-        int dt = diffThreshold;
         for(int i = rgbArray.length - 1; i >= 0; i --) {
-            outArray[i] = posterizePixel(rgbArray[i]);
+            outArray[i] = posterizePixel(rgbArray[i], diffThreshold);
         }
 
     }
