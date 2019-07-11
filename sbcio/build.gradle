@@ -1,14 +1,9 @@
 plugins {
     // Apply the java-library plugin to add support for Java Library
-    id 'application'
+    id 'java-library'
 }
 
-ext.moduleName = 'org.avphs.carclient'
-
-application {
-    // Define the main class for the application
-    mainClassName = 'org.avphs.carclient.CarStart'
-}
+ext.moduleName = 'org.avphs.sbcio'
 
 repositories {
     // Use jcenter for resolving dependencies.
@@ -23,15 +18,24 @@ dependencies {
 
     implementation project(':core')
 
-
     // Use TestNG framework, also requires calling test.useTestNG() below
     testImplementation 'org.testng:testng:6.14.3'
+
+    // https://mvnrepository.com/artifact/org.scream3r/jssc
+    implementation group: 'org.scream3r', name: 'jssc', version: '2.8.0'
+}
+
+task copyToMods(type: Copy) {
+    into file("$rootDir/mods")
+    from configurations.default {
+        include 'jssc*'
+    }
 }
 
 sourceSets {
     main{
         java {
-            srcDir 'src/main/java/org.avphs.carclient'
+            srcDir 'src/main/java/org.avphs.sbcio'
         }
     }
     test {
@@ -45,3 +49,10 @@ test {
     // Use TestNG for unit tests
     useTestNG()
 }
+
+buildScan {
+    termsOfServiceUrl = 'https://gradle.com/terms-of-service'
+    termsOfServiceAgree = 'yes'
+}
+
+build.finalizedBy(copyToMods)

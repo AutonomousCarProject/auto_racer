@@ -1,9 +1,9 @@
-package org.avphs.image;
+package org.avphs.calibration;
 
 import org.avphs.core.CarCommand;
 import org.avphs.core.CarModule;
 
-public class ImageModule implements CarModule {
+public class CalibrationModule implements CarModule {
 
     @Override
     public Class[] getDependencies() {
@@ -11,7 +11,7 @@ public class ImageModule implements CarModule {
     }
 
     @Override
-    public void init(CarModule... dependencies) {
+    public void init(CarModule[] dependencies) {
 
     }
 
@@ -25,5 +25,3 @@ public class ImageModule implements CarModule {
 
     }
 }
-
-
