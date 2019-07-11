@@ -6,6 +6,4 @@ public interface ClientInterface {
     void steer(boolean absolute, int angle);
 
     void stop();
-
-    byte[] getBayerImage();
 }

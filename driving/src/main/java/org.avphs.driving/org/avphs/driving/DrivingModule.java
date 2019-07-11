@@ -1,11 +1,10 @@
 package org.avphs.driving;
 
 import org.avphs.core.CarCommand;
+import org.avphs.core.CarCommandType;
 import org.avphs.core.CarModule;
 import org.avphs.util.VectorPoint;
 
-
-import java.util.Collection;
 
 public class DrivingModule implements CarModule {
 
