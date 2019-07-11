@@ -4,7 +4,6 @@ import org.avphs.core.CarCommand;
 import org.avphs.core.CarModule;
 import org.avphs.image.ImageModule;
 import org.avphs.map.MapModule;
-import org.avphs.util.VectorPoint;
 
 public class PositionModule implements CarModule {
 
@@ -17,7 +16,7 @@ public class PositionModule implements CarModule {
     @Override
     public Class[] getDependencies() {
         return new Class[] {
-        	ImageModule.class, MapModule.class, VectorPoint.class
+        	ImageModule.class, MapModule.class
         };
     }
 
@@ -41,8 +40,8 @@ public class PositionModule implements CarModule {
     
     
     //THE CODE BELOW IS TEMPORARY AND SUBJECT TO CHANGE PROBABLY VERY SOON
-    public VectorPoint getPosition(){ //returns the VectorPoint(x,y) of the car (ideally synced with the map)
-        return new VectorPoint(position[0],position[1]);
+    public float[] getPosition(){ //returns the VectorPoint(x,y) of the car (ideally synced with the map)
+        return position;
     }
     
     public float getDirection(){ //returns the direction of the car in degrees, always 0<= x <360
