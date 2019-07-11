@@ -105,7 +105,7 @@ public class CalibrationModule {
     public static final byte getSpeedChangeDist(byte floor, byte initSpeed, byte finalSpeed){
         return SPEED_CHANGE_DISTS[floor][initSpeed][finalSpeed];
     }
-    public static final byte getAngles (short rad){
+    public static final short getAngles (short rad){
         return ANGLES[rad];
     }
 /*
