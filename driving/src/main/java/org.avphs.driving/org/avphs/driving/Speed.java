@@ -9,12 +9,8 @@ public class Speed {
     * Each time the car moves to a new segment, newSegment will run, setting the next segment up.
     */
 
-
-    //private int targetSpeed;
-    //private boolean isStraight;
-    //private int speedChange;    //negative = slow down, positive = speed up
     private int brakeDist;
-    private final byte MAX_SPEED;       //maximum attainable speed
+    //private final byte MAX_SPEED;       //maximum attainable speed
     private final byte MAX_HARD_BRAKE;  //max throttle for braking w/o skidding
     private final byte FLOOR;           //floor index
     private VectorPoint currentPos;
@@ -23,12 +19,14 @@ public class Speed {
 
     public Speed(VectorPoint currentPos, RoadData currentSegment, RoadData nextSegment){
         FLOOR = (byte)2;            //dummy value
-        MAX_SPEED = CalibrationModule.getMaxSpeed(FLOOR, (byte)2);    //dummy values
+        //MAX_SPEED = CalibrationModule.getMaxSpeed(FLOOR, (byte)2);    //dummy values
         MAX_HARD_BRAKE = (byte)80;  //dummy value
         this.currentPos = currentPos;
         this.currentSegment = currentSegment;
         this.nextSegment = nextSegment;
-        brakeDist = CalibrationModule.getSpeedChangeDist(FLOOR, getTargetSpeedSegment(currentSegment), getTargetSpeedSegment(nextSegment));
+
+        brakeDist = CalibrationModule.getSpeedChangeDist(FLOOR, CalibrationModule.getMaxSpeed(FLOOR,
+                currentSegment.getRadius()), CalibrationModule.getMaxSpeed(FLOOR, nextSegment.getRadius()));
     }
 
     public void setCurrentPos(VectorPoint newCurrentPos){
@@ -38,8 +36,8 @@ public class Speed {
     public void newSegment(RoadData newNextSeg){
         currentSegment = nextSegment;
         nextSegment = newNextSeg;
-        //speedChange = getTargetSpeedSegment(nextSegment) - getTargetSpeedSegment(currentSegment);
-        brakeDist = CalibrationModule.getSpeedChangeDist(FLOOR, getTargetSpeedSegment(currentSegment), getTargetSpeedSegment(nextSegment));
+        brakeDist = CalibrationModule.getSpeedChangeDist(FLOOR, CalibrationModule.getMaxSpeed(FLOOR,
+                currentSegment.getRadius()), CalibrationModule.getMaxSpeed(FLOOR, nextSegment.getRadius()));
     }
 
     public int getThrottle(){
@@ -54,13 +52,12 @@ public class Speed {
         }
     }
 
-
-    private byte getTargetSpeedSegment(RoadData input){
+    /*private byte getTargetSpeedSegment(RoadData input){
         if (input instanceof Straight){
             return MAX_SPEED;
         } else {
             return 4;   //dummy value for now
         }
-    }
+    }*/
 }
 
