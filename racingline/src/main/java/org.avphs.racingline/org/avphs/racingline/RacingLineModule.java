@@ -68,10 +68,11 @@ public class RacingLineModule implements CarModule {
     //endregion
 
     //region Middle Line
-    private void getMiddleLine() {
+    private RacingLine getMiddleLine() {
         getWalls();
         calcMiddleLine();
         center.sortPoints();
+        return center;
     }
 
     private void getWalls() {
