@@ -1,8 +1,6 @@
 package org.avphs.driving;
 
 
-import org.avphs.util.VectorPoint;
-
 public class Speed {
     /* Currently, Speed will work like this:
     * The constructor takes your current position, current segment, and next upcoming segment.

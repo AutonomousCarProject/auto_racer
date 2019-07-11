@@ -1,7 +1,5 @@
 package org.avphs.driving;
 
-import org.avphs.util.VectorPoint;
-
 public class Steering {
 
     private VectorPoint currentPos;
@@ -9,8 +7,8 @@ public class Steering {
 
 
     public Steering(VectorPoint currentPos, RoadData currentSegment){
-        this.currentPos = currentPos;
         this.currentSegment = currentSegment;
+        this.currentPos = currentPos;
     }
 
 

@@ -2,12 +2,8 @@ package org.avphs.driving;
 
 import org.avphs.core.CarCommand;
 import org.avphs.core.CarModule;
-import org.avphs.util.VectorPoint;
 import org.avphs.racingline.*;
 import java.util.ArrayList;
-
-
-import java.util.Collection;
 
 public class DrivingModule implements CarModule {
 
@@ -33,11 +29,11 @@ public class DrivingModule implements CarModule {
 
     private RacingLine racingline;
     private ArrayList<RoadData> roadData;
-    private VectorPoint currentPos;
     private RoadData currentSegment;
     private RoadData nextSegment;
     private int angle = 90;
     private int throttle = 90;
+    private VectorPoint currentPos;
 
     public DrivingModule(RacingLine racingLine){
         this.racingline = racingLine;
@@ -58,8 +54,10 @@ public class DrivingModule implements CarModule {
         currentPos = input;
     }
 
+
+
     public VectorPoint getPosition(){ //returns the (x,y) of the car in the map
-        return new VectorPoint(0.0,0.0);
+        return null;
     }
     
     public int getDirection(){ //returns the direction of the car from 0 to 180

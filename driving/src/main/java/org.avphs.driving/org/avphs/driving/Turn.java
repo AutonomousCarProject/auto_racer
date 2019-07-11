@@ -1,7 +1,5 @@
 package org.avphs.driving;
 
-import org.avphs.util.VectorPoint;
-
 public class Turn implements RoadData{
 	private float radius;
 	private float angle;
@@ -10,7 +8,7 @@ public class Turn implements RoadData{
 	private float endX;
 	private float endY;
 
-	public Turn(float startX, float startY, float endX, float endY, float radius, float angle, VectorPoint pos) {
+	public Turn(float startX, float startY, float endX, float endY, float radius, float angle) {
 		this.radius = radius;
 		this.angle = angle;
 		this.startX = startX;
