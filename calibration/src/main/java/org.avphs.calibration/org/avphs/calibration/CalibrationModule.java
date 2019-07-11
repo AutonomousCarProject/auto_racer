@@ -62,5 +62,5 @@ public class CalibrationModule {
         long beginning = System.nanoTime();
         long ping = System.nanoTime() - beginning;
         return ping;
-    }//~getNetwork_Latency
+    }//~getNetwork_Latency*/
 }
