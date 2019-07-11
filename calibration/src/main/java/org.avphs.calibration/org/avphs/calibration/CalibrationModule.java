@@ -1,9 +1,5 @@
 package org.avphs.calibration;
 
-import org.avphs.core.CarCommand;
-import org.avphs.core.CarCommandType;
-import org.avphs.core.CarModule;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 
@@ -99,13 +95,14 @@ public class CalibrationModule {
     public static final FishData getFishData(short x, short y){
         return DEFISHER[x][y];
     }
-    public static final byte getMaxSpeed(byte floor, byte rad){
+    public static final byte getMaxSpeed(byte floor, short rad){
         return MAX_SPEEDS[floor][rad];
 
     }
     public static final byte getSpeedChangeDist(byte floor, byte initSpeed, byte finalSpeed){
         return SPEED_CHANGE_DISTS[floor][initSpeed][finalSpeed];
     }
+    //public statuic final byte getAngles
 /*
     static class pulseListener implements UpdateListener{ //adds listener for pulse
         int prior; //previous pulse read
