@@ -67,21 +67,10 @@ public class RacingLineModule implements CarModule {
      * @see RacingLine
      */
     public RacingLine getRacingLine() {
-        System.out.println("RacingLine.getRacingLine not implemented");
-        //RacingLinePoint test = new  RacingLinePoint();
-        RacingLinePoint [] middleLine = center.getRacingLinePoints();
-        float [][] middleline = new float [center.toString().length()][2];
-        int moveCord = 0;
-        int moveY;
-        for (int x = 0 ; x < center.toString().length(); x++ ) {
-            moveY=0;
-            middleline [moveCord][moveY] = middleLine[moveCord].getX();
-            moveY++;
-            middleline [moveCord][moveY] = middleLine[moveCord].getY();
-            moveCord++;
+        if(center == null){
+            System.out.println("Warning: Racing line has not yet been created. To create a racing line, run getMiddleLine");
         }
-        new WindowCurve(middleline);
-            return null;
+        return center;
     }
     //endregion
     //region Middle Line
@@ -182,80 +171,85 @@ class Point {
         y = _y;
     }
 }
-//endregion --------------------------------------------
+//--------------------------------------------
 class WindowCurve {
 
-    private List list = new ArrayList();
+    private ArrayList<Curve> curves = new ArrayList<Curve>();
     private Curve curveCurrentObj;
+    private ArrayList<RacingLinePoint> allPoints = new ArrayList<RacingLinePoint>();
 
-    public WindowCurve(float [][] middlePoints) {
+    public ArrayList<RacingLinePoint> getPoints() {
+        return allPoints;
+    }
+
+    public WindowCurve(float[][] middlePoints) {
+        generateCurves(middlePoints);
+    }
+
+    public WindowCurve(RacingLine line) {
+        RacingLinePoint[] middleLine = line.getRacingLinePoints();
+        float[][] middlePoints = new float[middleLine.length][2];
+        for (int i = 0; i < middleLine.length; i++) {
+            RacingLinePoint currentPoint = middleLine[i];
+            middlePoints[i][0] = currentPoint.getX();
+            middlePoints[i][1] = currentPoint.getY();
+        }
+        generateCurves(middlePoints);
+    }
+
+    private void generateCurves(float[][] middlePoints) {
         startLine(middlePoints);
-        Curve curveObj;
-        for (Object o : list) {
-            curveObj = (Curve) o;
+        for (Curve curveObj : curves) {
             curveObj.StartBezierCurve();
         }
-    }
-
-
-    public void startLine(float [][] middlePoints) {
-        int tickA = 0; int tickB = 0;
-        while (tickA + 3 < middlePoints.length) {
-            curveCurrentObj = new Curve();
-            curveCurrentObj.setP1(new Points(middlePoints[tickA][tickB], middlePoints[tickA][tickB + 1]));
-            tickA++;
-            curveCurrentObj.setP2(new Points(middlePoints[tickA][tickB], middlePoints[tickA][tickB + 1]));
-            tickA++;
-            curveCurrentObj.setP3(new Points(middlePoints[tickA][tickB], middlePoints[tickA][tickB + 1]));
-            tickA++;
-            curveCurrentObj.setP4(new Points(middlePoints[tickA][tickB], middlePoints[tickA][tickB + 1]));
-            list.add(curveCurrentObj);
+        for (Curve c : curves) {
+            allPoints.addAll(c.allPoints);
         }
     }
+
+    private void startLine(float[][] middlePoints) {
+        int tickA = 0;
+        int tickB = 0;
+        while (tickA + 3 < middlePoints.length) {
+            curveCurrentObj = new Curve();
+            curveCurrentObj.setP1(new RacingLinePoint(middlePoints[tickA][tickB], middlePoints[tickA][tickB + 1]));
+            tickA++;
+            curveCurrentObj.setP2(new RacingLinePoint(middlePoints[tickA][tickB], middlePoints[tickA][tickB + 1]));
+            tickA++;
+            curveCurrentObj.setP3(new RacingLinePoint(middlePoints[tickA][tickB], middlePoints[tickA][tickB + 1]));
+            tickA++;
+            curveCurrentObj.setP4(new RacingLinePoint(middlePoints[tickA][tickB], middlePoints[tickA][tickB + 1]));
+            curves.add(curveCurrentObj);
+        }
+    }
+
 }
 
-class Points {
-
-    private float x;
-    private float y;
-
-    public Points(float x, float y) {
-        this.x = x;
-        this.y = y;
-    }
-
-    public float getX() {
-        return x;
-    }
-
-    public float getY() {
-        return y;
-    }
-}
 class Curve {
 
-    private Points p1;
-    private Points p2;
-    private Points p3;
-    private Points p4;
-    private double[] H = {2, 1, -2, 1, -3, -2, 3, -1, 0, 1, 0, 0, 1, 0, 0, 0};
+    private RacingLinePoint p1;
+    private RacingLinePoint p2;
+    private RacingLinePoint p3;
+    private RacingLinePoint p4;
+    private double[] H = { 2, 1, -2, 1, -3, -2, 3, -1, 0, 1, 0, 0, 1, 0, 0, 0 };
+    public ArrayList<RacingLinePoint> allPoints = new ArrayList<RacingLinePoint>();
 
     public Curve() {
     }
 
-    public void setP1(Points p1) {
+    public void setP1(RacingLinePoint p1) {
         this.p1 = p1;
     }
 
-    public void setP2(Points p2) {
+    public void setP2(RacingLinePoint p2) {
         this.p2 = p2;
     }
 
-    public void setP3(Points p3) {
+    public void setP3(RacingLinePoint p3) {
         this.p3 = p3;
     }
 
-    public void setP4(Points p4) {
+    public void setP4(RacingLinePoint p4) {
         this.p4 = p4;
     }
 
@@ -271,11 +265,11 @@ class Curve {
         return basis.multiply(v);
     }
 
-    void DrawHermiteCurve(Points P0, Points T0, Points P1, Points T1, int numpoints) {
+    void DrawHermiteCurve(RacingLinePoint P0, RacingLinePoint T0, RacingLinePoint P1, RacingLinePoint T1,
+                          int numpoints) {
 
         Vector4 xcoeff = GetHermiteCoeff(P0.getX(), T0.getX(), P1.getX(), T1.getX());
         Vector4 ycoeff = GetHermiteCoeff(P0.getY(), T0.getY(), P1.getY(), T1.getY());
-
 
         if (numpoints < 2) {
             return;
@@ -288,16 +282,17 @@ class Curve {
             for (int i = 2; i >= 0; i--) {
                 vt.setValue(i, vt.getValue(i + 1) * t);
             }
-            int x = (int) Math.round(xcoeff.DotProduct(vt));
-            int y = (int) Math.round(ycoeff.DotProduct(vt));
-            System.out.println((float) x + "," + (float) y);
+            float x = (float) xcoeff.DotProduct(vt);
+            float y = (float) ycoeff.DotProduct(vt);
+            allPoints.add(new RacingLinePoint(x, y));
         }
     }
 
-    void DrawBezierCurve(Points P0, Points P1, Points P2, Points P3, int numpoints) {
+    void DrawBezierCurve(RacingLinePoint P0, RacingLinePoint P1, RacingLinePoint P2, RacingLinePoint P3,
+                         int numpoints) {
 
-        Points T0 = new Points(3 * (P1.getX() - P0.getX()), 3 * (P1.getY() - P0.getY()));
-        Points T1 = new Points(3 * (P3.getX() - P2.getX()), 3 * (P3.getY() - P2.getY()));
+        RacingLinePoint T0 = new RacingLinePoint(3 * (P1.getX() - P0.getX()), 3 * (P1.getY() - P0.getY()));
+        RacingLinePoint T1 = new RacingLinePoint(3 * (P3.getX() - P2.getX()), 3 * (P3.getY() - P2.getY()));
         DrawHermiteCurve(P0, T0, P3, T1, numpoints);
     }
 }
