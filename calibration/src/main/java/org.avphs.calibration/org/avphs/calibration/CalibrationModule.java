@@ -5,16 +5,20 @@ import org.avphs.core.CarCommandType;
 import org.avphs.core.CarModule;
 
 public class CalibrationModule {
+
+    //Helper method to read speed change distance data
     private static byte[][][] reedSpeedChangeDistData (){
         byte[][][] data = new byte[][][]{};
         return data;
     }
 
+    //Helper method to read max speed data
     private static byte[][] reedMaxSpeedData (){
         byte[][] data = new byte[][]{};
         return data;
     }
 
+    //Helper method to read defishing data
     private static FishData[][] reedFishData (){
         FishData[][] data = new FishData[][]{};
         return data;
@@ -28,12 +32,18 @@ public class CalibrationModule {
     //input x and y
     private static final FishData[][] DEFISHER = reedFishData();
 
+    //input x and y of pixels and outputs defisher data
     public static final FishData getFishData(short x, short y){
         return DEFISHER[x][y];
     }
+
+    //input the type of floor and the radius of the turn (cm) an output the max speed
     public static final byte getMaxSpeed(byte floor, byte rad){
         return MAX_SPEEDS[floor][rad];
     }
+
+    //input the type of floor, initial speed (cm/s), and final speed (cm/s) wich is SMALLER than initial speed.
+    // Output the distance (cm) it will take to get there
     public static final byte getSpeedChangeDist(byte floor, byte initSpeed, byte finalSpeed){
         return SPEED_CHANGE_DISTS[floor][initSpeed][finalSpeed];
     }
