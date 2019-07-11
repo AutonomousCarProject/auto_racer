@@ -1,5 +1,6 @@
 package org.avphs.driving;
 
+import org.avphs.calibration.CalibrationModule;
 
 public class Speed {
     /* Currently, Speed will work like this:
@@ -10,22 +11,24 @@ public class Speed {
 
     //private int targetSpeed;
     //private boolean isStraight;
-    private int speedChange;    //negative = slow down, positive = speed up
+    //private int speedChange;    //negative = slow down, positive = speed up
     private int brakeDist;
-    private final int MAX_SPEED;
-    private final int MAX_HARD_BRAKE; //max throttle for braking w/o skidding
+    private final byte MAX_SPEED;       //maximum attainable speed
+    private final byte MAX_HARD_BRAKE;  //max throttle for braking w/o skidding
+    private final byte FLOOR;           //floor index
     private VectorPoint currentPos;
     private RoadData currentSegment;
     private RoadData nextSegment;
 
-    public Speed(int MAX_SPEEDin, int MAX_HARD_BRAKEin, VectorPoint currentPos, RoadData currentSegment, RoadData nextSegment){
-        this.MAX_SPEED = MAX_SPEEDin;
-        this.MAX_HARD_BRAKE = MAX_HARD_BRAKEin;
+    public Speed(VectorPoint currentPos, RoadData currentSegment, RoadData nextSegment){
+        FLOOR = (byte)2;            //dummy value
+        MAX_SPEED = CalibrationModule.getMaxSpeed(FLOOR, (byte)2);    //dummy values
+        MAX_HARD_BRAKE = (byte)80;  //dummy value
         this.currentPos = currentPos;
         this.currentSegment = currentSegment;
         this.nextSegment = nextSegment;
 
-        brakeDist = 2;
+        brakeDist = CalibrationModule.getSpeedChangeDist(FLOOR, getTargetSpeedSegment(currentSegment), getTargetSpeedSegment(nextSegment));
     }
 
     public void setCurrentPos(VectorPoint newCurrentPos){
@@ -35,8 +38,8 @@ public class Speed {
     public void newSegment(RoadData newNextSeg){
         currentSegment = nextSegment;
         nextSegment = newNextSeg;
-        speedChange = getTargetSpeedSegment(nextSegment) - getTargetSpeedSegment(currentSegment);
-        brakeDist = 2;
+        //speedChange = getTargetSpeedSegment(nextSegment) - getTargetSpeedSegment(currentSegment);
+        brakeDist = CalibrationModule.getSpeedChangeDist(FLOOR, getTargetSpeedSegment(currentSegment), getTargetSpeedSegment(nextSegment));
     }
 
     public int getThrottle(){
@@ -46,20 +49,17 @@ public class Speed {
             } else {
                 return MAX_HARD_BRAKE;
             }
-
-//            return 180;     //currently returning max throttle
         } else {
             return 90;
         }
     }
 
-    private int getTargetSpeedSegment(RoadData input){
+    private byte getTargetSpeedSegment(RoadData input){
         if (input instanceof Straight){
             return MAX_SPEED;
         } else {
             return 4;   //dummy value for now
         }
     }
-
 }
 

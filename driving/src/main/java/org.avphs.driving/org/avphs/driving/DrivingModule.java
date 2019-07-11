@@ -35,10 +35,8 @@ public class DrivingModule implements CarModule {
     private RoadData nextSegment;
     private int angle = 90;
     private int throttle = 90;
-    private int MAX_SPEED;
-    private int MAX_HARD_BRAKE;
     private VectorPoint currentPos;
-    Speed speed = new Speed(MAX_SPEED, MAX_HARD_BRAKE, currentPos, currentSegment, nextSegment);
+    Speed speed = new Speed(currentPos, currentSegment, nextSegment);
     Steering steer = new Steering(currentPos, currentSegment);
 
     public DrivingModule(RacingLine[] racingLine){

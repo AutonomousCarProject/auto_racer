@@ -2,6 +2,7 @@ module org.avphs.driving {
     requires org.avphs.core;
     requires org.avphs.util;
     requires org.avphs.racingline;
+    requires org.avphs.calibration;
 
     exports org.avphs.driving;
 
