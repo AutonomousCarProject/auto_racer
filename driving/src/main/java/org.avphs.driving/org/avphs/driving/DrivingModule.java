@@ -38,7 +38,7 @@ public class DrivingModule implements CarModule {
     private RoadData nextSegment;
     private int angle = 90;
     private int throttle = 90;
-
+ 
     public DrivingModule(RacingLine racingLine){
         this.racingline = racingLine;
         roadData = new ArrayList<RoadData>();
