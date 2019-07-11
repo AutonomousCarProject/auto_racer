@@ -96,40 +96,29 @@ public class ImageProcessing implements ImageProcessingInterface {
         int bg = blue - green;
         if(rg > dt && rb > dt) {
             return PosterColor.RED;
-        }
-        else if (rg < -dt && bg < -dt) {
+        } else if (rg < -dt && bg < -dt) {
             return PosterColor.GREEN;
-        }
-        else if (rb < -dt && bg > dt) {
+        } else if (rb < -dt && bg > dt) {
             return PosterColor.BLUE;
-        }
-        else if (rg < dt && rg > -dt && rb > dt && bg < -dt) {
+        } else if (rg < dt && rg > -dt && rb > dt && bg < -dt) {
             return PosterColor.YELLOW;
-        }
-        else if (rb < dt && rb > -dt && rg > dt && bg > dt) {
+        } else if (rb < dt && rb > -dt && rg > dt && bg > dt) {
             return PosterColor.MAGENTA;
-        }
-        else if (bg < dt && bg > -dt && rg < -dt && rb < -dt ) {
+        } else if (bg < dt && bg > -dt && rg < -dt && rb < -dt ) {
             return PosterColor.CYAN;
-        }
-        else {
+        } else {
             int avg = (red + green + blue + green) >> 2;
             if(avg < 25) {
                 return PosterColor.BLACK;
-            }
-            else if(avg < 76) {
+            } else if(avg < 76) {
                 return PosterColor.GREY1;
-            }
-            else if(avg < 127) {
+            } else if(avg < 127) {
                 return PosterColor.GREY2;
-            }
-            else if(avg < 178) {
+            } else if(avg < 178) {
                 return PosterColor.GREY3;
-            }
-            else if(avg < 229) {
+            } else if(avg < 229) {
                 return PosterColor.GREY4;
-            }
-            else {
+            } else {
                 return PosterColor.WHITE;
             }
 

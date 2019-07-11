@@ -1,7 +1,10 @@
 package org.avphs.racingline;
 
 import org.avphs.core.CarCommand;
+import org.avphs.core.CarCommandType;
 import org.avphs.core.CarModule;
+import java.util.ArrayList;
+
 
 import java.util.ArrayList;
 
@@ -53,54 +56,22 @@ public class RacingLineModule implements CarModule {
         public RacingLinePoint[] RacingLinePoints;
 
         public RacingLine() {
-
         }
     }
 
-    public class RacingLinePoint {
-        float x, y, degree;
+    //region Classes
+    class WallPoint {
+        int x, y;
 
-        RacingLinePoint() {
-            setX(0);
-            setY(0);
-            setDegree(0);
+        public WallPoint() {
+            x = 0;
+            y = 0;
         }
 
-        RacingLinePoint(float x, float y) {
-            setX(x);
-            setY(y);
-            setDegree(0);
+        public WallPoint(int _x, int _y) {
+            x = _x;
+            y = _y;
         }
-
-        RacingLinePoint(float x, float y, float degree) {
-            setX(x);
-            setY(y);
-            setDegree(degree);
-        }
-
-        float getX() {
-            return x;
-        }
-
-        float getY() {
-            return y;
-        }
-
-        float getDegree() {
-            return degree;
-        }
-
-        void setX(float x) {
-            this.x = x;
-        }
-
-        void setY(float y) {
-            this.y = y;
-        }
-
-        void setDegree(float degree) {
-            this.degree = degree;
-        }
-
     }
+//endregion
 }

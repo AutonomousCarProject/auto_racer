@@ -1,6 +1,7 @@
 package org.avphs.position;
 
 import org.avphs.core.CarCommand;
+import org.avphs.core.CarCommandType;
 import org.avphs.core.CarModule;
 
 public class PositionModule implements CarModule {

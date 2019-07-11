@@ -11,7 +11,7 @@ public class CarCore {
 
     public ClientInterface client;
 
-    private Queue<CarCommand> commandQueue = new PriorityQueue<>();
+    private Queue<CarCommandType> commandQueue = new PriorityQueue<>();
     public void init() {
         var modules = CarModule.getInstances();
 
@@ -31,11 +31,5 @@ public class CarCore {
         });
         modules.forEach(m -> executorService.scheduleAtFixedRate(m, 0, Math.round(1000 / FPS), TimeUnit.MILLISECONDS));
 
-        while (true) {
-            modules.forEach(m -> commandQueue.addAll(Arrays.asList(m.commands())));
-            if (commandQueue.peek() != null) {
-                commandQueue.poll().execute();
-            }
-        }
     }
 }
