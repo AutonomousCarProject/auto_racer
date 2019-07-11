@@ -12,16 +12,24 @@ public class Speed {
     //private boolean isStraight;
     private int speedChange;    //negative = slow down, positive = speed up
     private int brakeDist;
-    private int max_speed;
+    private int MAX_SPEED;
+    private int MAX_HARD_BRAKE; //max throttle for braking w/o skidding
     private VectorPoint currentPos;
     private RoadData currentSegment;
     private RoadData nextSegment;
 
-    public Speed(VectorPoint currentPos, RoadData currentSegment, RoadData nextSegment){
+    public Speed(int MAX_SPEEDin, int MAX_HARD_BRAKEin, VectorPoint currentPos, RoadData currentSegment, RoadData nextSegment){
+        this.MAX_SPEED = MAX_SPEEDin;
+        this.MAX_HARD_BRAKE = MAX_HARD_BRAKEin;
         this.currentPos = currentPos;
         this.currentSegment = currentSegment;
         this.nextSegment = nextSegment;
 
+        brakeDist = 2;
+    }
+
+    public void setCurrentPos(VectorPoint newCurrentPos){
+        currentPos = newCurrentPos;
     }
 
     public void newSegment(RoadData newNextSeg){
@@ -32,27 +40,25 @@ public class Speed {
     }
 
     public int getThrottle(){
-        /*if (isStraight){
-            //targetSpeed = getTargetSpeedForStraight((Straight)roadData);
-            targetSpeed = max_speed;
-            return 180;     //currently returning max throttle
+        if (currentSegment instanceof Straight){
+            if (true){
+                return 180;
+            } else {
+                return MAX_HARD_BRAKE;
+            }
+
+//            return 180;     //currently returning max throttle
         } else {
-            //targetSpeed = getTargetSpeedForTurn((Turn)roadData);
-            return 1;
-        }*/
-        return 180;     //returns max throttle for now
+            return 90;
+        }
     }
 
     private int getTargetSpeedSegment(RoadData input){
         if (input instanceof Straight){
-            return max_speed;
+            return MAX_SPEED;
         } else {
             return 4;   //dummy value for now
         }
-    }
-
-    private int getTargetSpeedNextSegment(RoadData input) {
-        return 1;
     }
 }
 
