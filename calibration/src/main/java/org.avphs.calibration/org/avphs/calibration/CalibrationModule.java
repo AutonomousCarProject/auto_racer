@@ -1,6 +1,7 @@
 package org.avphs.calibration;
 
 import org.avphs.core.CarCommand;
+import org.avphs.core.CarCommandType;
 import org.avphs.core.CarModule;
 
 public class CalibrationModule {

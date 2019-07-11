@@ -1,6 +1,7 @@
 package org.avphs.racingline;
 
 import org.avphs.core.CarCommand;
+import org.avphs.core.CarCommandType;
 import org.avphs.core.CarModule;
 
 import java.util.ArrayList;

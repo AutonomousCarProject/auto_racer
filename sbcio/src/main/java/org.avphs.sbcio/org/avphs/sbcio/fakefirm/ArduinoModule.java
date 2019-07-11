@@ -6,7 +6,7 @@
 
 package org.avphs.sbcio.fakefirm;
 
-import org.avphs.core.CarCommand;
+import org.avphs.core.CarCommandType;
 import org.avphs.core.CarModule;
 import org.avphs.sbcio.IOSettings;
 import org.avphs.sbcio.PWMController;
@@ -39,8 +39,8 @@ public class ArduinoModule implements CarModule {
 	}
 
 	@Override
-	public CarCommand[] commands() {
-		return new CarCommand[0];
+	public CarCommandType[] commands() {
+		return new CarCommandType[0];
 	}
 
 	@Override
