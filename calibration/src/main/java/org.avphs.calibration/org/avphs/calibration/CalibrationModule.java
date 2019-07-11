@@ -15,7 +15,7 @@ public class CalibrationModule {
     public static final FishData[][] DEFISHER = {};
 
 
-
+/*
     static class pulseListener implements UpdateListener{ //adds listener for pulse
         int prior; //previous pulse read
 
@@ -24,7 +24,7 @@ public class CalibrationModule {
          * @param pin chosen pin
          * @param value value to be entered
          */
-        void pinUpdated(int pin, int value){ //updates pin
+       /* void pinUpdated(int pin, int value){ //updates pin
             boolean doit;
             if(pin==8){ //if pulse is sent to pin 8
                 if(value+prior>0) {
@@ -44,7 +44,7 @@ public class CalibrationModule {
      *
      * @return int distance (meters)
      */
-    public float getDistance_Elapsed(pulseListener pulser){
+    /*public float getDistance_Elapsed(pulseListener pulser){
         float dist = 0;
         if(pulser.prior != 0){ //if nonzero
             dist = pulser.prior*MetersPerTerm;
@@ -57,7 +57,7 @@ public class CalibrationModule {
      *
      * @return ping ping(ns)
      */
-    public float getNetwork_Latency(){
+    /*public float getNetwork_Latency(){
         long beginning = System.nanoTime();
         long ping = System.nanoTime() - beginning;
         return ping;
