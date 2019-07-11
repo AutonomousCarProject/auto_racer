@@ -14,7 +14,7 @@ public class RacingLineModule implements CarModule {
     private boolean[][] visited;
     private boolean[][] added;
     private boolean addToOuter;
-    private int length, width;
+    private int rows, columns;
     private int[] dx = {-1, 0, 1, 0};
     private int[] dy = {0, 1, 0, -1};
 
@@ -49,8 +49,8 @@ public class RacingLineModule implements CarModule {
      */
     public void makeRacingLine(boolean[][] map) {
         this.map = map;
-        length = map.length;
-        width = map[0].length;
+        rows = map.length;
+        columns = map[0].length;
         getMiddleLine();
     }
 
@@ -75,11 +75,11 @@ public class RacingLineModule implements CarModule {
     }
 
     private void getWalls() {
-        visited = new boolean[length][width];
-        added = new boolean[length][width];
+        visited = new boolean[rows][columns];
+        added = new boolean[rows][columns];
         addToOuter = true;
-        for (int i = 0; i < length; i++) {
-            for (int j = 0; j < width; j++) {
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
                 if (map[i][j] == false && visited[i][j] == false) {
                     BFS(i, j);
                     addToOuter = false;
@@ -100,7 +100,7 @@ public class RacingLineModule implements CarModule {
             for (int i = 0; i < 4; i++) {
                 int tx = x + dx[i];
                 int ty = y + dy[i];
-                if (tx >= 0 && tx < length && ty >= 0 && ty < width) {
+                if (tx >= 0 && tx < rows && ty >= 0 && ty < columns) {
                     if (map[tx][ty] == true && added[x][y] == false) {
                         added[x][y] = true;
                         Point newPoint = new Point(x, y);
@@ -124,7 +124,7 @@ public class RacingLineModule implements CarModule {
         ArrayList<Point> shorter = outerWall.size() <= innerWall.size() ? outerWall : innerWall;
         for (int i = 0; i < longer.size(); i++) {
             int closePoint = 0;
-            float dist = length + width;
+            float dist = rows + columns;
             for (int j = 0; j < shorter.size(); j++) {
                 float testDist = distanceBetweenPoints(longer.get(i), shorter.get(j));
                 if (testDist < dist) {
