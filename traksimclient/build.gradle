@@ -19,6 +19,7 @@ dependencies {
     implementation project(':core')
     implementation project(':camera')
     implementation project(':traksim')
+    implementation project(':image')
     implementation project(':sbcio')
 
     // Use TestNG framework, also requires calling test.useTestNG() below

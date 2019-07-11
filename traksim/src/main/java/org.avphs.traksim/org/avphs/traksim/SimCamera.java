@@ -48,6 +48,7 @@ public class SimCamera extends FlyCamera {
      */
     public boolean nextFrame(byte[] pixels) { // fills pixels, false if can't (SimCam)
         if (theSim == null) return false;
+        theSim.SimStep(1);
         return theSim.GetSimFrame(rose,colz,pixels);
     } //~NextFrame // in apw3.SimCamera
 
