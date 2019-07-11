@@ -45,6 +45,26 @@ public class ImageProcessing implements ImageProcessingInterface {
         return blue + (green << 8) + (red << 16);
     }
 
+    static void greyscaleFromChannel(int[] rgbArray, int[] outArray, int channel) {
+        switch(channel) {
+            case 1:
+                for(int i = 0; i < rgbArray.length; i ++) {
+                    outArray[i] = combineRGB(getRed(rgbArray[i]), getRed(rgbArray[i]), getRed(rgbArray[i]));
+                }
+                break;
+            case 2:
+                for(int i = 0; i < rgbArray.length; i ++) {
+                    outArray[i] = combineRGB(getGreen(rgbArray[i]), getGreen(rgbArray[i]), getGreen(rgbArray[i]));
+                }
+                break;
+            case 3:
+                for(int i = 0; i < rgbArray.length; i ++) {
+                    outArray[i] = combineRGB(getBlue(rgbArray[i]), getBlue(rgbArray[i]), getBlue(rgbArray[i]));
+                }
+                break;
+        }
+    }
+
     static int posterizePixel(int rgb, int dt) {
         int red = (rgb >> 16) & 0xFF;
         int green = (rgb >> 8) & 0xFF;
@@ -85,7 +105,7 @@ public class ImageProcessing implements ImageProcessingInterface {
                 return 0x999999;
             }
             else if(avg < 229) {
-                return 0xBBBBBB;
+                return 0xCCCCCC;
             }
             else {
                 return 0xFFFFFF;
