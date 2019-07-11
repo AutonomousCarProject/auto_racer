@@ -234,6 +234,7 @@ public class RacingLineModule implements CarModule {
         }
     }
 
+
     private float distanceBetweenPoints(Point start, Point end) {
         int x = Math.abs(end.x - start.x);
         int y = Math.abs(end.y - start.y);
