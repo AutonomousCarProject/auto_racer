@@ -32,19 +32,6 @@ public class CalibrationModule {
     //input x and y
     private static final FishData[][] DEFISHER = reedFishData();
 
-    //input x and y of pixels and outputs defisher data
-    public static final FishData getFishData(short x, short y){
-        return DEFISHER[x][y];
-
-    //input current speed and desired speed. get distance
-    private static final byte[][][] SPEED_CHANGE_DISTS = {};
-
-    //input floor type, radius of turn, get max velocity
-    private static final byte[][] MAX_SPEEDS = {};
-
-    //input x and y
-    private static final FishData[][] DEFISHER = {};
-
     public static final FishData getFishData(short x, short y){
         return DEFISHER[x][y];
     }
