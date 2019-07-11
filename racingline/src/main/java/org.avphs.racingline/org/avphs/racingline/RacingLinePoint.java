@@ -2,6 +2,8 @@ package org.avphs.racingline;
 
 import java.util.Objects;
 
+
+
 public class RacingLinePoint {
     private float x, y, degree;
 
