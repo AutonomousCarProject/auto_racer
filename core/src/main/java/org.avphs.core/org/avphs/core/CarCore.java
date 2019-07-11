@@ -9,7 +9,9 @@ import java.util.concurrent.TimeUnit;
 public class CarCore {
     private final int FPS = 30;
 
-    private Queue<CarCommand> commandQueue = new PriorityQueue<>();
+    public ClientInterface client;
+
+    private Queue<CarCommandType> commandQueue = new PriorityQueue<>();
     public void init() {
         var modules = CarModule.getInstances();
 
@@ -29,12 +31,5 @@ public class CarCore {
         });
         modules.forEach(m -> executorService.scheduleAtFixedRate(m, 0, Math.round(1000 / FPS), TimeUnit.MILLISECONDS));
 
-        while (true) {
-            modules.forEach(m -> commandQueue.addAll(Arrays.asList(m.commands())));
-            if (commandQueue.peek() != null) {
-                commandQueue.poll().execute();
-            }
-        }
     }
-
 }
