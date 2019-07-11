@@ -9,6 +9,8 @@ import java.util.concurrent.TimeUnit;
 public class CarCore {
     private final int FPS = 30;
 
+    public ClientInterface client;
+
     private Queue<CarCommand> commandQueue = new PriorityQueue<>();
     public void init() {
         var modules = CarModule.getInstances();
@@ -36,5 +38,4 @@ public class CarCore {
             }
         }
     }
-
 }
