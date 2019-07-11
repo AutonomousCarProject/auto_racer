@@ -3,7 +3,7 @@ package org.avphs.position;
 public class NWAPWPlaceholder {
 
     private float[] position;
-    private float direction; //in degrees
+    private float direction; //in radians
     private float movement;
     private int prevSpins; //depricated
 
@@ -20,13 +20,13 @@ public class NWAPWPlaceholder {
 
     private void computeDirection() {
         //CALL THE FUNCTION TO GET SERVO ANGLE
-        //assuming straight wheels = 90 in servo angle return thing
-        //direction += WHEEL ANGLE - 90; //servo angle return value placeholder
+        //assuming straight wheels = Math.PI/2 in servo angle return thing
+        //direction += WHEEL ANGLE - Math.PI/2; //servo angle return value placeholder
         direction = 0; //temporary
-        if (direction >= 360) {
-            direction -= 360;
+        if (direction >= 2*Math.PI) {
+            direction -= Math.PIs;
         } else if (direction < 0) {
-            direction += 360;
+            direction += 2*Math,PI;
         }
     }
 
@@ -38,8 +38,8 @@ public class NWAPWPlaceholder {
     }
 
     private void computePosition() {
-        position[0] += Math.cos(Math.toRadians(direction)) * movement;
-        position[1] += Math.sin(Math.toRadians(direction)) * movement;
+        position[0] += Math.cos(direction) * movement;
+        position[1] += Math.sin(direction) * movement;
     }
 
     //DEPRECATED, TRACKSIM HAS THIS
@@ -52,7 +52,7 @@ public class NWAPWPlaceholder {
         return position;
     }
 
-    public float getDirection() { //returns in degrees, 0 <= x < 360 (corresponding to unit circle)
+    public float getDirection() { //returns in radians, 0 <= x < 2PI (corresponding to unit circle)
     //there might be a tracksim function for this it is unclear
         return direction;
     }
