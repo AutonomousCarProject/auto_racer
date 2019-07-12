@@ -11,6 +11,7 @@ interface ImageProcessingInterface {
 
 public class ImageProcessing implements ImageProcessingInterface {
 
+
     enum PosterColor {
         RED(0xFF0000, (short)0),
         GREEN(0x00FF00, (short)1),
@@ -85,6 +86,20 @@ public class ImageProcessing implements ImageProcessingInterface {
                 }
                 break;
         }
+    }
+
+    static int[] debayer(byte[] bayer, int width, int height) {
+        int[] rgb = new int[width * height ];
+        for(int i = 0; i < height; i++){
+            for(int j = 0; j < width; j++){
+                int r = (int)bayer[2*(2*i*width+j)] & 0xFF;
+                int g = (int)bayer[2*(2*i*width+j)+1] & 0xFF;
+                int b = (int)bayer[2*((2*i+1)*width+j)+1] & 0xFF;
+                int pix = (r << 16) + (g << 8) + b;
+                rgb[i*width+j] = pix;
+            }
+        }
+        return rgb;
     }
 
     static PosterColor posterizePixel(int rgb, int dt) {

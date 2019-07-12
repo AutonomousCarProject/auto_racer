@@ -6,6 +6,11 @@ import static org.avphs.coreinterface.CarCommand.*;
 
 public class ImageModule implements CarModule {
 
+    public final int WINDOW_WIDTH = 640, WINDOW_HEIGHT = 480;
+
+    byte[] bayerImage = new byte[4*WINDOW_HEIGHT*WINDOW_WIDTH];
+    int[] rgbImage = new int[WINDOW_HEIGHT*WINDOW_HEIGHT];
+
     @Override
     public Class[] getDependencies() {
         return new Class[] {
@@ -21,15 +26,15 @@ public class ImageModule implements CarModule {
     @Override
     public CarCommand[] commands() {
         return new CarCommand[] {
-            accelerate(true, 100),
-            steer(false, 10),
-            stop()
+
         };
     }
 
     @Override
     public void update(CarData carData) {
         System.out.println("Image");
+        bayerImage = (byte[]) carData.getModuleData("client");
+        rgbImage = ImageProcessing.debayer(bayerImage, WINDOW_WIDTH, WINDOW_HEIGHT);
     }
 }
 
