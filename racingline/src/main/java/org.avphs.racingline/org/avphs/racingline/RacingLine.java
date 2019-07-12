@@ -66,11 +66,16 @@ public class RacingLine {
     }
 //    cos = adj over hype
 //    Math.acos adj over hyp
-    public void threePointAngle( RacingLinePoint [] allpoint ) {
-        int totalsize =  allpoint.length;
-        for (int i = 0 ; i < totalsize ; i++) {
-         allpoint[i].setDegree ((float)(((Math.atan2(allpoint[i+2].getY() - allpoint[i].getY(), allpoint[i+2].getX() - allpoint[i].getX()) -
-                    Math.atan2(allpoint[i+1].getY() - allpoint[i].getY(), allpoint[i+1].getX() - allpoint[i].getX())))));
+//    @FIXME Make sure to execute at the right time, driving team NEEDS angles to operate. Possible issue exterior vs interior angle
+    public void threePointAngle( RacingLinePoint [] allPoint ) {
+        int totalsize =  allPoint.length;
+        float p1x; float p2x; float p3x; float p1y; float p2y; float p3y;  float p12; float p13; float p23;
+        for (int i = 1 ; i < totalsize ; i++) {
+            p1x = allPoint[i-1].getX(); p1y=allPoint[i-1].getY(); p2x = allPoint[i].getX(); p2y=allPoint[i].getY(); p3x = allPoint[i+1].getX(); p3y=allPoint[i+1].getY();
+            p12 = (float)Math.sqrt(Math.pow((p1x - p2x),2) + Math.pow((p1y - p2y),2));
+            p13 = (float) Math.sqrt(Math.pow((p1x - p3x),2) + Math.pow((p1y - p3y),2));
+            p23 = (float) Math.sqrt(Math.pow((p2x - p3x),2) + Math.pow((p2y - p3y),2));
+            allPoint[i].setDegree((float)(Math.acos(((Math.pow(p12, 2)) + (Math.pow(p13, 2)) - (Math.pow(p23, 2))) / (2 * p12 * p13)) * 180 / Math.PI));
         }
     }
     public float averageAngle(RacingLinePoint [] allPoint) {
