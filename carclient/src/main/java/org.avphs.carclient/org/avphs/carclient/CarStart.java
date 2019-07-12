@@ -1,3 +1,4 @@
+
 package org.avphs.carclient;
 
 import org.avphs.camera.FlyCamera;
@@ -42,6 +43,11 @@ public class CarStart implements ClientInterface, Runnable {
         steer(true, 0);
         servos.close();
         camera.Finish();
+    }
+
+    @Override
+    public byte[] getCameraImage() {
+        return new byte[0];
     }
 
     @Override
