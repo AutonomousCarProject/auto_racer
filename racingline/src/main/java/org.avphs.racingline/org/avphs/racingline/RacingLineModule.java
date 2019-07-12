@@ -19,28 +19,6 @@ public class RacingLineModule implements CarModule {
     private int[] dx = {-1, 0, 1, 0};
     private int[] dy = {0, 1, 0, -1};
 
-    //region Overrides
-    @Override
-    public Class[] getDependencies() {
-        return null;
-    }
-
-    @Override
-    public void init(CarModule... dependencies) {
-
-    }
-
-    @Override
-    public CarCommand[] commands() {
-        return null;
-    }
-
-    @Override
-    public void run() {
-        System.out.println("Racing Line");
-    }
-    //endregion
-
     //region RacingLine
     /**
      * This method creates the racing line. This should be run before getRacingLine is called.
@@ -67,6 +45,33 @@ public class RacingLineModule implements CarModule {
             System.out.println("Warning: No RacingLine has been created yet. Run makeRacingLine to create a RacingLine");
         }
         return center;
+    }
+
+    @Override
+    public Class[] getDependencies() {
+        return new Class[0];
+    }
+
+    @Override
+    public void init(CarModule[] dependencies) {
+
+    }
+
+    @Override
+    public CarCommand[] commands() {
+        return new CarCommand[0];
+    }
+
+    @Override
+    public void update(CarData carData) {
+
+    }
+
+    public class RacingLine {
+        public ArrayList<RacingLinePoint> RacingLinePointsList = new ArrayList<RacingLinePoint>();
+        public RacingLinePoint[] RacingLinePoints;
+
+        public RacingLine() {        
     }
     //endregion
 

@@ -1,10 +1,10 @@
-package org.avphs.core;
+package org.avphs.coreinterface;
 
 import java.util.List;
 import java.util.ServiceLoader;
 import java.util.stream.Collectors;
 
-public interface CarModule extends Runnable {
+public interface CarModule {
 
     /**
      * Gets all instances of all CarModules, should probably only be called once from the Core.
@@ -34,4 +34,6 @@ public interface CarModule extends Runnable {
      * @return The array of commands to execute.
      */
     CarCommand[] commands();
+
+    void update(CarData carData);
 }

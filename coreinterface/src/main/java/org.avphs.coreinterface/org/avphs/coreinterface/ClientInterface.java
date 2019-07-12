@@ -1,4 +1,4 @@
-package org.avphs.core;
+package org.avphs.coreinterface;
 
 public interface ClientInterface {
     void accelerate(boolean absolute, int angle);
@@ -6,4 +6,5 @@ public interface ClientInterface {
     void steer(boolean absolute, int angle);
 
     void stop();
+
 }

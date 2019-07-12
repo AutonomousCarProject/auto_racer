@@ -2,18 +2,21 @@ package org.avphs.calibration;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import org.avphs.coreinterface.CarCommand;
+import org.avphs.coreinterface.CarData;
+import org.avphs.coreinterface.CarModule;
 
-public class CalibrationModule {
+public class CalibrationModule implements CarModule {
 
     //Helper method to read speed change distance data
-    private static byte[][][] reedSpeedChangeDistData (){
+    private static byte[][][] reedSpeedChangeDistData() {
         byte[][][] rowList = new byte[][][]{};
         try (BufferedReader br = new BufferedReader(new FileReader("pathtocsvfile.csv"))) {
 
             short numFloors = Short.parseShort(br.readLine());
             short initSpeeds = Short.parseShort(br.readLine());
             short finalSpeeds = Short.parseShort(br.readLine());
-            for(short i = 0; i<numFloors; i++){
+            for (short i = 0; i < numFloors; i++) {
                 for (int j = 0; j < initSpeeds; j++) {
 
                     String line = br.readLine();
@@ -24,15 +27,14 @@ public class CalibrationModule {
                 }
             }
 
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             // Handle any I/O problems
         }
         return rowList;
     }
 
     //Helper method to read max speed data
-    private static byte[][] reedMaxSpeedData (){
+    private static byte[][] reedMaxSpeedData() {
         byte[][] rowList = new byte[][]{};
         try (BufferedReader br = new BufferedReader(new FileReader("pathtocsvfile.csv"))) {
 
@@ -50,15 +52,14 @@ public class CalibrationModule {
             }
 
 
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             // Handle any I/O problems
         }
         return rowList;
     }
 
     //Helper method to read defishing data
-    private static FishData[][] reedFishData (){
+    private static FishData[][] reedFishData() {
         FishData[][] rowList = new FishData[][]{};
         try (BufferedReader br = new BufferedReader(new FileReader("pathtocsvfile.csv"))) {
 
@@ -66,23 +67,23 @@ public class CalibrationModule {
             short initSpeeds = Short.parseShort(br.readLine());
             short finalSpeeds = Short.parseShort(br.readLine());
 
-                for (int i = 0; i < initSpeeds; i++) {
+            for (int i = 0; i < initSpeeds; i++) {
 
-                    String line = br.readLine();
-                    String[] lineItems = line.split(" ");
-                    for (int j = 0; j < finalSpeeds; j+=2) {
-                        float deg = Float.parseFloat(lineItems[j]);
-                        float error = Float.parseFloat(lineItems[j+1]);
-                        rowList[i][j] = new FishData(deg, error);
-                    }
+                String line = br.readLine();
+                String[] lineItems = line.split(" ");
+                for (int j = 0; j < finalSpeeds; j += 2) {
+                    float deg = Float.parseFloat(lineItems[j]);
+                    float error = Float.parseFloat(lineItems[j + 1]);
+                    rowList[i][j] = new FishData(deg, error);
                 }
+            }
 
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             // Handle any I/O problems
         }
         return rowList;
     }
+
     //input current speed and desired speed. get distance
     private static final byte[][][] SPEED_CHANGE_DISTS = reedSpeedChangeDistData();
 
@@ -95,18 +96,41 @@ public class CalibrationModule {
     //
     private static final short[] ANGLES = {};
 
-    public static final FishData getFishData(short x, short y){
+    public static final FishData getFishData(short x, short y) {
         return DEFISHER[x][y];
     }
-    public static final byte getMaxSpeed(byte floor, short rad){
+
+    public static final byte getMaxSpeed(byte floor, short rad) {
         return MAX_SPEEDS[floor][rad];
 
     }
-    public static final byte getSpeedChangeDist(byte floor, byte initSpeed, byte finalSpeed){
+
+    public static final byte getSpeedChangeDist(byte floor, byte initSpeed, byte finalSpeed) {
         return SPEED_CHANGE_DISTS[floor][initSpeed][finalSpeed];
     }
-    public static final short getAngles (short rad){
+
+    public static final short getAngles(short rad) {
         return ANGLES[rad];
+    }
+
+    @Override
+    public Class[] getDependencies() {
+        return new Class[0];
+    }
+
+    @Override
+    public void init(CarModule[] dependencies) {
+
+    }
+
+    @Override
+    public CarCommand[] commands() {
+        return new CarCommand[0];
+    }
+
+    @Override
+    public void update(CarData carData) {
+
     }
 /*
     static class pulseListener implements UpdateListener{ //adds listener for pulse
