@@ -26,7 +26,7 @@ public class Speed {
         this.nextSegment = nextSegment;
 
         brakeDist = CalibrationModule.getSpeedChangeDist(FLOOR, CalibrationModule.getMaxSpeed(FLOOR,
-                currentSegment.getRadius()), CalibrationModule.getMaxSpeed(FLOOR, nextSegment.getRadius()));
+                currentSegment.radius), CalibrationModule.getMaxSpeed(FLOOR, nextSegment.radius));
     }
 
     public void setCurrentPos(VectorPoint newCurrentPos){
@@ -37,7 +37,7 @@ public class Speed {
         currentSegment = nextSegment;
         nextSegment = newNextSeg;
         brakeDist = CalibrationModule.getSpeedChangeDist(FLOOR, CalibrationModule.getMaxSpeed(FLOOR,
-                currentSegment.getRadius()), CalibrationModule.getMaxSpeed(FLOOR, nextSegment.getRadius()));
+                currentSegment.radius), CalibrationModule.getMaxSpeed(FLOOR, nextSegment.radius));
     }
 
     public int getThrottle(){
@@ -60,4 +60,3 @@ public class Speed {
         }
     }*/
 }
-
