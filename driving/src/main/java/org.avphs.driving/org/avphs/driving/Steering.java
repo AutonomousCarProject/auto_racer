@@ -1,5 +1,7 @@
 package org.avphs.driving;
 
+import org.avphs.calibration.*;
+
 public class Steering {
 
     private VectorPoint currentPos;
@@ -20,13 +22,13 @@ public class Steering {
     }
 
     public int getAngle(){
+
         if (currentSegment instanceof Straight){
             return 90;
         } else {
-            //radius = currentSegment.getRadius();
+            radius = currentSegment.getRadius();
+            return CalibrationModule.getAngles(radius);
         }
-
-        return 180;
     }
 
 }

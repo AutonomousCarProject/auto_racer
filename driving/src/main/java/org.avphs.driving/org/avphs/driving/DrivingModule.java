@@ -63,7 +63,7 @@ public class DrivingModule implements CarModule {
     }
 
     public void analyzeRacingLine(RacingLine[] input){
-        ArrayList<RacingLinePoint> racingLinePoints = new ArrayList<RacingLinePoint>();
+        //ArrayList<RacingLinePoint> racingLinePoints = new ArrayList<RacingLinePoint>();
         //racingLine.getRacingLinePoints();
     }
 
@@ -76,7 +76,12 @@ public class DrivingModule implements CarModule {
     }
 
     public int getDirection(){ //returns the direction of the car from 0 to 180
-        return angle = steer.getAngle();
+        angle = steer.getAngle();
+        if (angle == (float)-1){
+            throttle = 90;
+            return 90;
+        }
+        return angle;
     }
 
     public int getThrottle() { //returns the throttle of the car from 0 to 180
