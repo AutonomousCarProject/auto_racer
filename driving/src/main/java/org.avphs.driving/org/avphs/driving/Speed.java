@@ -1,6 +1,6 @@
 package org.avphs.driving;
 
-import org.avphs.calibration.*;
+import org.avphs.calibration.CalibrationModule;
 
 public class Speed {
     /* Currently, Speed will work like this:
@@ -25,7 +25,8 @@ public class Speed {
         this.currentSegment = currentSegment;
         this.nextSegment = nextSegment;
 
-        brakeDist = CalibrationModule.getSpeedChangeDist(FLOOR, CalibrationModule.getMaxSpeed(FLOOR, currentSegment.getRadius()), CalibrationModule.getMaxSpeed(FLOOR, nextSegment.getRadius()));
+        brakeDist = CalibrationModule.getSpeedChangeDist(FLOOR, CalibrationModule.getMaxSpeed(FLOOR,
+                currentSegment.radius), CalibrationModule.getMaxSpeed(FLOOR, nextSegment.radius));
     }
 
     public void setCurrentPos(VectorPoint newCurrentPos){
@@ -35,7 +36,8 @@ public class Speed {
     public void newSegment(RoadData newNextSeg){
         currentSegment = nextSegment;
         nextSegment = newNextSeg;
-        brakeDist = CalibrationModule.getSpeedChangeDist(FLOOR, CalibrationModule.getMaxSpeed(FLOOR, currentSegment.getRadius()), CalibrationModule.getMaxSpeed(FLOOR, nextSegment.getRadius()));
+        brakeDist = CalibrationModule.getSpeedChangeDist(FLOOR, CalibrationModule.getMaxSpeed(FLOOR,
+                currentSegment.radius), CalibrationModule.getMaxSpeed(FLOOR, nextSegment.radius));
     }
 
     public int getThrottle(){
@@ -58,4 +60,3 @@ public class Speed {
         }
     }*/
 }
-
