@@ -125,6 +125,57 @@ public class ImageProcessing implements ImageProcessingInterface {
         }
     }
 
+    static PosterColor posterizePixelHSL(int rgb, int dt) {
+        int red = (rgb >> 16) & 0xFF;
+        int green = (rgb >> 8) & 0xFF;
+        int blue = (rgb) & 0xFF;
+        int max = red > blue ? red > green ? red : green : blue > green ? blue : green;
+        int min = red < blue ? red < green ? red : green : blue < green ? blue : green;
+        int delta = max - min;
+        int h = 0;
+        if(delta == 0){
+            h = 0;
+        }else if(max == red){
+            h = ((green-blue)/delta) % 6;
+        }else if(max == green){
+            h = (blue - red)/delta + 2;
+        }else{
+            h = (red - green)/delta + 4;
+        }
+        h *= 60;
+        int l = (max + min) >> 1;
+        if(delta > dt){
+            if(h > 330 || h < 30){
+                return PosterColor.RED;
+            }else if(h > 30 && h < 90){
+                return PosterColor.YELLOW;
+            }else if( h > 90 && h < 150){
+                return PosterColor.GREEN;
+            }else if(h > 150 && h < 210){
+                return PosterColor.CYAN;
+            }else if(h > 210 && h < 270){
+                return PosterColor.BLUE;
+            }else if(h > 270 && h < 330){
+                return PosterColor.MAGENTA;
+            }
+        }else{
+            if(l < 43){
+                return PosterColor.BLACK;
+            }else if(l > 43 && l < 86){
+                return  PosterColor.GREY1;
+            }else if(l > 86 && l < 129){
+                return PosterColor.GREY2;
+            }else if(l > 129 && l < 152){
+                return PosterColor.GREY3;
+            }else if(l > 152 && l < 195){
+                return PosterColor.GREY4;
+            }else{
+                return PosterColor.WHITE;
+            }
+        }
+        return PosterColor.BLACK;
+    }
+
     static void posterizeImage(int[] rgbArray, PosterColor[] outArray, int diffThreshold) {
         for(int i = rgbArray.length - 1; i >= 0; i --) {
             outArray[i] = posterizePixel(rgbArray[i], diffThreshold);
