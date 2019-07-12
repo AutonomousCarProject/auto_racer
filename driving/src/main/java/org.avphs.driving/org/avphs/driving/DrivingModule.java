@@ -36,7 +36,7 @@ public class DrivingModule implements CarModule {
     private int angle = 90;
     private int throttle = 90;
     private VectorPoint currentPos;
-    Speed speed = new Speed(currentPos, currentSegment, nextSegment);
+    //Speed speed = new Speed(currentPos, currentSegment, nextSegment);
     Steering steer = new Steering(currentPos, currentSegment);
 
     public DrivingModule(RacingLine[] racingLine){
@@ -62,10 +62,16 @@ public class DrivingModule implements CarModule {
     }
 
     public int getDirection(){ //returns the direction of the car from 0 to 180
-        return angle = steer.getAngle();
+        angle = steer.getAngle();
+        if (angle == (float)-1){
+            throttle = 90;
+            return 90;
+        }
+        return angle;
     }
 
     public int getThrottle() { //returns the throttle of the car from 0 to 180
-        return throttle = speed.getThrottle();
+        //return throttle = speed.getThrottle();
+        return 0;
     }
 }
