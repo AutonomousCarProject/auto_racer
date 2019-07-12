@@ -3,8 +3,9 @@ package org.avphs.racingline;
 import java.util.*;
 import java.lang.Math;
 
-import org.avphs.core.CarCommand;
-import org.avphs.core.CarModule;
+import org.avphs.coreinterface.CarCommand;
+import org.avphs.coreinterface.CarData;
+import org.avphs.coreinterface.CarModule;
 import java.util.ArrayList;
 
 public class RacingLineModule implements CarModule {
@@ -20,6 +21,7 @@ public class RacingLineModule implements CarModule {
     private int[] dy = {0, 1, 0, -1};
 
     //region RacingLine
+
     /**
      * This method creates the racing line. This should be run before getRacingLine is called.
      *
@@ -66,14 +68,6 @@ public class RacingLineModule implements CarModule {
     public void update(CarData carData) {
 
     }
-
-    public class RacingLine {
-        public ArrayList<RacingLinePoint> RacingLinePointsList = new ArrayList<RacingLinePoint>();
-        public RacingLinePoint[] RacingLinePoints;
-
-        public RacingLine() {        
-    }
-    //endregion
 
     //region Middle Line
     private RacingLine getMiddleLine() {
