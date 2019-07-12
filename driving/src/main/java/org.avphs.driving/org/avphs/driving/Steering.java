@@ -24,7 +24,6 @@ public class Steering {
             return 90;
         } else {
             //radius = currentSegment.getRadius();
-
         }
 
         return 180;
