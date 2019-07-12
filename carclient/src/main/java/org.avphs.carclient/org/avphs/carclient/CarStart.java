@@ -45,6 +45,11 @@ public class CarStart implements ClientInterface, Runnable {
     }
 
     @Override
+    public byte[] getCameraImage() {
+        return new byte[0];
+    }
+
+    @Override
     public void run() {
 
     }
