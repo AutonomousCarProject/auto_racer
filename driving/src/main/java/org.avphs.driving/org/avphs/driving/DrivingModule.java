@@ -98,7 +98,7 @@ public class DrivingModule implements CarModule {
         //Racingline should eventaully have points only on the maxima and minima
         // .getDegree calculates the degree from the current point as a center and a previous and future point, and thus needs to start at second index
         for (int i = 1; i <  racingLinePoints.length ; i++ ) {
-            if (racingLinePoints[i].getDegree() < 10) { // 10 is an arbitrary number that needs further numbers
+            if (racingLinePoints[i].getDegree() > 170 && racingLinePoints[i].getDegree() < 190) { // 10 is an arbitrary number that needs further numbers
                 new Straight(racingLinePoints[i-1].getX(),racingLinePoints[i-1].getY(),racingLinePoints[i+1].getX(),racingLinePoints[i+1].getY());
             }
             else  {

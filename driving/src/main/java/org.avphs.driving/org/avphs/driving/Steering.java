@@ -24,7 +24,7 @@ public class Steering {
 
     private boolean onRacingLine(){
         if (currentSegment instanceof Straight){
-            //
+            //Calculator.solveSystem();
         } else {
 
         }
