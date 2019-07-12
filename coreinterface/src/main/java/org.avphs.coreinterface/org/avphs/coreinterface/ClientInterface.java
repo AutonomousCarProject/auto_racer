@@ -7,4 +7,6 @@ public interface ClientInterface {
 
     void stop();
 
+    byte[] getCameraImage();
+
 }

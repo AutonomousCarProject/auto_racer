@@ -30,6 +30,12 @@ public class TrakSimClient extends JFrame implements ClientInterface, Runnable, 
 
     private int simMode = 1;
 
+    private byte[] cameraImage;
+
+    public byte[] getCameraImage() {
+        return cameraImage;
+    }
+
     public TrakSimClient() {
         displayImage = new BufferedImage(WINDOW_WIDTH, WINDOW_HEIGHT, BufferedImage.TYPE_INT_RGB);
 
@@ -45,7 +51,8 @@ public class TrakSimClient extends JFrame implements ClientInterface, Runnable, 
             public void paintComponent(Graphics g) {
                 super.paintComponent(g);
 
-                var img = debayer(readCameraImage());
+                cameraImage = readCameraImage();
+                var img = debayer(cameraImage);
 
                 displayImage.setData(Raster.createRaster(displayImage.getSampleModel(),
                         new DataBufferInt(img, img.length), new Point())

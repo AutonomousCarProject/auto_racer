@@ -13,4 +13,5 @@ public class CarData {
     public void initizlizeModule(String moduleName, Object moduleData) {
         moduleDataMap.put(moduleName, moduleData);
     }
+
 }

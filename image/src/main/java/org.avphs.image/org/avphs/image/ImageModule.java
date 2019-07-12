@@ -18,7 +18,7 @@ public class ImageModule implements CarModule {
     @Override
     public CarCommand[] commands() {
         return new CarCommand[] {
-            accelerate(true, 0),
+            accelerate(true, 100),
             steer(false, 10),
             stop()
         };

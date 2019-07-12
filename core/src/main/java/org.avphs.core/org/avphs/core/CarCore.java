@@ -53,6 +53,7 @@ public class CarCore {
     }
 
     public void init() {
+        carData.initizlizeModule("client", client.getCameraImage());
         // FIXME: Make this more dynamic
         // INIT Driving
         CarModule[] drivingInit = {calibrationModule, racingLineModule};
@@ -83,6 +84,8 @@ public class CarCore {
     }
 
     private void update() {
+
+
         for (CarModule module : updatingCarModules) {
             module.update(carData);
             for (var command : module.commands()) {
