@@ -52,7 +52,7 @@ public class DrivingModule implements CarModule {
     public void run() {
         System.out.println("Driving");
     }
-    
+
     public DrivingModule(RacingLine[] racingLine){
         this.racingline = racingLine;
         roadData = new ArrayList<RoadData>();
