@@ -48,7 +48,7 @@ public class DrivingModule implements CarModule {
     public void update(CarData carData) {
         System.out.println("Driving");
     }
-
+  
     public void run() {
         System.out.println("Driving");
     }
@@ -80,6 +80,7 @@ public class DrivingModule implements CarModule {
     }
 
     public int getThrottle() { //returns the throttle of the car from 0 to 180
-        return throttle = speed.getThrottle();
+        //return throttle = speed.getThrottle();
+        return 90;
     }
 }
