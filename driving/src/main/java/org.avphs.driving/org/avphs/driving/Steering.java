@@ -1,12 +1,14 @@
 package org.avphs.driving;
 
 import org.avphs.calibration.*;
+//
 
 public class Steering {
 
     private VectorPoint currentPos;
     private RoadData currentSegment;
     private short radius;
+    private float maxDistanceFromRacingLine;
 
     public Steering(VectorPoint currentPos, RoadData currentSegment) {
         this.currentSegment = currentSegment;
@@ -21,13 +23,25 @@ public class Steering {
         currentSegment = newCurrentSegment;
     }
 
-    public int getAngle(){
-
+    private boolean onRacingLine(){
         if (currentSegment instanceof Straight){
-            return 90;
+            float distance = Calculator.findDistance(currentPos.getX(), currentPos.getY(),((Straight) currentSegment).getSlope());
         } else {
-            radius = currentSegment.getRadius();
-            return CalibrationModule.getAngles(radius);
+
+        }
+        return false;
+    }
+
+    public int getAngle(){
+        if (onRacingLine()) {
+            if (currentSegment instanceof Straight) {
+                return 90;
+            } else {
+                radius = currentSegment.getRadius();
+                return CalibrationModule.getAngles(radius);
+            }
+        } else {
+            return -1;
         }
     }
 

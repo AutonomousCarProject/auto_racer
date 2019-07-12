@@ -23,7 +23,7 @@ public class Straight extends RoadData {
 		return straightLen;
 	}
 
-	public float getSlope() {
+	public float getSlope(){
 		return slope;
 	}
 
@@ -31,4 +31,3 @@ public class Straight extends RoadData {
 		return negRecip;
 	}
 }
-
