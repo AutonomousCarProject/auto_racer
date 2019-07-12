@@ -1,8 +1,8 @@
 package org.avphs.prerace;
 
-import org.avphs.core.CarCommand;
-import org.avphs.core.CarCommandType;
-import org.avphs.core.CarModule;
+import org.avphs.coreinterface.CarCommand;
+import org.avphs.coreinterface.CarData;
+import org.avphs.coreinterface.CarModule;
 
 public class PreRaceModule implements CarModule {
 
@@ -22,7 +22,7 @@ public class PreRaceModule implements CarModule {
     }
 
     @Override
-    public void run() {
-        System.out.println("Pre Race");
+    public void update(CarData carData) {
+
     }
 }

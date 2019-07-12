@@ -1,6 +1,4 @@
-package org.avphs.core;
-
-import java.util.Collection;
+package org.avphs.coreinterface;
 
 public class CarCommand {
     public CarCommandType command;

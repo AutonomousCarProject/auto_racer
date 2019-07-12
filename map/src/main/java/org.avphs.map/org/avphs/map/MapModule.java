@@ -1,7 +1,8 @@
 package org.avphs.map;
 
-import org.avphs.core.CarCommand;
-import org.avphs.core.CarModule;
+import org.avphs.coreinterface.CarCommand;
+import org.avphs.coreinterface.CarData;
+import org.avphs.coreinterface.CarModule;
 import org.avphs.image.ImageModule;
 import org.avphs.position.PositionModule;
 
@@ -33,8 +34,8 @@ public class MapModule implements CarModule {
     }
 
     @Override
-    public void run() {
-        System.out.println("Map");
+    public void update(CarData carData) {
+
     }
 
     public Map getMap(){return map;}

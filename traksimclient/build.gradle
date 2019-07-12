@@ -21,6 +21,7 @@ dependencies {
     implementation project(':traksim')
     implementation project(':image')
     implementation project(':sbcio')
+    implementation project(':coreinterface')
 
     // Use TestNG framework, also requires calling test.useTestNG() below
     testImplementation 'org.testng:testng:6.14.3'

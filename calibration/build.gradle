@@ -13,8 +13,9 @@ repositories {
 
 dependencies {
     // Use TestNG framework, also requires calling test.useTestNG() below
-    implementation project(':core')
-    
+
+    implementation project(':coreinterface')
+
     testImplementation 'org.testng:testng:6.14.3'
 }
 

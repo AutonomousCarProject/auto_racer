@@ -1,4 +1,4 @@
-package org.avphs.core;
+package org.avphs.coreinterface;
 
 public enum CarCommandType {
     ACCELERATE_COMMAND,
