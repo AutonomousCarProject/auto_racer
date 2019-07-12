@@ -1,14 +1,15 @@
 package org.avphs.racingline;
 
-import org.avphs.coreinterface.CarCommand;
-import org.avphs.coreinterface.CarData;
-import org.avphs.coreinterface.CarModule;
+import java.util.*;
+import java.lang.Math;
 
+import org.avphs.core.CarCommand;
+import org.avphs.core.CarModule;
 import java.util.ArrayList;
 
 public class RacingLineModule implements CarModule {
-    private ArrayList<WallPoint> outerWall = new ArrayList<WallPoint>();
-    private ArrayList<WallPoint> innerWall = new ArrayList<WallPoint>();
+    private ArrayList<Point> outerWall = new ArrayList<Point>();
+    private ArrayList<Point> innerWall = new ArrayList<Point>();
     private RacingLine center = new RacingLine();
     private boolean[][] map;
     private boolean[][] visited;
@@ -23,6 +24,7 @@ public class RacingLineModule implements CarModule {
      * This method creates the racing line. This should be run before getRacingLine is called.
      *
      * @param map The map of the track represented by a 2d boolean array.
+     * @see RacingLine getRacingLine()
      */
     public void makeRacingLine(boolean[][] map) {
         this.map = map;
@@ -35,10 +37,14 @@ public class RacingLineModule implements CarModule {
      * Returns a RacingLine object that represents the racing line. Returns null if the racing line has not yet been created through makeRacingLine.
      *
      * @return A RacingLine object that contains an array of RacingLinePoint objects that represent the racing line.
+     * //@see void makeRacingLine(boolean[][])
+     * @see RacingLine
      */
     public RacingLine getRacingLine() {
-        System.out.println("RacingLine.getRacingLine not implemented");
-        return null;
+        if (center == null) {
+            System.out.println("Warning: No RacingLine has been created yet. Run makeRacingLine to create a RacingLine");
+        }
+        return center;
     }
 
     @Override
@@ -65,66 +71,17 @@ public class RacingLineModule implements CarModule {
         public ArrayList<RacingLinePoint> RacingLinePointsList = new ArrayList<RacingLinePoint>();
         public RacingLinePoint[] RacingLinePoints;
 
-        public RacingLine() {
-
-        }
-
-
+        public RacingLine() {        
     }
-
-    public class RacingLinePoint {
-        float x, y, degree;
-
-        RacingLinePoint() {
-            setX(0);
-            setY(0);
-            setDegree(0);
-        }
-
-        RacingLinePoint(float x, float y) {
-            setX(x);
-            setY(y);
-            setDegree(0);
-        }
-
-        RacingLinePoint(float x, float y, float degree) {
-            setX(x);
-            setY(y);
-            setDegree(degree);
-        }
-
-        float getX() {
-            return x;
-        }
-
-        float getY() {
-            return y;
-        }
-
-        float getDegree() {
-            return degree;
-        }
-
-        void setX(float x) {
-            this.x = x;
-        }
-
-        void setY(float y) {
-            this.y = y;
-        }
-
-        void setDegree(float degree) {
-            this.degree = degree;
-        }
-
-    }
-
     //endregion
 
     //region Middle Line
-    private void getMiddleLine() {
+    private RacingLine getMiddleLine() {
+        center = new RacingLine();
         getWalls();
         calcMiddleLine();
+        center.sortPoints();
+        return center;
     }
 
     private void getWalls() {
@@ -134,38 +91,46 @@ public class RacingLineModule implements CarModule {
         for (int i = 0; i < length; i++) {
             for (int j = 0; j < width; j++) {
                 if (map[i][j] == false && visited[i][j] == false) {
-                    DFS(i, j);
+                    BFS(i, j);
                     addToOuter = false;
                 }
             }
         }
     }
 
-    private void DFS(int x, int y) {
-        visited[x][y] = true;
-        for (int i = 0; i < 4; i++) {
-            int tx = x + dx[i];
-            int ty = y + dy[i];
-            if (tx >= 0 && tx < length && ty >= 0 && ty < width) {
-                if (map[tx][ty] == true && added[x][y] == false) {
-                    added[x][y] = true;
-                    WallPoint newPoint = new WallPoint(x, y);
-                    if (addToOuter == true) {
-                        outerWall.add(newPoint);
-                    } else {
-                        innerWall.add(newPoint);
+    private void BFS(int startx, int starty) {
+        Queue<Point> states = new LinkedList<Point>();
+        states.add(new Point(startx, starty));
+        visited[startx][starty] = true;
+        while (states.isEmpty() == false) {
+            Point currentPoint = states.remove();
+            int x = currentPoint.x;
+            int y = currentPoint.y;
+            for (int i = 0; i < 4; i++) {
+                int tx = x + dx[i];
+                int ty = y + dy[i];
+                if (tx >= 0 && tx < length && ty >= 0 && ty < width) {
+                    if (map[tx][ty] == true && added[x][y] == false) {
+                        added[x][y] = true;
+                        Point newPoint = new Point(x, y);
+                        if (addToOuter == true) {
+                            outerWall.add(newPoint);
+                        } else {
+                            innerWall.add(newPoint);
+                        }
                     }
-                }
-                if (map[tx][ty] == false && visited[tx][ty] == false) {
-                    DFS(tx, ty);
+                    if (map[tx][ty] == false && visited[tx][ty] == false) {
+                        states.add(new Point(tx, ty));
+                        visited[tx][ty] = true;
+                    }
                 }
             }
         }
     }
 
     private void calcMiddleLine() {
-        ArrayList<WallPoint> longer = outerWall.size() > innerWall.size() ? outerWall : innerWall;
-        ArrayList<WallPoint> shorter = outerWall.size() <= innerWall.size() ? outerWall : innerWall;
+        ArrayList<Point> longer = outerWall.size() > innerWall.size() ? outerWall : innerWall;
+        ArrayList<Point> shorter = outerWall.size() <= innerWall.size() ? outerWall : innerWall;
         for (int i = 0; i < longer.size(); i++) {
             int closePoint = 0;
             float dist = length + width;
@@ -176,38 +141,37 @@ public class RacingLineModule implements CarModule {
                     dist = testDist;
                 }
             }
-           // center.addPoint(midPoint(longer.get(i), shorter.get(closePoint)));
+            center.addPoint(midPoint(longer.get(i), shorter.get(closePoint)));
         }
     }
 
-    private float distanceBetweenPoints(WallPoint start, WallPoint end) {
+    private float distanceBetweenPoints(Point start, Point end) {
         int x = Math.abs(end.x - start.x);
         int y = Math.abs(end.y - start.y);
         float h = (float) Math.sqrt(x * x + y * y);
         return h;
     }
 
-    private RacingLinePoint midPoint(WallPoint outer, WallPoint inner) {
+    private RacingLinePoint midPoint(Point outer, Point inner) {
         float aveX = (float) ((float) (outer.x + inner.x) / 2.0);
         float aveY = (float) ((float) (outer.y + inner.y) / 2.0);
         return new RacingLinePoint(aveX, aveY);
     }
     //endregion
-
-
-    //region Classes
-    class WallPoint {
-        int x, y;
-
-        public WallPoint() {
-            x = 0;
-            y = 0;
-        }
-
-        public WallPoint(int _x, int _y) {
-            x = _x;
-            y = _y;
-        }
-    }
-//endregion
 }
+
+//region Classes
+class Point {
+    int x, y;
+
+    public Point() {
+        x = 0;
+        y = 0;
+    }
+
+    public Point(int _x, int _y) {
+        x = _x;
+        y = _y;
+    }
+}
+//endregion
