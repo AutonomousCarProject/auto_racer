@@ -15,6 +15,7 @@ public class Speed {
     private final byte MAX_HARD_BRAKE;  //max throttle for braking w/o skidding
     private final byte FLOOR;           //floor index
     private VectorPoint currentPos;
+    private RacingLinePoint brakePoint;
     private RoadData currentSegment;
     private RoadData nextSegment;
 
@@ -28,6 +29,7 @@ public class Speed {
 
         brakeDist = CalibrationModule.getSpeedChangeDist(FLOOR, CalibrationModule.getMaxSpeed(FLOOR,
                 currentSegment.radius), CalibrationModule.getMaxSpeed(FLOOR, nextSegment.radius));
+
     }
 
     public void setCurrentPos(VectorPoint newCurrentPos){
