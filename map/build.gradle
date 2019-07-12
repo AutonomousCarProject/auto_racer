@@ -18,6 +18,7 @@ dependencies {
 
     implementation project(':core')
     implementation project(':image')
+    implementation project(':position')
 
 
     // Use TestNG framework, also requires calling test.useTestNG() below
