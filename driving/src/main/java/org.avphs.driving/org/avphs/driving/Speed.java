@@ -1,6 +1,7 @@
 package org.avphs.driving;
 
 import org.avphs.calibration.CalibrationModule;
+import org.avphs.racingline.RacingLinePoint;
 
 public class Speed {
     /* Currently, Speed will work like this:
