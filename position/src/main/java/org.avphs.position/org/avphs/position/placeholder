@@ -1,0 +1,67 @@
+package org.avphs.position;
+
+public class NWAPWPlaceholder {
+
+    private float[] position;
+    private float direction; //in degrees
+    private float movement;
+    private int prevSpins; //depricated
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        //ORDER OF FUNCTION CALLING THAT HAPPENS EVERY TIME
+        //computeMovement
+        //computeDirection
+        //computePosition
+
+    }
+
+    private void computeDirection() {
+        //CALL THE FUNCTION TO GET SERVO ANGLE
+        //assuming straight wheels = 90 in servo angle return thing
+        //direction += WHEEL ANGLE - 90; //servo angle return value placeholder
+        direction = 0; //temporary
+        if (direction >= 360) {
+            direction -= 360;
+        } else if (direction < 0) {
+            direction += 360;
+        }
+    }
+
+    private void computeMovement() {
+        //GET SPIN COUNT - prevSpins;
+        //INSERT calibrationn function to convert shaft spin to distance
+        float distance = 0; //temporary
+        movement = distance;
+    }
+
+    private void computePosition() {
+        position[0] += Math.cos(Math.toRadians(direction)) * movement;
+        position[1] += Math.sin(Math.toRadians(direction)) * movement;
+    }
+
+
+    //DEPRICATED, TRACKSIM HAS THIS
+    private void updateSpinCount() {
+        //prevSpins = GET SPIN COUNT
+        prevSpins = 0; //temporary
+    }
+
+    public float[] getPosition() {
+        return position;
+    }
+
+    public float getDirection() { //returns in degrees, 0 <= x < 360 (corresponding to unit circle)
+    //there might be a tracksim function for this it is unclear
+        return direction;
+    }
+
+    public float getSpeed() { //DEPRECATED, TRACKSIM HAS THIS (as GetSpeed in DrDemo)
+        //return CalibrationConversion(GET SPIN COUNT - prevSpins)*(1/time elapsed in seconds)
+        //this will return the speed in meters per second
+        return 0;
+    }
+
+}

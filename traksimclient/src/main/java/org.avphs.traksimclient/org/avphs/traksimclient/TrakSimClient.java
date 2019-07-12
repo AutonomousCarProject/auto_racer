@@ -6,13 +6,15 @@ import org.avphs.traksim.SimCamera;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.awt.image.Raster;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-public class TrakSimClient extends JFrame implements Runnable{
+public class TrakSimClient extends JFrame implements Runnable, MouseListener {
 
     private SimCamera traksim;
 
@@ -23,6 +25,8 @@ public class TrakSimClient extends JFrame implements Runnable{
     private final int WINDOW_WIDTH = 912, WINDOW_HEIGHT = 480;
 
     private ArduinoIO servos;
+
+    private int simMode = 1;
 
     public TrakSimClient() {
         displayImage = new BufferedImage(WINDOW_WIDTH, WINDOW_HEIGHT, BufferedImage.TYPE_INT_RGB);
@@ -51,7 +55,10 @@ public class TrakSimClient extends JFrame implements Runnable{
             public Dimension getPreferredSize() {
                 return new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT);
             }
+
         };
+
+        panel.addMouseListener(this);
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -86,7 +93,7 @@ public class TrakSimClient extends JFrame implements Runnable{
 
     public byte[] readCameraImage() {
         byte[] temp = new byte[WINDOW_WIDTH * WINDOW_HEIGHT * 4];
-        if (traksim.nextFrame(temp))
+        if (traksim.nextFrame(temp, simMode))
         {
             return temp;
         }
@@ -97,5 +104,33 @@ public class TrakSimClient extends JFrame implements Runnable{
     @Override
     public void run() {
         repaint();
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        simMode++;
+        if (simMode > 3)
+            simMode = 0;
+        System.out.println(simMode);
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
     }
 }

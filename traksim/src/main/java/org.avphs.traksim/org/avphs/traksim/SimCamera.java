@@ -46,12 +46,17 @@ public class SimCamera extends FlyCamera {
      *
      * @return         True if success, false otherwise
      */
-    public boolean nextFrame(byte[] pixels) { // fills pixels, false if can't (SimCam)
+    public boolean nextFrame(byte[] pixels, int simMode) { // fills pixels, false if can't (SimCam)
         if (theSim == null) return false;
-        theSim.SimStep(1);
+        theSim.SimStep(simMode);
         return theSim.GetSimFrame(rose,colz,pixels);
     } //~NextFrame // in apw3.SimCamera
 
+
+    public void activate(boolean state)
+    {
+        theSim.Activate(state);
+    }
 
     /**
      * Terminate the (fake) camera session.

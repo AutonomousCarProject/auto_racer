@@ -34,6 +34,7 @@ public class RacingLine {
         HashSet<RacingLinePoint> remainingPoints = new HashSet<RacingLinePoint>(RacingLinePointsList);
         orderedRacingLine.add(RacingLinePointsList.get(0));
         remainingPoints.remove(RacingLinePointsList.get(0));
+
         while (remainingPoints.size() > 0) {
             RacingLinePoint currentPoint = orderedRacingLine.get(orderedRacingLine.size() - 1);
             RacingLinePoint closestPoint = new RacingLinePoint();
@@ -49,5 +50,8 @@ public class RacingLine {
             remainingPoints.remove(closestPoint);
         }
         RacingLinePointsList = orderedRacingLine;
+
+        while(remainingPoints.size() > 0){
+        }
     }
 }

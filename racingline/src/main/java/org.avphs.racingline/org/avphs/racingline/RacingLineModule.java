@@ -5,11 +5,12 @@ import java.lang.Math;
 
 import org.avphs.core.CarCommand;
 import org.avphs.core.CarModule;
+import java.util.ArrayList;
 
 public class RacingLineModule implements CarModule {
     private ArrayList<Point> outerWall = new ArrayList<Point>();
     private ArrayList<Point> innerWall = new ArrayList<Point>();
-    private RacingLine center;
+    private RacingLine center = new RacingLine();
     private boolean[][] map;
     private boolean[][] visited;
     private boolean[][] added;
@@ -41,7 +42,6 @@ public class RacingLineModule implements CarModule {
     //endregion
 
     //region RacingLine
-
     /**
      * This method creates the racing line. This should be run before getRacingLine is called.
      *
