@@ -51,6 +51,7 @@ public class DrivingModule implements CarModule {
     public void run() {
         System.out.println("Driving");
     }
+    private RacingLinePoint[] racingLinePoints;
 
     public DrivingModule(RacingLine[] racingLine){
         this.racingline = racingLine;

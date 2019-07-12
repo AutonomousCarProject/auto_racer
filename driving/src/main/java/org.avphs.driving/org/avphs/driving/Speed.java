@@ -56,7 +56,6 @@ public class Speed {
     }
 
     /*private byte getTargetSpeedSegment(RoadData input){
->>>>>>> 24f6f75... Updating vars, consts, and class types and arguments in Speed, Straight, and Turn.
         if (input instanceof Straight){
             return MAX_SPEED;
         } else {
