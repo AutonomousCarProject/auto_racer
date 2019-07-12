@@ -9,6 +9,7 @@ interface ImageProcessingInterface {
     void loadImage();
 }
 
+@SuppressWarnings("Duplicates")
 public class ImageProcessing implements ImageProcessingInterface {
 
 
@@ -191,6 +192,88 @@ public class ImageProcessing implements ImageProcessingInterface {
         return PosterColor.BLACK;
     }
 
+    static PosterColor posterizeChannels(int red, int green, int blue, int dt) {
+        int rg = red - green;
+        int rb = red - blue;
+        int bg = blue - green;
+        if(rg > dt && rb > dt) {
+            return PosterColor.RED;
+        } else if (rg < -dt && bg < -dt) {
+            return PosterColor.GREEN;
+        } else if (rb < -dt && bg > dt) {
+            return PosterColor.BLUE;
+        } else if (rg < dt && rg > -dt && rb > dt && bg < -dt) {
+            return PosterColor.YELLOW;
+        } else if (rb < dt && rb > -dt && rg > dt && bg > dt) {
+            return PosterColor.MAGENTA;
+        } else if (bg < dt && bg > -dt && rg < -dt && rb < -dt ) {
+            return PosterColor.CYAN;
+        } else {
+            int avg = (red + green + blue + green) >> 2;
+            if (avg < 25) {
+                return PosterColor.BLACK;
+            } else if (avg < 76) {
+                return PosterColor.GREY1;
+            } else if (avg < 127) {
+                return PosterColor.GREY2;
+            } else if (avg < 178) {
+                return PosterColor.GREY3;
+            } else if (avg < 229) {
+                return PosterColor.GREY4;
+            } else {
+                return PosterColor.WHITE;
+            }
+        }
+    }
+
+    static PosterColor posterizeChannelsHSL(int red, int green, int blue, int dt) {
+        int max = red > blue ? red > green ? red : green : blue > green ? blue : green;
+        int min = red < blue ? red < green ? red : green : blue < green ? blue : green;
+        int delta = max - min;
+        int h = 0;
+        if(delta == 0){
+            h = 0;
+        }else if(max == red){
+            h = ((green-blue)/delta) % 6;
+        }else if(max == green){
+            h = (blue - red)/delta + 2;
+        }else{
+            h = (red - green)/delta + 4;
+        }
+        h *= 60;
+        int l = (max + min) >> 1;
+        if(delta > dt){
+            if(h > 330 || h < 30){
+                return PosterColor.RED;
+            }else if(h > 30 && h < 90){
+                return PosterColor.YELLOW;
+            }else if( h > 90 && h < 150){
+                return PosterColor.GREEN;
+            }else if(h > 150 && h < 210){
+                return PosterColor.CYAN;
+            }else if(h > 210 && h < 270){
+                return PosterColor.BLUE;
+            }else if(h > 270 && h < 330){
+                return PosterColor.MAGENTA;
+            }
+        }else{
+            if(l < 43){
+                return PosterColor.BLACK;
+            }else if(l > 43 && l < 86){
+                return  PosterColor.GREY1;
+            }else if(l > 86 && l < 129){
+                return PosterColor.GREY2;
+            }else if(l > 129 && l < 152){
+                return PosterColor.GREY3;
+            }else if(l > 152 && l < 195){
+                return PosterColor.GREY4;
+            }else{
+                return PosterColor.WHITE;
+            }
+        }
+        return PosterColor.BLACK;
+    }
+
     static void posterizeImage(int[] rgbArray, PosterColor[] outArray, int diffThreshold) {
         for(int i = rgbArray.length - 1; i >= 0; i --) {
             outArray[i] = posterizePixel(rgbArray[i], diffThreshold);
@@ -202,5 +285,22 @@ public class ImageProcessing implements ImageProcessingInterface {
         for(int i = inArray.length - 1; i >= 0; i --) {
             outArray[i] = inArray[i].rgb;
         }
+    }
+
+    static int[] magicloop(byte[] bayer, int width, int height, int dt) {
+        int[] rgb = new int[width * height ];
+        for(int i = 0; i < height; i++){
+            for(int j = 0; j < width; j++){
+                int r = (int)bayer[2*(2*i*width+j)] & 0xFF;
+                int g = (int)bayer[2*(2*i*width+j)+1] & 0xFF;
+                int b = (int)bayer[2*((2*i+1)*width+j)+1] & 0xFF;
+                PosterColor posterPix = posterizeChannels(r, g, b, dt);
+                rgb[i*width+j] = posterPix.rgb;
+            }
+        }
+        return rgb;
+    }
+    static int[] process(byte[] bayerArray, int width, int height) {
+        return magicloop(bayerArray, width, height, 65);
     }
 }
