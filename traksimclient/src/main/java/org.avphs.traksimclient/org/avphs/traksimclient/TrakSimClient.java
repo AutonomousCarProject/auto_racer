@@ -1,7 +1,9 @@
 package org.avphs.traksimclient;
 
 import org.avphs.core.CarCore;
+import org.avphs.coreinterface.ClientInterface;
 import org.avphs.sbcio.fakefirm.ArduinoIO;
+import org.avphs.traksim.DriverCons;
 import org.avphs.traksim.SimCamera;
 
 import javax.swing.*;
@@ -14,7 +16,7 @@ import java.awt.image.Raster;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-public class TrakSimClient extends JFrame implements Runnable, MouseListener {
+public class TrakSimClient extends JFrame implements ClientInterface, Runnable, MouseListener {
 
     private SimCamera traksim;
 
@@ -69,7 +71,7 @@ public class TrakSimClient extends JFrame implements Runnable, MouseListener {
 
         servos.open();
 
-        var core = new CarCore();
+        var core = new CarCore(this);
         core.init();
     }
 
@@ -132,5 +134,23 @@ public class TrakSimClient extends JFrame implements Runnable, MouseListener {
     @Override
     public void mouseExited(MouseEvent e) {
 
+    }
+
+    @Override
+    public void accelerate(boolean absolute, int angle) {
+        servos.setServoAngle(DriverCons.D_GasServo, angle + 90);
+    }
+
+    @Override
+    public void steer(boolean absolute, int angle) {
+        servos.setServoAngle(DriverCons.D_SteerServo, angle + 90);
+    }
+
+    @Override
+    public void stop() {
+        accelerate(true, 0);
+        steer(true, 0);
+        servos.close();
+        traksim.Finish();
     }
 }

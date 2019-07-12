@@ -1,9 +1,8 @@
 package org.avphs.racingline;
 
-import org.avphs.core.CarCommand;
-import org.avphs.core.CarCommandType;
-import org.avphs.core.CarModule;
-import java.util.ArrayList;
+import org.avphs.coreinterface.CarCommand;
+import org.avphs.coreinterface.CarData;
+import org.avphs.coreinterface.CarModule;
 
 import java.util.ArrayList;
 
@@ -18,28 +17,6 @@ public class RacingLineModule implements CarModule {
     private int length, width;
     private int[] dx = {-1, 0, 1, 0};
     private int[] dy = {0, 1, 0, -1};
-
-    //region Overrides
-    @Override
-    public Class[] getDependencies() {
-        return null;
-    }
-
-    @Override
-    public void init(CarModule... dependencies) {
-
-    }
-
-    @Override
-    public CarCommand[] commands() {
-        return null;
-    }
-
-    @Override
-    public void run() {
-        System.out.println("Racing Line");
-    }
-    //endregion
 
     //region RacingLine
     /**
@@ -62,6 +39,26 @@ public class RacingLineModule implements CarModule {
     public RacingLine getRacingLine() {
         System.out.println("RacingLine.getRacingLine not implemented");
         return null;
+    }
+
+    @Override
+    public Class[] getDependencies() {
+        return new Class[0];
+    }
+
+    @Override
+    public void init(CarModule[] dependencies) {
+
+    }
+
+    @Override
+    public CarCommand[] commands() {
+        return new CarCommand[0];
+    }
+
+    @Override
+    public void update(CarData carData) {
+
     }
 
     public class RacingLine {

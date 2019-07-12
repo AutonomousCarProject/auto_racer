@@ -1,13 +1,29 @@
 package org.avphs.driving;
 
-import org.avphs.core.CarCommand;
-import org.avphs.core.CarCommandType;
-import org.avphs.core.CarModule;
-import org.avphs.racingline.*;
+import org.avphs.coreinterface.CarCommand;
+import org.avphs.coreinterface.CarData;
+import org.avphs.coreinterface.CarModule;
+import org.avphs.racingline.RacingLine;
+import org.avphs.racingline.RacingLinePoint;
+
 import java.util.ArrayList;
+
+import static org.avphs.coreinterface.CarCommand.*;
 
 
 public class DrivingModule implements CarModule {
+
+    private RacingLine[] racingline;
+    private ArrayList<RoadData> roadData;
+    private RoadData currentSegment;
+    private RoadData nextSegment;
+    private int angle = 90;
+    private int throttle = 90;
+    private int MAX_SPEED;
+    private int MAX_HARD_BRAKE;
+    private VectorPoint currentPos;
+    Speed speed = new Speed(currentPos, currentSegment, nextSegment);
+    Steering steer = new Steering(currentPos, currentSegment);
 
     @Override
     public Class[] getDependencies() {
@@ -21,23 +37,21 @@ public class DrivingModule implements CarModule {
 
     @Override
     public CarCommand[] commands() {
-        return null;
+        return new CarCommand[] {
+                accelerate(true, 0),
+                steer(false, 10),
+                stop()
+        };
     }
 
     @Override
-    public void run() {
+    public void update(CarData carData) {
         System.out.println("Driving");
     }
 
-    private RacingLine[] racingline;
-    private ArrayList<RoadData> roadData;
-    private RoadData currentSegment;
-    private RoadData nextSegment;
-    private int angle = 90;
-    private int throttle = 90;
-    private VectorPoint currentPos;
-    Speed speed = new Speed(currentPos, currentSegment, nextSegment);
-    Steering steer = new Steering(currentPos, currentSegment);
+    public void run() {
+        System.out.println("Driving");
+    }
 
     public DrivingModule(RacingLine[] racingLine){
         this.racingline = racingLine;
