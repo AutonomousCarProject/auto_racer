@@ -8,6 +8,7 @@ public class Steering {
     private VectorPoint currentPos;
     private RoadData currentSegment;
     private short radius;
+    private float maxDistanceFromRacingLine;
 
     public Steering(VectorPoint currentPos, RoadData currentSegment) {
         this.currentSegment = currentSegment;
@@ -24,7 +25,7 @@ public class Steering {
 
     private boolean onRacingLine(){
         if (currentSegment instanceof Straight){
-            //Calculator.solveSystem();
+            float distance = Calculator.findDistance(currentPos.getX(), currentPos.getY(),((Straight) currentSegment).getSlope());
         } else {
 
         }
