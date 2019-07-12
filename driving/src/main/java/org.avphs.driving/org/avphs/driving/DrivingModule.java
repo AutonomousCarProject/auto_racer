@@ -49,7 +49,7 @@ public class DrivingModule implements CarModule {
     }
 
     public void analyzeRacingLine(RacingLine[] input){
-        ArrayList<RacingLinePoint> racingLinePoints = new ArrayList<RacingLinePoint>();
+        //ArrayList<RacingLinePoint> racingLinePoints = new ArrayList<RacingLinePoint>();
         //racingLine.getRacingLinePoints();
     }
 
