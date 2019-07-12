@@ -1,6 +1,7 @@
 module org.avphs.image {
-    requires org.avphs.core;
-    requires org.avphs.camera;
+
+    requires org.avphs.coreinterface;
     exports org.avphs.image;
-    provides org.avphs.core.CarModule with org.avphs.image.ImageModule;
+
+    provides org.avphs.coreinterface.CarModule with org.avphs.image.ImageModule;
 }

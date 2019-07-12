@@ -1,18 +1,15 @@
 package org.avphs.image;
 
-import org.avphs.camera.FlyCamera;
-import org.avphs.core.CarCommand;
-import org.avphs.core.CarCommandType;
-import org.avphs.core.CarModule;
 
-import static org.avphs.core.CarCommand.*;
+import org.avphs.coreinterface.*;
+import static org.avphs.coreinterface.CarCommand.*;
 
 public class ImageModule implements CarModule {
 
     @Override
     public Class[] getDependencies() {
         return new Class[] {
-                FlyCamera.class
+                //FlyCamera.class
         };
     }
 
@@ -24,15 +21,15 @@ public class ImageModule implements CarModule {
     @Override
     public CarCommand[] commands() {
         return new CarCommand[] {
-            accelerate(true, 0),
+            accelerate(true, 100),
             steer(false, 10),
             stop()
         };
     }
 
     @Override
-    public void run() {
-
+    public void update(CarData carData) {
+        System.out.println("Image");
     }
 }
 

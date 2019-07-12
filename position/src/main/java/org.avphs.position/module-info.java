@@ -1,7 +1,5 @@
 module org.avphs.position {
-    requires org.avphs.core;
-
+    requires org.avphs.coreinterface;
     exports org.avphs.position;
-
-    provides org.avphs.core.CarModule with org.avphs.position.PositionModule;
+    provides org.avphs.coreinterface.CarModule with org.avphs.position.PositionModule;
 }

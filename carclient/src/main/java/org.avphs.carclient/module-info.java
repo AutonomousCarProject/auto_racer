@@ -1,4 +1,7 @@
 module org.avphs.carclient {
     requires org.avphs.core;
-    uses org.avphs.core.CarModule;
+    requires org.avphs.coreinterface;
+    requires org.avphs.sbcio;
+    requires org.avphs.camera;
+    requires org.avphs.traksim;
 }

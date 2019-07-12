@@ -1,8 +1,9 @@
 package org.avphs.position;
 
-import org.avphs.core.CarCommand;
-import org.avphs.core.CarCommandType;
-import org.avphs.core.CarModule;
+
+import org.avphs.coreinterface.CarCommand;
+import org.avphs.coreinterface.CarData;
+import org.avphs.coreinterface.CarModule;
 
 public class PositionModule implements CarModule {
 
@@ -22,12 +23,10 @@ public class PositionModule implements CarModule {
     }
 
     @Override
-    public void run() {
+    public void update(CarData carData) {
         System.out.println("Position");
     }
-    
-    
-    
+
     //THE CODE BELOW IS TEMPORARY AND SUBJECT TO CHANGE PROBABLY VERY SOON
     public float[] getPosition(){ //returns the (x,y) of the car (ideally synced with the map)
         return new float[]{0,0};

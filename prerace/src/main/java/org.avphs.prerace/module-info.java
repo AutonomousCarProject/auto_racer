@@ -1,7 +1,5 @@
 module org.avphs.prerace {
-    requires org.avphs.core;
-
+    requires org.avphs.coreinterface;
     exports org.avphs.prerace;
-
-    provides org.avphs.core.CarModule with org.avphs.prerace.PreRaceModule;
+    provides org.avphs.coreinterface.CarModule with org.avphs.prerace.PreRaceModule;
 }
