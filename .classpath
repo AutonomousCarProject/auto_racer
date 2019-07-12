@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="carclient/src/main/java/org.avphs.carclient"/>
+	<classpathentry kind="src" path="client/src/main/java/org.avphs.client"/>
+	<classpathentry kind="src" path="core/src/main/java/org.avphs.core"/>
+	<classpathentry kind="src" path="detection/src/main/java/org.avphs.detection"/>
+	<classpathentry kind="src" path="image/src/main/java/org.avphs.image"/>
+	<classpathentry kind="src" path="speed/src/main/java/org.avphs.speed"/>
+	<classpathentry kind="src" path="steering/src/main/java/org.avphs.steering"/>
+	<classpathentry kind="lib" path="gradle/wrapper/gradle-wrapper.jar"/>
+	<classpathentry kind="lib" path="mods/carclient.jar"/>
+	<classpathentry kind="lib" path="mods/client.jar"/>
+	<classpathentry kind="lib" path="mods/core.jar"/>
+	<classpathentry kind="lib" path="mods/detection.jar"/>
+	<classpathentry kind="lib" path="mods/image.jar"/>
+	<classpathentry kind="lib" path="mods/speed.jar"/>
+	<classpathentry kind="lib" path="mods/steering.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
