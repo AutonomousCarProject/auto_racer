@@ -1,6 +1,7 @@
 package org.avphs.driving;
 
 import org.avphs.calibration.CalibrationModule;
+import org.avphs.racingline.RacingLinePoint;
 
 public class Speed {
     /* Currently, Speed will work like this:
@@ -14,6 +15,7 @@ public class Speed {
     private final byte MAX_HARD_BRAKE;  //max throttle for braking w/o skidding
     private final byte FLOOR;           //floor index
     private VectorPoint currentPos;
+    private RacingLinePoint brakePoint;
     private RoadData currentSegment;
     private RoadData nextSegment;
 
@@ -26,7 +28,8 @@ public class Speed {
         this.nextSegment = nextSegment;
 
         brakeDist = CalibrationModule.getSpeedChangeDist(FLOOR, CalibrationModule.getMaxSpeed(FLOOR,
-                currentSegment.getRadius()), CalibrationModule.getMaxSpeed(FLOOR, nextSegment.getRadius()));
+                currentSegment.radius), CalibrationModule.getMaxSpeed(FLOOR, nextSegment.radius));
+
     }
 
     public void setCurrentPos(VectorPoint newCurrentPos){
@@ -37,7 +40,7 @@ public class Speed {
         currentSegment = nextSegment;
         nextSegment = newNextSeg;
         brakeDist = CalibrationModule.getSpeedChangeDist(FLOOR, CalibrationModule.getMaxSpeed(FLOOR,
-                currentSegment.getRadius()), CalibrationModule.getMaxSpeed(FLOOR, nextSegment.getRadius()));
+                currentSegment.radius), CalibrationModule.getMaxSpeed(FLOOR, nextSegment.radius));
     }
 
     public int getThrottle(){
@@ -60,4 +63,3 @@ public class Speed {
         }
     }*/
 }
-
