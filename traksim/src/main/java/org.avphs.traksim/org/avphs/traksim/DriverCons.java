@@ -94,7 +94,7 @@ public class DriverCons { // TrakSim constant parameters
           D_Crummy = 255,    // (power of 2) size of BreadCrumbs list for map display
           D_PebblSize = 1,   // default 2^x = size in park cm of carpet/track pebbles
           D_PebContrast = 6, // default pebble texture contrast, 0..9 (<0: none)
-          D_CheckerBd = 1;   // (power of 2) =1 to checker 1x1m, =2 for 2x2, =0 off
+          D_CheckerBd = 0;   // (power of 2) =1 to checker 1x1m, =2 for 2x2, =0 off
 
   public static final double D_TurnRadius = 7.0, // nom. meters in park coords
   // measured at servo position = min(LeftSteer,RiteSteer)

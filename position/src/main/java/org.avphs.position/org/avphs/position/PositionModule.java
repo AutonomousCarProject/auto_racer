@@ -24,7 +24,7 @@ public class PositionModule implements CarModule {
 
     @Override
     public void update(CarData carData) {
-        System.out.println("Position");
+        //System.out.println("Position");
     }
 
     //THE CODE BELOW IS TEMPORARY AND SUBJECT TO CHANGE PROBABLY VERY SOON

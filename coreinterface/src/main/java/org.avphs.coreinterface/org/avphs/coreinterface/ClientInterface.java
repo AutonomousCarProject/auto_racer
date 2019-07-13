@@ -7,6 +7,6 @@ public interface ClientInterface {
 
     void stop();
 
-    byte[] getCameraImage();
+    void getCameraImage(CarData carData);
 
 }

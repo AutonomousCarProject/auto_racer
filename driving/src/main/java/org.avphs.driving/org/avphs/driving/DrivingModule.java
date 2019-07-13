@@ -8,7 +8,7 @@ import org.avphs.racingline.RacingLinePoint;
 
 import java.util.ArrayList;
 
-import static org.avphs.coreinterface.CarCommand.*;
+import static org.avphs.coreinterface.CarCommand.accelerate;
 
 public class DrivingModule implements CarModule {
 
@@ -37,19 +37,13 @@ public class DrivingModule implements CarModule {
     @Override
     public CarCommand[] commands() {
         return new CarCommand[] {
-                accelerate(true, 0),
-                steer(false, 10),
-                stop()
+                accelerate(true, 10)
         };
     }
 
     @Override
     public void update(CarData carData) {
-        System.out.println("Driving");
-    }
-  
-    public void run() {
-        System.out.println("Driving");
+        //System.out.println("Driving");
     }
     private RacingLinePoint[] racingLinePoints;
 

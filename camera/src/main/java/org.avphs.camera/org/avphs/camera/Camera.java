@@ -2,13 +2,23 @@ package org.avphs.camera;
 
 public interface Camera {
 
-    boolean nextFrame(byte[] pixels);
+    void fetchNextFrame();
 
     boolean connect(int frameRate);
 
+    int getSteerServoPin();
+
+    int getSpeedServoPin();
+
     void finish();
 
-    int dimz();
+    int getCamDimensions();
+
+    int getCamHeight();
+
+    int getCamWidth();
+
+    byte[] getBayerImage();
 
     int pixTile();
 

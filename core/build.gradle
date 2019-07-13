@@ -16,11 +16,13 @@ dependencies {
 
     implementation project(':coreinterface')
     implementation project(':racingline')
+    implementation project(':car')
     implementation project(':calibration')
     implementation project(':map')
     implementation project(':driving')
     implementation project(':image')
     implementation project(':position')
+    implementation project(':window')
 
     api 'org.apache.commons:commons-math3:3.6.1'
 

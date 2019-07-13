@@ -1,7 +1,8 @@
 package org.avphs.image;
 
-import org.avphs.coreinterface.*;
-import static org.avphs.coreinterface.CarCommand.*;
+import org.avphs.coreinterface.CarCommand;
+import org.avphs.coreinterface.CarData;
+import org.avphs.coreinterface.CarModule;
 
 public class ImageModule implements CarModule {
 
@@ -17,16 +18,12 @@ public class ImageModule implements CarModule {
 
     @Override
     public CarCommand[] commands() {
-        return new CarCommand[] {
-            accelerate(true, 100),
-            steer(false, 10),
-            stop()
-        };
+        return null;
     }
 
     @Override
     public void update(CarData carData) {
-        System.out.println("Image");
+        //System.out.println("Image");
     }
 }
 
