@@ -25,7 +25,7 @@ public class CarData {
      * @param moduleName The key for any module's Data.
      * @param moduleData The data to be added/updated.
      */
-    public void initizlizeModule(String moduleName, Object moduleData) {
+    public void addData(String moduleName, Object moduleData) {
         moduleDataMap.put(moduleName, moduleData);
     }
 
