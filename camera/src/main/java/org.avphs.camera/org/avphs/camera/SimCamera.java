@@ -39,7 +39,7 @@ public class SimCamera extends CameraBase {
     private static final boolean
             NoisyFaker = DriverCons.D_Mini_Log && (DriverCons.D_Qlog < 0);
 
-    private TrakSim theSim = null;
+    private TrakSim theSim;
 
     public SimCamera() {
         if (NoisyFaker) {

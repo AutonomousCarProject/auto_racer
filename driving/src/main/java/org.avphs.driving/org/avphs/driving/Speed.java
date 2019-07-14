@@ -27,8 +27,9 @@ public class Speed {
         this.currentSegment = currentSegment;
         this.nextSegment = nextSegment;
 
-        brakeDist = CalibrationModule.getSpeedChangeDist(FLOOR, CalibrationModule.getMaxSpeed(FLOOR,
-                currentSegment.radius), CalibrationModule.getMaxSpeed(FLOOR, nextSegment.radius));
+        // FIXME: This throws error: Null Pointer Exception
+        //brakeDist = CalibrationModule.getSpeedChangeDist(FLOOR, CalibrationModule.getMaxSpeed(FLOOR,
+        //        currentSegment.radius), CalibrationModule.getMaxSpeed(FLOOR, nextSegment.radius));
 
     }
 
