@@ -11,7 +11,6 @@ public class Speed {
     */
 
     private int brakeDist;
-    //private final byte MAX_SPEED;       //maximum attainable speed
     private final byte MAX_HARD_BRAKE;  //max throttle for braking w/o skidding
     private final byte FLOOR;           //floor index
     private VectorPoint currentPos;
@@ -21,13 +20,12 @@ public class Speed {
 
     public Speed(VectorPoint currentPos, RoadData currentSegment, RoadData nextSegment){
         FLOOR = (byte)2;            //dummy value
-        //MAX_SPEED = CalibrationModule.getMaxSpeed(FLOOR, (byte)2);    //dummy values
         MAX_HARD_BRAKE = (byte)80;  //dummy value
         this.currentPos = currentPos;
         this.currentSegment = currentSegment;
         this.nextSegment = nextSegment;
 
-        // FIXME: This throws error: Null Pointer Exception
+        //  Wait for calibration to fix
         //brakeDist = CalibrationModule.getSpeedChangeDist(FLOOR, CalibrationModule.getMaxSpeed(FLOOR,
         //        currentSegment.radius), CalibrationModule.getMaxSpeed(FLOOR, nextSegment.radius));
 
@@ -46,7 +44,8 @@ public class Speed {
 
     public int getThrottle(){
         if (currentSegment instanceof Straight){
-            if (true){
+            if (Calculator.findClosestPoint(currentPos.getX(), currentPos.getY(), ((Straight)currentSegment).getSlope(),
+                    ((Straight)currentSegment).getB()) == new float[]{(float)0.1, (float)0.1} /*dummy values*/){
                 return 180;
             } else {
                 return MAX_HARD_BRAKE;
@@ -55,12 +54,4 @@ public class Speed {
             return 90;
         }
     }
-
-    /*private byte getTargetSpeedSegment(RoadData input){
-        if (input instanceof Straight){
-            return MAX_SPEED;
-        } else {
-            return 4;   //dummy value for now
-        }
-    }*/
 }
