@@ -1,93 +1,31 @@
 package org.avphs.traksimclient;
 
+import org.avphs.camera.SimCamera;
+import org.avphs.car.Car;
 import org.avphs.core.CarCore;
-import org.avphs.coreinterface.ClientInterface;
-import org.avphs.sbcio.fakefirm.ArduinoIO;
-import org.avphs.traksim.DriverCons;
-import org.avphs.traksim.SimCamera;
 
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferInt;
-import java.awt.image.Raster;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
 
 public class TrakSimClient extends JFrame implements ClientInterface, Runnable, MouseListener {
 
-
-    private SimCamera traksim;
-
-    private BufferedImage displayImage;
-
-    private JPanel panel;
-
     private final int WINDOW_WIDTH = 912, WINDOW_HEIGHT = 480;
-
-    private ArduinoIO servos;
-
+    private SimCamera traksim;
+    private BufferedImage displayImage;
+    private JPanel panel;
+    //private ArduinoIO servos;
     private int simMode = 1;
-
     private byte[] cameraImage;
 
-    public byte[] getCameraImage() {
-        return cameraImage;
-    }
-
     public TrakSimClient() {
-        displayImage = new BufferedImage(WINDOW_WIDTH, WINDOW_HEIGHT, BufferedImage.TYPE_INT_RGB);
+        //temp();
 
-        var executor = Executors.newSingleThreadScheduledExecutor();
-        executor.scheduleAtFixedRate(this, 0, 1000/30, TimeUnit.MILLISECONDS);
-
-        traksim = new SimCamera();
-        traksim.connect(4);
-        servos = new ArduinoIO();
-
-        panel = new JPanel() {
-            @Override
-            public void paintComponent(Graphics g) {
-                super.paintComponent(g);
-
-                cameraImage = readCameraImage();
-                var img = debayer(cameraImage);
-
-                displayImage.setData(Raster.createRaster(displayImage.getSampleModel(),
-                        new DataBufferInt(img, img.length), new Point())
-                );
-                g.drawImage(displayImage, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, null);
-            }
-
-            @Override
-            public Dimension getPreferredSize() {
-                return new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT);
-            }
-
-        };
-
-        panel.addMouseListener(this);
-
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
-        setResizable(true);
-        setVisible(true);
-        getContentPane().add(panel);
-        pack();
-
-        servos.open();
-
-        var core = new CarCore(this);
-        core.init();
+        new CarCore(new Car(new SimCamera()));
     }
 
     public static void main(String[] args) {
         new TrakSimClient();
     }
-
     public int[] debayer(byte[] bayer) {
         int[] rgb = new int[WINDOW_WIDTH * WINDOW_HEIGHT ];
         for(int i = 0; i < WINDOW_HEIGHT; i++){

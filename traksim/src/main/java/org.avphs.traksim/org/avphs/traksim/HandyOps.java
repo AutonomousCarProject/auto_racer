@@ -16,7 +16,7 @@
  */
 package org.avphs.traksim; // (class HandyOps)                    // 2019 May 24
 
-import org.avphs.sbcio.fakefirm.ArduinoIO;
+import org.avphs.sbcio.ArduinoIO;
 
 import java.io.File;
 import java.io.FileReader;

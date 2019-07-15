@@ -3,23 +3,12 @@ package org.avphs.carclient;
 
 import org.avphs.camera.FlyCamera;
 import org.avphs.core.CarCore;
-import org.avphs.coreinterface.ClientInterface;
-import org.avphs.sbcio.fakefirm.ArduinoIO;
-import org.avphs.traksim.DriverCons;
+import org.avphs.car.Car;
 
-public class CarStart implements ClientInterface, Runnable {
-
-    private ArduinoIO servos;
-    private FlyCamera camera;
+public class CarStart implements Runnable {
 
     public CarStart() {
-        camera = new FlyCamera();
-        camera.Connect(4);
-
-        servos = new ArduinoIO();
-        servos.open();
-
-        var core = new CarCore(this);
+        var core = new CarCore(new Car(new FlyCamera()));
         core.init();
     }
 

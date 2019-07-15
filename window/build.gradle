@@ -1,14 +1,9 @@
 plugins {
     // Apply the java-library plugin to add support for Java Library
-    id 'application'
+    id 'java-library'
 }
 
-ext.moduleName = 'org.avphs.carclient'
-
-application {
-    // Define the main class for the application
-    mainClassName = 'org.avphs.carclient.CarStart'
-}
+ext.moduleName = 'org.avphs.window'
 
 repositories {
     // Use jcenter for resolving dependencies.
@@ -21,9 +16,8 @@ dependencies {
     //api 'org.apache.commons:commons-math3:3.6.1'
     //api project(':core')
 
-    implementation project(':core')
+    implementation project(':coreinterface')
     implementation project(':camera')
-    implementation project(':car')
 
     // Use TestNG framework, also requires calling test.useTestNG() below
     testImplementation 'org.testng:testng:6.14.3'
@@ -32,7 +26,7 @@ dependencies {
 sourceSets {
     main{
         java {
-            srcDir 'src/main/java/org.avphs.carclient'
+            srcDir 'src/main/java/org.avphs.window'
         }
     }
     test {
@@ -45,4 +39,9 @@ sourceSets {
 test {
     // Use TestNG for unit tests
     useTestNG()
+}
+
+buildScan {
+    termsOfServiceUrl = 'https://gradle.com/terms-of-service'
+    termsOfServiceAgree = 'yes'
 }

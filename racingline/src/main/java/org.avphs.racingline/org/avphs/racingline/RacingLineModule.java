@@ -23,6 +23,7 @@ public class RacingLineModule implements CarModule {
     private int[] dy = {0, 1, 0, -1};
 
     //region RacingLine
+
     /**
      * This method creates the racing line. This should be run before getRacingLine is called.
      *
@@ -66,8 +67,6 @@ public class RacingLineModule implements CarModule {
     public void update(CarData carData) {
 
     }
-
-    //endregion
 
     //region Middle Line
     private RacingLine getMiddleLine() {

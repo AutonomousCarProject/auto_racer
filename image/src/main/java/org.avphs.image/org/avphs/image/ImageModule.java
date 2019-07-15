@@ -1,8 +1,11 @@
 package org.avphs.image;
 
 
+
 import org.avphs.coreinterface.*;
 import static org.avphs.coreinterface.CarCommand.*;
+import org.avphs.coreinterface.CarData;
+import org.avphs.coreinterface.CarModule;
 
 public class ImageModule implements CarModule {
 
@@ -26,8 +29,9 @@ public class ImageModule implements CarModule {
     @Override
     public CarCommand[] commands() {
         return new CarCommand[] {
-
+          
         };
+        return null;
     }
 
     @Override

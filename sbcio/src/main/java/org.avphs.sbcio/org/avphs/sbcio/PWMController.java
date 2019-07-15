@@ -32,16 +32,6 @@ public interface PWMController {
   }
   
   /**
-   * write three byte-castable ints to the buffer
-   * 
-   * @param i First byte
-   * @param j Second byte
-   * @param k Third byte
-   */
-  void write(int i, int j, int k);
-  
-  
-  /**
    * Set the pulse width of the output.
    *
    * @param pin Non-negative integer representing the pin number. Range dependent on

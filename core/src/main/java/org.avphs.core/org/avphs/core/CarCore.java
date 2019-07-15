@@ -1,14 +1,21 @@
 package org.avphs.core;
 
 import org.avphs.calibration.CalibrationModule;
-import org.avphs.coreinterface.*;
+import org.avphs.car.Car;
+import org.avphs.coreinterface.CarCommand;
+import org.avphs.coreinterface.CarData;
+import org.avphs.coreinterface.CarModule;
 import org.avphs.driving.DrivingModule;
 import org.avphs.image.ImageModule;
 import org.avphs.map.MapModule;
 import org.avphs.position.PositionModule;
 import org.avphs.racingline.RacingLineModule;
+import org.avphs.window.WindowModule;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
@@ -16,20 +23,22 @@ import java.util.concurrent.TimeUnit;
 
 public class CarCore {
     private final int FPS = 15;
-    public ClientInterface client;
     private Queue<CarCommand> commandQueue = new PriorityQueue<>();
-    private final List<CarModule> modules = CarModule.getInstances();
+    private final List<CarModule> modules;
     private DrivingModule drivingModule;
     private ImageModule imageModule;
     private PositionModule positionTrackingModule;
     private RacingLineModule racingLineModule;
     private CalibrationModule calibrationModule;
     private MapModule mapModule;
+    private WindowModule windowModule;
     private CarData carData;
+    private Car car;
     private ArrayList<CarModule> updatingCarModules = new ArrayList<>();
 
-    public CarCore(ClientInterface client) {
-        this.client = client;
+    public CarCore(Car car) {
+        this.car = car;
+        modules = CarModule.getInstances();
         carData = new CarData();
         // FIXME: Make this more dynamic
         modules.forEach(carModule -> {
@@ -45,6 +54,9 @@ public class CarCore {
                 racingLineModule = (RacingLineModule) carModule;
             } else if (carModule instanceof CalibrationModule) {
                 calibrationModule = (CalibrationModule) carModule;
+            } else if (carModule instanceof WindowModule) {
+                car.getCameraImage(carData);
+                windowModule = new WindowModule(carData);
             }
         });
 
@@ -53,17 +65,15 @@ public class CarCore {
     }
 
     public void init() {
-        carData.initizlizeModule("client", client.getCameraImage());
-        // FIXME: Make this more dynamic
-        // INIT Driving
         CarModule[] drivingInit = {calibrationModule, racingLineModule};
-        drivingModule.init(drivingInit);
-        // INIT Image
-        imageModule.init(calibrationModule);
-        // INIT Position
         CarModule[] positionInit = {racingLineModule, mapModule};
+
+        // FIXME: Make this more dynamic
+        drivingModule.init(drivingInit);
+        imageModule.init(calibrationModule);
         positionTrackingModule.init(positionInit);
 
+        updatingCarModules.add(windowModule);
         updatingCarModules.add(imageModule);
         updatingCarModules.add(positionTrackingModule);
         updatingCarModules.add(drivingModule);
@@ -84,28 +94,30 @@ public class CarCore {
     }
 
     private void update() {
-
-
+        car.getCameraImage(carData);
         for (CarModule module : updatingCarModules) {
             module.update(carData);
-            for (var command : module.commands()) {
-                switch (command.command) {
-                    case STOP_COMMAND:
-                        client.stop();
-                        break;
-                    case STEER_COMMAND:
-                        client.steer((boolean) command.parameters[0], (int) command.parameters[1]);
-                        break;
-                    case ACCELERATE_COMMAND:
-                        client.accelerate((boolean) command.parameters[0], (int) command.parameters[1]);
-                        break;
-                }
-            }
         }
     }
 
     private void commandListen() {
-        modules.forEach(m -> commandQueue.addAll(Arrays.asList(m.commands())));
+        for (CarModule module : updatingCarModules) {
+            if (module.commands() != null) {
+                for (var command : module.commands()) {
+                    switch (command.command) {
+                        case STOP_COMMAND:
+                            car.stop();
+                            break;
+                        case STEER_COMMAND:
+                            car.steer((boolean) command.parameters[0], (int) command.parameters[1]);
+                            break;
+                        case ACCELERATE_COMMAND:
+                            car.accelerate((boolean) command.parameters[0], (int) command.parameters[1]);
+                            break;
+                    }
+                }
+            }
+        }
     }
 
     public static class NamedThreadFactory implements ThreadFactory {
