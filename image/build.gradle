@@ -17,6 +17,8 @@ dependencies {
     //api project(':core')
 
     implementation project(':coreinterface')
+    implementation project(':window')
+    implementation project(':camera')
 
 
     // Use TestNG framework, also requires calling test.useTestNG() below

@@ -70,8 +70,8 @@ public class CarCore {
 
         // FIXME: Make this more dynamic
         drivingModule.init(drivingInit);
-        imageModule.init(calibrationModule);
-        positionTrackingModule.init(positionInit);
+        imageModule.init(calibrationModule, windowModule);
+        positionTrackingModule.init (positionInit);
 
         updatingCarModules.add(windowModule);
         updatingCarModules.add(imageModule);
