@@ -1,5 +1,7 @@
 package org.avphs.image;
 
+import java.util.EnumMap;
+
 interface ImageProcessingInterface {
     int[] getWallHeights();
     int[] getWallTypes();
@@ -9,6 +11,7 @@ interface ImageProcessingInterface {
 
 @SuppressWarnings("Duplicates")
 public class ImageProcessing implements ImageProcessingInterface {
+
 
     enum PosterColor {
         RED(0xFF0000, (short)0),
@@ -30,6 +33,21 @@ public class ImageProcessing implements ImageProcessingInterface {
             this.code = code;
         }
     }
+
+    static final int[] ColorArr = {
+            0xFF0000, //RED
+            0x00FF00, //GREEN
+            0x0000FF, //BLUE
+            0x00FFFF, //CYAN
+            0xFF00FF, //MAGENTA
+            0xFFFF00, //YELLOW
+            0,        //BLACK
+            0x333333, //GREY1
+            0x666666, //GREY2
+            0x999999, //GREY3
+            0xCCCCCC, //GREY4
+            0xFFFFFF  //WHITE
+    };
 
     @Override
     public int[] getWallHeights() {
@@ -133,6 +151,44 @@ public class ImageProcessing implements ImageProcessingInterface {
                 return PosterColor.GREY4;
             } else {
                 return PosterColor.WHITE;
+            }
+
+        }
+    }
+
+    static int posterizePixelInt(int rgb, int dt) {
+        int red = (rgb >> 16) & 0xFF;
+        int green = (rgb >> 8) & 0xFF;
+        int blue = (rgb) & 0xFF;
+        int rg = red - green;
+        int rb = red - blue;
+        int bg = blue - green;
+        if(rg > dt && rb > dt) {
+            return 0;
+        } else if (rg < -dt && bg < -dt) {
+            return 1;
+        } else if (rb < -dt && bg > dt) {
+            return 2;
+        } else if (rg < dt && rg > -dt && rb > dt && bg < -dt) {
+            return 5;
+        } else if (rb < dt && rb > -dt && rg > dt && bg > dt) {
+            return 4;
+        } else if (bg < dt && bg > -dt && rg < -dt && rb < -dt ) {
+            return 3;
+        } else {
+            int avg = (red + green + blue + green) >> 2;
+            if(avg < 25) {
+                return 6;
+            } else if(avg < 76) {
+                return 7;
+            } else if(avg < 127) {
+                return 8;
+            } else if(avg < 178) {
+                return 9;
+            } else if(avg < 229) {
+                return 10;
+            } else {
+                return 11;
             }
 
         }
@@ -284,6 +340,13 @@ public class ImageProcessing implements ImageProcessingInterface {
         }
     }
 
+    static void posterizeImageInt(int[] rgbArray, int[] outArray, int diffThreshold) {
+        for(int i = rgbArray.length - 1; i >= 0; i --) {
+            outArray[i] = posterizePixelInt(rgbArray[i], diffThreshold);
+        }
+
+    }
+
     static int[] magicloop(byte[] bayer, int width, int height, int dt) {
         int[] rgb = new int[width * height ];
         for(int i = 0; i < height; i++){
@@ -300,4 +363,5 @@ public class ImageProcessing implements ImageProcessingInterface {
     static int[] process(byte[] bayerArray, int width, int height) {
         return magicloop(bayerArray, width, height, 65);
     }
+
 }
