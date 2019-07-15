@@ -73,8 +73,7 @@ public class RacingLine {
         return xDiff*xDiff + yDiff*yDiff;
     }
     public void threePointAngle( RacingLinePoint [] allPoint ) {
-        int totalsize =  allPoint.length;
-        for (int i = 1 ; i < totalsize ; i++) {
+        for (int i = 1 ; i < allPoint.length ; i++) {
             // Square of lengths are a2, b2, c2
             float a2 = lengthSquare(allPoint[i],allPoint[i++]);
             float b2 = lengthSquare(allPoint[i--],allPoint[i++]);
@@ -100,14 +99,11 @@ public class RacingLine {
         }
     }
     public float averageAngle(RacingLinePoint [] allPoint) {
-        int allPointLength = allPoint.length;
-        int i = 0;
         float averageAngle = 0;
-
-        for(i = 0; i <= allPointLength; i++) {
+        for(int i = 0; i <= allPoint.length; i++) {
             averageAngle += allPoint[i].getDegree();
         }
 
-        return averageAngle;
+        return averageAngle / allPoint.length;
     }
 }
