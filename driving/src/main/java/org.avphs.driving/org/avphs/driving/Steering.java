@@ -13,6 +13,7 @@ public class Steering {
     public Steering(VectorPoint currentPos, RoadData currentSegment) {
         this.currentSegment = currentSegment;
         this.currentPos = currentPos;
+        maxDistanceFromRacingLine = 10;
     }
 
     public void changeCurrentPos(VectorPoint newCurrentPos) {
@@ -24,12 +25,15 @@ public class Steering {
     }
 
     private boolean onRacingLine(){
+        float distance;
         if (currentSegment instanceof Straight){
-            float distance = Calculator.findDistance(currentPos.getX(), currentPos.getY(),((Straight) currentSegment).getSlope());
+            Straight segment = (Straight)currentSegment;
+            distance = Calculator.findStraightDistance(currentPos.getX(), currentPos.getY(), segment.getStartingCoords(), segment.getSlope());
         } else {
-
+            Turn segment = (Turn)currentSegment;
+            distance = Calculator.findTurnDistance(0,0, new float[2], (short)0);
         }
-        return false;
+        return (distance < maxDistanceFromRacingLine) || (distance == maxDistanceFromRacingLine);
     }
 
     public int getAngle(){

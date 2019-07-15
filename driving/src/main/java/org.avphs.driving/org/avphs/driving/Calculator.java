@@ -9,8 +9,13 @@ public class Calculator {
         return new float[]{x2, m*x2+b};
     }
 
-    public static float findDistance(float x, float y, float m){
-        float[] closestPoint = findClosestPoint(x,y,m,(-m*x)+y);
+    public static float findStraightDistance(float x, float y, float[] point, float m){
+        float[] closestPoint = findClosestPoint(x,y,m,(-m*point[0])+point[1]);
         return (float)Math.sqrt(Math.pow(x - closestPoint[0], 2.0) + Math.pow(y - closestPoint[1], 2.0));
     }
+
+    public static float findTurnDistance(float x, float y, float[] center, short radius){
+        return 0;
+    }
+
 }
