@@ -15,7 +15,7 @@ import static org.avphs.coreinterface.CarCommand.stop;
 public class DrivingModule implements CarModule {
 
     private RacingLine[] racingline;
-    private ArrayList<RoadData> roadData;
+    private ArrayList<RoadData> roadData = new ArrayList<RoadData>();;
     private RacingLinePoint[] racingLinePoints;
     private RoadData currentSegment;
     private RoadData nextSegment;
@@ -56,7 +56,6 @@ public class DrivingModule implements CarModule {
 
     @Override
     public void update(CarData carData) {
-        roadData = new ArrayList<RoadData>();
         //racingLinePoints = (RacingLinePoint[])carData.getModuleData("racingLine");
         //float[] temp = carData.getModuleData("position");
         //currentPos = new VectorPoint(temp[0], temp[1], temp[2], temp[3]);
@@ -180,5 +179,11 @@ public class DrivingModule implements CarModule {
         speed.newSegment(nextSegment);
 
         throttle = speed.getThrottle();
+    }
+
+    public void testUpdate(){
+        analyzeRacingLine();
+        currentSegment();
+        getDirection(); getThrottle();
     }
 }
