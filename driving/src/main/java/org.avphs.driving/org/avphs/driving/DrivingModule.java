@@ -60,8 +60,9 @@ public class DrivingModule implements CarModule {
         //float[] temp = carData.getModuleData("position");
         //currentPos = new VectorPoint(temp[0], temp[1], temp[2], temp[3]);
         //analyzeRacingLine();
-        currentSegment();
-        getDirection(); getThrottle();
+        //currentSegment();
+        //getDirection();
+        //getThrottle();
     }
 
     public DrivingModule(){
