@@ -27,7 +27,7 @@ public class Steering {
         float distance;
         if (currentSegment instanceof Straight){
             Straight segment = (Straight)currentSegment;
-            distance = Calculator.findStraightDistance(currentPos.getX(), currentPos.getY(), segment.getStartingCoords(), segment.getSlope());
+            distance = Calculator.findStraightDistance(currentPos.getX(), currentPos.getY(), segment.getB(), segment.getSlope());
         } else {
             Turn segment = (Turn)currentSegment;
             distance = Calculator.findTurnDistance(currentPos.getX(),currentPos.getY(), new float[]{segment.getCenterX(), segment.getCenterY()}, segment.getRadius());
