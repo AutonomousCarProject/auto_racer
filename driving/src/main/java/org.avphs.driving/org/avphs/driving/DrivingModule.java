@@ -61,7 +61,6 @@ public class DrivingModule implements CarModule {
         //currentPos = new VectorPoint(temp[0], temp[1], temp[2], temp[3]);
         analyzeRacingLine();
         currentSegment();
-        getDirection(); getThrottle();
     }
 
     public DrivingModule(){
@@ -179,11 +178,5 @@ public class DrivingModule implements CarModule {
         speed.newSegment(nextSegment);
 
         throttle = speed.getThrottle();
-    }
-
-    public void testUpdate(){
-        analyzeRacingLine();
-        currentSegment();
-        getDirection(); getThrottle();
     }
 }
