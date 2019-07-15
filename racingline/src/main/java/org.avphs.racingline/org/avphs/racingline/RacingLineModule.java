@@ -367,7 +367,6 @@ public class RacingLineModule implements CarModule {
         float alphaM = (float) Math.pow((Math.sqrt(kAlpha) + Math.sqrt(kBeta / Math.abs(cosangle))), 2);
         float alphaPBetatilde = (float) (kAlpha / (1 - Math.sqrt(kBeta / betatilde)));
         float betaPAlphatilde = (float) (kBeta / (1 - Math.sqrt(kAlpha / alphatilde)));
-
         float cosrotateangle = ((p1x - p2x) * o1x + (p1y - p2y) * o1y) / (alphatilde * alphatilde);
         float rotateangle = (float) Math.acos(cosrotateangle);
         float sinrotateangle = (float) Math.sin(rotateangle);
