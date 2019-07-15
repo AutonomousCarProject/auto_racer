@@ -72,38 +72,41 @@ public class RacingLine {
         float yDiff = p1.getY()- p2.getY();
         return xDiff*xDiff + yDiff*yDiff;
     }
-    public void threePointAngle( RacingLinePoint [] allPoint ) {
-        for (int i = 1 ; i < allPoint.length ; i++) {
+    public static float threePointAngle( RacingLinePoint A, RacingLinePoint B, RacingLinePoint C ) {
+        /** Three Point angle takes in 3 RacingLinePoints and calculates the angle with B as the "middle" point using law of cosines
+         * This should always return the largest possible angle. Hopefully this does not break
+         * @FIXME THIS NEEDS TO BE CALLED SOMEWHERE
+         */
             // Square of lengths are a2, b2, c2
-            float a2 = lengthSquare(allPoint[i],allPoint[i++]);
-            float b2 = lengthSquare(allPoint[i--],allPoint[i++]);
-            float c2 = lengthSquare(allPoint[i--],allPoint[i]);
+            float a2 = lengthSquare(B,C);
+            float b2 = lengthSquare(A,C);
+            float c2 = lengthSquare(A,B);
 
             // length of sides be a, b, c
             float a = (float)sqrt(a2);
             float b = (float)sqrt(b2);
             float c = (float)sqrt(c2);
             // From Cosine law
-            float alpha = (float) acos((b2 + c2 - a2)/(2*b*c));
+//          float alpha = (float) acos((b2 + c2 - a2)/(2*b*c));
             float betta = (float) acos((a2 + c2 - b2)/(2*a*c));
-            float gamma = (float) acos((a2 + b2 - c2)/(2*a*b));
+//          float gamma = (float) acos((a2 + b2 - c2)/(2*a*b));
 
             // Converting to degree
-            alpha = (float) (alpha * 180 / PI);
+//          alpha = (float) (alpha * 180 / PI);
             betta = (float) (betta * 180 / PI);
-            gamma = (float) (gamma * 180 / PI);
-            allPoint[i].setDegree(betta);
+//          gamma = (float) (gamma * 180 / PI);
+            return betta;
             // Has the other angles in the supposed triangle but for our sake we are always using the middle
             // Returns largest possible angle always
-
         }
-    }
+
     public float averageAngle(RacingLinePoint [] allPoint) {
+        //currently receiving allPoints which is rather useless rn, but later could be used for other series of points to
+        //not being used rn
         float averageAngle = 0;
         for(int i = 0; i <= allPoint.length; i++) {
             averageAngle += allPoint[i].getDegree();
         }
-
         return averageAngle / allPoint.length;
     }
 }
