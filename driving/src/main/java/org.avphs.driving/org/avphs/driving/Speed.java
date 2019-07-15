@@ -21,13 +21,12 @@ public class Speed {
 
     public Speed(VectorPoint currentPos, RoadData currentSegment, RoadData nextSegment){
         FLOOR = (byte)2;            //dummy value
-        //MAX_SPEED = CalibrationModule.getMaxSpeed(FLOOR, (byte)2);    //dummy values
         MAX_HARD_BRAKE = (byte)80;  //dummy value
         this.currentPos = currentPos;
         this.currentSegment = currentSegment;
         this.nextSegment = nextSegment;
 
-        // FIXME: This throws error: Null Pointer Exception
+        //  Wait for calibration to fix
         //brakeDist = CalibrationModule.getSpeedChangeDist(FLOOR, CalibrationModule.getMaxSpeed(FLOOR,
         //        currentSegment.radius), CalibrationModule.getMaxSpeed(FLOOR, nextSegment.radius));
 
