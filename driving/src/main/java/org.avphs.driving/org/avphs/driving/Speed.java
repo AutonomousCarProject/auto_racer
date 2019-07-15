@@ -11,7 +11,6 @@ public class Speed {
     */
 
     private int brakeDist;
-    //private final byte MAX_SPEED;       //maximum attainable speed
     private final byte MAX_HARD_BRAKE;  //max throttle for braking w/o skidding
     private final byte FLOOR;           //floor index
     private VectorPoint currentPos;
@@ -46,7 +45,7 @@ public class Speed {
     public int getThrottle(){
         if (currentSegment instanceof Straight){
             if (Calculator.findClosestPoint(currentPos.getX(), currentPos.getY(), ((Straight)currentSegment).getSlope(),
-                    ((Straight)currentSegment).getB()) == 0.1){
+                    ((Straight)currentSegment).getB()) == new float[]{(float)0.1, (float)0.1} /*dummy values*/){
                 return 180;
             } else {
                 return MAX_HARD_BRAKE;
@@ -55,12 +54,4 @@ public class Speed {
             return 90;
         }
     }
-
-    /*private byte getTargetSpeedSegment(RoadData input){
-        if (input instanceof Straight){
-            return MAX_SPEED;
-        } else {
-            return 4;   //dummy value for now
-        }
-    }*/
 }
