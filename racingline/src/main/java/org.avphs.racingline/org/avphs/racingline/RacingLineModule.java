@@ -81,7 +81,7 @@ public class RacingLineModule implements CarModule {
         getWalls();
         calcMiddleLine();
         center.sortPoints();
-        //deletePoints();
+        deletePoints(30);
     }
 
     private void getWalls() {
@@ -192,26 +192,33 @@ public class RacingLineModule implements CarModule {
         return num;
     }
 
-    private void deletePoints() {
+    private void deletePoints(int trim) {
+        int times = 0;
         RacingLinePoint[] RacingLinePoints = center.getRacingLinePoints();
         RacingLinePoint p1 = RacingLinePoints[0];
         ArrayList<RacingLinePoint> compressedLine = new ArrayList<RacingLinePoint>();
         compressedLine.add(RacingLinePoints[0]);
         int index = 0;
+        int previous = 0;
         for (int i = 1; i < RacingLinePoints.length; i++) {
             RacingLinePoint p2 = RacingLinePoints[i];
             Point q1 = new Point(Math.round(p1.getX()), Math.round(p1.getY()));
             Point q2 = new Point(Math.round(p2.getX()), Math.round(p2.getY()));
             int result = intersect(q1, q2);
-            if (result > 0 || index >= 30) {
-                System.out.println("HOLA " + i + " " + result);
+            if (result > 0 || index >= trim) {
+                times++;
                 p1 = RacingLinePoints[i - 1];
+                //if(i-40>0) compressedLine.add(RacingLinePoints[i - 40]);
                 compressedLine.add(RacingLinePoints[i - 1]);
-                i--;
+                //if(i+40<RacingLinePoints.length) compressedLine.add(RacingLinePoints[i+40]);
+                if(i-1!=previous) i--;
+                previous = i;
                 index = 0;
             }
             index++;
         }
+        compressedLine.add(RacingLinePoints[RacingLinePoints.length-1]);
+        //System.out.println("HOLA "+ (RacingLinePoints.length-1));
         center.setRacingLinePointsList(compressedLine);
     }
 
