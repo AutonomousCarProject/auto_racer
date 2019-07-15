@@ -31,7 +31,6 @@ public class ImageModule implements CarModule {
         return new CarCommand[] {
           
         };
-        return null;
     }
 
     @Override
