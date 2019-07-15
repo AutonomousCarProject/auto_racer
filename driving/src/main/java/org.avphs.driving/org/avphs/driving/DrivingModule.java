@@ -58,7 +58,8 @@ public class DrivingModule implements CarModule {
     public void update(CarData carData) {
         roadData = new ArrayList<RoadData>();
         //racingLinePoints = (RacingLinePoint[])carData.getModuleData("racingLine");
-        //currentPos = (VectorPoint)carData.getModuleData("positionTracking");
+        //float[] temp = carData.getModuleData("positionTracking");
+        //currentPos = new VectorPoint(temp[0], temp[1], temp[2], temp[3]);
         analyzeRacingLine();
         getDirection(); getThrottle();
     }
@@ -140,7 +141,7 @@ public class DrivingModule implements CarModule {
             Turn seg = (Turn)currentSegment;
             float r = seg.getRadius(); float h = seg.getCenterX(); float k = seg.getCenterY();
             if (Math.pow((double)(x - h),2) + Math.pow((double)(y - k),2) != Math.pow(r,2)){
-
+        
             }
         }
     }
