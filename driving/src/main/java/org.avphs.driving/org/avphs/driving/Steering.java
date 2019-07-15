@@ -31,7 +31,7 @@ public class Steering {
             distance = Calculator.findStraightDistance(currentPos.getX(), currentPos.getY(), segment.getStartingCoords(), segment.getSlope());
         } else {
             Turn segment = (Turn)currentSegment;
-            distance = Calculator.findTurnDistance(0,0, new float[2], (short)0);
+            distance = Calculator.findTurnDistance(currentPos.getX(),currentPos.getY(), new float[]{segment.getCenterX(), segment.getCenterY()}, segment.getRadius());
         }
         return (distance < maxDistanceFromRacingLine) || (distance == maxDistanceFromRacingLine);
     }
