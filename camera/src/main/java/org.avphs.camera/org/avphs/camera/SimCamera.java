@@ -1,4 +1,4 @@
-/* TrakSim Car Simulator for use with NWAPW Year 3 Autonomous Car Project
+/* org.avphs.traksim.TrakSim Car Simulator for use with NWAPW Year 3 Autonomous Car Project
  * Use this package for testing with fly2cam.FlyCamera + fakefirm.Arduino
  *
  * This simulator pretends to be a camera using the FlyCamera API, and
@@ -6,19 +6,17 @@
  * and controls the simulated car based on those commands, then shows
  * what a forward-facing camera on the simulated car would see.
  *
- * TrakSim copyright 2018 Itty Bitty Computers and released at this time
+ * org.avphs.traksim.TrakSim copyright 2018 Itty Bitty Computers and released at this time
  * to the public as open source. There are no warranties of any kind.
  *
  * SimCamera is based on fly2cam.FlyCamera, which is in the public domain.
  */
 package org.avphs.camera; // (class SimCamera)                   // 2018 May 25
 
-import org.avphs.traksim.DriverCons;
 import org.avphs.traksim.HandyOps;
-import org.avphs.traksim.TrakSim;
 
 /**
- * FlyCamera Simulator for TrakSim (but different name)
+ * FlyCamera Simulator for org.avphs.traksim.TrakSim (but different name)
  * Use this for testing in parallel with fly2cam.FlyCamera
  */
 public class SimCamera extends CameraBase {
@@ -55,7 +53,7 @@ public class SimCamera extends CameraBase {
     }
 
     /**
-     * Gets one frame from the (fake) camera by fetching it from TrakSim.
+     * Gets one frame from the (fake) camera by fetching it from org.avphs.traksim.TrakSim.
      *
      * @return True if success, false otherwise
      */

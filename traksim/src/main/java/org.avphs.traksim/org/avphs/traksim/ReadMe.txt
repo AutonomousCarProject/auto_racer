@@ -1,8 +1,8 @@
-TrakSim ReadMe (Copyright 2019 July 4 Itty Bitty Computers)...
+org.avphs.traksim.TrakSim ReadMe (Copyright 2019 July 4 Itty Bitty Computers)...
 
-TrakSim is an emulator program that pretends to be the steering and drive servos of a radio-controlled car with the radio receiver replaced by a LattePanda (LP) computer running Java on Winows 10 and connected to a PointGrey(Flir) Chameleon3 or FireFly camera pointed straight ahead, which TrakSim also simulates, using the same APIs in each case.
+org.avphs.traksim.TrakSim is an emulator program that pretends to be the steering and drive servos of a radio-controlled car with the radio receiver replaced by a LattePanda (LP) computer running Java on Windows 10 and connected to a PointGrey(Flir) Chameleon3 or FireFly camera pointed straight ahead, which org.avphs.traksim.TrakSim also simulates, using the same APIs in each case.
 
-TrakSim is designed to work with the hardware complement of the LattePanda (LP) computer where it is used to replace the radio receiver in a standard R/C model car, with user-written software to drive the car. It can also be used in stand-alone mode on any Java-compatible computer to simulate the LP system in the absence of the LP hardware and attached car, which is its reason for existence. Develop on any computer, then deploy on an embedded LP in your car.
+org.avphs.traksim.TrakSim is designed to work with the hardware complement of the LattePanda (LP) computer where it is used to replace the radio receiver in a standard R/C model car, with user-written software to drive the car. It can also be used in stand-alone mode on any Java-compatible computer to simulate the LP system in the absence of the LP hardware and attached car, which is its reason for existence. Develop on any computer, then deploy on an embedded LP in your car.
 
 This program is released as Java source code which you can run in any standard Java development environment. It is designed to work with FakeFirmata (FF, included) to test your autonomous vehicle software apart from any controlled car, but also can be used in your car while controlling your car's servos. FF in turn works with the JavaSimpleSerialConnector serial port implementation (or any other compatible API) to send serial port commands to the Arduino daughter board included with the LattePanda computer. In a Java development environment other than LP, use package noJSSC (also included) to run the simulator as a stand-alone.
 
@@ -16,7 +16,7 @@ New This Release
 
 I added a tiled floor option to replicate a specific pattern on the track floor. Only the upload with a ReadMe dated today is current.
 
-I added a method Activate() to prevent TrakSim from using CPU time when running on an actual track with a live camera.
+I added a method Activate() to prevent org.avphs.traksim.TrakSim from using CPU time when running on an actual track with a live camera.
 
 I added track boundary walls compatible with the F1/10th race tracks, along with simulating the coefficient of friction and a driveshaft turns counter.
 

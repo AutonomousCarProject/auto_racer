@@ -1,7 +1,5 @@
 package org.avphs.camera;
 
-import org.avphs.traksim.DriverCons;
-
 public class CameraBase implements Camera {
 
     protected byte[] bayerImage;
