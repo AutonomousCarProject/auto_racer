@@ -180,10 +180,4 @@ public class DrivingModule implements CarModule {
 
         throttle = speed.getThrottle();
     }
-
-    public void testUpdate(){
-        analyzeRacingLine();
-        currentSegment();
-        getDirection(); getThrottle();
-    }
 }
