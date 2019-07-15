@@ -15,7 +15,7 @@ import static org.avphs.coreinterface.CarCommand.stop;
 public class DrivingModule implements CarModule {
 
     private RacingLine[] racingline;
-    private ArrayList<RoadData> roadData = new ArrayList<RoadData>();;
+    private ArrayList<RoadData> roadData = new ArrayList<RoadData>();
     private RacingLinePoint[] racingLinePoints;
     private RoadData currentSegment;
     private RoadData nextSegment;
@@ -59,7 +59,7 @@ public class DrivingModule implements CarModule {
         //racingLinePoints = (RacingLinePoint[])carData.getModuleData("racingLine");
         //float[] temp = carData.getModuleData("position");
         //currentPos = new VectorPoint(temp[0], temp[1], temp[2], temp[3]);
-        analyzeRacingLine();
+        //analyzeRacingLine();
         currentSegment();
         getDirection(); getThrottle();
     }
@@ -116,7 +116,7 @@ public class DrivingModule implements CarModule {
     public void analyzeRacingLine(){
         //RacingLine should eventually have points only on the maxima and minima
         // .getDegree calculates the degree from the current point as a center and a previous and future point, and thus needs to start at second index
-        for (int i = 1; i <  racingLinePoints.length ; i++ ) {
+        for (int i = 1; i <  racingLinePoints.length ; i++) {
             if (racingLinePoints[i].getDegree() > 170 && racingLinePoints[i].getDegree() < 190) { // 10 is an arbitrary number that needs further numbers
                 roadData.add(new Straight(racingLinePoints[i-1].getX(),racingLinePoints[i-1].getY(),racingLinePoints[i+1].getX(),racingLinePoints[i+1].getY()));
             }
