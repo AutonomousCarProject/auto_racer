@@ -6,18 +6,44 @@ import org.avphs.coreinterface.CarCommand;
 import org.avphs.coreinterface.CarData;
 import org.avphs.coreinterface.CarModule;
 
-public class CalibrationModule implements CarModule {
+import static java.lang.Short.parseShort;
+
+public class CalibrationModule {
+
+    /*private static <TOUT> TOUT readTable(String filepath){
+        TOUT rowList = null;
+
+        Object dimensionObj = rowList;
+        int dimensionCount = 0;
+        while(dimensionObj instanceof Object[]){
+            var array = (Object[])dimensionObj;
+            dimensionCount++;
+            dimensionObj = array[0];
+        }
+        Function<Integer, Integer> x = (y)->y+5;
+        x.
+        return rowList;
+    }
+    */
+
+    //TODO: find real value
+    //Axel dist in cm
+    public static final double WHEEL_BASE = 32.5;
+
+    public static final double  RIM_TO_RIM = 26.4;
 
     //Helper method to read speed change distance data
-    private static byte[][][] reedSpeedChangeDistData() {
-        byte[][][] rowList = new byte[][][]{};
-        try (BufferedReader br = new BufferedReader(new FileReader("pathtocsvfile.csv"))) {
+    private static byte[][][] reedSpeedChangeDistData (){
+        byte[][][] rowList = null;
+        try (BufferedReader br = new BufferedReader(new FileReader("DistanceCalculations.txt"))) {
 
-            short numFloors = Short.parseShort(br.readLine());
-            short initSpeeds = Short.parseShort(br.readLine());
-            short finalSpeeds = Short.parseShort(br.readLine());
-            for (short i = 0; i < numFloors; i++) {
-                for (int j = 0; j < initSpeeds; j++) {
+            short numFloors = parseShort(br.readLine());
+            short initSpeeds = parseShort(br.readLine());
+            short finalSpeeds = parseShort(br.readLine());
+            rowList = new byte[numFloors][initSpeeds][finalSpeeds];
+
+            for(short i = 0; i<numFloors; i++){
+                for(int j = 0; j < initSpeeds; j++) {
 
                     String line = br.readLine();
                     String[] lineItems = line.split(" ");
@@ -34,19 +60,19 @@ public class CalibrationModule implements CarModule {
     }
 
     //Helper method to read max speed data
-    private static byte[][] reedMaxSpeedData() {
-        byte[][] rowList = new byte[][]{};
-        try (BufferedReader br = new BufferedReader(new FileReader("pathtocsvfile.csv"))) {
+    private static byte[][] reedMaxSpeedData (){
+        byte[][] rowList = null;
+        try (BufferedReader br = new BufferedReader(new FileReader("MaxSpeeds.csv"))) {
 
-            short numFloors = Short.parseShort(br.readLine());
-            short initSpeeds = Short.parseShort(br.readLine());
-            short finalSpeeds = Short.parseShort(br.readLine());
+            short numFloor = parseShort(br.readLine());
+            short numRadii = parseShort(br.readLine());
+            rowList = new byte[numFloor][numRadii];
 
-            for (int i = 0; i < initSpeeds; i++) {
+            for (int i = 0; i < numFloor; i++) {
 
                 String line = br.readLine();
                 String[] lineItems = line.split(" ");
-                for (int j = 0; j < finalSpeeds; j++) {
+                for (int j = 0; j < numRadii; j++) {
                     rowList[i][j] = Byte.parseByte(lineItems[j]);
                 }
             }
@@ -61,11 +87,10 @@ public class CalibrationModule implements CarModule {
     //Helper method to read defishing data
     private static FishData[][] reedFishData() {
         FishData[][] rowList = new FishData[][]{};
-        try (BufferedReader br = new BufferedReader(new FileReader("pathtocsvfile.csv"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("CameraData.txt"))) {
 
-            short numFloors = Short.parseShort(br.readLine());
-            short initSpeeds = Short.parseShort(br.readLine());
-            short finalSpeeds = Short.parseShort(br.readLine());
+            short xCount = parseShort(br.readLine());
+            short yCount = parseShort(br.readLine());
 
             for (int i = 0; i < initSpeeds; i++) {
 
@@ -84,6 +109,27 @@ public class CalibrationModule implements CarModule {
         return rowList;
     }
 
+    //Helper method to read angle data
+    private static short[] readAngleData (){
+        short[] rowList = new short[]{};
+        try (BufferedReader br = new BufferedReader(new FileReader("AngleData.txt"))) {
+
+            short radCount = parseShort(br.readLine());
+            String line = br.readLine();
+            String[] lineItems = line.split(" ");
+            for (int i = 0; i < radCount; i++) {
+
+                rowList[i] = Short.parseShort(lineItems[i]);
+            }
+
+        }
+        catch(Exception e){
+            // Handle any I/O problems
+        }
+        return rowList;
+    }
+
+
     //input current speed and desired speed. get distance
     private static final byte[][][] SPEED_CHANGE_DISTS = reedSpeedChangeDistData();
 
@@ -94,22 +140,23 @@ public class CalibrationModule implements CarModule {
     private static final FishData[][] DEFISHER = reedFishData();
 
     //
-    private static final short[] ANGLES = {};
+    private static final short[] ANGLES = readAngleData();
 
     public static final FishData getFishData(short x, short y) {
         return DEFISHER[x][y];
     }
 
-    public static final byte getMaxSpeed(byte floor, short rad) {
+    //0 rad is straight
+    public static final byte getMaxSpeed(byte floor, short rad){
         return MAX_SPEEDS[floor][rad];
 
     }
-
-    public static final byte getSpeedChangeDist(byte floor, byte initSpeed, byte finalSpeed) {
+    public static final byte getSpeedChangeDist(short floor, byte initSpeed, byte finalSpeed){
         return SPEED_CHANGE_DISTS[floor][initSpeed][finalSpeed];
     }
 
-    public static final short getAngles(short rad) {
+    //returns val btwn 0 and 180--90 is straight ahead 180 is sharp right, 0 is sharp left
+    public static final short getAngles (short rad){
         return ANGLES[rad];
     }
 
