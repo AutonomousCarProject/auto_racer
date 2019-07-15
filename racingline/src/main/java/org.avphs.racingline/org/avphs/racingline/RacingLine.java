@@ -3,6 +3,9 @@ package org.avphs.racingline;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import static java.lang.Math.*;
+import static java.lang.Math.PI;
+
 /**
  * <p>This class represents a racing line. It contains an array of points which represent the line.</p>
  *
@@ -64,29 +67,46 @@ public class RacingLine {
         }
         RacingLinePointsList = orderedRacingLine;
     }
-//    cos = adj over hype
-//    Math.acos adj over hyp
-//    @FIXME Make sure to execute at the right time, driving team NEEDS angles to operate. Possible issue exterior vs interior angle
-    public void threePointAngle( RacingLinePoint [] allPoint ) {
-        int totalsize =  allPoint.length;
-        float p1x; float p2x; float p3x; float p1y; float p2y; float p3y;  float p12; float p13; float p23;
-        for (int i = 1 ; i < totalsize ; i++) {
-            p1x = allPoint[i-1].getX(); p1y=allPoint[i-1].getY(); p2x = allPoint[i].getX(); p2y=allPoint[i].getY(); p3x = allPoint[i+1].getX(); p3y=allPoint[i+1].getY();
-            p12 = (float)Math.sqrt(Math.pow((p1x - p2x),2) + Math.pow((p1y - p2y),2));
-            p13 = (float) Math.sqrt(Math.pow((p1x - p3x),2) + Math.pow((p1y - p3y),2));
-            p23 = (float) Math.sqrt(Math.pow((p2x - p3x),2) + Math.pow((p2y - p3y),2));
-            allPoint[i].setDegree((float)(Math.acos(((Math.pow(p12, 2)) + (Math.pow(p13, 2)) - (Math.pow(p23, 2))) / (2 * p12 * p13)) * 180 / Math.PI));
-        }
+    static float lengthSquare(RacingLinePoint p1, RacingLinePoint p2) {
+        float xDiff = p1.getX()- p2.getX();
+        float yDiff = p1.getY()- p2.getY();
+        return xDiff*xDiff + yDiff*yDiff;
     }
-    public float averageAngle(RacingLinePoint [] allPoint) {
-        int allPointLength = allPoint.length;
-        int i = 0;
-        float averageAngle = 0;
+    public static float threePointAngle( RacingLinePoint A, RacingLinePoint B, RacingLinePoint C ) {
+        /** Three Point angle takes in 3 RacingLinePoints and calculates the angle with B as the "middle" point using law of cosines
+         * This should always return the largest possible angle. Hopefully this does not break
+         * @FIXME THIS NEEDS TO BE CALLED SOMEWHERE
+         */
+            // Square of lengths are a2, b2, c2
+            float a2 = lengthSquare(B,C);
+            float b2 = lengthSquare(A,C);
+            float c2 = lengthSquare(A,B);
 
-        for(i = 0; i <= allPointLength; i++) {
+            // length of sides be a, b, c
+            float a = (float)sqrt(a2);
+            float b = (float)sqrt(b2);
+            float c = (float)sqrt(c2);
+            // From Cosine law
+//          float alpha = (float) acos((b2 + c2 - a2)/(2*b*c));
+            float betta = (float) acos((a2 + c2 - b2)/(2*a*c));
+//          float gamma = (float) acos((a2 + b2 - c2)/(2*a*b));
+
+            // Converting to degree
+//          alpha = (float) (alpha * 180 / PI);
+            betta = (float) (betta * 180 / PI);
+//          gamma = (float) (gamma * 180 / PI);
+            return betta;
+            // Has the other angles in the supposed triangle but for our sake we are always using the middle
+            // Returns largest possible angle always
+        }
+
+    public float averageAngle(RacingLinePoint [] allPoint) {
+        //currently receiving allPoints which is rather useless rn, but later could be used for other series of points to
+        //not being used rn
+        float averageAngle = 0;
+        for(int i = 0; i <= allPoint.length; i++) {
             averageAngle += allPoint[i].getDegree();
         }
-
-        return averageAngle;
+        return averageAngle / allPoint.length;
     }
 }
