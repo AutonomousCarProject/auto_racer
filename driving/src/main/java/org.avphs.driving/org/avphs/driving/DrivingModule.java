@@ -58,9 +58,10 @@ public class DrivingModule implements CarModule {
     public void update(CarData carData) {
         roadData = new ArrayList<RoadData>();
         //racingLinePoints = (RacingLinePoint[])carData.getModuleData("racingLine");
-        //float[] temp = carData.getModuleData("positionTracking");
+        //float[] temp = carData.getModuleData("position");
         //currentPos = new VectorPoint(temp[0], temp[1], temp[2], temp[3]);
         analyzeRacingLine();
+        currentSegment();
         getDirection(); getThrottle();
     }
 
@@ -134,14 +135,32 @@ public class DrivingModule implements CarModule {
         if (currentSegment instanceof Straight){
             Straight seg = (Straight)currentSegment;
             float m = seg.getSlope(); float b = (-m * x) + y;
-            if (y != m * x + b){
-                
+            float eq = m * x + b;
+            if (y > eq - 10 && y < eq + 10){
+                changeSegment();
             }
         } else {
             Turn seg = (Turn)currentSegment;
             float r = seg.getRadius(); float h = seg.getCenterX(); float k = seg.getCenterY();
-            if (Math.pow((double)(x - h),2) + Math.pow((double)(y - k),2) != Math.pow(r,2)){
-        
+            float eq = (float)Math.pow((double)(x - h),2) + (float)Math.pow((double)(y - k),2);
+            float r2 = r * r;
+            if (r2 > eq - 10 && r2 < eq + 10){
+                changeSegment();
+            }
+        }
+    }
+
+    public void changeSegment(){
+        int pos = roadData.indexOf(currentPos);
+        for (int i = 0; i < 2; i++) {
+            pos++;
+            if (pos == roadData.size()){
+                pos = 0;
+            }
+            if (i == 0){
+                currentSegment = roadData.get(pos);
+            } else {
+                nextSegment = roadData.get(pos);
             }
         }
     }
