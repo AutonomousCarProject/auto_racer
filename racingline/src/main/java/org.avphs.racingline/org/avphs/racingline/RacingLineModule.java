@@ -450,7 +450,6 @@ public class RacingLineModule implements CarModule {
     }
 }
 
-
 //region Classes
 class Point {
     int x, y;
@@ -466,7 +465,6 @@ class Point {
     }
 }
 
-//--------------------------------------------
 class WindowCurve {
 
     private ArrayList<Curve> curves = new ArrayList<Curve>();
@@ -652,3 +650,4 @@ class Matrix4 {
         return res;
     }
 }
+//endregion
