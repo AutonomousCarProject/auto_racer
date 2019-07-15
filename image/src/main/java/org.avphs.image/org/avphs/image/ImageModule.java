@@ -9,6 +9,10 @@ import org.avphs.window.WindowModule;
 public class ImageModule implements CarModule {
 
     WindowModule window;
+    public final int WINDOW_WIDTH = 912, WINDOW_HEIGHT = 480;
+
+    byte[] bayerImage = new byte[4*WINDOW_HEIGHT*WINDOW_WIDTH];
+    int[] rgbImage = new int[WINDOW_HEIGHT*WINDOW_HEIGHT];
 
     @Override
     public Class[] getDependencies() {
@@ -28,7 +32,8 @@ public class ImageModule implements CarModule {
     public void update(CarData carData) {
         window = (WindowModule) carData.getModuleData("window");
         var camera = (Camera) carData.getModuleData("camera");
-        var rgb = convertToRGB(camera.getBayerImage(), camera.getCamHeight(), camera.getCamWidth());
+        bayerImage = camera.getBayerImage();
+        var rgb = ImageProcessing.process(bayerImage,WINDOW_WIDTH,WINDOW_HEIGHT);
         window.setWindowImage(rgb);
     }
 
