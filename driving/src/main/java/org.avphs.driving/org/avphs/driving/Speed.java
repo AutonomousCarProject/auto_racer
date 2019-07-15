@@ -45,7 +45,8 @@ public class Speed {
 
     public int getThrottle(){
         if (currentSegment instanceof Straight){
-            if (true){
+            if (Calculator.findClosestPoint(currentPos.getX(), currentPos.getY(), ((Straight)currentSegment).getSlope(),
+                    ((Straight)currentSegment).getB()) == 0.1){
                 return 180;
             } else {
                 return MAX_HARD_BRAKE;

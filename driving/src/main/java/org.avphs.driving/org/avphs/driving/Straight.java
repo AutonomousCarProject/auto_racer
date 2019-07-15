@@ -3,6 +3,7 @@ package org.avphs.driving;
 public class Straight extends RoadData {
 	private float straightLen;
 	private float slope;
+	private float b;
 	private float negRecip;
 
 	public Straight(float startX, float startY, float endX, float endY) {
@@ -13,9 +14,8 @@ public class Straight extends RoadData {
 		this.radius = 0;
 
 		slope = (endY-startY)/(endX-startX);
-
+		b = (-slope * startX) + startY;
 		straightLen = (float)Math.sqrt(Math.pow(endX - startX, 2.0) + Math.pow(endY - startY, 2.0));
-
 		negRecip = ((float)-1)/slope;
 	}
 
@@ -25,6 +25,10 @@ public class Straight extends RoadData {
 
 	public float getSlope(){
 		return slope;
+	}
+
+	public float getB(){
+		return b;
 	}
 
 	public float getNegRecip(){
