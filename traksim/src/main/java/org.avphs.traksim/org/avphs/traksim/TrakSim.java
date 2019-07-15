@@ -1,4 +1,4 @@
-/* TrakSim Car Simulator for use with NWAPW Year 3 Autonomous Car Project
+package org.avphs.traksim;/* org.avphs.traksim.TrakSim Car Simulator for use with NWAPW Year 3 Autonomous Car Project
  * Use this package for testing with fly2cam.FlyCamera + fakefirm.Arduino
  *
  * This simulator pretends to be a camera using the FlyCamera API, and
@@ -6,7 +6,7 @@
  * and controls the simulated car based on those commands, then shows
  * what a forward-facing camera on the simulated car would see.
  *
- * TrakSim copyright 2018 Itty Bitty Computers and released at this time
+ * org.avphs.traksim.TrakSim copyright 2018 Itty Bitty Computers and released at this time
  * to the public as open source. There are no warranties of any kind.
  *
  * FakeFirmata is designed to work with JSSC (Java Simple Serial Connector),
@@ -14,105 +14,114 @@
  * than LattePanda, you can substitute package noJSSC, which has the same
  * APIs (as used by FakeFirmata) but does nothing.
  */
-package org.avphs.traksim; // (class TrakSim)                  // 2019 July 4
-
-import org.avphs.sbcio.ArduinoIO;
-import org.avphs.sbcio.fakefirm.SimHookBase;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
+
+import org.avphs.sbcio.ArduinoIO;
+import org.avphs.sbcio.fakefirm.*;
+import org.avphs.traksim.DriverConstants;
+import org.avphs.traksim.HandyOps;
+import org.avphs.traksim.MyMath;
 
 /**
- * The main TrakSim Car Simulator class..
+ * The main org.avphs.traksim.TrakSim Car Simulator class... God help you.
  */
 public class TrakSim {
+    // awdawdawdawdawd
 
-    private static final String SceneFiName = DriverCons.D_SceneFiName,
-            RevDate = DriverCons.D_RevDate;
-    // fGratio cnvrts ESC steps to nominal velocity; fMinSpeed=4.0,MinESC=10
+    private static final String SCENE_FILE_NAME = DriverConstants.D_Change_Scene_By_Name_File,
+            RevDate = DriverConstants.D_RevDate;
+    // RP Key: ESC = Electronic Speed Control
+    // fGratio convrts ESC steps to nominal velocity; FLOOR_MIN_SPEED=4.0,MinESC=10
     // ..adjust multiplier so it's correct for your car: *1.0 => fGratio=0.4
-    private static final double fMinSpeed = DriverCons.D_fMinSpeed,
-            fMinESC = (double) DriverCons.D_MinESCact,
-            fGratio = 1.0 * fMinSpeed / fMinESC;
-    private static final boolean RampServos = DriverCons.D_RampServos,
-            Mini_Log = DriverCons.D_Mini_Log && (DriverCons.D_Qlog != 0),
-            Log_Draw = DriverCons.D_Log_Draw && (DriverCons.D_Qlog < 0),
-            Log_Log = DriverCons.D_Log_Log && (DriverCons.D_Qlog < 0),
-            MapLogged = DriverCons.D_MapLogged && ((DriverCons.D_Qlog & 1) != 0),
-            NoisyMap = DriverCons.D_NoisyMap && MapLogged,
-            TrakNoPix = DriverCons.D_TrakNoPix, ShowMap = DriverCons.D_ShowMap,
-            DoCloseUp = DriverCons.D_DoCloseUp && ShowMap,
-            Reversible = DriverCons.D_Reversible, ShoHedLit = DriverCons.D_ShoHedLit,
-            ShoClikGrid = DriverCons.D_ShoClikGrid, Fax_Log = DriverCons.D_Fax_Log,
-            UseTexTrak = DriverCons.D_UseTexTrak, GoodLog = (DriverCons.D_Qlog < 0);
-    private static final int Vramp = DriverCons.D_Vramp; // imported constants,
-    private static final int ImHi = DriverCons.D_ImHi;
-    private static final int ImWi = DriverCons.D_ImWi; // ..local names
-    private static final int Hramp = DriverCons.D_Hramp;
-    private static final int RampA = DriverCons.D_RampA;
-    private static final int HalfMap = DriverCons.D_HalfMap;
-    private static final int HalfTall = DriverCons.D_HalfTall;
-    private static final int LeftSteer = DriverCons.D_LeftSteer;
-    private static final int RiteSteer = DriverCons.D_RiteSteer;
-    private static final int SteerServo = DriverCons.D_SteerServo;
-    private static final int GasServo = DriverCons.D_GasServo;
-    private static final int MinESCact = DriverCons.D_MinESCact;
-    private static final int MaxESCact = DriverCons.D_MaxESCact;
-    private static final int DrawDash = DriverCons.D_DrawDash;
-    private static final int FrameTime = DriverCons.D_FrameTime;
-    private static final int Zoom35 = DriverCons.D_Zoom35;
-    private static final int xCloseUp = DriverCons.D_xCloseUp;
-    private static final int Back_Wall = DriverCons.D_BackWall;
-    private static final int CarColo = DriverCons.D_CarColo;
-    private static final int ArtiColo = DriverCons.D_ArtiColo;
-    private static final int AltWalColo = ArtiColo; // = CarColo to see segment ends, else = ArtiColo
-    private static final int MarinBlue = DriverCons.D_MarinBlue;
-    private static final int SteerColo = DriverCons.D_SteerColo;
-    private static final int DashColo = DriverCons.D_DashColo;
-    private static final int CanSkid = -1; // =0 disables
-    private static final int Truk = 0x40000000;     // in-track flag added to MapColo res
-    private static final int izBG = 0x20000000;     // background wall flag, ditto
-    private static final int LumUniShif = 12;       // default track luminance, 2^LUS = nominal 1.0
-    private static final int unPainted = 0x9999CC;  // background color for SeeOnScrnPaint (steel gray)
-    private static final int SiTwide = 7;           // 7m side look for StayInTrack
-    private static final int xTrLiteTime = DriverCons.D_xTrLiteTime;
-    private static final int Qlog = DriverCons.D_Qlog;
-    private static final int BayerTile = DriverCons.D_BayTile; // 1=RG/GB
-    private static final int MapTall = HalfTall * 2;
-    private static final int MapWide = HalfMap * 2;
-    private static final int SteerMid = ImWi / 3;
-    private static final int ImHaf = ImHi / 2;
-    private static final int ImMid = ImWi / 2;
-    private static final int MapWiBit = 8;
-    private static final int Tintx = 0;
-    private static final int ArtBase = 8;
-    private static final int ImHmsk = 4095;
-    private static final int zx50 = 28; // = fudge-factor to make Zoom35=50 come out OK
-    private static final int ZoomPix = ImWi * zx50 / Zoom35; // divide this by distance for pix/meter
-    private static final int ParkDims = MapTall * 0x10000 + MapWide;
-    private static final int CheckerBd = DriverCons.D_CheckerBd;
-    private static final int ServoStepRate = 0; // = FrameTime/20, // Vscale = DriverCons.D_Vscale,
-    private static final int MapAsize = MapTall * MapWide;
-    private static final int GridSz = HalfTall * HalfMap;
-    private static final int MxLayShf = 3;
-    private static final int MaxLayers = 4;
-    private static final int LayStep = ImWi * MaxLayers;
-    private static final int LayerSz = LayStep * 2;
-    private static final int TweakRx = DriverCons.D_TweakRx;
-    private static final int Crummy = DriverCons.D_Crummy;
-    public static final int WinWi = (ShowMap ? MapWide + 16 : 0) + ImWi, // window width
-            Lin2 = WinWi * 2, nPixels = ImHi * WinWi; // + pix in whole window
-    private static final double TurnRadius = DriverCons.D_TurnRadius,
+    private static final double FLOOR_MIN_SPEED = DriverConstants.D_Floor_Min_Speed,
+            MIN_ESC_RANGE = (double) DriverConstants.D_Min_ESC_Range, // Was MIN_ESC_RANGE before, dunno what means, more work required.
+            fGratio = 1.0 * FLOOR_MIN_SPEED / MIN_ESC_RANGE; //RP Com: fg potentially means Frequency Generated Ratio for a servo more research needed.
+    private static final boolean RampServos = DriverConstants.D_Gradual_Servo_Change,
+            Mini_Log = DriverConstants.D_Minimized_Log && (DriverConstants.D_Verbose_Logging_Options != 0),
+            Log_Draw = DriverConstants.D_Log_Draw && (DriverConstants.D_Verbose_Logging_Options < 0),
+            Log_Log = DriverConstants.D_Log_Log && (DriverConstants.D_Verbose_Logging_Options < 0),
+            MapLogged = DriverConstants.D_MapLogged && ((DriverConstants.D_Verbose_Logging_Options & 1) != 0),
+            NoisyMap = DriverConstants.D_Detailed_Map_Log && MapLogged, //Way to see a lot more info when you're seeing a map //And turns bits to 0, OR turns bits to 1 //Req both to be true for result to be true
+            TrakNoPix = DriverConstants.D_Draw_Track_Only,
+            ShowMap = DriverConstants.D_ShowMap,
+            DoCloseUp = DriverConstants.D_Show_Close_Up_Map && ShowMap,
+
+    Reversible = DriverConstants.D_Allow_Reverse,
+            ShoHedLit = DriverConstants.D_Show_Headlights,
+            ShoClikGrid = DriverConstants.D_Show_Drive_Controls,
+            Fax_Log = DriverConstants.D_Factual_Log,
+            UseTexTrak = DriverConstants.D_Use_Text_File_Track,
+            GoodLog = (DriverConstants.D_Verbose_Logging_Options < 0);
+    private static final int Vramp = DriverConstants.D_Vertical_Car_Position, // imported constants,
+            ImageHeight = DriverConstants.Display_Height,
+            ImageWidth = DriverConstants.Display_Width, // ..local names
+            Hramp = DriverConstants.D_Horizontal_Car_Position,
+            RampA = DriverConstants.D_Initial_Car_Clockwise_Orientation,
+            HalfMap = DriverConstants.D_Half_Map_Width,
+            HalfTall = DriverConstants.D_Half_Map_Height,
+            LeftSteer = DriverConstants.D_Left_Steer_Range,
+            RiteSteer = DriverConstants.D_Right_Steer_Range,
+            SteerServo = DriverConstants.D_Steer_Servo_Pins,
+            GasServo = DriverConstants.D_Gas_Servo_Pins,
+            MinESCact = DriverConstants.D_Min_ESC_Range,
+            MaxESCact = DriverConstants.D_Max_ESC_Range,
+            DrawDash = DriverConstants.D_Draw_Dashboard,
+            FrameTime = DriverConstants.D_Frame_Rate_Period,
+            Zoom35 = DriverConstants.D_Camera_Zoom_35mm,
+            xCloseUp = DriverConstants.D_Magnification_Factor,
+            Back_Wall = DriverConstants.D_BackWall,
+            CarColo = DriverConstants.D_Car_Color,
+            ArtiColo = DriverConstants.D_Artifact_Color,
+            AltWalColo = ArtiColo, // = CarColo to see segment ends, else = ArtiColo
+            MarinBlue = DriverConstants.D_Driving_Info_Color,
+            SteerColo = DriverConstants.D_Steer_Wheel_Color,
+            DashColo = DriverConstants.D_Dash_Color,
+            CanSkid = -1, // =0 disables
+            Truk = 0x40000000,     // in-track flag added to MapColo res
+            izBG = 0x20000000,     // background wall flag, ditto
+            LumUniShif = 12,       // default track luminance, 2^LUS = nominal 1.0
+            unPainted = 0x9999CC,  // background color for SeeOnScrnPaint (steel gray)
+            SiTwide = 7,           // 7m side look for StayInTrack
+            xTrLiteTime = DriverConstants.D_Traffic_Light_Time,
+            Qlog = DriverConstants.D_Verbose_Logging_Options,
+            BayerTile = DriverConstants.D_Bayer_Tiling_Config, // 1=RG/GB
+
+    MapTall = HalfTall * 2,
+            MapWide = HalfMap * 2,
+            SteerMid = ImageWidth / 3,
+            ImHaf = ImageHeight / 2,
+            ImMid = ImageWidth / 2,
+            MapWiBit = 8,
+            Tintx = 0,
+            ArtBase = 8,
+            ImHmsk = 4095, zx50 = 28, // = fudge-factor to make Zoom35=50 come out OK
+            ZoomPix = ImageWidth * zx50 / Zoom35, // divide this by distance for pix/meter
+            ParkDims = MapTall * 0x10000 + MapWide,
+            CheckerBd = DriverConstants.D_Map_Checker_Board,
+            ServoStepRate = 0, // = FrameTime/20, // Vscale = DriverConstants.D_Vscale,
+            MapAsize = MapTall * MapWide,
+            GridSz = HalfTall * HalfMap, MxLayShf = 3,
+            MaxLayers = 4,
+            LayStep = ImageWidth * MaxLayers,
+            LayerSz = LayStep * 2,
+            TweakRx = DriverConstants.D_Adjust_Turn_Or_Zoom,
+            Crummy = DriverConstants.D_BreadCrumb_List_Size;
+    public static final int WinWi = (ShowMap ? MapWide + 16 : 0) + ImageWidth, // window width
+            Lin2 = WinWi * 2, nPixels = ImageHeight * WinWi; // + pix in whole window
+    private static final double TurnRadius = DriverConstants.D_TurnRadius,
             LfDeScaleSt = 1.0, RtDeScaleSt = 1.0, // (no longer used)
-            WhiteLnWi = DriverCons.D_WhiteLnWi, // Fby3 = 1.0/3.0,
-            ProxyThresh = DriverCons.D_ProxThresh * DriverCons.D_ProxThresh,
+            WhiteLnWi = DriverConstants.D_White_Line_Width, // Fby3 = 1.0/3.0,
+            ProxyThresh = DriverConstants.D_ProxThresh * DriverConstants.D_ProxThresh,
             fFtime = (double) FrameTime / 1000.0, fFPS = 1.0 / fFtime, // fps
-            Acceleration = DriverCons.D_Acceleration,
-            PkGrav = DriverCons.D_Grav * fFtime * fFtime, // now scaled to frame rate
-            fImMid = (double) ImMid, // ModelScale = (double)DriverCons.D_ModelScale,
-            CameraHi = DriverCons.D_CameraHi, CentoGrav = DriverCons.D_CentoGrav,
+            Acceleration = DriverConstants.D_Acceleration,
+            PkGrav = DriverConstants.D_Gravity * fFtime * fFtime, // now scaled to frame rate
+            fImMid = (double) ImMid, // ModelScale = (double)DriverConstants.D_Map_Scale,
+            CameraHi = DriverConstants.D_Camera_Height_Above_Track, CentoGrav = DriverConstants.D_Center_Of_Gravity,
             fMapTall = (double) MapTall, fMapWide = (double) MapWide,
-    // TurnRadius is measured at servo position = min(LeftSteer,RiteSteer)
+    // TurnRadius is measured at servo prerace = min(LeftSteer,RiteSteer)
     NormdRad = (256.0 / TurnRadius) * ((LeftSteer < RiteSteer)
             ? (double) LeftSteer : (double) RiteSteer),
     // NormdRad: scale factor to calc acceleration from servo steering angle
@@ -124,7 +133,7 @@ public class TrakSim {
             fMaxSpeed = fGratio * ((double) MaxESCact),
             CoFudge = 1.0, MaxRspeed = (Reversible ? -0.5 * fMaxSpeed : 0.0),
             Torque = fFtime / Acceleration, // used to calc speed change
-            fTime4mass = fMinESC * fFtime / Acceleration;
+            fTime4mass = MIN_ESC_RANGE * fFtime / Acceleration;
     private static final String[] CompNames = {" N  ", " NNE ", " NE ", " ENE ",
             " E  ", " ESE ", " SE ", " SSE ", " S  ", " SSW ", " SW ", " WSW ",
             " W  ", " WNW ", " NW ", " NNW "};
@@ -234,24 +243,26 @@ public class TrakSim {
             TmpI = 0, TripLine = 0, SameData = 0, SeePixBox = 0, GotPebz = 0,
             WideRatio = 0, PreLeft = 0, PreRite = 0, RoShift = 0,
             FloorOff = 0, FloorDims = 0, GrasColo = 0x00FF00, GrasDk = 0x009900,
-            WhitLnColo = DriverCons.D_WhitLnColo, PebblSize = DriverCons.D_PebblSize,
-            PavColo = 0x666666, PavDk = 0x333333,
+            WhitLnColo = DriverConstants.D_White_Line_Color, PebblSize = DriverConstants.D_Track_Pebble_Size,
+            PavementColor = 0x666666, PavDk = 0x333333,
             CarTall = (int) Math.round(CameraHi * 16.0), Tally, BackWall = Back_Wall,
             WallCo5 = Back_Wall, WallCo6 = unPainted, WallCo7 = unPainted,
-            PilasterCo = DriverCons.D_PilColo, CreamWall = DriverCons.D_CreamWall,
-            DarkWall = DriverCons.D_DarkWall, CeilingCo = DriverCons.D_CeilingCo,
-            PebContrast = DriverCons.D_PebContrast; // LoLumRo = 0, nLumins = 0;
+            PilasterCo = DriverConstants.D_Pillar_Color, // TODO: THIS MIGHT BE PLASTER COLOR OF WALLS, MUST TEST FURTHER
+            CreamWall = DriverConstants.D_Wall_Color,
+            DarkWall = DriverConstants.D_DarkWall,
+            CeilingCo = DriverConstants.D_Ceiling_Color,
+            PebContrast = DriverConstants.D_Pebble_Contrast; // LoLumRo = 0, nLumins = 0;
     private static double Velocity = 0.0, VuEdge = 0.0, // SloMotion = 0.0,
-            ShafTurns = 0.0, ScaledShaft = 1.0 / DriverCons.D_MetersPerTurn,
+            ShafTurns = 0.0, ScaledShaft = 1.0 / DriverConstants.D_MetersPerTurn,
             ZoomRatio, effTurnRad = TurnRadius, // effective = nearest we can see
             epsilon = MyMath.Fix2flt(256, 0) - MyMath.Fix2flt(0xFFFFF, 12), // tiny
-            CoFriction = DriverCons.D_CoefFriction, // Torque = 0.0, AccelForc = 0.0,
-            RubberGrip = DriverCons.D_CoefFriction * PkGrav * CoFudge,
+            CoFriction = DriverConstants.D_Friction_Coefficient, // Torque = 0.0, AccelForc = 0.0,
+            RubberGrip = DriverConstants.D_Friction_Coefficient * PkGrav * CoFudge,
     // skid acc (G=9.81*8)=1 @ cf=50% 5fps
     RubberTurn = RubberGrip * 256.0, // ditto, but for turns (scaled)
             PebBlur = (1 << PebblSize) / 32.0, mpSpix = 0.0,
             WallAim = 0.0, AverageAim = 0.0, Facing = 0.0, Vposn = 0.0, Hposn = 0.0,
-            Vcarx, Hcarx, Lcarx, Rcarx, Tcarx, Bcarx, // used to find car position
+            Vcarx, Hcarx, Lcarx, Rcarx, Tcarx, Bcarx, // used to find car prerace
             fZoom, Dzoom, fSpeed, fSteer, FltWi, fImHaf, fMapWi, WiZoom,
             OdomDx = 0.0, Speedom = 0.0, VcoFace = 0.0, HsiFace = 0.0, CashTan = 0.0,
             CashDx = 0.0, CeilingHi = 0.0, ZooMapScale, ZooMapWhLn,
@@ -260,9 +271,9 @@ public class TrakSim {
             DarkOnce = false, Moved = false, unScaleStee = false, ReloTabs = false,
             Skidding = false, InWalls = false, Braking = false, IsProxim = false,
             SeenHedLite = false, ShowOdometer = false, ValidPixSteps = false,
-            SimActive = true, ShoTrkTstPts = DriverCons.D_ShoTrkTstPts,
-            SimSpedFixt = DriverCons.D_FixedSpeed,
-            SimInTrak = DriverCons.D_StayInTrack, Shifty;
+            SimActive = true, ShoTrkTstPts = DriverConstants.D_Show_Track_Test_Pts,
+            SimSpedFixt = DriverConstants.D_FixedSpeed,
+            SimInTrak = DriverConstants.D_StayInTrack, Shifty;
     private static String Save4Log = "", RtnStr, TempStr;
     private static int[] LuminanceMap = null; // each int applies to 1/4 grid
     private static int[] ShoHeadLite = null; // to draw outline, if so
@@ -294,24 +305,24 @@ public class TrakSim {
     // + " 32+225! 54 157 190^58 36~21=16 -- BlueCar left-back\n"
     // + " 60+270! 54 155 190^114 36~22=16 -- BlueCar left\n"
     // + " 0!      54 157 352^2  36~23=16 -- BlueCar left-front";
-    final int[] TinyBits = { //    *       *     * *     * *         *   * * *     * *   * * *
-            0x25552, 0x22227,  //  *   *     *         *       *   *   *   *       *           *
-            0x61247, 0x61216,  //  *   *     *       *       *     *   *   * *     * *       *
-            0x15571, 0x74616,  //  *   *     *     *           *   * * *       *   *   *   *
-            0x34652, 0x71244,  //    *     * * *   * * *   * *         *   * *       *     *
-            0x25252, 0x25316,  //    *       *     *       *  * * *     * *  *       *  0x11244 *
+    final int[] TinyBits = {    //    *       *     * *     * *         *   * * *     * *   * * *
+            0x25552, 0x22227,   //  *   *     *         *       *   *   *   *       *           *
+            0x61247, 0x61216,   //  *   *     *       *       *     *   *   * *     * *       *
+            0x15571, 0x74616,   //  *   *     *     *           *   * * *       *   *   *   *
+            0x34652, 0x71244,   //    *     * * *   * * *   * *         *   * *       *     *
+            0x25252, 0x25316,   //    *       *     *       *  * * *     * *  *       *  0x11244 *
             0x49D9B9, 0x74647,  //  *   *   *   *   * *     *  *       *      *       *          *
             //    *       * *   *   *   *  * *       *    *   *   *        *
             0x34216, 0x699996,  //  *   *       *   *     * *  *           *  *   *   *      *
-            2, 0x00700};  //    *     * *     *       *  * * *   * *      *   *    *   *
+            2, 0x00700};        //    *     * *     *       *  * * *   * *      *   *    *   *
 
 
     private final int[] Grid_Locns = {6, 12, 18, 20, 28, 31, // (GridLocT) block index
-            0, 20, ImHaf - 40, ImHaf - 2, ImHi - DrawDash, ImHi,  // vert div'ns
-            0, 20, ImMid - 10, ImMid + 10, ImWi - 20, ImWi, 0, ImWi, // top horz div'ns,
-            0, ImWi / 7, ImWi * 2 / 7, ImWi * 3 / 7, ImWi * 4 / 7, ImWi * 5 / 7, ImWi * 6 / 7, ImWi, // mid
-            0, 20, ImWi, // ImWi/4, ImWi/2, ImWi*3/4, ImWi, // no gas posns (obsolete)
-            0, 20, ImMid, ImWi - 20, ImWi};                   // bottom horz div'ns
+            0, 20, ImHaf - 40, ImHaf - 2, ImageHeight - DrawDash, ImageHeight,  // vert div'ns
+            0, 20, ImMid - 10, ImMid + 10, ImageWidth - 20, ImageWidth, 0, ImageWidth, // top horz div'ns,
+            0, ImageWidth / 7, ImageWidth * 2 / 7, ImageWidth * 3 / 7, ImageWidth * 4 / 7, ImageWidth * 5 / 7, ImageWidth * 6 / 7, ImageWidth, // mid
+            0, 20, ImageWidth, // ImageWidth/4, ImageWidth/2, ImageWidth*3/4, ImageWidth, // no gas posns (obsolete)
+            0, 20, ImMid, ImageWidth - 20, ImageWidth};                   // bottom horz div'ns
 
     private final int[] TapedWheel = {-2 * 65536 + 0 * 256 + 12,         // 0..0,
             2 * 65536 + 1 * 256 + 17, 5 * 65536 + 3 * 256 + 22, 9 * 65536 + 6 * 256 + 28,       // 1..3,
@@ -330,7 +341,7 @@ public class TrakSim {
             0x4, 0xE, 0x1F, 0x3E, 0x7C, 0xF8, 0xF0, 0x60, 0x20, 0,     // 9 @73/25
             0x1, 0x3, 0x7, 0xF, 0x1F, 0x1E, 0xC, 0x4, 0,             // 10 @83/28
             1, 3, 3, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0}; // lsb: scrn botm  // 11 @92/33;  [12 @97/38]
-    private final int[] PiDigits = {0x31415926, 0x53589793,
+    private final int[] PiDigits = {0x31415926, 0x53589793, // I really don't know/understand why PI is placed into an array, OR why it's hex...
             0x23846264, 0x33832795, 0x02884197, 0x16939937, 0x51058209, 0x74944592,
             0x30781640, 0x62862089, 0x98628034, 0x82534211, 0x70679821, 0x48086513,
             0x28230664, 0x70938446, 0x09550582, 0x23172535, 0x94081284, 0x81117450,
@@ -354,9 +365,8 @@ public class TrakSim {
             0x38142061, 0x71776691, 0x47303598, 0x25349042, 0x87554687, 0x31159562,
             0x86388235, 0x37875937, 0x51957781, 0x85778053, 0x21712268, 0x06613001,
             0x92787661, 0x11959092, 0x16420198, 0x93809525, 0x06548586, 0x32788659};
-    private int Left_X, Rite_X, PreViewLoc, PreViewAim, ScrnRoCo = 0;
-    private SimHookBase SerialCalls = null;
-
+    private int Left_X, Rite_X, PreViewLoc, PreViewAim, ScrnRoCo = 0; //TODO: Refactor
+    private SimHookBase SerialCalls = null; //TODO: Trace this, perhaps serializes things whenever it's called
 
     public TrakSim() {
         StartPatty("TrakSimCons");
@@ -430,13 +440,14 @@ public class TrakSim {
         Kconst = Kconst + MyMath.Fix2flt(32, 12);
         // RatLib floats are 1-bit sign, 19-bit integer, 12-bit fraction..
         //   masking Mconst&0x1FFF gets only signed fraction (&0x1000 is sign)
-        //   Kconst has worst case range (45¡ @ bot corner = 2*(-399..+910))
+        //   Kconst has worst case range (45� @ bot corner = 2*(-399..+910))
         //     for 1-bit sign + 11-bit int + [31-2-13-12 =] 4-bit fract;
         //     implicit /4 then +5 shift here puts decode bin.pt in bit 19.
         bitz = ((Cast_F2I(Kconst) & 0xFFFFC0) << 5) // must decode(/4) into meters
                 + ((Cast_F2I(Mconst) & 0x1FFF) >> 2) + bitz;           // || Mini_Log
         if (Log_Draw || NoisyMap) if (Qlog < 0) if (SameData != bitz) {
             SameData = bitz;
+            //TODO: Change this fucking Sysout into a logging class
             System.out.println(HandyOps.Hex2Log("(EPE) = x", bitz, 8,
                     HandyOps.Flt2Log(HandyOps.IffyStr(EW, " EW Kc=", " NS Kc="), Kconst,
                             HandyOps.Flt2Log(" Mc=", Mconst, HandyOps.Dec2Log(" ", tall,
@@ -449,15 +460,16 @@ public class TrakSim {
     /**
      * Changes the simulated coefficient of friction.
      *
-     * @param newCoF The new coefficient of friction
+     * @param frictionCoef The new coefficient of friction
      */
-    public static void SetCoefFriction(double newCoF) {
-        if (newCoF <= 0.0) return; // too low
-        if (newCoF > 9.9) return; // too high
-        CoFriction = newCoF;     // (PkGrav=9.81*8/25=3.1)
-        RubberGrip = newCoF * PkGrav * CoFudge; // skid acc =1.6 @ cf=50% 5fps..
+    public static void SetCoefFriction(double frictionCoef) {
+        if (frictionCoef <= 0.0) return; // too low
+        if (frictionCoef > 9.9) return; // too high
+        CoFriction = frictionCoef;     // (PkGrav=9.81*8/25=3.1)
+        RubberGrip = frictionCoef * PkGrav * CoFudge; // skid acc =1.6 @ cf=50% 5fps..
         RubberTurn = RubberGrip * 256.0;
-        if (Qlog != 0) System.out.println(HandyOps.Flt2Log(" (SetCoFric) ", newCoF,
+        //TODO: Place this damn SysO into a damn logging class
+        if (Qlog != 0) System.out.println(HandyOps.Flt2Log(" (SetCoFric) ", frictionCoef,
                 HandyOps.Flt2Log(" ", RubberGrip, HandyOps.Flt2Log("/", RubberTurn,
                         HandyOps.Flt2Log(" G=", PkGrav, HandyOps.Flt2Log(" *", CoFudge,
                                 HandyOps.Flt2Log(" (", fFtime,
@@ -475,8 +487,11 @@ public class TrakSim {
      * @param theImgs An array of RGB pixels containing artifact images.
      */
     public static void WhiteAlfa(int tall, int wide, int[] theImgs) {
-        final int Transprnt = DriverCons.D_Transprnt;
-        int info, rx, cx, uppy = 0, here = 0, thar = -wide, tops = tall * wide;
+        final int TRANSPARENT = DriverConstants.D_Interior_Image_Color;
+        int info, rx, cx, uppy = 0,
+                here = 0,
+                thar = -wide,
+                tops = tall * wide;
         boolean seen = true;
         if (theImgs == null) return;
         if (tall < 4) return; // not a credible image array
@@ -514,7 +529,7 @@ public class TrakSim {
                     if (here >= theImgs.length) break;
                     info = theImgs[here];
                     thar--;
-                    if (info != Transprnt) { // magical interior transparent =0xFEFEFE
+                    if (info != TRANSPARENT) { // magical interior transparent =0xFEFEFE
                         if (info < 0xFFFFFF) {
                             seen = info < 0;
                             continue;
@@ -602,12 +617,12 @@ public class TrakSim {
             more = more - ((more & nx) << 1);
             break;
         } //~while
-        if ((PavColo == GrasColo) || (PavColo == GrasDk)) {
-            info = PavColo + more;
+        if ((PavementColor == GrasColo) || (PavementColor == GrasDk)) {
+            info = PavementColor + more;
             if (MapLogged) if ((Qlog & 256) != 0)
-                System.out.println(HandyOps.Colo2Log("^^^ PavColo adjusted from ", PavColo,
+                System.out.println(HandyOps.Colo2Log("^^^ PavementColor adjusted from ", PavementColor,
                         HandyOps.Hex2Log(" to x", info, 8, "")));
-            PavColo = info;
+            PavementColor = info;
         } //~if
         if ((PavDk == GrasColo) || (PavDk == GrasDk)) {
             info = PavDk + more;
@@ -640,7 +655,7 @@ public class TrakSim {
         bitz = info;
         for (zx = 12; zx >= 0; zx += -1) { // worst case 12x thru through..
             for (nx = 0; nx <= 9; nx++) if (PebleTrak[nx] == bitz) bitz = bitz + more;
-            if (PavColo == bitz) bitz = bitz + more;
+            if (PavementColor == bitz) bitz = bitz + more;
             if (PavDk == bitz) bitz = bitz + more;
             if (bitz == info) break;
             info = bitz;
@@ -803,7 +818,9 @@ public class TrakSim {
         if (Qlog == 0) return;
         if (theLum == null) return;
         lxx = theLum.length;
-        if (!Log_Draw) if (!NoisyMap) return; // NoisyMap=F
+        if (!Log_Draw)
+            if (!NoisyMap)
+                return; // NoisyMap=F
         for (here = 1; here <= tops; here++) {
             if (here > 31) break;
             info = ShoLumiLox[here];
@@ -854,7 +871,7 @@ public class TrakSim {
                 brite = 0.0, Hsn = 0.0, Vcs = 0.0, deep = 0.0, near = 0.0,
                 Vstp = 0.0, Hstp = 0.0, whar, hix, radius = 96.0, far = 63.0,
                 wix = 310.0, scale = MyMath.Fix2flt(1 << LumUniShif, 0);
-        // Vat = MyMath.Fix2flt(rx,0), Hat = MyMath.Fix2flt(cx,0);
+        // Vat = org.avphs.traksim.MyMath.MyMath.Fix2flt(rx,0), Hat = org.avphs.traksim.MyMath.MyMath.Fix2flt(cx,0);
         int[] theLum = LuminanceMap;
         while (true) { // once thru..
             if (xCh == '>') info++;
@@ -970,7 +987,8 @@ public class TrakSim {
                 preSc = true;
             } //~if
             else brite = MyMath.Fix2flt(colo, 10);
-            if (NoisyMap || MapLogged) aStr = "";
+            if (NoisyMap || MapLogged)
+                aStr = "";
             shade = false;
             rpt = 0;
             aim = info;
@@ -1311,7 +1329,7 @@ public class TrakSim {
         //   that do not change general compass direction.
 
         // As seen by the car, the face line advances x units to the right and
-        //   +/-y units fwd or back; for position z in the face, rx is z*y/x units
+        //   +/-y units fwd or back; for prerace z in the face, rx is z*y/x units
         //   +/-; disregard y in calc'ing z; corners denoted by low bits of V,H/Q,Z.
         // Record only compass dir'n, face starts @ left front corner of anchor,
         //   ends @ start of face in ending anchor (defines y), unless dir'n >45;
@@ -1350,7 +1368,7 @@ public class TrakSim {
         while (true) { // uses NuData,Wally,nBax to preserve state across calls
             InWalls = false;
             if (SeenWall == null) break; // errn = -120;
-            // xStr = HandyOps.NthItemOf(false,4,aLine);
+            // xStr = org.avphs.traksim.HandyOps.HandyOps.NthItemOf(false,4,aLine);
             if ((xCh == 'v') || (xCh == 'h') || (xCh == 'p')) { // prescan plain wall..
                 if (nBax == 0) nBax++;
                 nx = nBax + 2;
@@ -1407,7 +1425,7 @@ public class TrakSim {
                     Vstp = -MyMath.Cose;
                     Hstp = MyMath.Sine;
                     if (rocox == 0) if (xCh == 'g') if (aCh == ' ') { // calc end frm len..
-                        // pie = HandyOps.SafeParseInt(HandyOps.NthItemOf(false,10,aLine));
+                        // pie = org.avphs.traksim.HandyOps.HandyOps.SafeParseInt(org.avphs.traksim.HandyOps.HandyOps.NthItemOf(false,10,aLine));
                         if (pie <= 0) { // no lxx given, try for wall width..
                             nx = HandyOps.SafeParseInt(HandyOps.NthItemOf(false, 7, aLine));
                             pie = HandyOps.SafeParseInt(HandyOps.NthItemOf(false, 9, aLine));
@@ -1467,7 +1485,7 @@ public class TrakSim {
             errn--; // errn = -121                 //..~if (not plain walls)
             if (xCh == 'm') { // prescan (all params known/assumed valid)..
                 if (nBax == 0) nBax++;
-                nx = nBax + 1; // aStr = HandyOps.NthItemOf(false,5,aLine)
+                nx = nBax + 1; // aStr = org.avphs.traksim.HandyOps.HandyOps.NthItemOf(false,5,aLine)
                 frnt = (frnt << 1) & 0xFE00FE; // 'Mi vv hh dd 0 tt ww xx^yy pp 0*'
                 frnt = (frnt << 8) + frnt;     // ** vfy still works for 0/90/..
                 kx = kx & 15; // kx (frm engle)/aim (frm Mi): 0=E,1=S,2=W,3=N (side);
@@ -1476,7 +1494,7 @@ public class TrakSim {
                 // if engle & view are given, always use given angle, else recalc
                 offx = ((0x06660333 >> kx) & 0x10001) << 8; // end   // .. kx=10/11: westerly
                 offx = (0x09630C39 >> kx) & 0x10001 | offx | frnt; // +start
-                if (aCh == 'L') sang = 8; // aCh = HandyOps.CharAt(1,aLine);
+                if (aCh == 'L') sang = 8; // aCh = org.avphs.traksim.HandyOps.HandyOps.CharAt(1,aLine);
                 else if (aCh != 'R') sang = (kx + 8) & 8; // (kx set above frm engle)
                 sang = (sang << 23) + 0x80000000; // +04 if corner turns left
                 if (tmp == 0) tmp = (aim & 7) * 45; // recalc angle from face, else use given
@@ -1487,7 +1505,7 @@ public class TrakSim {
                     SeenWall[nx + 256] = tmp; // pie width:7 / view aim:10/:4 / compass:10
                     SeenWall[nx + 512] = ((offx >> 8) & 0xFF00FF) | sang;
                     SeenWall[nx + 768] = (skip << 16) | skip & 0xFFFF; // dunno links, use line+
-                    // zx = kx; // xStr = HandyOps.NthItemOf(false,1,aLine);
+                    // zx = kx; // xStr = org.avphs.traksim.HandyOps.HandyOps.NthItemOf(false,1,aLine);
                     // if (zx>7) zx = zx&9; // now reconstructed 'i' from "Mi"
                     xStr = "G" + kx + aLine; // not gen'd from curve; aCh => kx
                     theList = HandyOps.RepNthLine(xStr, lino, theList);
@@ -1512,7 +1530,7 @@ public class TrakSim {
                 nx = nBax + 1;   // allow for inserted singleton in turns >45..
                 kx = (aim << 24) + (nx << 8) + frnt; // frnt=r,c in NuDat not used
                 haff = Darken;
-                xStr = "";        // aCh = HandyOps.CharAt(1,aLine);
+                xStr = "";        // aCh = org.avphs.traksim.HandyOps.HandyOps.CharAt(1,aLine);
                 if (aCh >= '0') { // we have an explicit aim..
                     if (HandyOps.CharAt(2, aLine) == 'M') {
                         aCh = 'm';
@@ -1540,7 +1558,7 @@ public class TrakSim {
                 // if (aCh == 'm') { // if (TestOptn&0x8000 !=0) System.out.println(...);
                 if (engle < 0) if (rocox != frnt) // except singletons(?),
                     break; // errn = -121 // ..error if no angle given nor inferred
-                if (NuData > 0) { // aCh = HandyOps.CharAt(1,aLine);
+                if (NuData > 0) { // aCh = org.avphs.traksim.HandyOps.HandyOps.CharAt(1,aLine);
                     nuly = ((aim - pie) & 3) + 1; // =2 if turning right, =4 if left
                     if (((aim + pie) & 1) != 0) // new compass dirn..
                         if (aCh == ' ') doit = true; // else curve has its own corner(s)
@@ -1622,7 +1640,7 @@ public class TrakSim {
                         nx++;
                     }
                 } //~if // (doit=T: turning)
-                zx = aim; // aim = HandyOps.SafeParseInt(HandyOps.Substring(zx,3,aLine))
+                zx = aim; // aim = org.avphs.traksim.HandyOps.HandyOps.SafeParseInt(org.avphs.traksim.HandyOps.HandyOps.Substring(zx,3,aLine))
                 if (aim > 3) { // aim: 4=NE,5=SE,6=SW,7=NW (corner); 8=45 up diag, 9=135 d
                     // aim: eeeeaaiiii: eee=3-bit engle/45, aa=new aim, iiii=ix0 spec
                     if ((aim & 8) != 0) ix0 = (0x0609030C >> (aim & 3)) & 0x01010101;
@@ -1683,7 +1701,7 @@ public class TrakSim {
             if (xCh >= 'c') { // if (xCh <= 'd') { // prescan & fill in curve.. // **
                 Wally = 0;
                 nxt = 0;
-                // pie = HandyOps.SafeParseInt(HandyOps.NthItemOf(false,5,aLine));
+                // pie = org.avphs.traksim.HandyOps.HandyOps.SafeParseInt(org.avphs.traksim.HandyOps.HandyOps.NthItemOf(false,5,aLine));
                 // engle = SafeParseInt(NthItemOf(false,4,aLine)); // initial dir'n
                 // aim = ((engle+45)/90)&3; doit = false;
                 if (engle < 0) break; // errn = -122 // error if no angle given
@@ -2129,8 +2147,8 @@ public class TrakSim {
             if (whom) { // (xCh == 'G') // otherwise 'V'/'H'/'P'
                 frnt = frnt << 1; // frnt = (rx<<16)+cx; // now in pk meters w/corners
                 stub = (frnt << 8) + frnt; // (used for 1-cell end cap)
-                // aStr = HandyOps.NthItemOf(false,5,aLine);
-                // pie = HandyOps.SafeParseInt(aStr); // pie is current view angle
+                // aStr = org.avphs.traksim.HandyOps.HandyOps.NthItemOf(false,5,aLine);
+                // pie = org.avphs.traksim.HandyOps.HandyOps.SafeParseInt(aStr); // pie is current view angle
                 xStr = HandyOps.NthItemOf(false, 9, aLine);
                 ppm = HandyOps.SafeParseInt(xStr);
                 zx = HandyOps.NthOffset(0, "$", xStr);
@@ -2174,14 +2192,14 @@ public class TrakSim {
                     radius = HandyOps.SafeParseInt(HandyOps.NthItemOf(false, 5, aLine));
                     lxx = 0.0;
                 } //~if
-                else { // 'G' straight (also 'M').. // aCh = HandyOps.CharAt(1,aLine);
+                else { // 'G' straight (also 'M').. // aCh = org.avphs.traksim.HandyOps.HandyOps.CharAt(1,aLine);
                     why = 16;
                     if (aCh >= 'c') curvd = true; // after mid-curve
                     else if (aCh == 'M') aCh = 'm';
                     // else if (aCh >= '0') if (aCh <= '9') aCh = 'm';
                     if (((pie & -512) == 0) && (pie <= 360)) { // pie is credible view angle
-                        // aStr = HandyOps.NthItemOf(false,5,aLine);
-                        // pie = HandyOps.SafeParseInt(aStr); // pie is current view angle
+                        // aStr = org.avphs.traksim.HandyOps.HandyOps.NthItemOf(false,5,aLine);
+                        // pie = org.avphs.traksim.HandyOps.HandyOps.SafeParseInt(aStr); // pie is current view angle
                         haff = HandyOps.NthOffset(0, "+", aStr);
                         if (haff > 0) { // haff is view pie half-width..
                             haff = HandyOps.SafeParseInt(HandyOps.RestOf(haff + 1, aStr));
@@ -2242,7 +2260,7 @@ public class TrakSim {
                     Vinc = Korner(2 * 8, ix0, logy) - Korner(3 * 8, ix0, logy); // logy = 1&&MapLogged
                     Hinc = Korner(1 * 8, ix0, logy) - Korner(0 * 8, ix0, logy); // ..  (Korn/1)
                     info = engle; // default, in case calc fails (but it shouldn't)
-                    kx = 0;       // aCh = HandyOps.CharAt(1,aLine);
+                    kx = 0;       // aCh = org.avphs.traksim.HandyOps.HandyOps.CharAt(1,aLine);
                     if (aCh == '0') if (HandyOps.CharAt(2, aLine) == 'M') {
                         aCh = HandyOps.CharAt(3, aLine);
                         if (aCh == ' ') aCh = '0';
@@ -2280,9 +2298,9 @@ public class TrakSim {
                     } //~if
                     if (MyMath.iAbs(nx) > 47) InWalls = true; // mark & notify, but keep going
                     // engle = (aim<<10)+info; // pie width:7 / view aim:10/:4 / compass:10
-                    // aStr = HandyOps.NthItemOf(false,5,aLine);
-                    // haff = HandyOps.SafeParseInt(HandyOps.RestOf(haff+1,aStr)); // '+'
-                    // pie = HandyOps.SafeParseInt(aStr); // pie is current view angle
+                    // aStr = org.avphs.traksim.HandyOps.HandyOps.NthItemOf(false,5,aLine);
+                    // haff = org.avphs.traksim.HandyOps.HandyOps.SafeParseInt(org.avphs.traksim.HandyOps.HandyOps.RestOf(haff+1,aStr)); // '+'
+                    // pie = org.avphs.traksim.HandyOps.HandyOps.SafeParseInt(aStr); // pie is current view angle
                     ix1 = (aim << 10) + info; // pie width:7 / view aim:10/:4 / compass:10
                     if (pie >= 0) if (haff > 0) if (haff <= 90)
                         ix1 = (((haff << 12) + pie) << 12) + ix1; // pie half-width,view,aim,angle
@@ -2295,7 +2313,7 @@ public class TrakSim {
                     if (didit) { // "*": recycle image (lxx=0 OK)..
                         ix1 = ix1 | 0x80000000;
                         why = why + 2;
-                    } //~if     // xStr = HandyOps.NthItemOf(false,10,aLine);
+                    } //~if     // xStr = org.avphs.traksim.HandyOps.HandyOps.NthItemOf(false,10,aLine);
                     else if (HandyOps.NthOffset(0, "!", xStr) >= 0) {
                         if (false) if (lxx > 0.0) {
                             ftmp = MyMath.fMax(MyMath.Fix2flt(wide, 0) / lxx, 1.0);
@@ -2321,7 +2339,7 @@ public class TrakSim {
             } //~if // ('G' straight)(whom)   (in BackImag)
 
             else { // if (!whom) = (xCh != 'G') // else 'V'/'H'/'P' (plain wall)..
-                errn = -129; // aStr = HandyOps.NthItemOf(false,5,aLine)
+                errn = -129; // aStr = org.avphs.traksim.HandyOps.HandyOps.NthItemOf(false,5,aLine)
                 nxt = HandyOps.NthOffset(0, aLine, Save4Log); // nxt is logged
                 if (nxt < 0) break;
                 aStr = HandyOps.Substring(0, nxt + 2, Save4Log);
@@ -2371,7 +2389,7 @@ public class TrakSim {
                     tmp = tmp + 0x5A168000;
                 } //~if
                 if (xCh == 'V') {
-                    Vstp = 1.0; // -MyMath.Cose; (otherwise =0)
+                    Vstp = 1.0; // -org.avphs.traksim.MyMath.MyMath.Cose; (otherwise =0)
                     ix0 = 0x01000000; // default top left to bottom left
                     if (aim == 0) { // back side = South -> North
                         ix0 = 0x00010101; // otherwise bottom right to top right
@@ -2386,7 +2404,7 @@ public class TrakSim {
                 } //~if
                 else if (xCh == 'H') {
                     ix0 = 0x01010100; // default bottom left to bottom right
-                    Hstp = 1.0; // MyMath.Sine; (otherwise =0)
+                    Hstp = 1.0; // org.avphs.traksim.MyMath.MyMath.Sine; (otherwise =0)
                     if (aim != 0) { // back side = East -> West
                         ix0 = 0x00000001; // otherwise top right to top left
                         if (dx < 4) break; // errn = -139: too close to top so no north side
@@ -2443,7 +2461,7 @@ public class TrakSim {
             } //~else // (xCh != 'G') (else 'V'/'H'/'P')     (in BackImag)
 
             errn = -141; // load up index.............................................
-            nxt = nBax; // nxt is logged; // nBax = MyMath.iMin(nBax,255)+kx;
+            nxt = nBax; // nxt is logged; // nBax = org.avphs.traksim.MyMath.MyMath.iMin(nBax,255)+kx;
             if (MyMath.SgnExt(nBax) <= 0) break; // max 255 wall segments
             if (sofar <= 0) break;
             errn--; // errn = -142
@@ -2451,7 +2469,7 @@ public class TrakSim {
             if (frnt <= 0) break; // frnt=(rx*HalfMap+cx)<<1
             if (myMap == null) break; // already checked
             nBax--;
-            // if (lxx>0.0) dx = MyMath.Trunc8(lxx*MyMath.Fix2flt(px,0));
+            // if (lxx>0.0) dx = org.avphs.traksim.MyMath.MyMath.Trunc8(lxx*org.avphs.traksim.MyMath.MyMath.Fix2flt(px,0));
             //   else dx = wide;
             // Vinc = 0.5/Hinc; // was ppm, now 2m grid units / pix
             Vinc = 0.25; // quarter-grid steps is good enough
@@ -3064,7 +3082,7 @@ public class TrakSim {
                     + " (Imgs)\n  _:_" + HandyOps.ArrayDumpLine(AnimInfo, 0, 5)
                     + "\n   -- '";
             // tall = ImDims>>16;
-            // wide = MyMath.SgnExt(ImDims);
+            // wide = org.avphs.traksim.MyMath.MyMath.SgnExt(ImDims);
             nuIxBase++; // leave room for BG list pointer
             ImSz = tall * wide; // should be = nxt
             if (ImDims < 0x100000) ImDims = -1;
@@ -3116,7 +3134,7 @@ public class TrakSim {
                                             HandyOps.Dec2Log(" [", nuIxBase, HandyOps.Dec2Log(" ", wait,
                                                     HandyOps.Dec2Log(" ", PaintIx, HandyOps.Dec2Log("] ", nxt,
                                                             HandyOps.Int2Log(" ", info, xStr)))))))))))));
-            xStr = "";                       // HandyOps.IffyStr(ImDims <= 0,xStr,
+            xStr = "";                       // org.avphs.traksim.HandyOps.HandyOps.IffyStr(ImDims <= 0,xStr,
             // ImgWi = wide; // (init'd)
             // ImgHi = tall;
             wait = nuIxBase + GridSz + PaintIx + 2; // (includes hdr)
@@ -3141,7 +3159,7 @@ public class TrakSim {
                     if (sofar > 0) if (sofar < myMap.length) myMap[sofar] = zx;
                     sofar++;
                 } //~for // (copy anchors to index)
-                // xStr = " (" + yx + HandyOps.IffyStr(yx>0,"?)",")");
+                // xStr = " (" + yx + org.avphs.traksim.HandyOps.HandyOps.IffyStr(yx>0,"?)",")");
             } //~if // (ImDims>0)
             else { // no (or in-) valid images..
                 nuIxBase = ArtBase + 4;
@@ -3268,7 +3286,7 @@ public class TrakSim {
             nuIxBase++;
             if (here > 0) if (here < myMap.length - 1) {
                 myMap[here - 1] = 0; // end of artifact list
-                if (false) if (NoisyMap || MapLogged) myMap[here] = 0xDEADBEEF;
+                if (false) if (NoisyMap || MapLogged) myMap[here] = 0xDEADBEEF; // FUCK
                 myMap[here] = 0;
             } //~if // visual start of map in log
             dimz = HandyOps.SafeParseInt(aLine); // park dimensions in scaled meters
@@ -3422,7 +3440,7 @@ public class TrakSim {
                 case ';': // log luminance point..
                 case '=': // set flat luminance rect..
                 case '>': // add luminance light source..
-                    if (!frax) { // use mid-cell if not fractional position..
+                    if (!frax) { // use mid-cell if not fractional prerace..
                         Vat = Vat + 0.5;
                         Hat = Hat + 0.5;
                     } //~if
@@ -3477,7 +3495,7 @@ public class TrakSim {
                     if (cx < 8) break;
                     if (cx > 0xFFFFFF) break;
                     PilasterCo = cx;
-                    // nxt = HandyOps.SafeParseInt(HandyOps.NthItemOf(false,4,aLine));
+                    // nxt = org.avphs.traksim.HandyOps.HandyOps.SafeParseInt(org.avphs.traksim.HandyOps.HandyOps.NthItemOf(false,4,aLine));
                     if (nxt < 8) break; // nxt is logged
                     if (nxt > 0xFFFFFF) break;
                     CeilingCo = nxt;
@@ -3693,7 +3711,7 @@ public class TrakSim {
                     if (rx <= 0) break;
                     rpt--; // rpt = -15
                     if (cx <= 0) break;
-                    if (frax) { // allow for fractional position..
+                    if (frax) { // allow for fractional prerace..
                         rx = MyMath.Trunc8(Vat * 8.0);
                         cx = MyMath.Trunc8(Hat * 8.0);
                     } //~if
@@ -3877,7 +3895,7 @@ public class TrakSim {
                 case 'U': // painted (line) spec..
                     recell = rx;
                     yx = cx;
-                    if (frax) { // allow for fractional position..
+                    if (frax) { // allow for fractional prerace..
                         rx = MyMath.Trunc8(Vat * 8.0);
                         cx = MyMath.Trunc8(Hat * 8.0);
                     } //~if
@@ -3943,7 +3961,7 @@ public class TrakSim {
                         if (PaintIx == zx) break;
                     } //~if // something went wrong in Ad2LnMp
                     // else if (yx+wide>WinWi) break; // rpt = -91: Image Viewer off-screen
-                    // else if (recell+tall>ImHi) break; // off-image..
+                    // else if (recell+tall>ImageHeight) break; // off-image..
                     else if ((tall - 1) * ImgWi + thar > ImSz) break; // also checks optn=0 (+wide)
                     else if (SeePaintTopL == 0) {
                         cx = yx;
@@ -3976,7 +3994,7 @@ public class TrakSim {
                     else aStr = HandyOps.Dec2Log(" ", yx, " 0 0 0 0 0 4");
                     // nxt bits: +8=(V>), +4=(V<), +2=(H>), +1=(H<)..
                     aWord = "\nO " + HandyOps.NthItemOf(false, 2, aLine) + " ";
-                    if (frax) { // allow for fractional position, but add test bits..
+                    if (frax) { // allow for fractional prerace, but add test bits..
                         cx = (MyMath.Trunc8(Hat * 8.0) & 0xFFF) + (nxt << 12);
                         aWord = aWord + HandyOps.Fixt8th(" ", cx, aStr);
                     } //~if
@@ -4002,7 +4020,7 @@ public class TrakSim {
                     if (nxt < 5) break;  // word 4 is sequence+ (5-15), word 5 is + steps
                     if (nxt > 15) break;
                     tmp = HandyOps.NthOffset(0, " --", aLine);
-                    // if (tmp<0) tmp = HandyOps.NthOffset(0," //",aLine);
+                    // if (tmp<0) tmp = org.avphs.traksim.HandyOps.HandyOps.NthOffset(0," //",aLine);
                     if (tmp > 16) {
                         xStr = HandyOps.RestOf(tmp, aLine); // preserve comment
                         aStr = HandyOps.Substring(0, tmp, aLine);
@@ -4144,7 +4162,7 @@ public class TrakSim {
                     } //~if    // (preserve fractional coordinates)..
                     aWord = "\nO " + HandyOps.NthItemOf(false, 2, aLine) + " "
                             + HandyOps.NthItemOf(false, 3, aLine) + " ";
-                    // aWord = "\n" + HandyOps.Dec2Log("O ",rx,HandyOps.Dec2Log(" ",cx," "));
+                    // aWord = "\n" + org.avphs.traksim.HandyOps.HandyOps.Dec2Log("O ",rx,org.avphs.traksim.HandyOps.HandyOps.Dec2Log(" ",cx," "));
                     if (kx == 0) aWord = aLine // stop sign..
                             + HandyOps.Dec2Log(aWord, nxt, HandyOps.NthItemOf(true, 1, theText))
                             + HandyOps.Dec2Log(aWord, rpt, HandyOps.NthItemOf(true, 2, theText))
@@ -4206,7 +4224,7 @@ public class TrakSim {
                         else yx = 0;
                         if (prox) aStr = "0! ";
                         else aStr = "0 ";
-                        aWord = aWord + aStr + xStr; // HandyOps.Dec2Log(aWord,yx," ")
+                        aWord = aWord + aStr + xStr; // org.avphs.traksim.HandyOps.HandyOps.Dec2Log(aWord,yx," ")
                         nxt = AnimInfo[kx & 15]; // -> this obj's list (++ im's) in myMap
                         zx = MyMath.SgnExt(nxt); // (nxt is logged)
                         rpt--; // rpt = -43
@@ -4223,7 +4241,7 @@ public class TrakSim {
                             xStr = HandyOps.Substring(0, nxt + 1, aLine);
                         } //~if
                         else xStr = aLine;
-                        // nxt = HandyOps.SafeParseInt(HandyOps.NthItemOf(false,6,xStr));
+                        // nxt = org.avphs.traksim.HandyOps.HandyOps.SafeParseInt(org.avphs.traksim.HandyOps.HandyOps.NthItemOf(false,6,xStr));
                         nxt = HandyOps.NthOffset(0, " --", aWord);
                         if (nxt < 0) nxt = HandyOps.NthOffset(0, " //", aWord);
                         rpt--; // rpt = -45
@@ -4242,7 +4260,7 @@ public class TrakSim {
                     else if ((kx & -2) == 2) { // traffic light (animated, see Animatro)..
                         xStr = HandyOps.NthItemOf(true, 7, theText); // dark traffic lite..
                         zx = HandyOps.NthOffset(0, " --", xStr); // remove comment, if any..
-                        // if (zx<0) zx = HandyOps.NthOffset(0," //",xStr);
+                        // if (zx<0) zx = org.avphs.traksim.HandyOps.HandyOps.NthOffset(0," //",xStr);
                         if (zx >= 0) xStr = HandyOps.Substring(0, zx + 1, xStr);
                         zx = HandyOps.NthOffset(0, " 0 ", xStr);
                         if (zx >= 0) if (zx < 8) xStr = HandyOps.RestOf(zx + 2, xStr);
@@ -4307,7 +4325,7 @@ public class TrakSim {
                     // xcell = 0;
                     // if (kx==4) if (nxt==1) xcell = 0x800;
                     // nxt = nxt<<4;
-                    if (frax) { // allow for fractional position..
+                    if (frax) { // allow for fractional prerace..
                         rx = MyMath.Trunc8(Vat * 8.0);
                         cx = MyMath.Trunc8(Hat * 8.0);
                     } //~if
@@ -4687,10 +4705,10 @@ public class TrakSim {
     } //~GetPiDigs
 
     /**
-     * Gets a reference to the current image TrakSim is drawing on.
+     * Gets a reference to the current image org.avphs.traksim.TrakSim is drawing on.
      * <p>
-     * TrakSim maintains its own integer array to be used as a screen buffer,
-     * but a client can "borrow" TrakSim's drawing tools by saving the screen
+     * org.avphs.traksim.TrakSim maintains its own integer array to be used as a screen buffer,
+     * but a client can "borrow" org.avphs.traksim.TrakSim's drawing tools by saving the screen
      * buffer, then restoring it when done.
      *
      * @return The current screen buffer
@@ -4700,10 +4718,10 @@ public class TrakSim {
     } // so to trade out multiple..
 
     /**
-     * Gets the size of the current image TrakSim is drawing on.
+     * Gets the size of the current image org.avphs.traksim.TrakSim is drawing on.
      * <p>
-     * TrakSim maintains its own integer array to be used as a screen buffer,
-     * but a client can "borrow" TrakSim's drawing tools by saving the screen
+     * org.avphs.traksim.TrakSim maintains its own integer array to be used as a screen buffer,
+     * but a client can "borrow" org.avphs.traksim.TrakSim's drawing tools by saving the screen
      * buffer, then restoring it when done.
      *
      * @return The height and width of screen buffer packed into an integer
@@ -4713,7 +4731,7 @@ public class TrakSim {
     }
 
     /**
-     * Gets the current frame count. TrakSim increases this number each time
+     * Gets the current frame count. org.avphs.traksim.TrakSim increases this number each time
      * some data changes and it is redrawn. Screen buffers requested between
      * changes do not increase the frame count.
      *
@@ -4725,7 +4743,7 @@ public class TrakSim {
 
     /**
      * Gets the width of the image file (if loaded), or else =0. Use this
-     * to convert pixel row & column into position for SeeOnScrnPaint
+     * to convert pixel row & column into prerace for SeeOnScrnPaint
      *
      * @return The image width
      */
@@ -4753,7 +4771,7 @@ public class TrakSim {
     }
 
     /**
-     * Converts a coordinate position (in park meters) to screen pixel.
+     * Converts a coordinate prerace (in park meters) to screen pixel.
      * If not visible from the car, gives an indication of why not.
      * <p>
      * This uses (class variable) VuEdge, which is the angle of the raster
@@ -4765,7 +4783,7 @@ public class TrakSim {
      * in pixels*256/meter at this distance, and if pie>0, the actual compass
      * angle from this point to the car in (class variable) WallAim.
      * <p>
-     * TrakSim uses this method for finding pixels along the front side of
+     * org.avphs.traksim.TrakSim uses this method for finding pixels along the front side of
      * a wall segment, and it is assumed that this wall segment crosses the
      * center of view (perhaps only by extension) at some angle. The calcs
      * are designed so that the wall surface appears as a straight line on
@@ -4805,7 +4823,7 @@ public class TrakSim {
         int kx = 0, nx = 0, zx = 0, rx = 0, cx = 0, dx = 0, ppm = 0, why = 0;
         double sinA = 0.0, sinB = 0.0, xtmp = 0.0, ftmp = 0.0, fdst = 0.0,
                 Vx = Vat - Vposn, Hx = Hat - Hposn, aim = MyMath.aTan0(Hx, -Vx) - Facing;
-        // fdst=Vx,Hx: Vat,Hat position relative to car (in park meters)
+        // fdst=Vx,Hx: Vat,Hat prerace relative to car (in park meters)
         // aim is deviation in degrees from center-view (=Facing), -90<aim<90
         TmpI = 0; // = scr.px/m
         if (nuly) WallAim = 0.0;
@@ -4879,7 +4897,7 @@ public class TrakSim {
             if (CashDx > 0.01) ftmp = CashDx;
             else ftmp = fdst;
             zx = (int) Math.round(ftmp * 16.0); // zx = distance to wall in 6cm steps
-            ftmp = aim * fImMid / VuEdge; // fImMid=ImWi/2
+            ftmp = aim * fImMid / VuEdge; // fImMid=ImageWidth/2
             xtmp = 1.0;
             if (aim != 0.0) {
                 why = why | 0x40000; // why = +4,x
@@ -4887,7 +4905,7 @@ public class TrakSim {
                 xtmp = MyMath.Cose;
                 if (false) ftmp = ftmp * xtmp;
             } //~if // shortens too much // cx = pix H-posn..
-            cx = MyMath.iMax(MyMath.iMin((int) Math.round(ftmp + fImMid), ImWi - 1), 0);
+            cx = MyMath.iMax(MyMath.iMin((int) Math.round(ftmp + fImMid), ImageWidth - 1), 0);
             ftmp = fImHaf * fZoom * 342.25; // 120|240*1.9 (need 1.3x fudge) ~ 70K
             // see log: '(Refocus) 52 (389 52. 28. 320.) = 1.9 0.3 +0.0=26.9/K T'
             if (CashDx > 0.5) { // not too close to pixelate (CashDx>0.4 is safe@52mm)..
@@ -4913,7 +4931,7 @@ public class TrakSim {
             } //~if // why = 4
             if (zx > 2047) zx = 2047; // zx in 6cm units (from cam)
             rx = RangeRow[zx & 2047]; // rx = screen pix V-posn (slant, away from cam)
-            if (!clok) if (rx >= ImHi) break; // why = 4, dx = -4
+            if (!clok) if (rx >= ImageHeight) break; // why = 4, dx = -4
             dx = (rx << 16) + cx; // rx is 0-based frac'l scrn row (ImHaf not incl)
             why = why & -0x10000; // why = x,0
             break;
@@ -4951,9 +4969,9 @@ public class TrakSim {
     } //~Map2screen
 
     /**
-     * Returns true if TrakSim is running in fixed-speed mode.
+     * Returns true if org.avphs.traksim.TrakSim is running in fixed-speed mode.
      *
-     * @return true if TrakSim is running in fixed-speed mode
+     * @return true if org.avphs.traksim.TrakSim is running in fixed-speed mode
      */
     public boolean IsFixtSped() {
         return SimSpedFixt;
@@ -5001,7 +5019,7 @@ public class TrakSim {
                 ZooMapDim = 0;
                 break;
             } //~if
-            if (here > ImHi - 32) break;
+            if (here > ImageHeight - 32) break;
             why++; // why = 5
             if (RasterMap == null) {
                 RasterMap = new double[ImHaf * 4]; // for V,H at each row end
@@ -5014,8 +5032,8 @@ public class TrakSim {
             else nx = 5; // = log2(displayed close-up width in park meters)
             ZooMapShf = MapWiBit - nx; // MapWiBit=log2(MapWide=256)=8, so ZSf= 4 or 3
             // zx = 1<<ZooMapShf; // MapWide=256, so zx=8 or =16, =pix/m in c-u view
-            info = (ImHi - here) >> ZooMapShf; // = close-up height in pix, now pk meters
-            ZooMapBase = (here << 16) + ImWi + 2; // ZooMapShf cvts c-u(pix) <-> meters..
+            info = (ImageHeight - here) >> ZooMapShf; // = close-up height in pix, now pk meters
+            ZooMapBase = (here << 16) + ImageWidth + 2; // ZooMapShf cvts c-u(pix) <-> meters..
             ZooMapDim = (info << 16) + (1 << nx); // = displayed close-up size in meters
             ZooMapScale = MyMath.Fix2flt(1 << (ZooMapShf + 1), 0); // cv 2m grid -> img pix
             if (WhitLnSz == 0.0) ZooMapWhLn = 0.0;
@@ -5031,10 +5049,10 @@ public class TrakSim {
     } //~SetCloseTop
 
     /**
-     * Sets the position and direction of the simulated car.
+     * Sets the prerace and direction of the simulated car.
      *
-     * @param Vat The vertical (southward) component of the position in meters
-     * @param Hat The horizontal (eastward) component of the position in meters
+     * @param Vat The vertical (southward) component of the prerace in meters
+     * @param Hat The horizontal (eastward) component of the prerace in meters
      * @param aim The direction facing, in degrees clockwise from north
      */
     public void SetStart(int Vat, int Hat, int aim) {
@@ -5056,7 +5074,7 @@ public class TrakSim {
 
     /**
      * Converts a row/column click location on the close-up map (if showing)
-     * to a true (park) position in 64ths of a meter, packed into an integer.
+     * to a true (park) prerace in 64ths of a meter, packed into an integer.
      *
      * @param aim2 If true, also points the car to be facing the click point
      * @param rx   The image row clicked on
@@ -5068,8 +5086,8 @@ public class TrakSim {
     public int ZoomMap2true(boolean aim2, int rx, int cx) { // rtns (r,c)<<6
         int base = (rx << 16) - ZooMapBase + cx, zx = base << (6 - ZooMapShf),
                 rez = (ZooMapTopL << 6) + zx;
-        double Vat = 0, Hat = 0; // get posn: Vat = MyMath.Fix2flt(rez&-0x10000,22);
-        if (aim2) while (true) { //    Hat = MyMath.Fix2flt(MyMath.SgnExt(rez),6);
+        double Vat = 0, Hat = 0; // get posn: Vat = org.avphs.traksim.MyMath.MyMath.Fix2flt(rez&-0x10000,22);
+        if (aim2) while (true) { //    Hat = org.avphs.traksim.MyMath.MyMath.Fix2flt(org.avphs.traksim.MyMath.MyMath.SgnExt(rez),6);
             Vat = MyMath.Fix2flt(rez & -0x10000, 22) - Vposn;
             Hat = MyMath.Fix2flt(MyMath.SgnExt(rez), 6) - Hposn;
             if (MyMath.fAbs(Vat) + MyMath.fAbs(Hat) < 1.5) break;
@@ -5083,7 +5101,7 @@ public class TrakSim {
             System.out.println(HandyOps.TF2Log("(ZooMp2tru) ", aim2,
                     HandyOps.Dec2Log(" ", rx, HandyOps.Dec2Log("/", cx,
                             HandyOps.Int2Log(" ", base, HandyOps.Int2Log(" ", zx,
-                                    HandyOps.Hex2Log(" = x", rez, 8, // HandyOps.IffyStr(!aim2,"",
+                                    HandyOps.Hex2Log(" = x", rez, 8, // org.avphs.traksim.HandyOps.HandyOps.IffyStr(!aim2,"",
                                             HandyOps.Flt2Log(" - ", Vposn, HandyOps.Flt2Log("/", Hposn,
                                                     HandyOps.Flt2Log(" -> ", Vat, HandyOps.Flt2Log("/", Hat,
                                                             HandyOps.Flt2Log(" => ", Facing, ""))))))))))));
@@ -5091,19 +5109,19 @@ public class TrakSim {
     } //~ZoomMap2true
 
     /**
-     * Converts a row/column position on the perspective view generated by TrakSim
-     * to an image pixel position of the close-up map (if shown) or zero otherwise.
+     * Converts a row/column prerace on the perspective view generated by org.avphs.traksim.TrakSim
+     * to an image pixel prerace of the close-up map (if shown) or zero otherwise.
      * <p>
      * This is useful for adding to the close-up map display information derived
      * from examining the perspective view, which is the normal way a self-driving
      * car program would be operating. Alternatively (yx=true) you can convert
      * direct map coordinates (in park meters) to screen pixel in the close-up map.
      * <p>
-     * The close-up map jumps around dynamically depending on the position and
+     * The close-up map jumps around dynamically depending on the prerace and
      * direction of the car. This allows your software to add information to the
      * map view. Use ZoomMap2true to reverse the calculation.
      *
-     * @param yx  If true, converts a position in meters instead of screen coord
+     * @param yx  If true, converts a prerace in meters instead of screen coord
      * @param Vat The image row in pixels, or map vertical in park meters
      * @param Hat The image column in pixels, or map horizontal in park meters
      * @return A packed integer, the pixel row in the high 16 bits,
@@ -5136,7 +5154,7 @@ public class TrakSim {
                 why++; // why = 9
                 if (rx >= RasterMap.length - 4) break;
                 why++; // why = 10
-                deep = Hat / FltWi; // = fractional position in image (1.0 = right edge)
+                deep = Hat / FltWi; // = fractional prerace in image (1.0 = right edge)
                 Vinc = RasterMap[rx]; // left end of raster (in grid=2m)
                 Hinc = RasterMap[rx + 1];
                 Vstp = RasterMap[rx + 2] - Vinc; // (distance to) right end
@@ -5172,15 +5190,15 @@ public class TrakSim {
     } //~ZoomMapCoord
 
     /**
-     * Replaces the TrakSim pixel buffer with your own array.
+     * Replaces the org.avphs.traksim.TrakSim pixel buffer with your own array.
      * You are responsible for saving the previous screen and restoring it
-     * before calling any TrakSim method that expects to be using its own
+     * before calling any org.avphs.traksim.TrakSim method that expects to be using its own
      * screen buffer, such as NextFrame.
      *
      * @param theAry The pixel array, at least tall*wide in length
      * @param tall   The number of pixel rows
      * @param wide   The number of pixel columns
-     * @param tile   Should be 1, because that's what TrakSim knows
+     * @param tile   Should be 1, because that's what org.avphs.traksim.TrakSim knows
      */
     public void SetMyScreen(int[] theAry, int tall, int wide, int tile) {
         int size = tall * wide;
@@ -5196,12 +5214,12 @@ public class TrakSim {
     } //~SetMyScreen
 
     /**
-     * Gets the TrakSim pixel at the specified row and column.
+     * Gets the org.avphs.traksim.TrakSim pixel at the specified row and column.
      * This might be your own buffer, if you called SetMyScreen.
      *
      * @param rx The pixel row
      * @param cx The pixel column
-     * @return The pixel in that position, = 0x00RRGGBB
+     * @return The pixel in that prerace, = 0x00RRGGBB
      */
     public int PeekPixel(int rx, int cx) { // <- myScreen
         int here = SceneWide, didit = 0;
@@ -5217,10 +5235,10 @@ public class TrakSim {
     } //~PeekPixel
 
     /**
-     * Sets the TrakSim pixel at the specified row and column.
+     * Sets the org.avphs.traksim.TrakSim pixel at the specified row and column.
      * This might be your own buffer, if you called SetMyScreen.
      *
-     * @param colo The pixel to go in that position, = 0x00RRGGBB
+     * @param colo The pixel to go in that prerace, = 0x00RRGGBB
      * @param rx   The pixel row
      * @param cx   The pixel column
      */
@@ -5237,7 +5255,7 @@ public class TrakSim {
     } //~PokePixel
 
     /**
-     * Sets a whole rectangle of TrakSim pixels from one corner of the
+     * Sets a whole rectangle of org.avphs.traksim.TrakSim pixels from one corner of the
      * rectangle in pixel coordinates, to the opposite corner.
      * This might be your own buffer, if you called SetMyScreen.
      *
@@ -5277,7 +5295,7 @@ public class TrakSim {
     } //~RectFill
 
     /**
-     * Draws a line of TrakSim pixels.
+     * Draws a line of org.avphs.traksim.TrakSim pixels.
      * This might be your own buffer, if you called SetMyScreen.
      *
      * @param colo The pixel color to draw that line, = 0x00RRGGBB
@@ -5326,7 +5344,7 @@ public class TrakSim {
 
     /**
      * Draws a tiny decimal digit (or one of six other special characters)
-     * on the TrakSim pixel buffer. The digit is 5 pixels high and 4 wide.
+     * on the org.avphs.traksim.TrakSim pixel buffer. The digit is 5 pixels high and 4 wide.
      * This might be drawn on your own buffer, if you called SetMyScreen.
      *
      * @param whom The digit to draw, a 4-bit index into "0123456789NESW.-"
@@ -5366,7 +5384,7 @@ public class TrakSim {
 
     /**
      * Draws a text string (which must be only the characters: " 0123456789NESW.-")
-     * on the TrakSim pixel buffer.
+     * on the org.avphs.traksim.TrakSim pixel buffer.
      *
      * @param aLine The text string to draw
      * @param rx    The pixel row at the bottom (right corner)
@@ -5417,19 +5435,19 @@ public class TrakSim {
      */
     public void SetPixSize(int size) {
         if (size < 0) return;
-        if (size * 8 > ImHi) return;
+        if (size * 8 > ImageHeight) return;
         if (size > 0) size--;
         PixScale = size;
     } //~SetPixSize
 
     /**
-     * Draws a red "X" in the lower left corner of the TrakSim pixel buffer.
+     * Draws a red "X" in the lower left corner of the org.avphs.traksim.TrakSim pixel buffer.
      */
     public void DrawRedX() { // to show it crashed
         int rx;
         for (rx = 0; rx <= 4; rx++) { // draw red (crashed) "X" in lower left corner..
-            PokePixel(0xFF0000, ImHi - 8 + rx, 4 + rx);
-            PokePixel(0xFF0000, ImHi - 8 + rx, 8 - rx);
+            PokePixel(0xFF0000, ImageHeight - 8 + rx, 4 + rx);
+            PokePixel(0xFF0000, ImageHeight - 8 + rx, 8 - rx);
         } //~for
         if (Qlog == 0) return;
         System.out.println(HandyOps.Dec2Log(" (DrRedX) o", OpMode, ""));
@@ -5437,18 +5455,18 @@ public class TrakSim {
 
     /**
      * Draws a tan steering wheel slightly to the left of center at the bottom
-     * of the TrakSim pixel buffer. Optionally also shows the dashboard.
+     * of the org.avphs.traksim.TrakSim pixel buffer. Optionally also shows the dashboard.
      * <p>
      * The steering wheel may be drawn with a piece of "white tape" on the top,
      * so it's easy to see when it it turned off-center.
      * The wheel has 23 positions from -11 to +11 where this tape is shown,
-     * and it is not shown if the position is out of range.
+     * and it is not shown if the prerace is out of range.
      * Alternatively, you can give it a signed angle -127 to +127 and have it
      * scaled non-linearly to fit in the shorter range.
      *
-     * @param posn   The position to draw the white tape, -11 to +11,
+     * @param posn   The prerace to draw the white tape, -11 to +11,
      *               or -127 to +127 if scaled
-     * @param scaled True if the position is to be scaled
+     * @param scaled True if the prerace is to be scaled
      * @param dash2  Also draw the dashboard from available information
      */
     public void DrawSteerWheel(int posn, boolean scaled, boolean dash2) {
@@ -5497,7 +5515,7 @@ public class TrakSim {
                     bitz = TapedWheel[thar]; // lsb is bottom of screen
                     if (bitz == 0) break;
                     for (cx = 0; cx <= 31; cx++) {
-                        rx = ImHi - 1 - cx;
+                        rx = ImageHeight - 1 - cx;
                         if ((bitz & 1) != 0) PokePixel(info, rx, whar);
                         bitz = bitz >> 1;
                         if (bitz == 0) break;
@@ -5516,7 +5534,7 @@ public class TrakSim {
         // private final int[] Grid_Locns = {6,12,16,18,26,28,  0,16,80,126,228,240,
         //   0,20,300,320,  0,320,  0,45,91,137,182,228,274,320, 0,320,  0,20,300,320};
         int here, thar, whar, nx, prio, fini, lft, rit,
-                tops, info = 0, next = 0, botm = ImHi - 1;
+                tops, info = 0, next = 0, botm = ImageHeight - 1;
         int[] grids = GridLocTable;
         if (grids == null) return;
         if (grids.length < 4) return;
@@ -5537,7 +5555,7 @@ public class TrakSim {
             if (tops >= botm) break;
             if (next > botm) next = botm;
             if (tops >= next) continue;
-            if (tops > 0) for (nx = 0; nx <= ImWi - 1; nx++) if ((nx & 8) == 0) PokePixel(0xFF0000, tops, nx);
+            if (tops > 0) for (nx = 0; nx <= ImageWidth - 1; nx++) if ((nx & 8) == 0) PokePixel(0xFF0000, tops, nx);
             if (grids == null) break;
             lft = rit;
             if (here > 0) if (here < grids.length) rit = grids[here];
@@ -5548,7 +5566,7 @@ public class TrakSim {
                 if (prio > 0) if (prio < info) for (nx = tops; nx <= next - 1; nx++)
                     if (((nx - tops) & 8) == 0) PokePixel(0xFF0000, nx, prio);
                 prio = info;
-                if (prio > ImWi - 2) break;
+                if (prio > ImageWidth - 2) break;
                 lft++;
             }
         }
@@ -5611,7 +5629,7 @@ public class TrakSim {
      * bottom. The horizontal cells of the top group are the left 20 pixels as
      * row +1 cell +1, the right 20 pixels (+3), and everything in between as
      * cell +2 in row +1. The second group has only one cell, from the left
-     * edge (0) to the right edge (ImWi); any click in that region is (2,1).
+     * edge (0) to the right edge (ImageWidth); any click in that region is (2,1).
      * The next row, just above the middle of the screen, has seven equal cells.
      * The third row, from the middle down to the dashboard, has a little sliver
      * on the left (click there to properly shut down the serial port and exit).
@@ -5668,15 +5686,15 @@ public class TrakSim {
     } //~NewGridTbl
 
     /**
-     * Requests TrakSim to set its simulation mode to one of three states.
+     * Requests org.avphs.traksim.TrakSim to set its simulation mode to one of three states.
      * mode=0: (initially) Paused, the simulated car does not move.
      * This is required to clear a crashed condition (OpMode==3).
      * mode=1: Single-step, the simulated car is updated this once only;
      * call SimStep(1) after each steering&gas update if your driving code
-     * takes up more than FrameTime ticks (including TrakSim time).
+     * takes up more than FrameTime ticks (including org.avphs.traksim.TrakSim time).
      * This does not clear a crashed condition (OpMode==3).
      * mode=2: Real-time, the simulated car is updated on every call to
-     * GetSimFrame (through SimCamera.NextFrame), as many times as
+     * GetSimFrame (through camera.NextFrame), as many times as
      * necessary to catch up to the real-time count of FrameTime ticks;
      * calling before the next tick (or if the simulated car is not moving
      * unless FreshImage was called) returns the previous image. Using this
@@ -5692,7 +5710,7 @@ public class TrakSim {
         boolean doit = true;
         if (prio == 3) if (nuly > 0) doit = false;
         if (nuly < 0) {
-            if (DriverCons.D_StartInCalibrate)
+            if (DriverConstants.D_Start_Servo_Calibration)
                 if (SpecWheel == 0) unScaleStee = true; // used to calibrate servos
             nuly = 0;
         } //~if
@@ -5778,8 +5796,8 @@ public class TrakSim {
             why++; // why = +1 // now show it on-screen..
             if (whom > 0) SeenHedLite = false;
             if (!SeenHedLite) break;
-            // Vbase = MyMath.Fix2flt(rx,0);
-            // Hbase = MyMath.Fix2flt(cx,0);
+            // Vbase = org.avphs.traksim.MyMath.MyMath.Fix2flt(rx,0);
+            // Hbase = org.avphs.traksim.MyMath.MyMath.Fix2flt(cx,0);
             whom = whom & 0x7FFFFFFF;
             here = ShoHeadLite[1];
             deep = ShoHeadLite[2];
@@ -5793,7 +5811,7 @@ public class TrakSim {
             lxx = aWord.length() + lxx;
             why++; // why = +2
             // if ((rx|cx) !=0)
-            //   if (MyMath.fAbs(Vbase-Vposn)+MyMath.fAbs(Hbase-Hposn)>4.0) break;
+            //   if (org.avphs.traksim.MyMath.MyMath.fAbs(Vbase-Vposn)+org.avphs.traksim.MyMath.MyMath.fAbs(Hbase-Hposn)>4.0) break;
             why++; // why = +3
             if (whom == 0) break;
             if (here == 0) break;
@@ -5823,13 +5841,13 @@ public class TrakSim {
     } //~HeadShoLines // final log
 
     private int ViewAngle(int whar, int locn, int info, boolean prox) {
-        boolean doit = (ProxyThresh > 0.0) && prox; // locn is artifact posn in 25cm u
+        boolean doit = (ProxyThresh > 0.0) && prox; // locn is artifact position in 25cm u
         double Vstp = 0.0, Hstp = 0.0, dx = ProxyThresh;
         int res, aim, Hx, Vx = info >> 16, locx = locn & 0x0FFF0FFF, Vz = locx >> 16,
                 Hz = locx & 0xFFFF;
         if (PreViewLoc != locx) {
             Vstp = MyMath.Fix2flt(Vz, 2) - Vposn; // Vz/Hz in 25cm grid/8 units,
-            Hstp = Hposn - MyMath.Fix2flt(Hz, 2); // ..Vposn/Hposn in 1m park coords
+            Hstp = Hposn - MyMath.Fix2flt(Hz, 2); // ..Vposition/Hposition in 1m park coords
             if (doit) dx = Vstp * Vstp + Hstp * Hstp; // check proximity on this artifact
             aim = (int) Math.round(MyMath.aTan0(Hstp, Vstp)); // degs c-wise from north
             PreViewLoc = locx;                          // .. from artifact to car
@@ -5852,9 +5870,9 @@ public class TrakSim {
         return res;
     } //~ViewAngle // rtn >0 if in view
 
-    private int Animatron(int whar, int locn, boolean logy) { // for animated art
+    private int Animatron(int whar, int locn, boolean logy) { // for animated artifact
         String aLine = ""; // used if logz=T  // may also retn TmpI = updated whar
-        final int Anim_Log = DriverCons.D_Anim_Log;
+        final int Anim_Log = DriverConstants.D_Animated_Artifact_Log;
         boolean uppy = false, logz = false, skipper = false, prox = false;
         int why = 0, kx = 0, zx = 0, nx = 0, here = 0, thar, info,
                 seen = locn, anim = (locn >> 28) & 15;
@@ -6063,7 +6081,7 @@ public class TrakSim {
     private void ShoArtifax() { // sort by distance, then display far-to-near..
         double fudge = 6.0; // (patch as needed)
         boolean doit = (OpMode == 2) || StepOne, prox, logz;
-        // ZoomRatio = (50*64.0)/(Zoom35*fImMid); fImMid = ImWi/2 // zx50 = 28
+        // ZoomRatio = (50*64.0)/(Zoom35*fImMid); fImMid = ImageWidth/2 // zx50 = 28
         int Vbase = (int) Math.round(Vposn * 4.0), Hbase = (int) Math.round(Hposn * 4.0),
                 pint = (int) Math.round(Facing), whar = ArtBase, here, Pmap, oops,
                 topper, tole, tall, wide, rotst, nx, wx, yx, zx, looky = FrameNo - 1,
@@ -6158,7 +6176,7 @@ public class TrakSim {
                 if (locn > 0) if (locn != whom) { // duplicate locn = alt view
                     whom = locn;
                     // info = locn-(Vbase<<16)-Hbase; // (for log) V/Hbase in 25cm units
-                    tall = (locn >> 16) - Vbase; // position of artifact, relative to car
+                    tall = (locn >> 16) - Vbase; // prerace of artifact, relative to car
                     wide = (locn & 0xFFF) - Hbase; // ..measured in half-meters (50cm)
                     aim = MyMath.aTan0(MyMath.Fix2flt(wide, 0), -MyMath.Fix2flt(tall, 0));
                     aim = aim - Facing; // aim is angle of deviation from center-view
@@ -6168,7 +6186,7 @@ public class TrakSim {
                     Hx = wide * wide;
                     if (aim > VuEdge) dx = -8; // not in view
                     else if (aim + VuEdge >= 0.0) { // dx = radial distance, cx = pix H-posn..
-                        step = Math.sqrt(MyMath.Fix2flt(Vx + Hx, 4)) * 16.0; // fImMid=ImWi/2..
+                        step = Math.sqrt(MyMath.Fix2flt(Vx + Hx, 4)) * 16.0; // fImMid=ImageWidth/2..
                         ftmp = aim * fImMid / VuEdge;
                         if (true)
                             if ((aim > 4.0) || (aim + 4.0 < 0.0)) {
@@ -6193,7 +6211,7 @@ public class TrakSim {
                     System.out.println(HandyOps.Dec2Log("  (;;) ", nx,
                             HandyOps.Dec2Log(" +", lino, HandyOps.Dec2Log(" = ", here,
                                     HandyOps.Dec2Log(" ", dx, HandyOps.Dec2Log("/", cx,
-                                            HandyOps.Int2Log(" => ", locn, // HandyOps.Int2Log(" ",info,
+                                            HandyOps.Int2Log(" => ", locn, // org.avphs.traksim.HandyOps.HandyOps.Int2Log(" ",info,
                                                     HandyOps.Dec2Log(" ", tall, HandyOps.Dec2Log("/", wide,
                                                             HandyOps.Dec2Log(" ", Vx, HandyOps.Dec2Log("/", Hx,
                                                                     HandyOps.Flt2Log(" ", aim, HandyOps.Flt2Log(" = ", step,
@@ -6300,7 +6318,7 @@ public class TrakSim {
                     } //~if // (whar>0)
                     zx = 0;
                     if (DoCloseUp) if (RoWiM == 0.0) {
-                        zx = (rx - ImHaf) << 2; // ImHaf = ImHi/2
+                        zx = (rx - ImHaf) << 2; // ImHaf = ImageHeight/2
                         if (pint < 8) zx++; // car facing N/S (use H)
                         else if (pint < 82) zx = 0; // not square-on
                         else if (pint < 98) {
@@ -6321,7 +6339,7 @@ public class TrakSim {
                         wide = -MyMath.SgnExt(tall);
                         zx = tall >> 16;
                         // anim = zx>>12; // logged only (also test for unreasonableness)
-                        zx = zx & 255;                   // ImMid = ImWi/2..
+                        zx = zx & 255;                   // ImMid = ImageWidth/2..
                         if (ppm > 0) tole = (zx << 4) / ppm; // pk meters*16
                         tops = Pmap - (zx - 1) * ImgWi - wide;   // dx = dist in 6cm units..
                         // ZoomRatio = (50*64.0)/(Zoom35*fImMid) = 3200/(35*160) = 20/35
@@ -6358,7 +6376,7 @@ public class TrakSim {
                         tall = MyMath.Trunc8(MyMath.Fix2flt(tall, 0) / step) + 1; // + V-rows
                         zx = MyMath.Trunc8(MyMath.Fix2flt(wide, 0) / step) + 1; // + H-cols/2
                         cx = cx - 1 - zx; // off left end of image on screen (cx = dx&0xFFFF)
-                        Hat = 4096.5 - MyMath.Fix2flt(zx, 0) * step; // +MyMath.Fix2flt(Pmap,0)
+                        Hat = 4096.5 - MyMath.Fix2flt(zx, 0) * step; // +org.avphs.traksim.MyMath.MyMath.Fix2flt(Pmap,0)
                         if (zx < 0) {
                             oops = oops | 128;
                             zx = 0;
@@ -6370,10 +6388,10 @@ public class TrakSim {
                             Vat = 0.0;
                             wx = 0;
                             topper = 0;
-                            if (cx >= ImWi) oops = oops | 256; // off right end;  off left end..
+                            if (cx >= ImageWidth) oops = oops | 256; // off right end;  off left end..
                             else if (cx < 0) oops = oops | 0x1000; // kill inner loop, not outer
                             else if (SeenWall != null) if (SeenWall[LayerSz] > 0) {
-                                for (yx = cx; yx <= LayerSz - 1; yx += ImWi) {
+                                for (yx = cx; yx <= LayerSz - 1; yx += ImageWidth) {
                                     wx = SeenWall[yx];
                                     if (wx == 0) break;    // tole = (tall<<4)/ppm; rotst = rx<<20..
                                     if (wx < rotst) continue; // wall is behind, might be another
@@ -6385,14 +6403,14 @@ public class TrakSim {
                                             if (wx <= 0) continue; // always wx>0, so shouldn't hap
                                             if (tole > (wx & 0xFFFF)) wx = wx | 0x80000;
                                         } //~if // art is taller
-                                    info = SeenWall[yx + ImWi * MaxLayers]; // MaxLayers = 4 (wall top)
+                                    info = SeenWall[yx + ImageWidth * MaxLayers]; // MaxLayers = 4 (wall top)
                                     if (info < 0) {
                                         // (wx&-0x100000)!=0 if wall is in front;
                                         // assume art is front of ceil-hi wall at same distance
                                         if (info + 1 == 0) if ((wx & -0x100000) == 0) continue;
                                         if (Mini_Log) if (logy) { // (looky==0) incl in logy
                                             if (TempStr == "") TempStr = "\n    ";
-                                            TempStr = TempStr + HandyOps.Dec2Log(" Lyr=", yx / ImWi,
+                                            TempStr = TempStr + HandyOps.Dec2Log(" Lyr=", yx / ImageWidth,
                                                     HandyOps.Dec2Log(" +", cx, HandyOps.Dec2Log(" [", yx,
                                                             HandyOps.Hex2Log("] ", rotst, 8, HandyOps.Int2Log(":", wx,
                                                                     HandyOps.Dec2Log(" ", info, ""))))));
@@ -6434,7 +6452,7 @@ public class TrakSim {
                                                                         HandyOps.Flt2Log(" ", Vat * 16.0, HandyOps.Int2Log(" ", wx,
                                                                                 HandyOps.Dec2Log(" ", tall, HandyOps.Hex2Log(" x", oops, 5,
                                                                                         HandyOps.IffyStr(oops != 0, " = x",  // tagged err: oops =
-                                                                                                HandyOps.IffyStr(yx >= ImHi - DrawDash, " = ^", // off botm
+                                                                                                HandyOps.IffyStr(yx >= ImageHeight - DrawDash, " = ^", // off botm
                                                                                                         HandyOps.IffyStr(topper + yx + 1 < 0, " = ~",    // behind wall
                                                                                                                 HandyOps.IffyStr(info < 0, " = _",           // transparent
                                                                                                                         HandyOps.Colo2Log(" = ", info, ""))))))))))))))))
@@ -6443,7 +6461,7 @@ public class TrakSim {
                                 } //~if
                                 if (oops != 0) break; // otherwise commit..
                                 topper++; // topper<0 behind a wall (=0 if no wall)
-                                if (topper > 0) if (info >= 0) if (yx < ImHi - DrawDash)
+                                if (topper > 0) if (info >= 0) if (yx < ImageHeight - DrawDash)
                                     PokePixel(info, yx, cx);
                                 Vat = Vat + step;
                                 while (Vat >= 1.0) {
@@ -6473,7 +6491,7 @@ public class TrakSim {
             if (why > 13) break;
             why = 0;
             break;
-        } //~while              // HandyOps.IffyStr(!logy,"",   // why =
+        } //~while              // org.avphs.traksim.HandyOps.HandyOps.IffyStr(!logy,"",   // why =
         if ((why > 0) || Mini_Log) if (((Qlog & 32) != 0) || ((Qlog & 2048) != 0) && (looky == 0))
             if (looky == 0) System.out.println(HandyOps.Dec2Log(" (ShoArt) ", why,
                     HandyOps.Flt2Log(" ", ZoomRatio * 256.0, HandyOps.Dec2Log("/256 ", whar,
@@ -6598,9 +6616,9 @@ public class TrakSim {
                 why++; // why = 2 // (already checked by caller..)
                 if (SeenWall == null) break;
                 if (cx < 0) break;
-                if (cx >= ImWi) break;
+                if (cx >= ImageWidth) break;
                 ix0 = SeenWall[cx];
-                // inv = MyMath.iAbs(inv); // obsolete)
+                // inv = org.avphs.traksim.MyMath.MyMath.iAbs(inv); // obsolete)
                 why++; // why = 3 // new layer spex..
                 whom = 0;
                 // (new) General strategy: layers sorted by frontness, layer 0 is backmost
@@ -6620,9 +6638,9 @@ public class TrakSim {
                 } //~if
                 why++; // why = 4
                 for (nx = MaxLayers * 3; nx >= 0; nx += -1) WaLayerz[nx] = 0;
-                for (nx = cx; nx <= cx + ImWi * (MaxLayers - 1); nx += ImWi) { // copy SeenWal -> WaLayer..
+                for (nx = cx; nx <= cx + ImageWidth * (MaxLayers - 1); nx += ImageWidth) { // copy SeenWal -> WaLayer..
                     if (nx < 0) break;
-                    if (nx >= LayStep) break; // LayStep=ImWi*MaxLayers
+                    if (nx >= LayStep) break; // LayStep=ImageWidth*MaxLayers
                     whom = SeenWall[nx];
                     if (whom == 0) break;
                     colo = SeenWall[nx + LayStep];
@@ -6784,20 +6802,20 @@ public class TrakSim {
                 WaLayerz[whar + MaxLayers] = inv;
                 WaLayerz[whar + MaxLayers * 2] = skey;
             } //~if
-            ix0 = whar * ImWi + cx;
-            if (Shifty) for (nx = cx; nx <= cx + ImWi * (MaxLayers - 1); nx += ImWi) { // copy WaLayer..
+            ix0 = whar * ImageWidth + cx;
+            if (Shifty) for (nx = cx; nx <= cx + ImageWidth * (MaxLayers - 1); nx += ImageWidth) { // copy WaLayer..
                 if (nx < 0) break;
-                if (nx >= LayStep) break; // LayStep=ImWi*MaxLayers
+                if (nx >= LayStep) break; // LayStep=ImageWidth*MaxLayers
                 if (thar < 0) break;
                 if (thar >= MaxLayers) break;
                 ix1 = WaLayerz[thar + MaxLayers];
-                if (ix1 >= 0x30000000) if (nx >= ImWi) logx = logx | 32;
+                if (ix1 >= 0x30000000) if (nx >= ImageWidth) logx = logx | 32;
                 SeenWall[nx + LayStep] = ix1;
                 SeenWall[nx] = WaLayerz[thar];
                 thar++;
             } //~for // (copy WaLayer)
-            else if (ix0 >= 0) if (ix0 < LayStep) { // LayStep=ImWi*MaxLayers
-                if (ix0 >= ImWi) if (inv >= 0x30000000) logx = logx | 64;
+            else if (ix0 >= 0) if (ix0 < LayStep) { // LayStep=ImageWidth*MaxLayers
+                if (ix0 >= ImageWidth) if (inv >= 0x30000000) logx = logx | 64;
                 SeenWall[ix0] = info;
                 SeenWall[ix0 + LayStep] = inv; // = tall, vertical ipx*256/spx
                 if (why < 0) why = why - 100;
@@ -6807,8 +6825,8 @@ public class TrakSim {
         } //~if // (into its SeenWal layer) xx = 1/6
         else xx = 0;
         if ((Qlog & 256) != 0) {
-            if (cx > 0) if (((TripLine + cx) & 0xFFFF) == 0) if (cx < ImWi)
-                if (SeenWall[cx + ImWi + LayStep] >= 0x30000000) logx = logx | 256;
+            if (cx > 0) if (((TripLine + cx) & 0xFFFF) == 0) if (cx < ImageWidth)
+                if (SeenWall[cx + ImageWidth + LayStep] >= 0x30000000) logx = logx | 256;
             if (logx > 0) logz = true;
         } //~if
         if (logy > 0) if (logz) {
@@ -6833,9 +6851,9 @@ public class TrakSim {
             RtnStr = "";
         } //~if // (logy>0 && logz)
         if (Mini_Log) if (logy > 0) if (logx > 0) if ((Qlog & 256) != 0)
-            if (cx > 0) if (cx < ImWi) {
-                ix0 = SeenWall[cx + ImWi];
-                ix1 = SeenWall[cx + ImWi + LayStep];
+            if (cx > 0) if (cx < ImageWidth) {
+                ix0 = SeenWall[cx + ImageWidth];
+                ix1 = SeenWall[cx + ImageWidth + LayStep];
                 System.out.println(HandyOps.Dec2Log("   (.?.) ", doing,
                         HandyOps.Dec2Log(" ", cx, HandyOps.Int2Log(": ", info,
                                 HandyOps.Int2Log(" [", inv, HandyOps.Dec2Log("] => ", whar,
@@ -6846,7 +6864,7 @@ public class TrakSim {
     } //~SortLayer // whar = 0..MaxLayers+3=7
 
     private void DoWalls(boolean doit) { // no early rtn "{DW} "           // nBax
-        final int HalfLoaf = Crummy / 2 - 3, CapDims = ImHi * 0x10000 + ImWi;
+        final int HalfLoaf = Crummy / 2 - 3, CapDims = ImageHeight * 0x10000 + ImageWidth;
         boolean ImgWall = GroundsColors < 0, sawn;           // data frm BackImag
         int looky = FrameNo - 1, ImH8 = ImHaf * 8, ImgHi, ImgWi, ImgSz, stip, doing,
                 topper, inv, nuly, full,
@@ -6881,7 +6899,7 @@ public class TrakSim {
         //   do not change general compass direction.
 
         // As seen by the car, the face line advances x units to the right and
-        //   +/-y units fwd or back; for position z in the face, rx is z*y/x units
+        //   +/-y units fwd or back; for prerace z in the face, rx is z*y/x units
         //   +/-; disregard y in calc'ing z; corners denoted by low bits of V,H/Q,Z.
         // Record only compass dir'n, face starts @ left front corner of anchor,
         //   ends @ start of face in ending anchor (defines y), unless dir'n >45;
@@ -6901,7 +6919,7 @@ public class TrakSim {
         if (looky == 0) {
             if (Qlog > 0x10000) {
                 whoz = Qlog >> 16;
-                logz = ImWi;
+                logz = ImageWidth;
             } //~if
             logy = 2;
         } //~if
@@ -6951,7 +6969,7 @@ public class TrakSim {
                                                 HandyOps.Colo2Log(" = ", ink, HandyOps.Dec2Log(" ", info,
                                                         HandyOps.Dec2Log(" ", yx, HandyOps.Dec2Log(" ", zx,
                                                                 HandyOps.Dec2Log(" ", kx, ""))))))));
-                                DrawLine(ink, info, yx + ImWi + 2, zx, kx + ImWi + 2); // map coords in meters..
+                                DrawLine(ink, info, yx + ImageWidth + 2, zx, kx + ImageWidth + 2); // map coords in meters..
                                 Vbase = Korner(2 * 8, ix0, logy); // rtns (float) park meters
                                 Hbase = Korner(0 * 8, ix0, logy); // logy = 2; // ..  (Korn/2)
                                 Vstp = Korner(3 * 8, ix0, logy);
@@ -6977,7 +6995,7 @@ public class TrakSim {
                             } //~if // (ShowMap)
                 if (xx > 0) { // = TmpI = rx for 1st ink on floor
                     if (!ImgWall) xx = 0; // no back walls, no fill if outdoors
-                    else if (xx >= ImHi) xx = 0; // (can't)
+                    else if (xx >= ImageHeight) xx = 0; // (can't)
                     else xx = (xx << 20) + 5;
                 } //~if // default to BackWall, farthest floor
                 why = 15;
@@ -6998,7 +7016,7 @@ public class TrakSim {
                 } //~if
                 for (ipx = 0; ipx <= MaxLayers - 1; ipx++) { // 4 layers, do each separately (doit=T)..
                     why = 16;    // MaxLayers = 4 = depth of image wall layers
-                    for (cx = 0; cx <= ImWi - 1; cx++) { // 2 brk (err), 3 cont (when done)
+                    for (cx = 0; cx <= ImageWidth - 1; cx++) { // 2 brk (err), 3 cont (when done)
                         fz = 0;
                         why = 0;
                         ixp = 0;
@@ -7007,16 +7025,16 @@ public class TrakSim {
                         orient = 0;
                         gotit = false;
                         info = SeenWall[cx];
-                        ink = SeenWall[cx + ImWi * 4]; // in pix*256 so fractional steps
-                        SeenWall[cx] = SeenWall[cx + ImWi];
-                        SeenWall[cx + ImWi] = SeenWall[cx + ImWi * 2];
-                        SeenWall[cx + ImWi * 2] = SeenWall[cx + ImWi * 3];
-                        SeenWall[cx + ImWi * 3] = info; // (restore moved info for ShoArt)
-                        SeenWall[cx + ImWi * 4] = SeenWall[cx + ImWi * 5];
-                        SeenWall[cx + ImWi * 5] = SeenWall[cx + ImWi * 6];
-                        SeenWall[cx + ImWi * 6] = SeenWall[cx + ImWi * 7];
-                        SeenWall[cx + ImWi * 7] = ink;
-                        topper = cx + ImWi * 7; // put ~walltop there
+                        ink = SeenWall[cx + ImageWidth * 4]; // in pix*256 so fractional steps
+                        SeenWall[cx] = SeenWall[cx + ImageWidth];
+                        SeenWall[cx + ImageWidth] = SeenWall[cx + ImageWidth * 2];
+                        SeenWall[cx + ImageWidth * 2] = SeenWall[cx + ImageWidth * 3];
+                        SeenWall[cx + ImageWidth * 3] = info; // (restore moved info for ShoArt)
+                        SeenWall[cx + ImageWidth * 4] = SeenWall[cx + ImageWidth * 5];
+                        SeenWall[cx + ImageWidth * 5] = SeenWall[cx + ImageWidth * 6];
+                        SeenWall[cx + ImageWidth * 6] = SeenWall[cx + ImageWidth * 7];
+                        SeenWall[cx + ImageWidth * 7] = ink;
+                        topper = cx + ImageWidth * 7; // put ~walltop there
                         offx = info & 0xFFF; // offset to pix in botm row of this image,
                         whom = info >> 12;   //   ..or plain wall color (whom=0)
                         rx = whom >> 8;     // 0-based fractional row to start on
@@ -7056,14 +7074,14 @@ public class TrakSim {
                                                     HandyOps.IffyStr(tall == 0, "!", "")));
                                     if ((tall & 0x20000) != 0) fz = rx;
                                 } //~if // T: close to park edge
-                                if (topper > 0) if (topper < ImWi * 8) {
+                                if (topper > 0) if (topper < ImageWidth * 8) {
                                     SeenWall[topper] = -1;
                                     topper = 0;
                                 } //~if
                                 orient = BackWall;
                                 gotit = true;
                             } //~if // (insert backwall behind)
-                            if (fz > ImHi - DrawDash) fz = ImHi - DrawDash;
+                            if (fz > ImageHeight - DrawDash) fz = ImageHeight - DrawDash;
                         } //~if // (ipx=0)
                         if (whoz > 0) { // whoz = Qlog>>16;
                             logy = 0;
@@ -7072,7 +7090,7 @@ public class TrakSim {
                                 if (whom == whoz) logy++; // logy = 2;
                                 else if (TripLine != 0) if (cx > 0) {
                                     if ((cx & 63) == 0) logy++;
-                                    else if (cx + 3 > ImWi) logy++;
+                                    else if (cx + 3 > ImageWidth) logy++;
                                     else if (((TripLine + cx) & 0xFFFF) == 0) logy++;
                                     else if (zx + 1 < 0) if (zx + cx == 0) logy++;
                                 } //~if
@@ -7134,8 +7152,8 @@ public class TrakSim {
                                 if (rx == TripLine) stip = 32;
                                 if (whom > 0) if (whom == whoz) stip = stip | 16;
                                 if (cx > 0) if (((TripLine + cx) & 0xFFFF) == 0) stip = stip + 8;
-                                if (cx + 3 > ImWi) stip = stip + 4;
-                                if (cx == (ImWi >> 1)) stip = stip + 2;
+                                if (cx + 3 > ImageWidth) stip = stip + 4;
+                                if (cx == (ImageWidth >> 1)) stip = stip + 2;
                                 if (cx == 1) stip++;
                                 maxy++;
                                 if (stip > 15) if ((stip & 15) != 0) rpt = true;
@@ -7148,7 +7166,7 @@ public class TrakSim {
                                 System.out.println(HandyOps.Dec2Log("  . : . ", ipx,   // (DoWall/T)
                                         HandyOps.Dec2Log(" ", whom, HandyOps.Dec2Log(" ", rx,    // why =
                                                 HandyOps.Dec2Log("/", cx, HandyOps.Int2Log(": ", info,
-                                                        HandyOps.Colo2Log("=", orient, HandyOps.Dec2Log(" (", cx + ImWi * 3,
+                                                        HandyOps.Colo2Log("=", orient, HandyOps.Dec2Log(" (", cx + ImageWidth * 3,
                                                                 HandyOps.Fixt8th(") +", ink >> 5, HandyOps.Dec2Log(" @ ", offx,
                                                                         HandyOps.Dec2Log("..", ibase, HandyOps.Dec2Log(" *", ImgWi,
                                                                                 HandyOps.TF2Log(" ", gotit, HandyOps.Dec2Log(TempStr, why,
@@ -7156,7 +7174,7 @@ public class TrakSim {
                                                                                                 ""))))))))))))))));
                                 TempStr = "";
                             } //~if // (Mini_Log)
-                        if (gotit) if (cx < ImWi) for (fz = fz; fz >= 0; fz += -1) { // do BackWall behind..
+                        if (gotit) if (cx < ImageWidth) for (fz = fz; fz >= 0; fz += -1) { // do BackWall behind..
                             if (full > 0) if (fz == full) {
                                 orient = CeilingCo; // show ceiling above
                                 full = 0;
@@ -7179,7 +7197,7 @@ public class TrakSim {
                                                     HandyOps.Int2Log(": ", info, HandyOps.Dec2Log(" ", kx,
                                                             HandyOps.Dec2Log("/", here, "")))))));
                                 } //~if
-                                if (info >= 0) if (rx < ImHi - DrawDash) { // -1 = transparent
+                                if (info >= 0) if (rx < ImageHeight - DrawDash) { // -1 = transparent
                                     if (info < 8) info = 0x010101;
                                     fz = rx; // top pix row actually filled
                                     PokePixel(info, rx, cx);
@@ -7192,17 +7210,17 @@ public class TrakSim {
                                 else if (zx == 2) offx = offx - (ImgWi + ImgWi);
                                 else offx = offx - zx * ImgWi;
                             } //~for // (rx)
-                            if (topper > 0) if (topper < ImWi * 8) {
+                            if (topper > 0) if (topper < ImageWidth * 8) {
                                 SeenWall[topper] = ~fz;
                                 topper = 0;
                             }
                         } //~if // (topper>0) (ImgWall=T)
-                        else if (orient > 8) if (cx < ImWi) if (fz >= ImHaf) for (rx = fz; rx >= 0; rx += -1) {
+                        else if (orient > 8) if (cx < ImageWidth) if (fz >= ImHaf) for (rx = fz; rx >= 0; rx += -1) {
                             if (full > 0) if (rx == full) {
                                 orient = CeilingCo; // show ceiling above
                                 full = 0;
                             } //~if
-                            if (topper > 0) if (topper < ImWi * 8) {
+                            if (topper > 0) if (topper < ImageWidth * 8) {
                                 SeenWall[topper] = -1;
                                 topper = 0;
                             } //~if
@@ -7223,7 +7241,7 @@ public class TrakSim {
                                     HandyOps.Dec2Log(" @ ", zx, HandyOps.Int2Log(" ", pz, ""))));
                         if ((pz & 1) == 0) continue;
                         zx = zx + 16;
-                        if (zx > ImWi - 16) break;
+                        if (zx > ImageWidth - 16) break;
                         if (Mini_Log) TempStr = TempStr + HandyOps.Dec2Log(" ", nx, "");
                         LabelScene(HandyOps.Dec2Log("", nx, ""), 24, zx, 0xFFFFFF);
                     } //~for // (nx)
@@ -7351,7 +7369,7 @@ public class TrakSim {
                                                         HandyOps.Int2Log(" ", ix1, HandyOps.Int2Log(" ", ix2,      //_10
                                                                 HandyOps.Int2Log(" ", ix3, HandyOps.Dec2Log("] ", pie,
                                                                         HandyOps.Flt2Log(" {", fase, HandyOps.Dec2Log(" ", zero,
-                                                                                HandyOps.Dec2Log("} ", aim, // HandyOps.Dec2Log(" ",topper,
+                                                                                HandyOps.Dec2Log("} ", aim, // org.avphs.traksim.HandyOps.HandyOps.Dec2Log(" ",topper,
                                                                                         HandyOps.IffyStr(xx == 0, "", " *"))))))))))))))));
                         pz = HandyOps.NthOffset(0, HandyOps.Dec2Log("@ ", Pmap, " "), Save4Log);
                         if (pz > 0) System.out.println("    __ " + HandyOps.NthItemOf(true, 1,
@@ -7532,7 +7550,7 @@ public class TrakSim {
                             } //~if
                             zx = TmpI;
                             pz = ink & 0xFFFF;
-                            gotit = (pz == ImWi - 1);
+                            gotit = (pz == ImageWidth - 1);
                             if (!gotit) if (ink > 0) {
                                 if (yx < 0) gotit = true; // out of tries, stop here
                                 else if (maxz < 0) maxz = pz;
@@ -7546,8 +7564,8 @@ public class TrakSim {
                                 else roff = roff + Vinc - Vstp;
                                 Vstp = Vinc;
                                 Hstp = Hinc;
-                                if (ink > 0) if (pz < ImWi - 1) // pretend we hit the end..
-                                    ink = ink & -0x10000 | (ImWi - 1);
+                                if (ink > 0) if (pz < ImageWidth - 1) // pretend we hit the end..
+                                    ink = ink & -0x10000 | (ImageWidth - 1);
                                 break;
                             } //~if // 1st of 2 exits
                             if (yx < 0) { // can't get there, back up to best known..
@@ -7690,7 +7708,7 @@ public class TrakSim {
                 if (ImgWall) { // image wall..                               // (DoWall)
                     gotit = (ix1 & 0x800000) != 0; // centered
                     // stip = (ix2>>16)&0xFF00;
-                    Hpm = ppm; // ppm = MyMath.Fix2flt(stip,0); // stip = (image ppm)*256
+                    Hpm = ppm; // ppm = org.avphs.traksim.MyMath.MyMath.Fix2flt(stip,0); // stip = (image ppm)*256
                     fz = stip >> 8; // now is img.pix/m, can't =0 (tested above)
                     stip = 0;
                     if (engle != 0.0) if (!gotit) { // don't oblique-compress centered
@@ -7701,7 +7719,7 @@ public class TrakSim {
                         Hpm = MyMath.fAbs(engle); // engle = (ix1&0x1FF)-90.0-Facing;
                         if (Hpm > 88.0) if (fase > 0.0) { // if (near) parallel, use fase..
                             // fase is true compass, need rel:xaim, so 0 degs = square-on..
-                            // fase = fase-90.0-MyMath.Fix2flt(ix1&0x1FF,0);
+                            // fase = fase-90.0-org.avphs.traksim.MyMath.MyMath.Fix2flt(ix1&0x1FF,0);
                             fase = fase - engle - 180.0 - Facing; // (-engle incl +90+Facing, subt)
                             while (fase + 180.0 < 0.0) fase = fase + 360.0;
                             if (fase > 180.0) fase = fase - 360.0;
@@ -7824,7 +7842,7 @@ public class TrakSim {
                     }
                 } //~if // (ImgWall)
                 else fz = MyMath.iAbs(ibase - ink);
-                // offx = MyMath.iAbs(fz)&-0x20000; // =0 if (nearly) square-on
+                // offx = org.avphs.traksim.MyMath.MyMath.iAbs(fz)&-0x20000; // =0 if (nearly) square-on
                 // xxx = (step*yx)>>5; // sb net visi face length in im.pix
                 rx = (ibase << 4) & -0x100000; // 0-based fractional pix row as shown..
                 Vz = (ink << 4) & -0x100000;  // (so no need to adjust for lost ends)
@@ -7916,7 +7934,7 @@ public class TrakSim {
                         else if ((rx >> 23) + ImHaf != TripLine) if (zx == 0) if (offx < wide)
                             if (doing != whoz) if (doing != TripLine) if (maxz > 33)
                                 if (cx != Hx) if (cx + 1 < Hz) if (((TripLine + cx) & 0xFFFF) == 0)
-                                    if (cx != (ImWi >> 1)) xx = 0;
+                                    if (cx != (ImageWidth >> 1)) xx = 0;
                         if (xx > 0) { // show details for this column..
                             if (!sawn) {
                                 sawn = (xx > 1); // didn't see doing line, show partial here..
@@ -7971,7 +7989,7 @@ public class TrakSim {
                                                                                                                     HandyOps.Flt2Log(" ", pct, HandyOps.Flt2Log(" ", ppm,
                                                                                                                             HandyOps.Flt2Log("(=", ppm / 256.0, "*256)}"
                                                                                                                                     + TempStr))))))))))))))))))))))));
-                            sawn = true;          // HandyOps.Dec2Log("*256) ",stip,
+                            sawn = true;          // org.avphs.traksim.HandyOps.HandyOps.Dec2Log("*256) ",stip,
                             TempStr = ""; // (TmpSt is left over from prep B4 loop)
                             RtnStr = "";
                             maxz++;
@@ -8007,7 +8025,7 @@ public class TrakSim {
                     kx = Math.max(kx - 2, 0);
                 }
                 logz = 0;
-                if (looky == 0) if (whoz > 0) logz = ImWi;
+                if (looky == 0) if (whoz > 0) logz = ImageWidth;
             } //~for // (doing: each wall)
             if (GroundsColors < 0) if (SeenWall[LayerSz] == 0) SeenWall[LayerSz]++;
             why = 0; // (find all visible walls)
@@ -8067,7 +8085,7 @@ public class TrakSim {
         double whom = WhitLnSz,     // optn: +1 rtns walls<0, +8 rtns non-trk=0
                 lxx, ledge = MyMath.fMin(MyMath.fMax(ink, whom), 1.4), // Vat,Hat: pk m's
                 Vstp = Vsee, Hstp = Hsee, deep = 0.0, Mconst = 0.0, Kconst = 0.0;
-        final boolean ShoWallz = DriverCons.D_ShoWallz;
+        final boolean ShoWallz = DriverConstants.D_Show_Distant_Walls;
         boolean BGed = false;
         int why = 0, thar = 0, whar = 0, Vx = 0, Hx = 0, info = 0, colo = 0,
                 more = 0, Wallz = -1, rx = MyMath.Trunc8(Vat * 128.0), yx = rx >> 7,
@@ -8075,7 +8093,7 @@ public class TrakSim {
                 zx = cx >> 7, nx,
                 looky = FrameNo - 1,
                 Pmap = (yx >> 1) * HalfMap + (zx >> 1) + MapIxBase, // max(Pmap) ~ 24K?
-                kolo = PavColo | Truk, optx = optn; // rcx = optn&0xFFFFFF0,
+                kolo = PavementColor | Truk, optx = optn; // rcx = optn&0xFFFFFF0,
         boolean car2 = (optn & 2) != 0, flat = (optn & 5) == 5, tkonly = (optn & 8) != 0,
                 tript = (TripLine != 0) && GoodLog, logy = optn < 0;
         // TripLine specifies park meters south (here) or pixel row (in caller)
@@ -8093,8 +8111,8 @@ public class TrakSim {
             if (yx == TripLine) logy = true;
             else if (zx + TripLine == 0) logy = true;
             else {
-                if (zx + 1 == ImWi) logy = true;
-                else if (zx == (ImWi >> 1)) logy = true;
+                if (zx + 1 == ImageWidth) logy = true;
+                else if (zx == (ImageWidth >> 1)) logy = true;
             }
         }
         // tnt = 0; if ((optn&4) !=0) tnt = -0x333333; // darkens walls in map // **
@@ -8444,7 +8462,7 @@ public class TrakSim {
         } //~for
         if (colo < 0) return;
         if (rx == 0) return;
-        if (rx + tall + 2 > ImHi) return;
+        if (rx + tall + 2 > ImageHeight) return;
         if (cx + wide + 2 > WinWi) return;
         DrawLine(MarinBlue, rx - 1, cx - 1, rx - 1, cx + wide + 1); // frame it..
         DrawLine(MarinBlue, rx + tall + 1, cx - 1, rx + tall + 1, cx + wide + 1);
@@ -8463,7 +8481,7 @@ public class TrakSim {
     } //~DoPixSteps
 
     private void BuildFrame() { // no early return, always logs; frm GetSimFrame
-        final boolean DeepDark = false; // DriverCons.D_DeepDark;
+        final boolean DeepDark = false; // DriverConstants.D_Darken_Background;
         double ledge, Vat = Vposn, Hat = Hposn, fHafIm = FltWi * 0.5 + 1.0,
                 GridTall = MyMath.Fix2flt(HalfTall, 0), // Mconst, Kconst,
                 GridWide = MyMath.Fix2flt(HalfMap, 0), Vbase, Hbase, Vpx, Hpx, ftmp;
@@ -8505,7 +8523,7 @@ public class TrakSim {
                 System.out.println(HandyOps.Dec2Log("(..BF..) ", FrameNo, // (**frozen format**)
                         HandyOps.Dec2Log(" ", NuData, HandyOps.Int2Log(" ", ZooMapDim, " [ s="
                                 + HandyOps.Dec2Log(LefDash + HandyOps.IffyStr(OpMode == 3, "# ! ", "# / ")
-                                + myDash + " =g ] ", ImHi - DrawDash, HandyOps.Int2Log(" ", TripLine,
+                                + myDash + " =g ] ", ImageHeight - DrawDash, HandyOps.Int2Log(" ", TripLine,
                                 HandyOps.Flt2Log(HandyOps.IffyStr(SimSpedFixt, " [Fx ", " [v="), Velocity,
                                         HandyOps.Dec2Log("] ", optn, HandyOps.PosTime(" @ ")))))))));
             if (false) if (Mini_Log) if (Qlog < 0) if (theInx != null) if (FrameNo == 1)
@@ -8521,7 +8539,7 @@ public class TrakSim {
                 why++; // why = 1
                 if (myPix == null) break; // (only early exit)
                 if (PrioRaster == null) break;
-                for (cx = 0; cx <= ImWi - 1; cx++) PrioRaster[cx] = 0;
+                for (cx = 0; cx <= ImageWidth - 1; cx++) PrioRaster[cx] = 0;
                 why++; // why = 2 // if (DoScenery||ShowMap) {
                 MyMath.Angle2cart(Facing); // angles are in degrees, not radians
                 HsiFace = MyMath.Sine; // sin grows to right, step E to edge
@@ -8535,9 +8553,9 @@ public class TrakSim {
                                 " --" + HandyOps.ArrayDumpLine(SeenWall, 0, 16)));
                 }
                 // if (!ValidPixSteps) DoPixSteps(); // only for fisheye lens
-                // MyMath.Angle2cart(Facing+90.0); // this now points left-to-right,
-                Vinc = HsiFace; // -MyMath.Cose; // for stepping across the view screen
-                Hinc = -VcoFace; // MyMath.Sine;
+                // org.avphs.traksim.MyMath.MyMath.Angle2cart(Facing+90.0); // this now points left-to-right,
+                Vinc = HsiFace; // -org.avphs.traksim.MyMath.MyMath.Cose; // for stepping across the view screen
+                Hinc = -VcoFace; // org.avphs.traksim.MyMath.MyMath.Sine;
 
                 ZooMapTopL = 0;                    // calc edges of close-up map..
                 yx = ZooMapDim >> 16; // close-up size, in park meters
@@ -8549,7 +8567,7 @@ public class TrakSim {
                     if (zx >= MapWy) if (yx >= MapHy) break; // no offset needed
                     if (MyMath.Trunc8(TurnRadius * 2.0) + 4 > yx) step = 2;
                     else step = 1; // in park meters, how much car to show (at edge)
-                    kx = (step << 16) + kx; // was: =MyMath.Trunc8((Facing+22.5)/45.0)
+                    kx = (step << 16) + kx; // was: =org.avphs.traksim.MyMath.MyMath.Trunc8((Facing+22.5)/45.0)
                     switch (kx & 15) {
                         case 0:
                         case 1:
@@ -8713,7 +8731,7 @@ public class TrakSim {
                 if (TopCloseView == 0) kx = MapHy;
                 else if (TopCloseView <= MapHy) kx = TopCloseView - 1;
                 else kx = MapHy;
-                for (rx = ImHi - 1; rx >= 0; rx += -1) { // fill defaults..................................
+                for (rx = ImageHeight - 1; rx >= 0; rx += -1) { // fill defaults..................................
                     logy = false;
                     if (Mini_Log) if (TripLine > 0) if (looky == 0) { // Log_Draw=F, GoodLog=T..
                         if (rx == TripLine) logy = Log_Draw || GoodLog || ((Qlog & 2048) != 0);
@@ -8721,7 +8739,7 @@ public class TrakSim {
                             logy = GoodLog;
                     } //~if
                     // if (rx<4) logy = Log_Draw; else
-                    // if (rx>ImHi-5) logy = Log_Draw;
+                    // if (rx>ImageHeight-5) logy = Log_Draw;
                     // else if (rx>ImHaf+2) logy = false;
                     // else if (rx>ImHaf-8) logy = Log_Draw;
                     // else if ((rx&15)==0) logy = Log_Draw;
@@ -8734,7 +8752,7 @@ public class TrakSim {
                     } //~if // aiming for 3399FF in highest sky
                     else bitz = DarkWall; // darkened wall color, in case overshot (DW=996)
                     // else bitz = 0xFF00; // green // 0xFFCC99; // not dirt
-                    if (DrawDash > 0) if (rx > ImHi - 1 - DrawDash) bitz = DashColo; // dk.brown
+                    if (DrawDash > 0) if (rx > ImageHeight - 1 - DrawDash) bitz = DashColo; // dk.brown
                     if (ZooMapDim == 0) dx = -1;
                     else dx = rx - (ZooMapBase >> 16); // <0 if above close-up view (in c-u pix)
                     // ZMD=32,32 ZSf=3 ZB=224,642 ZSc=16. ZW=0.2 ZT=8,16
@@ -8756,12 +8774,12 @@ public class TrakSim {
                     for (cx = WinWi - 1; cx >= 0; cx += -1) {
                         info = 0; // default black separator, letterbox around map(s)
                         if (logy) info = 0x0000FF; // (TripLine)
-                        zx = cx - 2 - ImWi;
+                        zx = cx - 2 - ImageWidth;
                         deep = 0.0;
                         far = 0;
                         if (logy) if (rx == zx) far = 0x80000000;
-                        if (cx < ImWi) {
-                            if (logy) if ((rx == cx) || (cx < 8) && (rx < 5) || (cx > ImWi - 3))
+                        if (cx < ImageWidth) {
+                            if (logy) if ((rx == cx) || (cx < 8) && (rx < 5) || (cx > ImageWidth - 3))
                                 System.out.println(HandyOps.Dec2Log("   ..  .. ", rx,
                                         HandyOps.Dec2Log("/", cx, HandyOps.Colo2Log(" => ", bitz,
                                                 HandyOps.Colo2Log("/", info, "")))));
@@ -8816,7 +8834,7 @@ public class TrakSim {
                         if (info == 0) continue;
                         rx = info >> 16;
                         if (TopCloseView > 0) if (rx >= TopCloseView) continue;
-                        cx = (info & 0xFFF) + ImWi + 2;
+                        cx = (info & 0xFFF) + ImageWidth + 2;
                         if (PeekPixel(rx, cx) != CarColo) // car avatar already there
                             PokePixel(ArtiColo, rx, cx);
                     } //~for // ArtiColo=F90
@@ -8842,15 +8860,15 @@ public class TrakSim {
                     } //~if
                     zx = MyMath.iMin(kx + 8, MapTall - 8); // MapHy
                     for (thar = 0; thar <= zx; thar += 8) { // some yellow tics..
-                        PokePixel(0xFFFF00, thar, ImWi + 2);          // ..along the top & left..
+                        PokePixel(0xFFFF00, thar, ImageWidth + 2);          // ..along the top & left..
                         if (thar == 0) continue;
                         if ((thar & 31) != 0) continue;
-                        PokePixel(0xFFFF00, thar, ImWi + 1);
-                        PokePixel(0xFFFF00, thar, ImWi);
+                        PokePixel(0xFFFF00, thar, ImageWidth + 1);
+                        PokePixel(0xFFFF00, thar, ImageWidth);
                     } //~for
                     zx = MyMath.iMin(MapWy + 8, MapWide - 8);
                     for (thar = 8; thar <= zx; thar += 8) {
-                        cx = thar + ImWi + 2;
+                        cx = thar + ImageWidth + 2;
                         PokePixel(0xFFFF00, 0, cx);
                         if ((thar & 31) != 0) continue;
                         PokePixel(0xFFFF00, 1, cx);
@@ -8869,20 +8887,20 @@ public class TrakSim {
                         System.out.println(HandyOps.Dec2Log("  (DrawDash) ", DrawDash,
                                 HandyOps.TF2Log(" ", ShoClikGrid, HandyOps.PosTime(" @ "))));
                     if (ShoClikGrid) DrawGrid();
-                    LabelScene(myDash, ImHi - 4, ImWi - 8, -1);
+                    LabelScene(myDash, ImageHeight - 4, ImageWidth - 8, -1);
                     myDash = HandyOps.Flt2Log(" ", Velocity * fFPS, " "); // (5/fps) fFPS=5
-                    LabelScene(myDash, ImHi - 4, myDash.length() * 2 + SteerMid, 0xFF9999);
+                    LabelScene(myDash, ImageHeight - 4, myDash.length() * 2 + SteerMid, 0xFF9999);
                     info = -1;
                     if (StepOne) info = 0x66FFFF; // cyan for 1-step
                     else if (OpMode == 2) info = 0x66FF00; // green for real-time
                     else if (OpMode > 2) info = 0xFF0099; // red for crashed
-                    LabelScene(LefDash, ImHi - 4, -12, info);
+                    LabelScene(LefDash, ImageHeight - 4, -12, info);
                     LefDash = HandyOps.Fixt8th(" ", RealTimeNow, " ");
                     LabelScene(LefDash, SceneTall - 4, LefDash.length() * 2 + ImMid, 0xFF9900);
                     myDash = myDash + " t=" + LefDash;
                 } //~if // (DrawDash>0)
-                // Vmap = MyMath.Trunc8(Vposn); // = current posn in park meters (2x grid)
-                // Hmap = MyMath.Trunc8(Hposn);
+                // Vmap = org.avphs.traksim.MyMath.MyMath.Trunc8(Vposn); // = current posn in park meters (2x grid)
+                // Hmap = org.avphs.traksim.MyMath.MyMath.Trunc8(Hposn);
                 info = -1;
                 if (Vmap > 3) if (Hmap > 3) if (Vmap < MapTall - 4) if (Hmap < MapWide - 4) info = 0;
                 if (info != 0) {
@@ -8906,23 +8924,23 @@ public class TrakSim {
                                         HandyOps.PosTime(" @ "))))))));
                 //
                 // The car is at (Vposn,Hposn), facing (init'ly NW) -> Facing (Fa)
-                // The screen is ImWi pixels wide, which imaged at distance dx
-                //   is dx/fZoom meters wide, and the map position of the left edge
+                // The screen is ImageWidth pixels wide, which imaged at distance dx
+                //   is dx/fZoom meters wide, and the map prerace of the left edge
                 //   of the image plane at distance dx is -90 degrees to the left
                 //   (=Fc-90 in degrees C-wise from North) to map point Vat/Hat
                 //   = (VIc-dx*cos(Lp)/(2*fZoom),HIc+dx*sin(Lp)/(2*fZoom)).
-                // Stepping from the left, each pixel adds dx*cos(Lp)/(ImWi*fZoom)
-                //   to V and subtracts dx*sin(Lp)/(ImWi*fZoom) from H.
+                // Stepping from the left, each pixel adds dx*cos(Lp)/(ImageWidth*fZoom)
+                //   to V and subtracts dx*sin(Lp)/(ImageWidth*fZoom) from H.
                 // We calculate Vbase = -cos(Fa)-cos(Lp)/(2*fZoom) and Hbase sim'ly,
                 //   then each row, add dx (=deep)*Vbase to Vposn for the V part of Lx;
-                //   and step Vstp = dx*cos(Lp)/(ImWi*fZoom) and Hstp sim'ly.
+                //   and step Vstp = dx*cos(Lp)/(ImageWidth*fZoom) and Hstp sim'ly.
                 //
-                // MyMath.Angle2cart(Facing); // angles are in degrees, not radians
-                // HsiFace = MyMath.Sine; // sin grows to right, step E to edge
-                // VcoFace = -MyMath.Cose; // cos shrinks down (sin^2+cos^2 = 1m) step S
-                // MyMath.Angle2cart(Facing-90.0); // this now points left-to-right,
-                // Vinc = MyMath.Cose; // for stepping across the view screen
-                // Hinc = -MyMath.Sine;
+                // org.avphs.traksim.MyMath.MyMath.Angle2cart(Facing); // angles are in degrees, not radians
+                // HsiFace = org.avphs.traksim.MyMath.MyMath.Sine; // sin grows to right, step E to edge
+                // VcoFace = -org.avphs.traksim.MyMath.MyMath.Cose; // cos shrinks down (sin^2+cos^2 = 1m) step S
+                // org.avphs.traksim.MyMath.MyMath.Angle2cart(Facing-90.0); // this now points left-to-right,
+                // Vinc = org.avphs.traksim.MyMath.MyMath.Cose; // for stepping across the view screen
+                // Hinc = -org.avphs.traksim.MyMath.MyMath.Sine;
                 // deep = 256.0;
                 // Vbase = VcoFace*256.0; // about double the park width (in 2m grid locs),
                 // Hbase = HsiFace*256.0; // so guaranteed to be outside the park
@@ -8936,11 +8954,11 @@ public class TrakSim {
                         if ((dx & 7) == 0) System.out.println(HandyOps.Dec2Log("  ?..? ", dx,
                                 HandyOps.Dec2Log(" ", rx, HandyOps.Dec2Log("/", robe,
                                         HandyOps.Dec2Log("  ", nBax, HandyOps.PosTime(" @ "))))));
-                    if (rx >= ImHi - DrawDash) break; // normal exit at bottom of screen
+                    if (rx >= ImageHeight - DrawDash) break; // normal exit at bottom of screen
                     // far = far&0xFFFFFF|(robe<<24);
                     // if (Vscale>0) robe = (robe-ImHaf)*Vscale+ImHaf;
                     if (robe <= rx) continue;
-                    step = ImWi;
+                    step = ImageWidth;
                     while (rx < robe) {
                         rx++; // ..1 cont, 1 brk
                         // rotst = rx<<23;
@@ -8973,12 +8991,12 @@ public class TrakSim {
                         deep = MyMath.Fix2flt(doit + doit, 6); // RR: m*16 (6cm), deep: 2m
                         // deep is grid units from camera to center of screen @ this raster
                         // = nominal (50mm) width of half-screen at this distance in meters
-                        mpSpix = deep * 0.125 * WiZoom; // WiZoom = Dzoom*32/FltWi = 16/(ImWi*fZoom)
+                        mpSpix = deep * 0.125 * WiZoom; // WiZoom = Dzoom*32/FltWi = 16/(ImageWidth*fZoom)
                         // so mpSpix is ("meters")GU/scr.pixel?
                         Vbase = deep * VcoFace + Vposn * 0.5; // current center of the view at this dx,
                         Hbase = deep * HsiFace + Hposn * 0.5; // ..in grid coords (2m)
                         Vpx = Vinc * mpSpix; // step size across image (in grid/pix)..
-                        Hpx = Hinc * mpSpix; // .. = {deep/(ImWi/2)/zoom}*(sin|cos)
+                        Hpx = Hinc * mpSpix; // .. = {deep/(ImageWidth/2)/zoom}*(sin|cos)
                         Voffm = Vpx * fHafIm; // fHafIm = ((double)FltWi)/2+1.0 (+1 for extra +Vpx)
                         Hoffm = Hpx * fHafIm;
                         Vat = Vbase - Voffm; // start here at left edge of screen (in grid=2m)
@@ -9000,7 +9018,7 @@ public class TrakSim {
                             if (DeepDark) {
                                 doit = doit >> 3; // = distance in half-meters (=deep*4)
                                 if (doit > 63) Darken = 0x3F3F3F;      // I don't believe this..
-                                else if (doit > 0) { // ZoomPix=ImWi*50/Zoom35..
+                                else if (doit > 0) { // ZoomPix=ImageWidth*50/Zoom35..
                                     cx = ZoomPix * 2 / doit; // = pix/meter (12cm @ 1:8), = baseboard
                                     Darken = doit * 0x10101;
                                 }
@@ -9011,10 +9029,10 @@ public class TrakSim {
                         if (CheckerBd == 0) if (solidGry) if (rx > ImHaf + 32) {
                             if (Log_Draw) if (optn > 1)
                                 OopsLog = OopsLog + HandyOps.Dec2Log(" Sr", rx, "");
-                            for (cx = 0; cx <= ImWi - 1; cx++) {
+                            for (cx = 0; cx <= ImageWidth - 1; cx++) {
                                 thar++;
                                 if (myPix != null) if (thar > 0) if (thar < myPix.length)
-                                    myPix[thar] = PavColo;
+                                    myPix[thar] = PavementColor;
                             } //~for
                             continue;
                         } //~if // (solidGry)
@@ -9029,7 +9047,7 @@ public class TrakSim {
                                     if (RwL != 0) seen = false;
                                 }
                             } //~if // (Mtrk)
-                            if (rx == ImHi - 2 - DrawDash) { // DrawDash=12
+                            if (rx == ImageHeight - 2 - DrawDash) { // DrawDash=12
                                 if (ZooMapDim != 0) { // draw view trapezoid..
                                     zx = ZoomMapCoord(false, MyMath.Fix2flt(rx, 0), 1.0); // sb = Lww
                                     Lww = ZoomMapCoord(true, Vat + Vat, Hat + Hat); // should be visible
@@ -9048,8 +9066,8 @@ public class TrakSim {
                                     else if (cx >= TopCloseView) cx = 0;
                                 } //~if
                                 if (cx > 0) DrawLine(MarinBlue + Tintx * 2, zx,
-                                        MyMath.Trunc8(Hat + Hat) + ImWi + 2, cx,
-                                        MyMath.Trunc8(Hoffm + Hoffm) + ImWi + 2);
+                                        MyMath.Trunc8(Hat + Hat) + ImageWidth + 2, cx,
+                                        MyMath.Trunc8(Hoffm + Hoffm) + ImageWidth + 2);
                             }
                         } //~if // (DrawDash) (ShowMap)
                         if (VuEdge == 0.0) {
@@ -9072,7 +9090,7 @@ public class TrakSim {
                         seen = true; // if (TrakNoPix) if (rx<ImHaf+4) cont_inue;
                         solidGry = true;
                         info = 0;
-                        if ((cx & 15) == 0) for (cx = 0; cx <= ImWi - 1; cx++) { // .. repeat until off right..
+                        if ((cx & 15) == 0) for (cx = 0; cx <= ImageWidth - 1; cx++) { // .. repeat until off right..
                             bitz = PrioRaster[cx]; // also used to pro-rate pix in image wall
                             thar++;
                             Vat = Vat + Vpx;
@@ -9093,8 +9111,8 @@ public class TrakSim {
                                 } //~if // (step)
                                 continue;
                             } //~if // (often outside park)
-                            // Vmap = MyMath.Trunc8(Vat+Vat);
-                            // Hmap = MyMath.Trunc8(Hat+Hat);
+                            // Vmap = org.avphs.traksim.MyMath.MyMath.Trunc8(Vat+Vat);
+                            // Hmap = org.avphs.traksim.MyMath.MyMath.Trunc8(Hat+Hat);
                             yx = far; // (so MapCo can log it)
                             // if (TripWall>0) yx = yx|0x80000000; // far|1; TripLine: far<0
                             Vsee = VcoFace; // = 1 unit step in direction Facing..
@@ -9122,7 +9140,7 @@ public class TrakSim {
                                     colo = colo & 0xFFFFFF;
                                 } //~if
                                 else if ((colo == GrasColo) || (colo == GrasDk)) { // (fails if pebbled)
-                                    if (zx == PavColo) colo = WhitLnColo; // paved next to grass..
+                                    if (zx == PavementColor) colo = WhitLnColo; // paved next to grass..
                                     else if (zx == PavDk) colo = WhitLnColo;
                                     // else if (chekt>0) colo = GrasDk; // dk.grn
                                     solidGry = false;
@@ -9202,7 +9220,7 @@ public class TrakSim {
     private void InTrackIt(int looky) { // calc new posn & aim to stay in track
         boolean fOK = true, doit = true, logy = Mini_Log; // if (Qlog..) -- in M_L
         int whom = MapColor(8, Vposn, Hposn, 0), // trak = whom&Truk, // =0 if off-trk
-                // Vat = MyMath.Trunc8(Vposn), Hat = MyMath.Trunc8(Hposn),   // ML=LM=T
+                // Vat = org.avphs.traksim.MyMath.MyMath.Trunc8(Vposn), Hat = org.avphs.traksim.MyMath.MyMath.Trunc8(Hposn),   // ML=LM=T
                 ledge = 0, ridge = 0, fudge = 0, more = 0, info = 0, seen = 0, dun = 0,
                 nuLft = 0, nuRit = 0, optn = 0, nx = 0, kx = 0, zx = 0, why = 0;
         String aStr = "", aLine = "";         // PreLeft = 0, PreRite = 0,
@@ -9261,7 +9279,7 @@ public class TrakSim {
                     Vat = Vrit + Vstp;
                     Hat = Hrit + Hstp;
                     info = MapColor(8, Vat, Hat, 0); // rtns info<0 if on line, =0 if off-trk
-                    if (info == 0) {                // = PavColo|Truk = 0x40666666 if inside
+                    if (info == 0) {                // = PavementColor|Truk = 0x40666666 if inside
                         if ((whom == 0) && !doit) { // was/still off-track,
                             Vrit = Vat; // keep looking..
                             Hrit = Hat;
@@ -9416,7 +9434,7 @@ public class TrakSim {
                 else dun = 0;
                 if (zx > 0) { // car shifted, pretend we saw both edges (if close)..
                     if (ledge == 0) if ((ridge > 0) || (fudge > 0)) {
-                        // if (MyMath.fAbs(Vposn-Vrit)+MyMath.fAbs(Hposn-Hrit)<2.0) {
+                        // if (org.avphs.traksim.MyMath.MyMath.fAbs(Vposn-Vrit)+org.avphs.traksim.MyMath.MyMath.fAbs(Hposn-Hrit)<2.0) {
                         if (ridge == 0) {
                             ledge = fudge;
                             kx = kx | 0x80000000;
@@ -9432,7 +9450,7 @@ public class TrakSim {
                         zx = zx + 2;
                     } //~if
                     if ((zx & 3) == 0) if (ridge == 0) if ((ledge > 0) || (fudge > 0)) {
-                        // if (MyMath.fAbs(Vposn-Vlft)+MyMath.fAbs(Hposn-Hlft)<1.5) {
+                        // if (org.avphs.traksim.MyMath.MyMath.fAbs(Vposn-Vlft)+org.avphs.traksim.MyMath.MyMath.fAbs(Hposn-Hlft)<1.5) {
                         if (ledge == 0) {
                             ridge = fudge;
                             kx = kx | 0x80000000;
@@ -9687,16 +9705,16 @@ public class TrakSim {
                                                         HandyOps.Flt2Log(" z=", Ztmp, aLine)))))))))))));
     } //~InTrackIt
 
-    private void MoveCar() { // called once for each frame (not nec'ly sync'sly)
-        final double MperTurn = DriverCons.D_MetersPerTurn;
-        boolean logy = Log_Log || Log_Draw; // =F
+    private void MoveCar() { // called once for each frame (not neccessarily syncronysly)
+        final double MperTurn = DriverConstants.D_MetersPerTurn;
+        boolean useConsoleLogging = Log_Log || Log_Draw; // =F
         int zx, here, thar = -1, prio = SteerWhee, info = SpecWheel - prio,
                 prev = GasBrake, more = SpecGas - prev,
                 nx = -1, looky = 0, why = 0;
         double axel = 0.0, d1 = 0.0, d2 = 0.0, d3 = 0.0, d4 = 0.0, d5 = 0.0,
                 doing = 0.0, t1 = 0.0, t2 = 0.0, t3 = 0.0, t4 = 0.0, t5 = 0.0,
                 x1 = 0.0, x2 = 0.0, x3 = 0.0, x4 = 0.0, x5 = 0.0, oV = Velocity,
-                MPF = fMinSpeed * fFtime, // m/frame; fFtime=0.2, fMinSpeed=4.0
+                MPF = FLOOR_MIN_SPEED * fFtime, // m/frame; fFtime=0.2, FLOOR_MIN_SPEED=4.0
                 best = MyMath.Fix2flt(MyMath.iMax(SpecGas, prev), 0),
                 test = MyMath.fAbs(oV);
         // " (MovCar) FrameNo OpMode +NuData s: SpecWheel=prio fSteer
@@ -9719,7 +9737,7 @@ public class TrakSim {
                 here = (MyMath.Trunc8(Vposn) << 16) + MyMath.Trunc8(Hposn);
                 BreadCrumbs[nCrumbs & Crummy] = here; // Crummy = 255
                 nCrumbs++;
-            } //~if       // MPF = 0.8 = fMinSpeed*fFtime (in pk m/fr)..
+            } //~if       // MPF = 0.8 = FLOOR_MIN_SPEED*fFtime (in pk m/fr)..
             if ((SpecGas | prev) == 0) if (test + test < MPF) {
                 GasBrake = 0;        // fSpeed doesn't track perfectly thru 0..
                 fSpeed = 0.0;
@@ -9747,7 +9765,7 @@ public class TrakSim {
             GasBrake = GasBrake + more; // (only) new setting (as ramped)
             if (SimSpedFixt) {                                      // =FixedSpeed
                 if (SpecGas <= 0) fSpeed = 0.0; // (5/fps)
-                else fSpeed = MPF; // fFtime=0.2, fMinSpeed=4.0, MPF = 0.8
+                else fSpeed = MPF; // fFtime=0.2, FLOOR_MIN_SPEED=4.0, MPF = 0.8
                 doing = fSpeed; // (5/fps) so doing=0.8 = 4m/s = 8mph park
                 Velocity = doing;
             } //~if // V is in meters/frame (after physics)
@@ -9772,7 +9790,7 @@ public class TrakSim {
                 // oV = test = Velocity;
                 t1 = fSpeed; // fSpeed = (prev+GasBrake)*fGratio*fFtime/2 (ramp up)
                 if (t1 < MPF) if (SpecGas < MinESCact) { // stopping..
-                    why++; // why = 6 => 9/12; MPF = 0.8 = fMinSpeed*fFtime (in pk m/fr)
+                    why++; // why = 6 => 9/12; MPF = 0.8 = FLOOR_MIN_SPEED*fFtime (in pk m/fr)
                     fSpeed = fSpeed * 0.5; // can be negative if active braking
                     if (fSpeed <= 0.1) if (test > 0.0) if (test + test < MPF) { // test=abs(oV)
                         why = why + 768;       // count this as stopped..
@@ -9788,12 +9806,12 @@ public class TrakSim {
                     else doing = MaxRspeed; // =0 cuz Reversible=F
                     x1 = doing;
 
-                    // accel is in m/s/s, calc'd by measuring time to fMinSpeed = 4.0 m/s
+                    // accel is in m/s/s, calc'd by measuring time to FLOOR_MIN_SPEED = 4.0 m/s
                     //  @ MinESCact, = T2MinSp (guess'd) = 500ms, Tq=fFtime/T2MinSp=0.4
                     // so acc (sb 8m/s/s) = Tq*(GasBrake/MinESCact)=0.4, we need m/ft/ft,
                     // (how much to increase the frame speed in one frame) = 8/25 = 0.32
                     // so Tq*doing is delta-V, but result V must <= GasBrake*Vceiling
-                    // (Vceiling=fMinSpeed/MinESC=fGratio/10); Torque = fFtime/Accel = 0.4
+                    // (Vceiling=FLOOR_MIN_SPEED/MinESC=fGratio/10); Torque = fFtime/Accel = 0.4
 
                     doing = MyMath.fMax(MyMath.fMin(fSpeed, fMaxSpeed), doing); // in pk m/f
                     x2 = doing;
@@ -9810,7 +9828,7 @@ public class TrakSim {
                     // in park terms, axel = 24 pk m/s/s @ 5fps = 0.9, so RG must = 0.96
                     if ((CanSkid & 1) != 0) if (!Skidding) if (MyMath.fAbs(axel) > RubberGrip) {
                         Skidding = true;                // Skidding while accel/braking.. +F+
-                        logy = true; // we want to see this
+                        useConsoleLogging = true; // we want to see this
                         why = why | 32;
                     }
                 } //~if
@@ -9835,13 +9853,13 @@ public class TrakSim {
                 nx = 0;
                 t3 = doing * fSteer * fTurn4m; // = Facing change as fn(travel) T4m=2/(TR*pi)
                 t4 = Facing + t3; // = new Facing for this frame // @(5/fps)
-                d1 = (Facing + t4) * 0.5; // use avg direction to calc new forward position
+                d1 = (Facing + t4) * 0.5; // use avg direction to calc new forward prerace
                 MyMath.Angle2cart(d1); // Facing is in degrees, not radians
                 d2 = MyMath.Sine;
                 d3 = MyMath.Cose;
                 Facing = t4; // @(5/fps)
                 if (t3 != 0.0) { // fTurn4m = 2/(TurnRadius*pi), =180/(r*pi) -> dg/dg/m
-                    // TurnRadius is measured at servo position = min(LeftSteer,RiteSteer)
+                    // TurnRadius is measured at servo prerace = min(LeftSteer,RiteSteer)
                     // NormdRad = 256.0/(TurnRadius*((double)Math.min(LeftSteer,RiteSteer))),
                     x5 = fSteer * NormdRad; // fSteer*NormdRad = 256/(turn radius in pk m)
                     axel = Velocity * Velocity * x5; // axel = 256*V*V/rad // V in pk m/fr
@@ -9850,12 +9868,12 @@ public class TrakSim {
                     if (CanSkid < 0) if (!Skidding) if (MyMath.fAbs(axel) > RubberTurn) {
                         why = why | 64;                        // RubberTurn = RubberGrip*256;
                         Skidding = true;                     // Skidding while turning.. +T+
-                        logy = true; // we want to see this
+                        useConsoleLogging = true; // we want to see this
                         nx = GetPiDigit(nCrumbs + FrameNo); // +/- random 0-20 degs..
                         d4 = MyMath.Fix2flt(nx + nx, 0) * MyMath.Signum(t3);
                         Facing = Facing + d4;
                         if (Mini_Log) if ((looky == 0) || (Qlog < 0)) if (Log_AxL != 0) {
-                            zx = 1 << (info >> 1); // info = MyMath.iAbs(SteerWhee)
+                            zx = 1 << (info >> 1); // info = org.avphs.traksim.MyMath.MyMath.iAbs(SteerWhee)
                             if ((Log_AxL & zx) != 0) {
                                 System.out.println(HandyOps.Dec2Log(" (Log_AxL) ", info,
                                         HandyOps.Flt2Log(" a=", axel, HandyOps.TF2Log(" ", Skidding,
@@ -9878,7 +9896,7 @@ public class TrakSim {
                     d5 = MyMath.Fix2flt(zx << 1, 6);
                     doing = doing * (1.16 - d5);      // RubberGrip = CoFriction*PkGrav..
                     SimStep(8); // so crash it (CrashMe)       // ..see (SetCoFric) in log
-                    if (logy || Mini_Log) // if (Qlog..) -- included in M_L
+                    if (useConsoleLogging || Mini_Log) // if (Qlog..) -- included in M_L
                         System.out.println(HandyOps.Dec2Log("** Skid ** ", why >> 5,
                                 HandyOps.Dec2Log(" + ", nx, HandyOps.Dec2Log("/", zx,
                                         HandyOps.Flt2Log(" = ", d5 * 100.0, HandyOps.Flt2Log("c ", axel,
@@ -9900,7 +9918,7 @@ public class TrakSim {
             } //~if
             break;
         } //~while // why = 7/8/9/10/11/12, +16+32+64
-        if (logy || Mini_Log) if ((looky == 0) || (Qlog < 0)) // ** nobody sets Moved=false ??
+        if (useConsoleLogging || Mini_Log) if ((looky == 0) || (Qlog < 0)) // ** nobody sets Moved=false ??
             if (((SpecGas | SpecWheel) != 0) || (looky == 0) || Skidding || !Moved) {
                 System.out.println(HandyOps.Dec2Log(" (MovCar) ", FrameNo,
                         HandyOps.Dec2Log(HandyOps.IffyStr(SimSpedFixt, " Fs o", " o"), OpMode,
@@ -9912,8 +9930,8 @@ public class TrakSim {
                                                                         HandyOps.TF2Log(" ", Braking, HandyOps.TF2Log("/", Skidding,
                                                                                 HandyOps.Flt2Log(" f:", Facing, HandyOps.Dec2Log(" = ", why, // why =
                                                                                         HandyOps.PosTime(HandyOps.IffyStr(SimInTrak, " SiT @ ",
-                                                                                                " @ ")))))))))))))))))));           // logy = Mini_Log+lok..
-                if (logy) { // RubberGrip = CoFriction*PkGrav..
+                                                                                                " @ ")))))))))))))))))));           // useConsoleLogging = Mini_Log+lok..
+                if (useConsoleLogging) { // RubberGrip = CoFriction*PkGrav..
                     System.out.println(HandyOps.Flt2Log("      ", fTurn4m,
                             HandyOps.Flt2Log(" ", RubberGrip, HandyOps.Flt2Log(" ", Torque,
                                     HandyOps.Flt2Log(" ", test, HandyOps.Flt2Log(" -- ", t1,
@@ -9922,7 +9940,7 @@ public class TrakSim {
                                                             HandyOps.Flt2Log("/", d3, HandyOps.Flt2Log(" .. ", x1,
                                                                     HandyOps.Flt2Log(" ", x2, HandyOps.Flt2Log(" ", x3, // axel = V*V/rad..
                                                                             HandyOps.Flt2Log(" ", x4, "")))))))))))))));
-                    // TurnRadius is measured at servo position = min(LeftSteer,RiteSteer)
+                    // TurnRadius is measured at servo prerace = min(LeftSteer,RiteSteer)
                     // NormdRad = 256.0/(TurnRadius*((double)Math.min(LeftSteer,RiteSteer))),
                     // NormdRad*fSteer = 256/(turn radius in pk meters), Velocity in pk m/fr
                     // RubberTurn = RubberGrip*256 -- see (SetCoFric) in log
@@ -9949,10 +9967,10 @@ public class TrakSim {
      *
      * @param rose   The number of image rows
      * @param colz   The number of image columns
+     * @param pixels The array to fill with Bayer8-coded pixels
      * @return True if success, otherwise false
      */
-    public byte[] GetSimFrame(int rose, int colz) {
-        byte[] pixels = new byte[WinWi * ImHi * 4];
+    public boolean GetSimFrame(int rose, int colz, byte[] pixels) {
         int rx, cx = 0, info = 0, here = 0, thar = 0;
         byte aByte;                 // from GetCameraIm -> boolean NextFrame
         int[] myPix = myScreen;
@@ -10001,7 +10019,11 @@ public class TrakSim {
             SimBusy = false;
             StepOne = false;
         }
-        for (rx = 0; rx <= ImHi - 1; rx++) {                   // BayerTile=1 = RG/GB..
+        if (rose != ImageHeight) return false;
+        if (colz != WinWi) return false;
+        if (pixels == null) return false;
+        if (myPix == null) return false;
+        for (rx = 0; rx <= ImageHeight - 1; rx++) {                   // BayerTile=1 = RG/GB..
             for (cx = 0; cx <= WinWi - 1; cx++) {
                 if (myPix == null) break;
                 if (here < 0) break;
@@ -10022,11 +10044,11 @@ public class TrakSim {
             thar = thar + Lin2;
         } //~for
         DarkOnce = false;
-        return pixels;
+        return true;
     } //~GetSimFrame
 
     public boolean StartImage(int rose, int colz, int tile) {
-        final int myHi = ImHi;
+        final int myHi = ImageHeight;
         int why = 0;
         while (true) {
             why++; // why = 1 // if (DoScenery) {
@@ -10089,12 +10111,12 @@ public class TrakSim {
             } //~if // (pin=SteerServo)
             break;
         } //~while (once)
-        if (GoodLog) { // HandyOps.Flt2Log(" {",valu,
+        if (GoodLog) { // org.avphs.traksim.HandyOps.HandyOps.Flt2Log(" {",valu,
             if (pin == SteerServo) msg =
                     HandyOps.Dec2Log("=", info,
                             HandyOps.Flt2Log(" {", valu, "} (Steer) +"));
-                // HandyOps.Flt2Log("/",LfDeScaleSt,
-                // HandyOps.Flt2Log("/",RtDeScaleSt,"} (Steer) +")));
+                // org.avphs.traksim.HandyOps.HandyOps.Flt2Log("/",LfDeScaleSt,
+                // org.avphs.traksim.HandyOps.HandyOps.Flt2Log("/",RtDeScaleSt,"} (Steer) +")));
             else if (pin == GasServo) msg = " (Speed) +";
             else msg = " (?) ";
             System.out.println(HandyOps.Dec2Log("(TSsServo) ", pin, HandyOps.Dec2Log(" = ",
@@ -10106,24 +10128,24 @@ public class TrakSim {
     } //~SetServo
 
     /**
-     * Disables (or re-enables) TrakSim, so it uses less CPU time.
+     * Disables (or re-enables) org.avphs.traksim.TrakSim, so it uses less CPU time.
      * Use this when running your software with a live image. If you call
-     * GetSimFrame, TrakSim will still do all its processing to move the car
+     * GetSimFrame, org.avphs.traksim.TrakSim will still do all its processing to move the car
      * and deliver the next image, so you also need to refrain from asking
      * GetSimFrame for the next image when you are running a real track, if
      * your software needs to use the processor time for other tasks.
      *
-     * @param activ False disables TrakSim from watching servo commands
+     * @param activ False disables org.avphs.traksim.TrakSim from watching servo commands
      */
     public void Activate(boolean activ) {
         if (SimActive == activ) return;
-        System.out.println(HandyOps.IffyStr(activ, "### TrakSim Active ###",
-                "### TrakSim Not Looking at Servos ###"));
+        System.out.println(HandyOps.IffyStr(activ, "### org.avphs.traksim.TrakSim Active ###",
+                "### org.avphs.traksim.TrakSim Not Looking at Servos ###"));
         SimActive = activ;
     } //~Activate
 
     /**
-     * Requests TrakSim to return its next NextFrame->GetFrame image black.
+     * Requests org.avphs.traksim.TrakSim to return its next NextFrame->GetFrame image black.
      * Use this to test briefly covering the lens as a signal to your software.
      */
     public void DarkFlash() {
@@ -10131,7 +10153,7 @@ public class TrakSim {
     }
 
     /**
-     * Requests TrakSim to redraw its scene on next NextFrame->GetFrame call.
+     * Requests org.avphs.traksim.TrakSim to redraw its scene on next NextFrame->GetFrame call.
      * Use this if you are drawing on the image and you need a fresh copy.
      */
     public void FreshImage() {
@@ -10139,9 +10161,9 @@ public class TrakSim {
     } // to redraw the scene
 
     /**
-     * Returns true if TrakSim is running in stay-in-track mode.
+     * Returns true if org.avphs.traksim.TrakSim is running in stay-in-track mode.
      *
-     * @return true if TrakSim is running in stay-in-track mode
+     * @return true if org.avphs.traksim.TrakSim is running in stay-in-track mode
      */
     public boolean StinTrak() {
         return SimInTrak;
@@ -10155,7 +10177,7 @@ public class TrakSim {
     }
 
     /**
-     * TrakSim will crash the car (stop simulation) if it runs off the track
+     * org.avphs.traksim.TrakSim will crash the car (stop simulation) if it runs off the track
      * (or other Bad Things Happen), this tells you if it did.
      *
      * @return True if crashed, otherwise false
@@ -10184,10 +10206,10 @@ public class TrakSim {
     } //~GetMapSize
 
     /**
-     * Gets one coordinate of the current car position.
+     * Gets one coordinate of the current car prerace.
      *
      * @param horz True to get the horizontal (east-west) coordinate
-     * @return The east-west coordinate of the car position in park meters
+     * @return The east-west coordinate of the car prerace in park meters
      * if horz=true, otherwise the north-south coordinate
      */
     public double GetPosn(boolean horz) { // T: get (east-west) coord
@@ -10196,7 +10218,7 @@ public class TrakSim {
     } //~GetPosn
 
     /**
-     * TrakSim will crash the car (stop simulation) if it runs off the track
+     * org.avphs.traksim.TrakSim will crash the car (stop simulation) if it runs off the track
      * (or other Bad Things Happen). This is one of those Bad Things.
      *
      * @param seen True to draw the red "X" on the screen
@@ -10238,8 +10260,7 @@ public class TrakSim {
      * turn radius too short, one or both numbers could be below the bottom of
      * the screen, or possibly approximated at the horizon (screen middle).
      *
-     * @param why >0 to log the result
-     * @return The row position of the turn radius relative to the car
+     * @return The row prerace of the turn radius relative to the car
      * in the low half, and twice the turn radius in the high 16.
      */
     public int TurnRadRow() { // image row+ at turn radius & 2x turn radius
@@ -10251,9 +10272,9 @@ public class TrakSim {
         //   SOH,CAH,TOA: sin=opp/hyp; cos=adj/hyp; tan=opp/adj
         double whom, tmp, far = 1.0 / 256.0, // fZoom=Zoom35/50.0
                 // CameraHi = 1.2, // Camera height above track in park meters
-                // ZoomPix = ImWi*zx50/Zoom35, // divide this by distance for pix/meter
+                // ZoomPix = ImageWidth*zx50/Zoom35, // divide this by distance for pix/meter
                 ratio = fImHaf * 256.0 * fZoom, // sb = (120 or)240*256*1.9=117K
-                z16 = fZoom * CameraHi * 16.0, // sb = 1.3*1.2*16=27 // ImHaf=ImHi/2
+                z16 = fZoom * CameraHi * 16.0, // sb = 1.3*1.2*16=27 // ImHaf=ImageHeight/2
                 aim = 0.0;
         int kx = 0, xx = 0, dx = 0, nx = 0, px = 0, rx = 0, cx = 0, yx = 0,
                 zx = 2047, ImH8 = ImHaf * 8, btn = 0,
@@ -10283,7 +10304,7 @@ public class TrakSim {
                                                             HandyOps.Flt2Log(" ", CeilingHi, HandyOps.Dec2Log(" ", cx,
                                                                     HandyOps.Fixt8th("=", cx >> 1, "")))))))))))))));
         ReloTabs = false;
-        // if (Vscale>0) ratio = MyMath.Fix2flt(Vscale,0)*ratio;
+        // if (Vscale>0) ratio = org.avphs.traksim.MyMath.MyMath.Fix2flt(Vscale,0)*ratio;
         tRadix = 0;
         t2Radix = 0;
         for (nx = 0; nx <= 999; nx++) { // 0 to 75 down, in quarter-degrees
@@ -10299,7 +10320,7 @@ public class TrakSim {
             dx = (int) Math.round(tmp * MyMath.Cose); // = track distance in meters*16
             // if (dx >= 512) continue;
             // if (dx<0) break;
-            // xxx = 2.0/MyMath.Cose; // nominal radius to screen @ 2m
+            // xxx = 2.0/org.avphs.traksim.MyMath.MyMath.Cose; // nominal radius to screen @ 2m
             px = ((int) Math.round(ratio * MyMath.Sine / MyMath.Cose));
             rx = (px + 128) >> 8;
             xx = ((px + 16) >> 5); // 0-based rx<<3 (in table), ImHaf not included
@@ -10344,7 +10365,7 @@ public class TrakSim {
                 zx--;
             } //~while
             if (zx <= 0) if (yx >= ImHaf) break;
-        } //~for // (only exit) rx valid, >ImHi
+        } //~for // (only exit) rx valid, >ImageHeight
         zx = 0;
         yx = MyMath.iMax(xx, ImH8);
         while (RangeRow[zx & 2047] == 0) {
@@ -10360,7 +10381,7 @@ public class TrakSim {
                                         + HandyOps.ArrayDumpLine(RowRange, ImH8, 10) + "\n<RowCeil>"
                                         + HandyOps.ArrayDumpLine(RowCeiling, ImH8, -10))))))));
         t2Radix = MyMath.iMax(t2Radix, ImHaf + 1);
-        if (tRadix == 0) tRadix = ImHi + 2;
+        if (tRadix == 0) tRadix = ImageHeight + 2;
     } //~MakeRangeTbl
 
     /**
@@ -10382,7 +10403,7 @@ public class TrakSim {
             fc35 = MyMath.Fix2flt(newFoc35, 0);
             fZoom = fc35 / fx50; // = 2x for 100mm-equivalent lens (NOT) [=1.3 for fc35=35]
             Dzoom = fx50 * 0.5 / fc35; // "denom-zoom" = 1/(2*fZoom)
-            WiZoom = (Dzoom * 32.0) / FltWi; // FltWi = (double)ImWi;
+            WiZoom = (Dzoom * 32.0) / FltWi; // FltWi = (double)ImageWidth;
             ZoomRatio = 3200.0 / (fc35 * FltWi); // 50*64 = 3200
             didit = true;
             break;
@@ -10399,9 +10420,8 @@ public class TrakSim {
     public void GotBytes(byte[] msg, int lxx) {
         if (msg == null) return;
         if ((((int) msg[0]) & 0xF0) != ArduinoIO.ANALOG_MESSAGE) return;
-        if (msg.length >= 3) {
-            SetServo((int) msg[1], (int) msg[2]);
-        }
+        if (msg.length >= 3) SetServo(((int) msg[0]) & 0xF,
+                (((int) msg[2]) << 7) | ((int) msg[1]) & 0x7F);
     } //~GotBytes
 
     private int Color4ix(int whom) { // only frm InitInd
@@ -10434,7 +10454,7 @@ public class TrakSim {
         // the distance from luminance(co) to nearest rail defines half-range,
         // ..except at cx=9 top rail is raised by lx/2-96 (affects only lx>192);
         // contrast cx<9 reduces range /2^((9-cx)/2)        // kx=GroundsColors,
-        double aim, scale, ink;   // co=PavColo, zx=PebblSize, cx=PebContrast
+        double aim, scale, ink;   // co=PavementColor, zx=PebblSize, cx=PebContrast
         int lxx, mx, nx, rx, why = 0;                     // only frm InitInd
         String aWord
                 = HandyOps.Dec2Log("LdPebTrk: ", cx, "");
@@ -10503,7 +10523,7 @@ public class TrakSim {
     } //~LdPebTrak
 
     private boolean InitIndex(int whoz, int[] theInx) { // =T if OK, always logs
-        int tall, wide, anim, myHi = ImHi, zx = ArtBase, nx = 0, rx = 0, cx = 0,
+        int tall, wide, anim, myHi = ImageHeight, zx = ArtBase, nx = 0, rx = 0, cx = 0,
                 Bmap = 0, Pmap = 0, bitz = 0, info = 0, dimz = 0, aim = 0,
                 lxx = 0, whom = 0, why = 0;                           // no early exit
         int[] myFax = null;
@@ -10572,7 +10592,7 @@ public class TrakSim {
                     WhitLnSz = MyMath.Fix2flt(info, 0) * 0.014; // white line width
                     aWord = aWord + HandyOps.Flt2Log("W= ", WhitLnSz, " ");
                 } //~if
-                PavColo = Color4ix(0);
+                PavementColor = Color4ix(0);
                 PavDk = Color4ix(1);
                 GrasColo = Color4ix(2);
                 GrasDk = Color4ix(3);
@@ -10644,7 +10664,7 @@ public class TrakSim {
             break;
         } //~while // (true)
         nx = GroundsColors; // (shorter line)
-        LdPebTrak(nx, PavColo, PebblSize, PebContrast);                 // (in InitInd)
+        LdPebTrak(nx, PavementColor, PebblSize, PebContrast);                 // (in InitInd)
         // if (ShoHedLit) if (SeenHedLite) HeadShoLines(true); // too soon?
         if (nBax > 0) if (theInx != null) {
             zx = MapIxBase - 1; // MapIxBase = theInx[2]; // start of map
@@ -10658,7 +10678,7 @@ public class TrakSim {
                 HandyOps.Dec2Log(") = ", why, HandyOps.Dec2Log(" ", tall,  // why =
                         HandyOps.Dec2Log("/", wide, HandyOps.Hex2Log(" ", nx, 8,
                                 HandyOps.Colo2Log(" G=", GrasColo, HandyOps.Colo2Log("/", GrasDk,
-                                        HandyOps.Colo2Log(" T=", PavColo, HandyOps.Colo2Log("/", PavDk,
+                                        HandyOps.Colo2Log(" T=", PavementColor, HandyOps.Colo2Log("/", PavDk,
                                                 HandyOps.TF2Log(" I=", InWalls, HandyOps.Dec2Log(" ", myHi,
                                                         HandyOps.Dec2Log(" ", NumFax, HandyOps.Dec2Log(" BG=", nBax,
                                                                 HandyOps.Hex2Log("\n    x", bitz, 4, HandyOps.TF2Log(" ", theInx != null,
@@ -10786,7 +10806,7 @@ public class TrakSim {
         byte[] bytes8 = new byte[12];
         int[] theInx;
         byte[] xData;
-        File myFile = new File(SceneFiName + "indx");
+        File myFile = new File(SCENE_FILE_NAME + ".indx");
         FileInputStream theFile = null;
         try {
             while (true) {
@@ -10900,77 +10920,90 @@ public class TrakSim {
                         HandyOps.Dec2Log(") = ", why, "")))));
     } //~ReadTrakIndex
 
-    private boolean LoadTrackInfo() { // true if success
+    private void LoadTrackInfo() throws IOException { // true if success
         int nx, zx, tall = 0, wide = 0, why = 0;  // this loads the text track file
         String theList, aLine, filename;
         int[] theInx = null; // (loading this was an exercise for the user ;-)
         int[] myMap = null;
-        if (UseTexTrak) while (true) {
-            try {
-                why++; // why = 1
-                MapIndex = null;
-                TrakImages = null;
-                LuminanceMap = null;
-                theList = HandyOps.ReadWholeTextFile(SceneFiName + "txt");
-                if (theList == "") break; // why = 1
-                why++; // why = 2
-                if (HandyOps.CharAt(0, theList) == '\"') { // skip to named descriptor..
-                    aLine = " " + HandyOps.NthItemOf(true, 1, theList);
-                    nx = HandyOps.NthOffset(0, aLine, theList);
-                    zx = HandyOps.NthOffset(0, "\n0x", theList);
-                    if (nx > 0) {
-                        while (nx > 0)
-                            if (HandyOps.CharAt(nx, theList) == '\n') {
-                                zx = nx;
-                                break;
-                            } //~if
-                            else nx--;
-                    } //~if
-                    if (zx > 0) theList = HandyOps.RestOf(zx + 1, theList);
-                    else break;
-                } //~if // why = 2
-                why++; // why = 3
-                if (!TrakNoPix) if (GotImgOps(theList) != 0) while (true) {
-                    why++; // why = 4
-                    filename = SceneFiName + "tiff";
-                    zx = HandyOps.ReadTiff32Image(filename, null);
-                    if (zx == 0) break; // why = 4
+        while (UseTexTrak) {
+            why++; // why = 1
+            MapIndex = null;
+            TrakImages = null;
+            LuminanceMap = null;
+            // TODO FIX ME
+            theList = HandyOps.ReadWholeTextFile("traksim/src/main/resources/" + SCENE_FILE_NAME + ".txt");
+            if (theList.equals("")) {
+                break; // why = 1
+            }
+            why++; // why = 2
+            if (HandyOps.CharAt(0, theList) == '\"') { // skip to named descriptor..
+                aLine = " " + HandyOps.NthItemOf(true, 1, theList);
+                nx = HandyOps.NthOffset(0, aLine, theList);
+                zx = HandyOps.NthOffset(0, "\n0x", theList);
+                if (nx > 0) {
+                    while (nx > 0)
+                        if (HandyOps.CharAt(nx, theList) == '\n') {
+                            zx = nx;
+                            break;
+                        } else {
+                            nx--;
+                        }
+                }
+                if (zx > 0) {
+                    theList = HandyOps.RestOf(zx + 1, theList);
+                } else {
+                    break;
+                }
+            } //~if // why = 2
+            why++; // why = 3
+            if (!TrakNoPix && (GotImgOps(theList) != 0)) {
+                why++; // why = 4
+                filename = SCENE_FILE_NAME + ".tiff";
+                zx = HandyOps.ReadTiff32Image(filename, null);
+                if (zx != 0) {
                     tall = zx >> 16;
                     wide = zx & 0xFFFF;
                     nx = tall * wide;
                     theInx = new int[nx];
                     why++; // why = 5
-                    if (theInx == null) break;
                     nx = HandyOps.ReadTiff32Image(filename, theInx);
                     if (nx == zx) {
                         WhiteAlfa(tall, wide, theInx);
                         TrakImages = theInx;
-                    } //~if
-                    else theInx = null;
+                    } else {
+                        theInx = null;
+                    }
                     why++; // why = 6
-                    break;
-                } //~while
-                myMap = BuildMap(theList, (tall << 16) + wide, theInx);
-                if (myMap == null) break; // why = 2..6
-                for (nx = 0; nx <= myMap.length - 4; nx++) {
-                    if (myMap == null) break;
-                    if (nx < 0) break;
-                    if (nx < myMap.length - 3) myMap[nx] = myMap[nx + 3];
-                } //~for
-            } catch (Exception ex) {
-                break;
+                }
             }
-            if (InitIndex(2, myMap)) MapIndex = myMap; // InIx always logs, always true
+            myMap = BuildMap(theList, (tall << 16) + wide, theInx);
+            if (myMap == null) {
+                break; // why = 2..6
+            }
+            for (nx = 0; nx <= myMap.length - 4; nx++) {
+                if (myMap == null) {
+                    break;
+                }
+                if (nx < 0) {
+                    break;
+                }
+                if (nx < myMap.length - 3) {
+                    myMap[nx] = myMap[nx + 3];
+                }
+            } //~for
+            if (InitIndex(2, myMap)) {
+                MapIndex = myMap; // InIx always logs, always true
+            }
             why = -why; // why = -2..-6
             break;
         } //~while
-        if ((Qlog < 0) || (why > 0)) System.out.println(HandyOps.Dec2Log("(LdTrkInfo) = ", why,
-                HandyOps.TF2Log(" ", UseTexTrak, "")));
+        if ((Qlog < 0) || (why > 0)) {
+            System.out.println(HandyOps.Dec2Log("(LdTrkInfo) = ", why, HandyOps.TF2Log(" ", UseTexTrak, "")));
+        }
         if (MapIndex == null) {
             ReadTrakIndex();
-            return MapIndex != null;
-        } //~if
-        return true;
+            throw new IllegalStateException("MapIndex is null.");
+        }
     } //~LoadTrackInfo
 
     private void Valid8consts() {
@@ -10994,19 +11027,19 @@ public class TrakSim {
             aWord = "";
         } //~if
         if (ParkDims != 0xC80100) { // ParkDims checked only here
-            System.out.println("<!> TrakSim is designed only for ParkDims=200x256");
+            System.out.println("<!> org.avphs.traksim.TrakSim is designed only for ParkDims=200x256");
             NG = true;
         } //~if
         if (BayerTile != 1) {
-            System.out.println("<!> TrakSim is designed only for BayerTile=1");
+            System.out.println("<!> org.avphs.traksim.TrakSim is designed only for BayerTile=1");
             NG = true;
         } //~if
         while (true) {
-            if (ImHi == 480) if (ImWi == 640) break;
-            if (ImHi == 240) if (ImWi == 320) break;
-            System.out.println(HandyOps.Dec2Log("<!> TrakSim has not been tested"
+            if (ImageHeight == 480) if (ImageWidth == 640) break;
+            if (ImageHeight == 240) if (ImageWidth == 320) break;
+            System.out.println(HandyOps.Dec2Log("<!> org.avphs.traksim.TrakSim has not been tested"
                     + " with image sizes other than V=480 x H=640 and V=240 x H=320"
-                    + " (", ImHi, HandyOps.Dec2Log("x", ImWi, ")")));
+                    + " (", ImageHeight, HandyOps.Dec2Log("x", ImageWidth, ")")));
             break;
         } //~while
         if (DrawDash < 0) {
@@ -11015,11 +11048,11 @@ public class TrakSim {
         } //~if
         else if (DrawDash > 32) {
             System.out.println("<!> A large DrawDash leaves no image space for track");
-            if (DrawDash * 4 > ImHi) NG = true;
+            if (DrawDash * 4 > ImageHeight) NG = true;
         } //~if
         while (true) {
             if (MapTall == 200) if (MapWide == 256) break;
-            System.out.println("<!> TrakSim is designed for park size V=200 x H=256");
+            System.out.println("<!> org.avphs.traksim.TrakSim is designed for park size V=200 x H=256");
             NG = true;
             break;
         } //~while
@@ -11033,20 +11066,20 @@ public class TrakSim {
         if ((RampA < 0) || (RampA >= 360))
             System.out.println("<!> RampA should be in the range 0-359");
         if ((Zoom35 < 20) || (Zoom35 > 255))
-            System.out.println("<!> TrakSim probably won't work well with Zoom35 as extreme "
+            System.out.println("<!> org.avphs.traksim.TrakSim probably won't work well with Zoom35 as extreme "
                     + HandyOps.IffyStr(Zoom35 < 99, "close-up", "telephoto") + " lens");
         if (FrameTime < 20) {
-            System.out.println("<!> TrakSim is designed only for FrameTime >= 20ms");
+            System.out.println("<!> org.avphs.traksim.TrakSim is designed only for FrameTime >= 20ms");
             NG = true;
         } //~if
         if (SteerServo == GasServo) {
-            System.out.println("<!> TrakSim requires distinct Steer & Gas Servos");
+            System.out.println("<!> org.avphs.traksim.TrakSim requires distinct Steer & Gas Servos");
             NG = true;
         } //~if
         while (true) {
             if (SteerServo > 0) if (SteerServo < 16)
                 if (GasServo > 0) if (GasServo < 16) break;
-            System.out.println("<!> TrakSim is designed only for servo pins 1-15");
+            System.out.println("<!> org.avphs.traksim.TrakSim is designed only for servo pins 1-15");
             NG = true;
             break;
         } //~while
@@ -11057,7 +11090,7 @@ public class TrakSim {
         else while (true) {
             if (MinESCact >= 0) if (MinESCact < 90)
                 if (MaxESCact > 0) if (MaxESCact <= 90) break;
-            System.out.println("<!> TrakSim is designed for MinESCact/MaxESCact"
+            System.out.println("<!> org.avphs.traksim.TrakSim is designed for MinESCact/MaxESCact"
                     + " only in the range 0-90");
             NG = true;
             break;
@@ -11065,7 +11098,7 @@ public class TrakSim {
         // while (true) {
         //   if (LeftSteer >= 0) if (LeftSteer <= 90)
         //     if (RiteSteer >= 0) if (RiteSteer <= 90) break;
-        //   System.out.println("<!> TrakSim is designed for LeftSteer/RiteSteer"
+        //   System.out.println("<!> org.avphs.traksim.TrakSim is designed for LeftSteer/RiteSteer"
         //       + " only in the range 0-90");
         //   NG = true;
         //   break;} //~while
@@ -11088,10 +11121,10 @@ public class TrakSim {
         else if ((BackWall & -0x01000000) != 0) aWord = "BackWall";
         else if ((CreamWall & -0x01000000) != 0) aWord = "CreamWall";
         if (aWord != "")
-            System.out.println("<!> TrakSim is designed for 00 alpha channel"
+            System.out.println("<!> org.avphs.traksim.TrakSim is designed for 00 alpha channel"
                     + " in colors like " + aWord);
         if (TurnRadius < 0.5) {
-            System.out.println("<!> I don't think TrakSim can simulate a car"
+            System.out.println("<!> I don't think org.avphs.traksim.TrakSim can simulate a car"
                     + " with a TurnRadius less than 2 meters");
             NG = true;
         } //~if
@@ -11100,12 +11133,12 @@ public class TrakSim {
         else if (TurnRadius > 64.0)
             System.out.println("<!> Wow! That's a really long TurnRadius,"
                     + " Did you intend your car to have no steering wheel?");
-        if (fMinSpeed < 0.0) {
-            System.out.println("<!> TrakSim does not simulate a car going backwards");
+        if (FLOOR_MIN_SPEED < 0.0) {
+            System.out.println("<!> org.avphs.traksim.TrakSim does not simulate a car going backwards");
             NG = true;
         } //~if
-        else if (fMinSpeed > 32.0) System.out.println("<!> MINimum speed 65mph"
-                + " (fMinSpeed>32 m/s) is ridiculous");
+        else if (FLOOR_MIN_SPEED > 32.0) System.out.println("<!> MINimum speed 65mph"
+                + " (FLOOR_MIN_SPEED>32 m/s) is ridiculous");
         if (WhiteLnWi < 0.0) {
             System.out.println("<!> You can't have negative width WhiteLnWi");
             NG = true;
@@ -11136,23 +11169,23 @@ public class TrakSim {
             if (ShowMap) BreadCrumbs = new int[Crummy + 1]; // Crummy = 255
             if (GoodLog) if (ShowMap) if (DoCloseUp) ShoHeadLite = new int[4];
             SeenWall = new int[MyMath.iMax(LayerSz + 1, 1024)];
-            // PixelSteps = new int[ImWi];
-            PrioRaster = new int[ImWi];
+            // PixelSteps = new int[ImageWidth];
+            PrioRaster = new int[ImageWidth];
             PebleTrak = new int[16];
             ShoLumiLox = new int[32];
             DidCells = new int[256];
             WalzTall = new int[256];
             AnimInfo = new int[16];
             WallColoz = new int[8];
-            FltWi = (double) ImWi;
+            FltWi = (double) ImageWidth;
             fImHaf = (double) ImHaf;
             Valid8consts(); // quits if bogus defined constants
             Refocus(Zoom35); // does these things:
             // Dzoom = ((double)zx50)/((double)Zoom35*2); // "denom-zoom" = 1/(2*fZoom)
-            // WiZoom = (Dzoom*32.0)/FltWi; // = 16/(ImWi*fZoom)
+            // WiZoom = (Dzoom*32.0)/FltWi; // = 16/(ImageWidth*fZoom)
             // fZoom = ((double)Zoom35)/((double)zx50); // = 2x for 100mm-equivalent lens
             // MakeRangeTbl(2); // builds RangeRo,RowRang, sets tRadix
-            if (TweakRx != 0) while (tRadix > ImHi - 8 - DrawDash) { // TweakRx=0
+            if (TweakRx != 0) while (tRadix > ImageHeight - 8 - DrawDash) { // TweakRx=0
                 if (TweakRx > 0) {
                     effTurnRad = effTurnRad + MyMath.Fix2flt(TweakRx, 0); // +TurnRadius/4.0;
                     MakeRangeTbl(4);
@@ -11162,8 +11195,10 @@ public class TrakSim {
             } //~while
             SetStart(Vramp, Hramp, RampA);
             // Vposn = Vramp; Hposn = Hramp; Facing = RampA;
-            if (!LoadTrackInfo()) { // calls BuildMap
-                System.out.println("Unable to load track map");
+            try {
+                LoadTrackInfo(); // calls BuildMap
+            } catch (Exception ex) {
+                ex.printStackTrace();
                 System.exit(3);
             }
             if (false) if (Mini_Log) if (Qlog < 0) if (MapIndex != null)
@@ -11183,7 +11218,7 @@ public class TrakSim {
     } //~StartPatty
 
     public String toString() {
-        return "TrakSim " + RevDate;
+        return "org.avphs.traksim.TrakSim " + RevDate;
     }
 
     public class SimHookX extends SimHookBase {
@@ -11191,4 +11226,4 @@ public class TrakSim {
             GotBytes(msg, lxx);
         }
     } //~SimHookX
-} //~TrakSim (apw3) (TS)
+} //~org.avphs.traksim.TrakSim (trakSimFiles) (TS)
