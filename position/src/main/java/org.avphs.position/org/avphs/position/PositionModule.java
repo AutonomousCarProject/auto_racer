@@ -8,16 +8,14 @@ import org.avphs.image.ImageModule;
 //import org.avphs.map.MapModule;
 
 public class PositionModule implements CarModule {
-
     private ImageModule imageModule;
     //private MapModule mapModule;
     private CalibrationModule calibrationModule;
-    private float[] position = {0,0};
-    private float direction=0;
-    private float speed=0;
-    private float movement;
-    private int prevSpins; //depricated
+
+    private int prevSpins; //deprecated
+    private PositionData prevPositionData = new PositionData(new float[]{0, 0},0, 0); //WILL BE USED LATER
     private PositionData positionData;
+
 
     @Override
     public Class[] getDependencies() {
@@ -31,6 +29,8 @@ public class PositionModule implements CarModule {
         //imageModule = (ImageModule) dependencies[0];
         //mapModule = (MapModule) dependencies[1];
         //calibrationModule = (CalibrationModule) dependencies[2];
+        //THIS WILL BE WHERE WE READ FROM A FILE TO FIND THE INITIAL POSITION
+        positionData = new PositionData(new float[]{0, 0},0, 0); //TEMPORARY
     }
 
     @Override
@@ -40,39 +40,43 @@ public class PositionModule implements CarModule {
 
     @Override
     public void update(CarData carData) {
-        //FIXME: Position never instantiated
-        //positionData.update(position,direction,speed);
-        //carData.addData("position",positionData);
-
-        //System.out.println("Position");
         //ORDER OF FUNCTION CALLING THAT HAPPENS EVERY TIME
-        //computeMovement
-        //computeDirection
-        //computePosition
+        computeDirection();
+        computeSpeed();
+        computePosition();
+        carData.addData("position",positionData);
 
+        //THIS WILL BE USED LATER
+        prevPositionData.updateAll(positionData.getPosition(), positionData.getDirection(), positionData.getSpeed());
     }
+
     private void computeDirection() {
+        //FIXME: More complex calculation to find travel distance on arc required
         //CALL THE FUNCTION TO GET SERVO ANGLE
         //assuming straight wheels = 90 in servo angle return thing
-        //direction += WHEEL ANGLE - 90; //servo angle return value placeholder
-        direction = 0; //temporary
+        //prevdirection += WHEEL ANGLE - 90; //servo angle return value placeholder
+        float direction = 0; //temporary
         if (direction >= 360) {
             direction -= 360;
         } else if (direction < 0) {
             direction += 360;
         }
+        positionData.updateDirection(direction);
     }
-    private void computeMovement() {
+    private void computeSpeed() {
         //GET SPIN COUNT - prevSpins;
         //INSERT calibrationn function to convert shaft spin to distance
-        float distance = 0;//calibration.getDistance_Elapsed(); //0 is temporary
-        movement = distance;
+        float speed = 0;//calibration.getDistance_Elapsed(); //0 is temporary
+        //depending on calibration function, this may need conversion to m/s
+        positionData.updateSpeed(speed);
     }
 
     private void computePosition() {
-        position[0] += Math.cos(Math.toRadians(direction)) * movement;
-        position[1] += Math.sin(Math.toRadians(direction)) * movement;
+        float x = positionData.getPosition()[0] + (float) Math.cos(Math.toRadians(positionData.getDirection())) * positionData.getSpeed();
+        float y = positionData.getPosition()[1] + (float) Math.sin(Math.toRadians(positionData.getDirection())) * positionData.getSpeed();
+        positionData.updatePosition(new float[]{x, y});
     }
+
 
     //DEPRECATED, TRACKSIM HAS THIS
     private void updateSpinCount() {
