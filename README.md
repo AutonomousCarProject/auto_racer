@@ -12,22 +12,22 @@ Master: [![Build Status](https://travis-ci.com/AutonomousCarProject/auto_racer.s
     * Included clients are `carclient` and `traksim`
     
 ### Module System
-* Extend `CarModule` and implement its method to crete a new runnable module
-* List your modules dependencies in the `getDependencies()` method
-    * example: 
+* Extend `CarModule` and implement its methods
+* Your Module will be passed a `CarData` in init(), use this to get data from other modules and provide your own data.
+    * Getting data example from `ImageModule`: 
+    ```java
+    window = (WindowModule) carData.getModuleData("window");
+    var camera = (Camera) carData.getModuleData("camera");
+    ```
+    * Providing data example from `WindowModule`:
+    ```java
+      private void init() {
+          carData.addData("window", this);
+      }
+    ```
     
-            @Override
-             public Class[] getDependencies() {
-                 return new Class[] {
-                     ImageModule.class
-                 };
-             }
- * Your module will be given its dependencies in `init()`
- * `Run()` will be called once per frame
- * Submit this frames `CarCommands` to the Core by returning them from `commands()`
- 
- ### Core
- *
+ * `update()` will be called once per frame.
+ * Submit current frame's `CarCommands` to the Core by returning them from `commands()`
  
  ### Clients
  * 
