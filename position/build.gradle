@@ -17,6 +17,9 @@ dependencies {
     //api project(':core')
 
     implementation project(':coreinterface')
+    implementation project(':calibration')
+    implementation project(':image')
+    //implementation project(':map')
 
 
     // Use TestNG framework, also requires calling test.useTestNG() below
