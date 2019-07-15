@@ -40,8 +40,10 @@ public class PositionModule implements CarModule {
 
     @Override
     public void update(CarData carData) {
-        positionData.update(position,direction,speed);
-        carData.addData("position",positionData);
+        //FIXME: Position never instantiated
+        //positionData.update(position,direction,speed);
+        //carData.addData("position",positionData);
+
         //System.out.println("Position");
         //ORDER OF FUNCTION CALLING THAT HAPPENS EVERY TIME
         //computeMovement
