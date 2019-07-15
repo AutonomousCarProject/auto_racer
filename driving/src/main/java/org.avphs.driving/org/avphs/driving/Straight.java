@@ -34,10 +34,4 @@ public class Straight extends RoadData {
 	public float getNegRecip(){
 		return negRecip;
 	}
-
-	public float[] getStartingCoords(){
-		float[] point = new float[2];
-		point[0] = startX; point[1] = startY;
-		return point;
-	}
 }
