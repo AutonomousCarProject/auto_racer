@@ -34,10 +34,12 @@ public class RacingLinePoint {
     public float getX() {
         return x;
     }
+    public int getIntX() { return (int)x; }
 
     public float getY() {
         return y;
     }
+    public int getIntY() { return (int)y; }
 
     public float getDegree() {
         return degree;
