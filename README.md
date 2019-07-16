@@ -5,7 +5,7 @@ Master: [![Build Status](https://travis-ci.com/AutonomousCarProject/auto_racer.s
     * Target the auto_racer gradle project
     * Paste `clean build` into tasks (if `build` doesnt work for you try `jar`)
 * Java Application config
-    * Main class: `autoracer.yourclient.YourMainClass`
+    * Main class: ashdflkashdfkjahslkjdfhaskljdhfklajshdf`autoracer.yourclient.YourMainClass`
     * Classpath of module: `org.avphs.yourclient.main`
     * Under VM options, paste this line:
         * `--module-path mods -m org.avphs.yourclient/org.avphs.yourclient.YourMainClass`
