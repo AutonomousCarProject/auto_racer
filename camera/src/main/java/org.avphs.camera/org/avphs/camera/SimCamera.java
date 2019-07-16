@@ -44,7 +44,7 @@ public class SimCamera extends CameraBase {
     public TrakSim getTrakSim() {
         return theSim;
     }
-
+    
     public SimCamera() {
         if (NoisyFaker) {
             System.out.println(HandyOps.Dec2Log("apw3.SimCamera ", CamHight,

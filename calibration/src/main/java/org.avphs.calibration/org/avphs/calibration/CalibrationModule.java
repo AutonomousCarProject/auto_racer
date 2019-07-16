@@ -131,6 +131,29 @@ public class CalibrationModule {
         return rowList;
     }
 
+    //Helper method to read radii data
+    private static short[] readRadiiData (){
+        //TODO: FIX
+        short[] rowList = null;
+        try (BufferedReader br = new BufferedReader(new FileReader("AngleData.txt"))) {
+
+            short radCount = parseShort(br.readLine());
+            rowList = new short[radCount];
+            String line = br.readLine();
+            String[] lineItems = line.split(" ");
+            for (int i = 0; i < radCount; i++) {
+
+                rowList[i] = Short.parseShort(lineItems[i]);
+            }
+
+        }
+        catch(Exception e){
+            // Handle any I/O problems
+
+        }
+        return rowList;
+    }
+
     //input current speed and desired speed. get distance
     private static final byte[][][] SPEED_CHANGE_DISTS = reedSpeedChangeDistData();
 
@@ -142,6 +165,8 @@ public class CalibrationModule {
 
     //
     private static final short[] ANGLES = readAngleData();
+
+    private static final short[] RADII = readRadiiData();
 
     private static final short[][][] THROTTLES = new short[][][]{};
 
@@ -161,13 +186,16 @@ public class CalibrationModule {
     }
 
     //returns val btwn 0 and 180--90 is straight ahead 180 is sharp right, 0 is sharp left
-    public static final short getAngles (short rad){
+    public static final short getAngle (short rad){
         return ANGLES[rad];
     }
 
-    //returns the ammount of throttle needed to mantain a given speed
-    //rad
-    //surface
+    public static final short getRadius (short deg){
+        return RADII[deg];
+    }
+
+    //returns the ammount of throttle needed to mantain a given speed on a given floor surface and with a given turn radius
+    //0 = straight line
     public static final short getThrottle (short floor, short radius, short speed){
         return THROTTLES[floor][radius][speed];
     }
