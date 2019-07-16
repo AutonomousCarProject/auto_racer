@@ -7,9 +7,7 @@ public class Steering {
     private short radius;
     private float maxDistanceFromRacingLine;
 
-    public Steering(VectorPoint currentPos, RoadData currentSegment) {
-        this.currentSegment = currentSegment;
-        this.currentPos = currentPos;
+    public Steering() {
         maxDistanceFromRacingLine = 10;
     }
 
