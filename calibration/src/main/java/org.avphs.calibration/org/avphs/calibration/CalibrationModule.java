@@ -86,17 +86,19 @@ public class CalibrationModule {
 
     //Helper method to read defishing data
     private static FishData[][] reedFishData() {
-        FishData[][] rowList = new FishData[][]{};
+        FishData[][] rowList = null;
         try (BufferedReader br = new BufferedReader(new FileReader("CameraData.txt"))) {
+
 
             short xCount = parseShort(br.readLine());
             short yCount = parseShort(br.readLine());
+            rowList = new FishData[xCount][yCount];
 
-            for (int i = 0; i < initSpeeds; i++) {
+            for (int i = 0; i < xCount; i++) {
 
                 String line = br.readLine();
                 String[] lineItems = line.split(" ");
-                for (int j = 0; j < finalSpeeds; j += 2) {
+                for (int j = 0; j < yCount; j += 2) {
                     float deg = Float.parseFloat(lineItems[j]);
                     float error = Float.parseFloat(lineItems[j + 1]);
                     rowList[i][j] = new FishData(deg, error);
@@ -104,17 +106,18 @@ public class CalibrationModule {
             }
 
         } catch (Exception e) {
-            // Handle any I/O problems
+
         }
         return rowList;
     }
 
     //Helper method to read angle data
     private static short[] readAngleData (){
-        short[] rowList = new short[]{};
+        short[] rowList = null;
         try (BufferedReader br = new BufferedReader(new FileReader("AngleData.txt"))) {
 
             short radCount = parseShort(br.readLine());
+            rowList = new short[radCount];
             String line = br.readLine();
             String[] lineItems = line.split(" ");
             for (int i = 0; i < radCount; i++) {
@@ -160,25 +163,6 @@ public class CalibrationModule {
         return ANGLES[rad];
     }
 
-    @Override
-    public Class[] getDependencies() {
-        return new Class[0];
-    }
-
-    @Override
-    public void init(CarModule[] dependencies) {
-
-    }
-
-    @Override
-    public CarCommand[] commands() {
-        return new CarCommand[0];
-    }
-
-    @Override
-    public void update(CarData carData) {
-
-    }
 /*
     static class pulseListener implements UpdateListener{ //adds listener for pulse
         int prior; //previous pulse read
