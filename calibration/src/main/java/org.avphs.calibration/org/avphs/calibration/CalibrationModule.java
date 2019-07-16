@@ -145,6 +145,10 @@ public class CalibrationModule {
     //
     private static final short[] ANGLES = readAngleData();
 
+    private static final short[][][] THROTTLES = new short[][][]{};
+
+
+
     public static final FishData getFishData(short x, short y) {
         return DEFISHER[x][y];
     }
@@ -163,6 +167,12 @@ public class CalibrationModule {
         return ANGLES[rad];
     }
 
+    //returns the ammount of throttle needed to mantain a given speed
+    //rad
+    //surface
+    public static final short getThrottle (short floor, short radius, short speed){
+        return THROTTLES[floor][radius][speed];
+    }
 /*
     static class pulseListener implements UpdateListener{ //adds listener for pulse
         int prior; //previous pulse read
