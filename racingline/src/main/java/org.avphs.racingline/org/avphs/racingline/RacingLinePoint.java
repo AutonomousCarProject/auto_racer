@@ -57,6 +57,10 @@ public class RacingLinePoint {
         this.degree = degree;
     }
 
+    public CurvePoint toCurvePoint() {
+        return new CurvePoint((int)x,(int)y);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

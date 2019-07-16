@@ -101,19 +101,37 @@ public class RacingLine {
             // Returns largest possible angle always
         }
 
-    public float calculateFlat(RacingLinePoint [] allPoint) {
-        //currently receiving allPoints which is rather useless rn, but later could be used for other series of points to
-        //not being used rn, could theroritically be used to calculate how flat the raacing line is in norder to minimize the cuveture
+    public float rateLine(RacingLinePoint [] allPoint) {
+        /** Pass in an array of all the racingline and this method will rate the line using a simple metric
+         * of the average angle divided by the total distance. This could be used to compare racing lines by brute forcing
+         * dynamically or simply by comparing methods
+         */
+
         float averageAngle = 0;
+        float totalDistance = 0;
         for(int i = 0; i <= allPoint.length; i++) {
             averageAngle += allPoint[i].getDegree();
+            totalDistance += lengthSquare(allPoint[i], allPoint[i+1]);
         }
-        return averageAngle / allPoint.length;
+        averageAngle = averageAngle / allPoint.length;
+        return totalDistance/averageAngle;
+    }
+
+    public RacingLinePoint getApex(ArrayList <RacingLinePoint> RacingLinecurve ){
+        /**
+         * This method produces the smallest point in a given curve which will then be used to generate the constraints.
+         */
+        RacingLinePoint smallestDig = RacingLinecurve.get(0);
+        for (int i = 0; i < RacingLinecurve.size(); i++) {
+            if (RacingLinecurve.get(i).getDegree()< smallestDig.getDegree()) smallestDig = RacingLinecurve.get(i);
+        }
+            return smallestDig;
+
     }
 }
 
 class RacingLineCurve{
-    private ArrayList<RacingLinePoint> curve;
+    public ArrayList<RacingLinePoint> curve;
 
     public RacingLineCurve() {}
     public RacingLineCurve(ArrayList<RacingLinePoint> _curve) {
