@@ -18,14 +18,9 @@ public class Speed {
     private RoadData currentSegment;
     private RoadData nextSegment;
 
-    public Speed(VectorPoint currentPos, RoadData currentSegment, RoadData nextSegment){
+    public Speed(){
         FLOOR = (byte)0;            //dummy value
         MAX_HARD_BRAKE = (byte)80;  //dummy value
-        this.currentPos = currentPos;
-        this.currentSegment = currentSegment;
-        this.nextSegment = nextSegment;
-        brakeDist = CalibrationModule.getSpeedChangeDist(FLOOR, CalibrationModule.getMaxSpeed(FLOOR,
-                currentSegment.radius), CalibrationModule.getMaxSpeed(FLOOR, nextSegment.radius));
     }
 
     public void setCurrentPos(VectorPoint newCurrentPos){
@@ -37,6 +32,11 @@ public class Speed {
         nextSegment = newNextSeg;
         brakeDist = CalibrationModule.getSpeedChangeDist(FLOOR, CalibrationModule.getMaxSpeed(FLOOR,
                 currentSegment.radius), CalibrationModule.getMaxSpeed(FLOOR, nextSegment.radius));
+    }
+
+    public void initialize(RoadData startSegment, RoadData nextSegment){
+        currentSegment = startSegment;
+        this.nextSegment = nextSegment;
     }
 
     public int getThrottle(){
