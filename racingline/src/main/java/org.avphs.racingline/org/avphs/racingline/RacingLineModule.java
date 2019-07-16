@@ -1,12 +1,12 @@
 package org.avphs.racingline;
 
-import java.util.*;
-import java.lang.Math;
-
 import org.avphs.coreinterface.CarCommand;
 import org.avphs.coreinterface.CarData;
 import org.avphs.coreinterface.CarModule;
+
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class RacingLineModule implements CarModule {
     private ArrayList<Point> outerWall = new ArrayList<Point>();
@@ -55,7 +55,7 @@ public class RacingLineModule implements CarModule {
     }
 
     @Override
-    public void init(CarModule[] dependencies) {
+    public void init(CarData carData) {
 
     }
 

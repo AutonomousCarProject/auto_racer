@@ -9,8 +9,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
-import java.util.function.Function;
-import java.util.function.Predicate;
 
 public class WindowModule extends JFrame implements CarModule {
     private Camera camera;
@@ -81,7 +79,7 @@ public class WindowModule extends JFrame implements CarModule {
     }
 
     @Override
-    public void init(CarModule[] dependencies) {}
+    public void init(CarData carData) {}
 
     @Override
     public CarCommand[] commands() {

@@ -27,7 +27,7 @@ public interface CarModule {
      * Called when the Core initializes, before any modules has been run.
      * @param dependencies An array of this modules dependencies, provided by the Core.
      */
-    void init(CarModule[] dependencies);
+    void init(CarData carData);
 
     /**
      * Returns this modules current commands to the core.

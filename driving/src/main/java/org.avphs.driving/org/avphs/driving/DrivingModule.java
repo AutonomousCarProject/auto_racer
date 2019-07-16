@@ -20,8 +20,8 @@ public class DrivingModule implements CarModule {
     private RoadData currentSegment;
     private RoadData nextSegment;
 
-    private int angle = 90;
-    private int throttle = 90;
+    private int angle = 0;
+    private int throttle = 10;
     private boolean stop = false;
 
     private int MAX_SPEED;
@@ -38,7 +38,7 @@ public class DrivingModule implements CarModule {
     }
 
     @Override
-    public void init(CarModule... dependencies) {
+    public void init(CarData carData) {
 
     }
 

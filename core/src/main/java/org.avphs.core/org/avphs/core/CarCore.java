@@ -70,9 +70,9 @@ public class CarCore {
         CarModule[] positionInit = {racingLineModule, mapModule};
 
         // FIXME: Make this more dynamic
-        drivingModule.init(drivingInit);
-        imageModule.init(windowModule);
-        positionTrackingModule.init (positionInit);
+        drivingModule.init(carData);
+        imageModule.init(carData);
+        positionTrackingModule.init(carData);
 
         updatingCarModules.add(windowModule);
         updatingCarModules.add(imageModule);
