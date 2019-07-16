@@ -23,6 +23,10 @@ public class CalibrationModule {
     }
     */
 
+    //Camera view angle width in degrees
+    //TODO:Find real value
+    public static final float CAMERA_VIEW_ANGLE = 100;
+
     //TODO: find real value
     //Axel dist in cm
     public static final double WHEEL_BASE = 32.5;
@@ -135,13 +139,13 @@ public class CalibrationModule {
     private static short[] readRadiiData (){
         //TODO: FIX
         short[] rowList = null;
-        try (BufferedReader br = new BufferedReader(new FileReader("AngleData.txt"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("Radii.txt"))) {
 
-            short radCount = parseShort(br.readLine());
-            rowList = new short[radCount];
+            short angleCount = parseShort(br.readLine());
+            rowList = new short[angleCount];
             String line = br.readLine();
             String[] lineItems = line.split(" ");
-            for (int i = 0; i < radCount; i++) {
+            for (int i = 0; i < angleCount; i++) {
 
                 rowList[i] = Short.parseShort(lineItems[i]);
             }
