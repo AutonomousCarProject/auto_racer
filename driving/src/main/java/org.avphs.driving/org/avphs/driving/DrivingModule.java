@@ -65,7 +65,7 @@ public class DrivingModule implements CarModule {
         float x = 0; float y = 0;
         if (racingLinePoints == null) {
             try {
-                File file = new File("C:\\Users\\ASUS\\Desktop\\bruh.txt");
+                File file = new File("driving/src/main/java/org.avphs.driving/org/avphs/driving/bruh.txt");
                 Scanner sc = new Scanner(file);
                 int count = 0;
                 while (sc.hasNextLine()) {
