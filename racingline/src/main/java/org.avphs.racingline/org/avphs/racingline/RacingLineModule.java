@@ -191,6 +191,9 @@ public class RacingLineModule implements CarModule {
         }
         return num;
     }
+    public int intersect(RacingLinePoint p1, RacingLinePoint p2) {
+        return intersect(new Point(p1.getIntX(), p1.getIntY()), new Point(p1.getIntX(), p2.getIntY()));
+    }
 
     private void deletePoints(int trim) {
         int times = 0;
@@ -278,6 +281,9 @@ public class RacingLineModule implements CarModule {
         int y = Math.abs(end.y - start.y);
         float h = (float) Math.sqrt(x * x + y * y);
         return h;
+    }
+    private float distanceBetweenPoints(RacingLinePoint start, RacingLinePoint end) {
+        return distanceBetweenPoints(new Point(start.getIntX(), start.getIntY()), new Point(end.getIntX(), end.getIntY()));
     }
 
     private RacingLinePoint midPoint(Point outer, Point inner) {
