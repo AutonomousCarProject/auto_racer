@@ -14,6 +14,8 @@ public class ImageModule implements CarModule {
     byte[] bayerImage = new byte[4*WINDOW_HEIGHT*WINDOW_WIDTH];
     int[] rgbImage = new int[WINDOW_HEIGHT*WINDOW_HEIGHT];
 
+    ImageData data = new ImageData();
+
     @Override
     public Class[] getDependencies() {
         return null;
@@ -38,6 +40,7 @@ public class ImageModule implements CarModule {
         bayerImage = camera.getBayerImage();
         rgbImage = ImageProcessing.process(bayerImage,WINDOW_WIDTH,WINDOW_HEIGHT);
         window.setWindowImage(rgbImage);
+        carData.addData("image", data);
     }
 
 
