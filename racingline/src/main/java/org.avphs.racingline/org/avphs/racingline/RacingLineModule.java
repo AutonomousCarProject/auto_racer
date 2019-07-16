@@ -488,7 +488,7 @@ public class RacingLineModule implements CarModule {
             boundedBezier.addPoint(new RacingLinePoint(pointx, pointy));
 
         }
-        
+
         return boundedBezier;
     }
 
