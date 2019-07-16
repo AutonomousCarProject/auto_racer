@@ -66,12 +66,12 @@ public class CarCore {
     }
 
     public void init() {
-        CarModule[] drivingInit = {calibrationModule, racingLineModule};
+        CarModule[] drivingInit = {racingLineModule};
         CarModule[] positionInit = {racingLineModule, mapModule};
 
         // FIXME: Make this more dynamic
         drivingModule.init(drivingInit);
-        imageModule.init(calibrationModule, windowModule);
+        imageModule.init(windowModule);
         positionTrackingModule.init (positionInit);
 
         updatingCarModules.add(windowModule);
