@@ -1,6 +1,7 @@
 package org.avphs.racingline;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 
 import static java.lang.Math.*;
@@ -108,5 +109,25 @@ public class RacingLine {
             averageAngle += allPoint[i].getDegree();
         }
         return averageAngle / allPoint.length;
+    }
+}
+
+class RacingLineCurve{
+    private ArrayList<RacingLinePoint> curve;
+
+    public RacingLineCurve() {}
+    public RacingLineCurve(ArrayList<RacingLinePoint> _curve) {
+        curve = _curve;
+    }
+    public RacingLineCurve(RacingLinePoint[] _curve) {
+        curve = new ArrayList<RacingLinePoint>(Arrays.asList(_curve));
+    }
+
+    public RacingLinePoint[] getCurve() {
+        return curve.toArray(RacingLinePoint[]::new);
+    }
+
+    public void AddPoint(RacingLinePoint newPoint) {
+        curve.add(newPoint);
     }
 }
