@@ -110,7 +110,11 @@ public class RacingLine {
         }
         return averageAngle / allPoint.length;
     }
+
     public RacingLinePoint getApex(ArrayList <RacingLinePoint> RacingLinecurve ){
+        /**
+         * This method produces the smallest point in a given curve which will then be used to generate the constraints
+         */
         RacingLinePoint smallestDig = RacingLinecurve.get(0);
         for (int i = 0; i < RacingLinecurve.size(); i++) {
             if (RacingLinecurve.get(i).getDegree()< smallestDig.getDegree()) smallestDig = RacingLinecurve.get(i);
