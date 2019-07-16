@@ -11,7 +11,9 @@ public class Car implements ClientInterface {
     private Camera camera;
     private PWMController arduino;
 
-    public Car(Camera camera) {
+    public Car(Camera camera, CarData cardata) {
+        cardata.addData("traksim", ((SimCamera) camera).getTrakSim());
+
         this.camera = camera;
         camera.connect(4);
         this.arduino = new ArduinoIO();
