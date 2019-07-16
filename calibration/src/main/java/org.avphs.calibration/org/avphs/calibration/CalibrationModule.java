@@ -139,7 +139,7 @@ public class CalibrationModule {
     private static short[] readRadiiData (){
         //TODO: FIX
         short[] rowList = null;
-        try (BufferedReader br = new BufferedReader(new FileReader("Radii.txt"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("RadiiData.txt"))) {
 
             short angleCount = parseShort(br.readLine());
             rowList = new short[angleCount];
@@ -158,6 +158,32 @@ public class CalibrationModule {
         return rowList;
     }
 
+    private static byte[][][] readThrottleData(){
+        byte[][][] rowList = null;
+        try (BufferedReader br = new BufferedReader(new FileReader("ThrottleCalculations.txt"))) {
+
+            short numFloors = parseShort(br.readLine());
+            short radCount = parseShort(br.readLine());
+            short desiredSpeedsCount = parseShort(br.readLine());
+            rowList = new byte[numFloors][radCount][desiredSpeedsCount];
+
+            for(short i = 0; i<numFloors; i++){
+                for(int j = 0; j < radCount; j++) {
+
+                    String line = br.readLine();
+                    String[] lineItems = line.split(" ");
+                    for (int k = 0; k < desiredSpeedsCount; k++) {
+                        rowList[i][j][k] = Byte.parseByte(lineItems[k]);
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            // Handle any I/O problems
+        }
+        return rowList;
+    }
+
     //input current speed and desired speed. get distance
     private static final byte[][][] SPEED_CHANGE_DISTS = readSpeedChangeDistData();
 
@@ -167,12 +193,14 @@ public class CalibrationModule {
     //input x and y
     private static final FishData[][] DEFISHER = readFishData();
 
-    //
+    //input radius
     private static final short[] ANGLES = readAngleData();
 
+    //input angle
     private static final short[] RADII = readRadiiData();
 
-    private static final short[][][] THROTTLES = new short[][][]{};
+    //
+    private static final byte[][][] THROTTLES = readThrottleData();
 
 
 
@@ -199,8 +227,8 @@ public class CalibrationModule {
     }
 
     //returns the amount of throttle needed to maintain a given speed on a given floor surface and with a given turn radius
-    //0 = straight line
-    public static final short getThrottle (short floor, short radius, short speed){
+    //0 = go full throttle
+    public static final byte getThrottle (byte floor, byte radius, byte speed){
         return THROTTLES[floor][radius][speed];
     }
 
