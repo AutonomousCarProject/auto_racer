@@ -211,13 +211,13 @@ public class RacingLineModule implements CarModule {
                 //if(i-40>0) compressedLine.add(RacingLinePoints[i - 40]);
                 compressedLine.add(RacingLinePoints[i - 1]);
                 //if(i+40<RacingLinePoints.length) compressedLine.add(RacingLinePoints[i+40]);
-                if(i-1!=previous) i--;
+                if (i - 1 != previous) i--;
                 previous = i;
                 index = 0;
             }
             index++;
         }
-        compressedLine.add(RacingLinePoints[RacingLinePoints.length-1]);
+        compressedLine.add(RacingLinePoints[RacingLinePoints.length - 1]);
         //System.out.println("HOLA "+ (RacingLinePoints.length-1));
         center.setRacingLinePointsList(compressedLine);
     }
@@ -256,8 +256,8 @@ public class RacingLineModule implements CarModule {
     }
 
     public void minBezierCurvature(float p1x, float p1y, float p2x, float p2y, float p3x, float p3y) {
-        float o1x,o1y,o2x,o2y,o3x,o3y;
-        float qx,qy;
+        float o1x, o1y, o2x, o2y, o3x, o3y;
+        float qx, qy;
         float alphastar, betastar;
 
         // Test Data //
@@ -380,8 +380,8 @@ public class RacingLineModule implements CarModule {
         float sinrotateangle = (float) Math.sin(rotateangle);
         if (p1y < p2y) sinrotateangle *= -1;
 
-        if(betatilde <= betaPAlphatilde || ((Xi*alphatilde) <= betaPAlphatilde) && (betaPAlphatilde < betatilde) || ((Xi*betatilde) <= alphaPBetatilde) && (alphaPBetatilde < alphatilde)) {
-            minBezierCurvature( p1x, p1y, p2x, p2y, p3x, p3y);
+        if (betatilde <= betaPAlphatilde || ((Xi * alphatilde) <= betaPAlphatilde) && (betaPAlphatilde < betatilde) || ((Xi * betatilde) <= alphaPBetatilde) && (alphaPBetatilde < alphatilde)) {
+            minBezierCurvature(p1x, p1y, p2x, p2y, p3x, p3y);
         } else if (alphaPBetatilde >= alphaM) {
             float alphastar = alphaPBetatilde;
             float betastar = betatilde;
@@ -438,7 +438,7 @@ public class RacingLineModule implements CarModule {
 
     public float distance(float a, float b, float c, float d) {
         //(a,b) (c,d)
-        return (float)Math.sqrt((c-a)*(c-a)+(d-b)*(d-b));
+        return (float) Math.sqrt((c - a) * (c - a) + (d - b) * (d - b));
     }
 
     public double argmin(float kAlpha, float kBeta, float cosangle, float sinangle) {
@@ -446,9 +446,9 @@ public class RacingLineModule implements CarModule {
         double iterationSize = 0.001;
 
         double minAlphastar = 0;
-        for(int i = 0; i <= iterations; i += iterationSize) {
+        for (int i = 0; i <= iterations; i += iterationSize) {
             double alpha = i;
-            double alphastar = (Math.pow(Math.pow((Math.sqrt(alpha) - Math.sqrt(kAlpha)), 4)-(2 * kBeta * cosangle * Math.pow((Math.sqrt(alpha) - Math.sqrt(kAlpha)), 2)+(Math.pow(kBeta, 2))), 1.5))/(2 * Math.pow(kBeta, 2) * Math.pow(sinangle, 2) * Math.pow(Math.sqrt(alpha) - Math.sqrt(kAlpha), 2) * alpha);
+            double alphastar = (Math.pow(Math.pow((Math.sqrt(alpha) - Math.sqrt(kAlpha)), 4) - (2 * kBeta * cosangle * Math.pow((Math.sqrt(alpha) - Math.sqrt(kAlpha)), 2) + (Math.pow(kBeta, 2))), 1.5)) / (2 * Math.pow(kBeta, 2) * Math.pow(sinangle, 2) * Math.pow(Math.sqrt(alpha) - Math.sqrt(kAlpha), 2) * alpha);
 
             if (alphastar < minAlphastar) {
                 minAlphastar = alphastar;
@@ -457,6 +457,7 @@ public class RacingLineModule implements CarModule {
         return minAlphastar;
     }
 }
+
 
 //region Classes
 class Point {

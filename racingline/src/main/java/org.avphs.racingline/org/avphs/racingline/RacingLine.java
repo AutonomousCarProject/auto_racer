@@ -110,10 +110,17 @@ public class RacingLine {
         }
         return averageAngle / allPoint.length;
     }
+    public RacingLinePoint getApex(ArrayList <RacingLinePoint> RacingLinecurve ){
+        RacingLinePoint smallestDig = RacingLinecurve.get(0);
+        for (int i = 0; i < RacingLinecurve.size(); i++) {
+            if (RacingLinecurve.get(i).getDegree()< smallestDig.getDegree()) smallestDig = RacingLinecurve.get(i);
+        }
+            return smallestDig;
+    }
 }
 
 class RacingLineCurve{
-    private ArrayList<RacingLinePoint> curve;
+    public ArrayList<RacingLinePoint> curve;
 
     public RacingLineCurve() {}
     public RacingLineCurve(ArrayList<RacingLinePoint> _curve) {
