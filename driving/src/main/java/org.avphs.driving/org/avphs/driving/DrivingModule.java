@@ -28,8 +28,9 @@ public class DrivingModule implements CarModule {
     private int MAX_HARD_BRAKE;
     private VectorPoint currentPos;
 
-    Speed speed = new Speed(currentPos, currentSegment, nextSegment);
-    Steering steer = new Steering(currentPos, currentSegment);
+    // FIXME: THIS WONT EVER NOT THROW A NULL POINTER EXCEPTION!!!!
+    Speed speed;//= new Speed(currentPos, currentSegment, nextSegment);
+    Steering steer;// = new Steering(currentPos, currentSegment);
 
     @Override
     public Class[] getDependencies() {
