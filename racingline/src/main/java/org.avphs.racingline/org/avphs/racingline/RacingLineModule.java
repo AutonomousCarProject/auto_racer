@@ -222,6 +222,37 @@ public class RacingLineModule implements CarModule {
         center.setRacingLinePointsList(compressedLine);
     }
 
+    private void trimPoints(float trim) {
+        RacingLinePoint[] line = center.getRacingLinePoints();
+        ArrayList<RacingLinePoint> compressedLine = new ArrayList<>();
+        ArrayList<RacingLinePoint> deleted = new ArrayList<>();
+
+        RacingLinePoint currPoint;
+
+        for (RacingLinePoint p : line) {
+            if (ContainsPoint(deleted, p)) {
+                continue;
+            }
+            compressedLine.add(p);
+            for (RacingLinePoint p2 : line) {
+                if (distanceBetweenPoints(p, p2) < trim && !deleted.contains(p2) && p != p2) {
+                    deleted.add(p2);
+                }
+            }
+        }
+
+        center.setRacingLinePointsList(compressedLine);
+    }
+
+    private boolean ContainsPoint(ArrayList<RacingLinePoint> list, RacingLinePoint point) {
+        for (RacingLinePoint p: list) {
+            if (p == point) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void calcMiddleLine() {
         ArrayList<Point> longer = outerWall.size() > innerWall.size() ? outerWall : innerWall;
         ArrayList<Point> shorter = outerWall.size() <= innerWall.size() ? outerWall : innerWall;
