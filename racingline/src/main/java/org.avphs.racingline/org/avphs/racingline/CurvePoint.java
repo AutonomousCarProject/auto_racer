@@ -62,4 +62,7 @@ public class CurvePoint {
     public void setPrevious(CurvePoint a) {
         previous = a;
     }
+    public RacingLinePoint toRacingLinePoint() {
+        return new RacingLinePoint(x,y);
+    }
 }
