@@ -14,7 +14,6 @@ repositories {
 dependencies {
     // Use TestNG framework, also requires calling test.useTestNG() below
     implementation project(':traksim')
-    implementation 'org.bytedeco:flycapture:2.13.3.31-1.5.1'
     testImplementation 'org.testng:testng:6.14.3'
 }
 
