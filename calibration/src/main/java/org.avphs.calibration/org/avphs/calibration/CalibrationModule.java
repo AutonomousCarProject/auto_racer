@@ -227,8 +227,8 @@ public class CalibrationModule {
     }
 
     //returns the amount of throttle needed to maintain a given speed on a given floor surface and with a given turn radius
-    //0 = go full throttle
-    public static final byte getThrottle (byte floor, byte radius, byte speed){
+    //0 = straight line
+    public static final short getThrottle (short floor, short radius, short speed){
         return THROTTLES[floor][radius][speed];
     }
 
