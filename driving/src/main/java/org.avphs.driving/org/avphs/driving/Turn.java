@@ -1,11 +1,12 @@
 package org.avphs.driving;
 
-public class Turn {
-	private float radius;
-	private float angle;
+public class Turn extends RoadData{
 
-	public Turn(float radius, float angle) {
+	public Turn(float startX, float startY, float endX, float endY, short radius) {
 		this.radius = radius;
-		this.angle = angle;
+		this.startX = startX;
+		this.startY = startY;
+		this.endX = endX;
+		this.endY = endY;
 	}
 }

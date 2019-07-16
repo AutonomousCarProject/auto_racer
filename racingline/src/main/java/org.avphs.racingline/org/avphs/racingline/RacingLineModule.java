@@ -9,17 +9,24 @@ import org.avphs.core.CarModule;
 
 import java.util.*;
 
+import org.avphs.coreinterface.CarCommand;
+import org.avphs.coreinterface.CarData;
+import org.avphs.coreinterface.CarModule;
+import java.util.ArrayList;
+
 public class RacingLineModule implements CarModule {
     private ArrayList<Point> outerWall = new ArrayList<Point>();
     private ArrayList<Point> innerWall = new ArrayList<Point>();
     private RacingLine center = new RacingLine();
     private RacingLine bezierCurveLine = new RacingLine();
     private RacingLine boundedBezier = new RacingLine();
+
     private boolean[][] map;
     private boolean[][] visited;
     private boolean[][] added;
     private boolean addToOuter;
     private int rows, columns;
+    private int length, width;
     private int[] dx = {-1, 0, 1, 0};
     private int[] dy = {0, 1, 0, -1};
 

@@ -25,6 +25,7 @@ public class RacingLinePoint {
     }
     //endregion
 
+
     public float distanceToPoint(RacingLinePoint other) {
         float diffx = x - other.x;
         float diffy = y - other.y;
@@ -36,11 +37,39 @@ public class RacingLinePoint {
         return x;
     }
     public int getIntX() { return (int)x; }
+    /**Returns a calculated point that is a specified distance towards another point
+     *
+     * Will return null if other param is the same as the current RacingLinePoint
+     *
+     * @param other Give the direction for the calculation
+     * @param distance Distance in map mixels in the given direction
+     * @return Return new RacingLinePoint at calculated distance
+     */
+    public RacingLinePoint distanceTowardsPoint(RacingLinePoint other, float distance)
+    {
+        if (other.equals(this))
+        {
+            System.out.println("RacingLinePoint.distanceTowardsPoint: [@param]other is equal to current point");
+            return null;
+        }
+        float diffx = other.x - x;
+        float diffy = other.y - y;
+        int dir = diffx < 0 ? -1 : 1;
+        float ang = (float)(Math.atan(diffy/diffx));
+        float newX = x + (float)(distance * Math.cos(ang) * dir);
+        float newY = y + (float)(distance * Math.sin(ang) * dir);
+        return new RacingLinePoint(newX, newY);
+    }
+
+    public float getX() {
+        return x;
+    }
 
     public float getY() {
         return y;
     }
     public int getIntY() { return (int)y; }
+
 
     public float getDegree() {
         return degree;
@@ -64,6 +93,7 @@ public class RacingLinePoint {
     }
 
     //region overrides
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -78,4 +108,5 @@ public class RacingLinePoint {
         return Objects.hash(x, y);
     }
     //endregion
+
 }
