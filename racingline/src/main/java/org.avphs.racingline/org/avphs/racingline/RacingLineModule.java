@@ -15,6 +15,7 @@ public class RacingLineModule implements CarModule {
     private ArrayList<Point> innerWall = new ArrayList<Point>();
     private RacingLine center = new RacingLine();
     private RacingLine bezierCurveLine = new RacingLine();
+    private RacingLine boundedBezier = new RacingLine();
     private boolean[][] map;
     private boolean[][] visited;
     private boolean[][] added;
@@ -255,52 +256,43 @@ public class RacingLineModule implements CarModule {
         return new RacingLinePoint(aveX, aveY);
     }
 
-    public void minBezierCurvature(float p1x, float p1y, float p2x, float p2y, float p3x, float p3y) {
-        float o1x,o1y,o2x,o2y,o3x,o3y;
-        float qx,qy;
-        float alphastar, betastar;
+    public RacingLine boundedBezier(float p1x, float p1y, float p2x, float p2y, float p3x, float p3y, float qxx, float qyy) {
+
+        RacingLine boundedBezier = new RacingLine();
 
         // Test Data //
-        p1x = 1200;
-        p1y = 20;
-        p2x = 300;
-        p2y = 100;
+        p1x = 500;
+        p1y = 50;
+        p2x = 50;
+        p2y = 50;
         p3x = 50;
         p3y = 500;
 
-        qx = 1000;
-        qy = 700;
+        qxx = 200;
+        qyy = 100;
         // Test Data //
 
-
+        float o3x = p3x - p2x;
+        float o1x = p1x - p2x;
+        float o2x = 0;
+        float o3y = p3y - p2y;
+        float o1y = p1y - p2y;
+        float o2y = 0;
         float centerx = p2x;
         float centery = p2y;
-
-        //translate
-        //p2 = origin
-        o3x = p3x - p2x;
-        o1x = p1x - p2x;
-        o2x = 0;
-
-        o3y = p3y - p2y;
-        o1y = p1y - p2y;
-        o2y = 0;
-
-        System.out.println(o1x + " " + o1y);
-        System.out.println(o3x + " " + o3y);
-
-        //rotate
+        float qx = qxx-centerx;
+        float qy = qyy-centery;
         float dotproduct = o1x * o3x + o1y * o3y;
-        //System.out.println(dotproduct);
         float alphatilde = distance(0, 0, o1x, o1y);
         float betatilde = distance(0, 0, o3x, o3y);
-        //System.out.println(alphatilde+" "+betatilde);
-
         float cosangle = dotproduct / (alphatilde * betatilde);
-        //theta = angle
         float theta = (float) Math.acos(cosangle);
         float sinangle = (float) Math.sin(theta);
-        //System.out.println(theta+" "+sinangle+" "+cosangle);
+        float cotangle = (float) (1 / Math.tan(theta));
+
+        float alphastar;
+        float betastar;
+        float betaPAlphastar;
 
         o1x = alphatilde;
         o1y = 0;
@@ -311,31 +303,54 @@ public class RacingLineModule implements CarModule {
         float rotateangle = (float) Math.acos(cosrotateangle);
         float sinrotateangle = (float) Math.sin(rotateangle);
         if (p1y < p2y) sinrotateangle *= -1;
-        System.out.println(rotateangle + " " + sinrotateangle + " " + cosrotateangle);
 
-        //p1 on x axis
+        float aa = qx;
+        float bb = qy;
+        qx = aa*cosrotateangle - -1*bb*sinrotateangle;
+        qy = -1*aa*sinrotateangle + bb*cosrotateangle;
 
-        //no boundary condition
+        float kAlpha = qy / sinangle;
+        float kBeta = qx + qy * cotangle;
+        float alphaM = (float) Math.pow((Math.sqrt(kAlpha) + Math.sqrt(kBeta / Math.abs(cosangle))), 2);
+        float alphaPBetatilde = (float) (kAlpha / (1 - Math.sqrt(kBeta / betatilde)));
+        float betaPAlphatilde = (float) (kBeta / (1 - Math.sqrt(kAlpha / alphatilde)));
         o1x = alphatilde;
         o1y = 0;
         o3x = betatilde * cosangle;
         o3y = betatilde * sinangle;
-        //System.out.println(o1x+" "+o1y);
-        //System.out.println(o3x+" "+o3y);
+
         float xi = (float) -cosangle / 2 + (float) Math.sqrt(cosangle * cosangle + 8) / 2;
-        alphastar = Math.min(alphatilde, xi * betatilde);
-        betastar = Math.min(betatilde, xi * alphatilde);
+        float alphaC = (float) Math.pow((Math.sqrt(kAlpha) + Math.sqrt(kBeta / xi)), 2);
 
-        //System.out.println(alphastar+" "+betastar);
+        if((betatilde <= betaPAlphatilde) || (((xi * alphatilde) <= betaPAlphatilde) && (betaPAlphatilde < betatilde)) || (((xi * betatilde) <= alphaPBetatilde) && (alphaPBetatilde < alphatilde))) { // Normal
+            System.out.println("1");
+            alphastar = Math.min(alphatilde, xi * betatilde);
+            betastar = Math.min(betatilde, xi * alphatilde);
+            System.out.println(alphastar);
+            System.out.println(betastar);
+        } else if (alphaPBetatilde >= alphaM) { // Outside of bounds
+            System.out.println("2");
+            alphastar = alphaPBetatilde;
+            betastar = betatilde;
+            System.out.println(alphastar);
+            System.out.println(betastar);
+        } else { // Constrained
+            System.out.println("3");
+            alphastar = (float) argmin(kAlpha, kBeta, cosangle, sinangle, alphaC, alphaPBetatilde, alphaM, alphatilde);
+            betaPAlphastar = (float) (kBeta / (1 - Math.sqrt(kAlpha / alphastar)));
+            betastar = betaPAlphastar;
+            System.out.println(alphastar);
+            System.out.println(betastar);
+        }
 
-        //convert back
         o1x = alphastar;
         o1y = 0;
         o3x = betastar * cosangle;
         o3y = betastar * sinangle;
+
         //rotate back
-        float aa = o1x;
-        float bb = o1y;
+        aa = o1x;
+        bb = o1y;
         o1x = aa * cosrotateangle - bb * sinrotateangle;
         o1y = aa * sinrotateangle + bb * cosrotateangle;
         aa = o3x;
@@ -350,89 +365,14 @@ public class RacingLineModule implements CarModule {
         o2x += centerx;
         o2y += centery;
         //Q(t) = (1-t)^2 p1 + 2t(1-t) p2 + t^2 p3
-    }
 
-    public void minBezierCurveConstrained(float p1x, float p1y, float p2x, float p2y, float p3x, float p3y, float qx, float qy) {
-        float o3x = p3x - p2x;
-        float o1x = p1x - p2x;
-        float o2x = 0;
-        float o3y = p3y - p2y;
-        float o1y = p1y - p2y;
-        float o2y = 0;
-        float centerx = p2x;
-        float centery = p2y;
-        float dotproduct = o1x * o3x + o1y * o3y;
-        float alphatilde = distance(0, 0, o1x, o1y);
-        float betatilde = distance(0, 0, o3x, o3y);
-        float cosangle = dotproduct / (alphatilde * betatilde);
-        float theta = (float) Math.acos(cosangle);
-        float sinangle = (float) Math.sin(theta);
-        float cotangle = (float) (1 / Math.tan(theta));
-        float kAlpha = qy / sinangle;
-        float kBeta = qx + qy * cotangle;
-        float Xi = (float) -cosangle / 2 + (float) Math.sqrt(cosangle * cosangle + 8) / 2;
-        float alphaM = (float) Math.pow((Math.sqrt(kAlpha) + Math.sqrt(kBeta / Math.abs(cosangle))), 2);
-        float alphaPBetatilde = (float) (kAlpha / (1 - Math.sqrt(kBeta / betatilde)));
-        float betaPAlphatilde = (float) (kBeta / (1 - Math.sqrt(kAlpha / alphatilde)));
-        float cosrotateangle = ((p1x - p2x) * o1x + (p1y - p2y) * o1y) / (alphatilde * alphatilde);
-        float rotateangle = (float) Math.acos(cosrotateangle);
-        float sinrotateangle = (float) Math.sin(rotateangle);
-        if (p1y < p2y) sinrotateangle *= -1;
-
-        if(betatilde <= betaPAlphatilde || ((Xi*alphatilde) <= betaPAlphatilde) && (betaPAlphatilde < betatilde) || ((Xi*betatilde) <= alphaPBetatilde) && (alphaPBetatilde < alphatilde)) {
-            minBezierCurvature( p1x, p1y, p2x, p2y, p3x, p3y);
-        } else if (alphaPBetatilde >= alphaM) {
-            float alphastar = alphaPBetatilde;
-            float betastar = betatilde;
-
-            o1x = alphastar;
-            o1y = 0;
-            o3x = betastar * cosangle;
-            o3y = betastar * sinangle;
-            //rotate back
-            float aa = o1x;
-            float bb = o1y;
-            o1x = aa * cosrotateangle - bb * sinrotateangle;
-            o1y = aa * sinrotateangle + bb * cosrotateangle;
-            aa = o3x;
-            bb = o3y;
-            o3x = aa * cosrotateangle - bb * sinrotateangle;
-            o3y = aa * sinrotateangle + bb * cosrotateangle;
-            //translate back
-            o1x += centerx;
-            o1y += centery;
-            o3x += centerx;
-            o3y += centery;
-            o2x += centerx;
-            o2y += centery;
-            //Q(t) = (1-t)^2 p1 + 2t(1-t) p2 + t^2 p3
-        } else {
-            float alphastar = (float) argmin(kAlpha, kBeta, cosangle, sinangle);
-            float betaPAlphastar = (float) (kBeta / (1 - Math.sqrt(kAlpha / alphastar)));
-            float betastar = betaPAlphastar;
-
-            o1x = alphastar;
-            o1y = 0;
-            o3x = betastar * cosangle;
-            o3y = betastar * sinangle;
-            //rotate back
-            float aa = o1x;
-            float bb = o1y;
-            o1x = aa * cosrotateangle - bb * sinrotateangle;
-            o1y = aa * sinrotateangle + bb * cosrotateangle;
-            aa = o3x;
-            bb = o3y;
-            o3x = aa * cosrotateangle - bb * sinrotateangle;
-            o3y = aa * sinrotateangle + bb * cosrotateangle;
-            //translate back
-            o1x += centerx;
-            o1y += centery;
-            o3x += centerx;
-            o3y += centery;
-            o2x += centerx;
-            o2y += centery;
-            //Q(t) = (1-t)^2 p1 + 2t(1-t) p2 + t^2 p3
+        for(float t = 0; t <= 1; t += 0.001) {
+            float pointx = (1-t)*(1-t)*o1x + 2*t*(1-t)*o2x+t*t*o3x;
+            float pointy = (1-t)*(1-t)*o1y + 2*t*(1-t)*o2y + t*t*o3y;
+            boundedBezier.addPoint(new RacingLinePoint(pointx, pointy));
         }
+
+        return boundedBezier;
     }
 
     public float distance(float a, float b, float c, float d) {
@@ -440,20 +380,42 @@ public class RacingLineModule implements CarModule {
         return (float)Math.sqrt((c-a)*(c-a)+(d-b)*(d-b));
     }
 
-    public double argmin(float kAlpha, float kBeta, float cosangle, float sinangle) {
-        double iterations = 1000;
-        double iterationSize = 0.001;
+    public double argmin(float kAlpha, float kBeta, float cosangle, float sinangle, float alphaC, float alphaPBetatilde, float alphaM, float alphatilde) {
+        int iterationAmount = 1000;
+        double iterationMin = Math.max(alphaC, alphaPBetatilde);
+        double iterationMax = Math.min(alphaM, alphatilde);
+        double iterationSize = (iterationMax - iterationMin) / iterationAmount;
+        double alpha;
+        double alphastar;
+        double minAlphastar;
+        double argminAlpha;
 
-        double minAlphastar = 0;
-        for(int i = 0; i <= iterations; i += iterationSize) {
-            double alpha = i;
-            double alphastar = (Math.pow(Math.pow((Math.sqrt(alpha) - Math.sqrt(kAlpha)), 4)-(2 * kBeta * cosangle * Math.pow((Math.sqrt(alpha) - Math.sqrt(kAlpha)), 2)+(Math.pow(kBeta, 2))), 1.5))/(2 * Math.pow(kBeta, 2) * Math.pow(sinangle, 2) * Math.pow(Math.sqrt(alpha) - Math.sqrt(kAlpha), 2) * alpha);
+        double temp;
 
-            if (alphastar < minAlphastar) {
+        if (iterationMin > iterationMax) {
+            temp = iterationMin;
+            iterationMin = iterationMax;
+            iterationMax = temp;
+            iterationSize *= -1;
+        }
+
+        minAlphastar = (Math.pow(Math.pow((Math.sqrt(iterationMin) - Math.sqrt(kAlpha)), 4) - (2 * kBeta * cosangle * Math.pow((Math.sqrt(iterationMin) - Math.sqrt(kAlpha)), 2) + (Math.pow(kBeta, 2))), 1.5)) / (2 * Math.pow(kBeta, 2) * Math.pow(sinangle, 2) * Math.pow(Math.sqrt(iterationMin) - Math.sqrt(kAlpha), 2) * iterationMin);
+        argminAlpha = iterationMin;
+
+        for(alpha = iterationMin; alpha <= iterationMax; alpha += iterationSize) {
+            alphastar = (Math.pow(Math.pow((Math.sqrt(alpha) - Math.sqrt(kAlpha)), 4) - (2 * kBeta * cosangle * Math.pow((Math.sqrt(alpha) - Math.sqrt(kAlpha)), 2)) + (Math.pow(kBeta, 2)), 1.5)) / (2 * Math.pow(kBeta, 2) * Math.pow(sinangle, 2) * Math.pow(Math.sqrt(alpha) - Math.sqrt(kAlpha), 2) * alpha);
+
+            System.out.println("alphastar: " + alphastar);
+            System.out.println("alpha: " + alpha);
+
+            if ((Double.isNaN(minAlphastar)) || ((alphastar < minAlphastar) && (!Double.isNaN(alphastar)))) {
                 minAlphastar = alphastar;
+                argminAlpha = alpha;
             }
         }
-        return minAlphastar;
+
+        System.out.println("Iterated: " + argminAlpha);
+        return argminAlpha;
     }
 }
 
