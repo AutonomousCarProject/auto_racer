@@ -30,7 +30,7 @@ public class CalibrationModule {
     public static final double  RIM_TO_RIM = 26.4;
 
     //Helper method to read speed change distance data
-    private static byte[][][] reedSpeedChangeDistData (){
+    private static byte[][][] readSpeedChangeDistData (){
         byte[][][] rowList = null;
         try (BufferedReader br = new BufferedReader(new FileReader("DistanceCalculations.txt"))) {
 
@@ -57,7 +57,7 @@ public class CalibrationModule {
     }
 
     //Helper method to read max speed data
-    private static byte[][] reedMaxSpeedData (){
+    private static byte[][] readMaxSpeedData (){
         byte[][] rowList = null;
         try (BufferedReader br = new BufferedReader(new FileReader("MaxSpeeds.csv"))) {
 
@@ -82,7 +82,7 @@ public class CalibrationModule {
     }
 
     //Helper method to read defishing data
-    private static FishData[][] reedFishData() {
+    private static FishData[][] readFishData() {
 
         FishData[][] rowList = null;
         try (BufferedReader br = new BufferedReader(new FileReader("CameraData.txt"))) {
@@ -155,13 +155,13 @@ public class CalibrationModule {
     }
 
     //input current speed and desired speed. get distance
-    private static final byte[][][] SPEED_CHANGE_DISTS = reedSpeedChangeDistData();
+    private static final byte[][][] SPEED_CHANGE_DISTS = readSpeedChangeDistData();
 
     //input floor type, radius of turn, get max velocity
-    private static final byte[][] MAX_SPEEDS = reedMaxSpeedData();
+    private static final byte[][] MAX_SPEEDS = readMaxSpeedData();
 
     //input x and y
-    private static final FishData[][] DEFISHER = reedFishData();
+    private static final FishData[][] DEFISHER = readFishData();
 
     //
     private static final short[] ANGLES = readAngleData();
@@ -194,7 +194,7 @@ public class CalibrationModule {
         return RADII[deg];
     }
 
-    //returns the ammount of throttle needed to mantain a given speed on a given floor surface and with a given turn radius
+    //returns the amount of throttle needed to maintain a given speed on a given floor surface and with a given turn radius
     //0 = straight line
     public static final short getThrottle (short floor, short radius, short speed){
         return THROTTLES[floor][radius][speed];
