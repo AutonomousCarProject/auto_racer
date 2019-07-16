@@ -1,7 +1,6 @@
 plugins {
     // Apply the java-library plugin to add support for Java Library
     id 'java-library'
-    id 'com.stehno.natives' version '0.3.1'
 }
 
 ext.moduleName = 'org.avphs.camera'
@@ -14,15 +13,16 @@ repositories {
 
 dependencies {
     // Use TestNG framework, also requires calling test.useTestNG() below
-    compile files(':fly2cam')
     implementation project(':traksim')
+    implementation 'org.bytedeco:flycapture:2.13.3.31-1.5.1'
     testImplementation 'org.testng:testng:6.14.3'
 }
 
-natives {
-    configurations = ['compile', 'runtime']
-    platforms = Platform.findAll()
-    outputDir = 'natives'
+task copyToMods(type: Copy) {
+    into file("$rootDir/mods")
+    from configurations.default {
+        include 'flycapture*'
+    }
 }
 
 sourceSets {
@@ -42,3 +42,6 @@ test {
     // Use TestNG for unit tests
     useTestNG()
 }
+
+
+build.finalizedBy(copyToMods)

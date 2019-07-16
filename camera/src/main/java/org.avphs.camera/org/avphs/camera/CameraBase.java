@@ -38,6 +38,7 @@ public class CameraBase implements Camera {
      */
     public native boolean connect(int frameRate); // required, sets numRows, numCols,tile
 
+
     /**
      * Gets one frame from the Chameleon3 or FireFly camera.
      *
