@@ -5,6 +5,7 @@ import java.util.Objects;
 public class RacingLinePoint {
     private float x, y, degree;
 
+    //region Constructors
     public RacingLinePoint() {
         setX(0);
         setY(0);
@@ -22,6 +23,8 @@ public class RacingLinePoint {
         setY(y);
         setDegree(degree);
     }
+    //endregion
+
 
     public float distanceToPoint(RacingLinePoint other) {
         float diffx = x - other.x;
@@ -29,6 +32,8 @@ public class RacingLinePoint {
         return (float) Math.sqrt(diffx * diffx + diffy * diffy);
     }
 
+    //region Getters/Setters
+    public int getIntX() { return (int)x; }
     /**Returns a calculated point that is a specified distance towards another point
      *
      * Will return null if other param is the same as the current RacingLinePoint
@@ -60,6 +65,8 @@ public class RacingLinePoint {
     public float getY() {
         return y;
     }
+    public int getIntY() { return (int)y; }
+
 
     public float getDegree() {
         return degree;
@@ -76,6 +83,13 @@ public class RacingLinePoint {
     public void setDegree(float degree) {
         this.degree = degree;
     }
+    //endregion
+
+    public CurvePoint toCurvePoint() {
+        return new CurvePoint((int)x,(int)y);
+    }
+
+    //region overrides
 
     @Override
     public boolean equals(Object o) {
@@ -90,4 +104,6 @@ public class RacingLinePoint {
     public int hashCode() {
         return Objects.hash(x, y);
     }
+    //endregion
+
 }
