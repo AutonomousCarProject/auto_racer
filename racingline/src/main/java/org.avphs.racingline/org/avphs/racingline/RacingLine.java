@@ -101,9 +101,9 @@ public class RacingLine {
             // Returns largest possible angle always
         }
 
-    public float averageAngle(RacingLinePoint [] allPoint) {
+    public float calculateFlat(RacingLinePoint [] allPoint) {
         //currently receiving allPoints which is rather useless rn, but later could be used for other series of points to
-        //not being used rn
+        //not being used rn, could theroritically be used to calculate how flat the raacing line is in norder to minimize the cuveture
         float averageAngle = 0;
         for(int i = 0; i <= allPoint.length; i++) {
             averageAngle += allPoint[i].getDegree();
