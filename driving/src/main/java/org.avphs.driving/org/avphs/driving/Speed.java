@@ -17,6 +17,7 @@ public class Speed {
     private float[] currentPosOnLine;   //where we "should" be on the racing line. Updates with every getThrottle call.
     private RoadData currentSegment;
     private RoadData nextSegment;
+    private short throttleForSeg;
 
     public Speed(VectorPoint currentPos, RoadData currentSegment, RoadData nextSegment){
         FLOOR = (byte)0;            //dummy value
@@ -26,6 +27,12 @@ public class Speed {
         this.nextSegment = nextSegment;
         brakeDist = CalibrationModule.getSpeedChangeDist(FLOOR, CalibrationModule.getMaxSpeed(FLOOR,
                 currentSegment.radius), CalibrationModule.getMaxSpeed(FLOOR, nextSegment.radius));
+        if (currentSegment instanceof Straight){
+            throttleForSeg = (short)180;
+        } else {
+            throttleForSeg = CalibrationModule.getThrottle(FLOOR, currentSegment.radius,
+                    CalibrationModule.getMaxSpeed(FLOOR, currentSegment.radius));
+        }
     }
 
     public void setCurrentPos(VectorPoint newCurrentPos){
@@ -37,6 +44,12 @@ public class Speed {
         nextSegment = newNextSeg;
         brakeDist = CalibrationModule.getSpeedChangeDist(FLOOR, CalibrationModule.getMaxSpeed(FLOOR,
                 currentSegment.radius), CalibrationModule.getMaxSpeed(FLOOR, nextSegment.radius));
+        if (currentSegment instanceof Straight){
+            throttleForSeg = (short)180;
+        } else {
+            throttleForSeg = CalibrationModule.getThrottle(FLOOR, currentSegment.radius,
+                    CalibrationModule.getMaxSpeed(FLOOR, currentSegment.radius));
+        }
     }
 
     public int getThrottle(){
@@ -50,7 +63,7 @@ public class Speed {
                 return MAX_HARD_BRAKE;
             }
         } else {
-            return 90;
+            return throttleForSeg;
         }
     }
 }
