@@ -81,7 +81,8 @@ public class RacingLineModule implements CarModule {
         getWalls();
         calcMiddleLine();
         center.sortPoints();
-        //deletePoints(30);
+        deletePoints(30);
+        connectTheDots();
     }
 
     private void getWalls() {
@@ -223,6 +224,84 @@ public class RacingLineModule implements CarModule {
         compressedLine.add(RacingLinePoints[RacingLinePoints.length - 1]);
         //System.out.println("HOLA "+ (RacingLinePoints.length-1));
         center.setRacingLinePointsList(compressedLine);
+    }
+
+    private void connectTheDots() {
+        RacingLinePoint[] array = center.getRacingLinePoints();
+        int size = array.length;
+        CurvePoint[] curves = new CurvePoint[size];
+        ArrayList<RacingLinePoint> connected = new ArrayList<RacingLinePoint>();
+        for(int i=0;i<size;i++) {
+            curves[i] = array[i].toCurvePoint();
+        }
+        for(int i=0;i<size;i++) {
+            CurvePoint c = curves[i];
+            int h = (i+size-1)%size;
+            int j = (i+1)%size;
+            c.setNext(curves[j]);
+            c.setPrevious(curves[h]);
+            c.start();
+        }
+        float cux = curves[0].getX();
+        float cuy = curves[0].getY();
+        float iter = 0.01f;
+        for(int i=0;i<size;i++) {
+            CurvePoint c = curves[i];
+            CurvePoint next = curves[(i+1)%size];
+            cux = c.getX();
+            cuy = c.getY();
+            //translate && rotate
+            float px = (float)Math.sqrt((next.getX()-c.getX())*(next.getX()-c.getX())+
+                    (next.getY()-c.getY())*(next.getY()-c.getY()));
+            float cosrotateangle = (next.getX()-c.getX())/px;
+            float sinrotateangle = (c.getY()-next.getY())/px;
+
+            float odx = c.getTargetX()*cosrotateangle - c.getTargetY()*sinrotateangle;
+            float ody = c.getTargetX()*sinrotateangle + c.getTargetY()*cosrotateangle;
+            float pdx = next.getTargetX()*cosrotateangle - next.getTargetY()*sinrotateangle;
+            float pdy = next.getTargetX()*sinrotateangle + next.getTargetY()*cosrotateangle;
+            float oslope = 100;
+            float pslope = 100;
+            if(Math.abs(odx) > 0.01) oslope = ody/odx;
+            if(Math.abs(pdx) > 0.01) pslope = pdy/pdx;
+
+            float stopx = 0;
+            float stopy = 0;
+            if((oslope >= 0 && pslope >= 0)||(oslope <= 0 && pslope <= 0)) {
+                stopx = Math.abs(pslope)/(Math.abs(pslope)+Math.abs(oslope));
+                stopy = (-1*oslope*stopx+pslope*stopx-pslope)/(1+2*stopx);
+            } else {
+                stopx = Math.abs(pslope)/(Math.abs(pslope)+Math.abs(oslope));
+                stopy = 0;
+            }
+            if(stopx<0||stopx>1) System.out.println("UH OH THERE IS AN ERROR");
+            for(float t=0;t<1;t+=iter) {
+                float tt = (t>=0.5f)?t+iter:t;
+                float dx = iter*px;
+                float dy = 0;
+                if(tt>=stopx) {
+                    dy = (pslope - stopy) * (tt - 1) / (1 - stopx) + pslope;
+                } else {
+                    dy = (stopy - oslope)*(tt/stopx) + oslope;
+                }
+                dy *= (iter*px);
+                float rdx = dx*cosrotateangle - -1*dy*sinrotateangle;
+                float rdy = -1*dx*sinrotateangle + dy*cosrotateangle;
+                cux += rdx;
+                cuy += rdy;
+                connected.add(new RacingLinePoint((int)cux,(int)cuy));
+            }
+        }
+        for(int i=0;i<connected.size();i++) {
+            int j = (i+1)%connected.size();
+            RacingLinePoint c = connected.get(i);
+            RacingLinePoint d = connected.get(j);
+            if(c.getX() == d.getX() && c.getY() == d.getY()) {
+                connected.remove(j);
+                i--;
+            }
+        }
+        center.setRacingLinePointsList(connected);
     }
 
     public void trimPoints(float trim) {
