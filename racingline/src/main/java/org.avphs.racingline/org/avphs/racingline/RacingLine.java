@@ -205,7 +205,7 @@ public class RacingLine {
 class RacingLineCurve{
     public ArrayList<RacingLinePoint> curve;
 
-    public RacingLineCurve() {}
+    public RacingLineCurve() { curve = new ArrayList<>(); }
     public RacingLineCurve(ArrayList<RacingLinePoint> _curve) {
         curve = _curve;
     }
