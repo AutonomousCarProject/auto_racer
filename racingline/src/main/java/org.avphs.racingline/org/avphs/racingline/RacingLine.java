@@ -15,15 +15,18 @@ import static java.lang.Math.PI;
 public class RacingLine {
     private ArrayList<RacingLinePoint> RacingLinePointsList = new ArrayList<RacingLinePoint>();
     private RacingLinePoint[] RacingLinePoints;
+    private RacingLineCurve[] RacingLineCurves;
 
+    //region Constructors
     public RacingLine() {
 
     }
-
     public RacingLine(ArrayList<RacingLinePoint> pointsList) {
         RacingLinePointsList = pointsList;
     }
+    //endregion
 
+    //region Getters/Setters
     public RacingLinePoint[] getRacingLinePoints() {
         if (RacingLinePoints == null) {
             RacingLinePoints = new RacingLinePoint[RacingLinePointsList.size()];
@@ -33,18 +36,73 @@ public class RacingLine {
         }
         return RacingLinePoints;
     }
-
+    public RacingLineCurve[] getRacingLineCurves() {
+        if (RacingLineCurves == null) {
+            System.out.println("Need to create RacingLineCurve before using it");
+        }
+        return RacingLineCurves;
+    }
     public ArrayList<RacingLinePoint> getRacingLinePointsList() {
         return RacingLinePointsList;
     }
-
     public void setRacingLinePointsList(ArrayList<RacingLinePoint> newLine) {
         RacingLinePointsList = newLine;
         RacingLinePoints = null;
     }
-
     public void addPoint(RacingLinePoint newPoint) {
         RacingLinePointsList.add(newPoint);
+    }
+    //endregion
+
+    //region Find Curves
+    public void FindCurves(float minStraightAngle, float maxDistance) {
+        ArrayList<RacingLinePoint> potentialCurves = FindPotentialCurves(minStraightAngle);
+        ArrayList<RacingLineCurve> splitCurves = SplitCurves(potentialCurves, maxDistance);
+        RacingLineCurves = CurveListToArray(splitCurves);
+    }
+
+    private ArrayList<RacingLinePoint> FindPotentialCurves(float maxStraightAngle) {
+        ArrayList<RacingLinePoint> newCurves = new ArrayList<>();
+
+        for(int i = 0; i < RacingLinePoints.length - 1; i++)
+        {
+            if (RacingLinePoints[i].getDegree() < maxStraightAngle) {
+                newCurves.add(RacingLinePoints[i]);
+            }
+        }
+        return newCurves;
+    }
+
+    private ArrayList<RacingLineCurve> SplitCurves(ArrayList<RacingLinePoint> potentialCurves, float accuracy) {
+        ArrayList<RacingLineCurve> sortedCurves = new ArrayList<>();
+        ArrayList<RacingLinePoint> checked = new ArrayList<>();
+        RacingLineCurve currCurve;
+
+        for (int p = 0; p < potentialCurves.size(); p++) {
+            if (RacingLineModule.ContainsPoint(checked, potentialCurves.get(p))) {
+                continue;
+            }
+            currCurve = new RacingLineCurve();
+            currCurve.AddPoint(potentialCurves.get(p));
+            for (int p2 = p; p2 < potentialCurves.size(); p2++) {
+                if (RacingLineModule.distanceBetweenPoints(potentialCurves.get(p), potentialCurves.get(p2)) < accuracy && !checked.contains(p2) && p != p2) {// && RacingLineModule.intersects() == 0) {
+                    checked.add(potentialCurves.get(p2));
+                    currCurve.AddPoint(potentialCurves.get(p2));
+                }
+            }
+            sortedCurves.add(currCurve);
+        }
+
+        return sortedCurves;
+    }
+    //endregion
+
+    public static RacingLineCurve[] CurveListToArray(ArrayList<RacingLineCurve> list) {
+        RacingLineCurve[] array = new RacingLineCurve[list.size()];
+        for(int i = 0; i < list.size(); i++) {
+            array[i] = list.get(i);
+        }
+        return array;
     }
 
     public void sortPoints() {
@@ -67,6 +125,19 @@ public class RacingLine {
             remainingPoints.remove(closestPoint);
         }
         RacingLinePointsList = orderedRacingLine;
+    }
+
+    //region Calculate Angles
+    public void setAngles() {
+        if (RacingLinePoints == null) {
+            System.out.println("setAngles(): Trying to set the points to a line, but no line has been generated");
+            return;
+        }
+        for (int i = 0; i < RacingLinePoints.length; i++) {
+            int prevPoint = i == 0 ? RacingLinePoints.length - 1 : i - 1;
+            int nextPoint = i + 1 == RacingLinePoints.length ? 0 : i + 1;
+            RacingLinePoints[i].setDegree(threePointAngle(RacingLinePoints[prevPoint], RacingLinePoints[i], RacingLinePoints[nextPoint]));
+        }
     }
     static float lengthSquare(RacingLinePoint p1, RacingLinePoint p2) {
         float xDiff = p1.getX()- p2.getX();
@@ -100,6 +171,7 @@ public class RacingLine {
             // Has the other angles in the supposed triangle but for our sake we are always using the middle
             // Returns largest possible angle always
         }
+    //endregion
 
     public float rateLine(RacingLinePoint [] allPoint) {
         /** Pass in an array of all the racingline and this method will rate the line using a simple metric

@@ -9,7 +9,6 @@ import org.avphs.core.CarModule;
 
 import java.util.*;
 
-
 public class RacingLineModule implements CarModule {
     private ArrayList<Point> outerWall = new ArrayList<Point>();
     private ArrayList<Point> innerWall = new ArrayList<Point>();
@@ -47,7 +46,6 @@ public class RacingLineModule implements CarModule {
     //endregion
 
     //region RacingLine
-
     /**
      * This method creates the racing line. This should be run before getRacingLine is called.
      *
@@ -76,6 +74,7 @@ public class RacingLineModule implements CarModule {
         }
         return bezierCurveLine;
     }
+    //endregion
 
     //region Middle Line
     private void getMiddleLine() {
@@ -130,6 +129,9 @@ public class RacingLineModule implements CarModule {
         }
     }
 
+    //endregion
+
+    //region Basic Calculations
     public static int floor(int num, int den) {
         return (int) -Math.ceil((double) -num / den);
     }
@@ -196,6 +198,7 @@ public class RacingLineModule implements CarModule {
     public int intersect(RacingLinePoint p1, RacingLinePoint p2) {
         return intersect(new Point(p1.getIntX(), p1.getIntY()), new Point(p1.getIntX(), p2.getIntY()));
     }
+    //endregion
 
     public void deletePoints(int trim) {
         int times = 0;
@@ -327,7 +330,7 @@ public class RacingLineModule implements CarModule {
         center.setRacingLinePointsList(compressedLine);
     }
 
-    private boolean ContainsPoint(ArrayList<RacingLinePoint> list, RacingLinePoint point) {
+    public static boolean ContainsPoint(ArrayList<RacingLinePoint> list, RacingLinePoint point) {
         for (RacingLinePoint p: list) {
             if (p == point) {
                 return true;
@@ -355,14 +358,13 @@ public class RacingLineModule implements CarModule {
         }
     }
 
-
-    private float distanceBetweenPoints(Point start, Point end) {
+    public static float distanceBetweenPoints(Point start, Point end) {
         int x = Math.abs(end.x - start.x);
         int y = Math.abs(end.y - start.y);
         float h = (float) Math.sqrt(x * x + y * y);
         return h;
     }
-    private float distanceBetweenPoints(RacingLinePoint start, RacingLinePoint end) {
+    public static float distanceBetweenPoints(RacingLinePoint start, RacingLinePoint end) {
         return distanceBetweenPoints(new Point(start.getIntX(), start.getIntY()), new Point(end.getIntX(), end.getIntY()));
     }
 
@@ -372,6 +374,7 @@ public class RacingLineModule implements CarModule {
         return new RacingLinePoint(aveX, aveY);
     }
 
+    //region Bezier Curve
     public RacingLine boundedBezier(float p1x, float p1y, float p2x, float p2y, float p3x, float p3y, float qxx, float qyy) {
 
         RacingLine boundedBezier = new RacingLine();
@@ -534,10 +537,9 @@ public class RacingLineModule implements CarModule {
         System.out.println("Iterated: " + argminAlpha);
         return argminAlpha;
     }
+    //endregion
 }
 
-
-//region Classes
 class Point {
     int x, y;
 
@@ -737,4 +739,3 @@ class Matrix4 {
         return res;
     }
 }
-//endregion

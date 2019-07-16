@@ -2,11 +2,10 @@ package org.avphs.racingline;
 
 import java.util.Objects;
 
-
-
 public class RacingLinePoint {
     private float x, y, degree;
 
+    //region Constructors
     public RacingLinePoint() {
         setX(0);
         setY(0);
@@ -24,6 +23,7 @@ public class RacingLinePoint {
         setY(y);
         setDegree(degree);
     }
+    //endregion
 
     public float distanceToPoint(RacingLinePoint other) {
         float diffx = x - other.x;
@@ -31,6 +31,7 @@ public class RacingLinePoint {
         return (float) Math.sqrt(diffx * diffx + diffy * diffy);
     }
 
+    //region Getters/Setters
     public float getX() {
         return x;
     }
@@ -56,11 +57,13 @@ public class RacingLinePoint {
     public void setDegree(float degree) {
         this.degree = degree;
     }
+    //endregion
 
     public CurvePoint toCurvePoint() {
         return new CurvePoint((int)x,(int)y);
     }
 
+    //region overrides
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -74,4 +77,5 @@ public class RacingLinePoint {
     public int hashCode() {
         return Objects.hash(x, y);
     }
+    //endregion
 }
