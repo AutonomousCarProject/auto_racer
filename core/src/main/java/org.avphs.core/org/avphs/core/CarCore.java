@@ -40,6 +40,7 @@ public class CarCore {
         this.car = car;
         modules = CarModule.getInstances();
         carData = new CarData();
+        this.car.init(carData);
         // FIXME: Make this more dynamic
         modules.forEach(carModule -> {
             if (carModule instanceof DrivingModule) {

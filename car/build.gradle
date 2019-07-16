@@ -15,6 +15,7 @@ dependencies {
     // Use TestNG framework, also requires calling test.useTestNG() below
     implementation project(':camera')
     implementation project(':sbcio')
+    implementation project(':traksim')
     implementation project(':coreinterface')
     
 

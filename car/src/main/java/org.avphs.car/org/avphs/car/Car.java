@@ -1,6 +1,7 @@
 package org.avphs.car;
 
 import org.avphs.camera.Camera;
+import org.avphs.camera.SimCamera;
 import org.avphs.coreinterface.CarData;
 import org.avphs.coreinterface.ClientInterface;
 import org.avphs.sbcio.ArduinoIO;
@@ -14,6 +15,10 @@ public class Car implements ClientInterface {
         this.camera = camera;
         camera.connect(4);
         this.arduino = new ArduinoIO();
+    }
+
+    public void init(CarData carData) {
+        carData.addData("traksim", ((SimCamera) camera).theSim);
     }
 
     @Override

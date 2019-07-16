@@ -19,6 +19,12 @@ dependencies {
     testImplementation 'org.testng:testng:6.14.3'
 }
 
+natives {
+    configurations = ['compile', 'runtime']
+    platforms = Platform.findAll()
+    outputDir = 'natives'
+}
+
 sourceSets {
     main{
         java {
