@@ -1,7 +1,5 @@
 package org.avphs.driving;
 
-import org.avphs.calibration.*;
-
 public class Steering {
 
     private VectorPoint currentPos;
@@ -41,11 +39,13 @@ public class Steering {
                 return 90;
             } else {
                 radius = currentSegment.getRadius();
-                return CalibrationModule.getAngles(radius);
+
+                //FIXME: DONT DO THIS!
+                //return CalibrationModule.getAngles(radius);
             }
         } else {
             return -1;
         }
+        return -1;
     }
-
 }
