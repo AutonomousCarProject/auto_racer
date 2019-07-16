@@ -81,7 +81,7 @@ public class RacingLineModule implements CarModule {
         getWalls();
         calcMiddleLine();
         center.sortPoints();
-        deletePoints(30);
+        //deletePoints(30);
     }
 
     private void getWalls() {
@@ -195,7 +195,7 @@ public class RacingLineModule implements CarModule {
         return intersect(new Point(p1.getIntX(), p1.getIntY()), new Point(p1.getIntX(), p2.getIntY()));
     }
 
-    private void deletePoints(int trim) {
+    public void deletePoints(int trim) {
         int times = 0;
         RacingLinePoint[] RacingLinePoints = center.getRacingLinePoints();
         RacingLinePoint p1 = RacingLinePoints[0];
@@ -225,7 +225,7 @@ public class RacingLineModule implements CarModule {
         center.setRacingLinePointsList(compressedLine);
     }
 
-    private void trimPoints(float trim) {
+    public void trimPoints(float trim) {
         RacingLinePoint[] line = center.getRacingLinePoints();
         ArrayList<RacingLinePoint> compressedLine = new ArrayList<>();
         ArrayList<RacingLinePoint> deleted = new ArrayList<>();
