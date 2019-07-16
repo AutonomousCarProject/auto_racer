@@ -81,7 +81,7 @@ public class RacingLineModule implements CarModule {
         getWalls();
         calcMiddleLine();
         center.sortPoints();
-        deletePoints(30);
+        //deletePoints(30);
     }
 
     private void getWalls() {
@@ -191,8 +191,11 @@ public class RacingLineModule implements CarModule {
         }
         return num;
     }
+    public int intersect(RacingLinePoint p1, RacingLinePoint p2) {
+        return intersect(new Point(p1.getIntX(), p1.getIntY()), new Point(p1.getIntX(), p2.getIntY()));
+    }
 
-    private void deletePoints(int trim) {
+    public void deletePoints(int trim) {
         int times = 0;
         RacingLinePoint[] RacingLinePoints = center.getRacingLinePoints();
         RacingLinePoint p1 = RacingLinePoints[0];
@@ -222,6 +225,37 @@ public class RacingLineModule implements CarModule {
         center.setRacingLinePointsList(compressedLine);
     }
 
+    public void trimPoints(float trim) {
+        RacingLinePoint[] line = center.getRacingLinePoints();
+        ArrayList<RacingLinePoint> compressedLine = new ArrayList<>();
+        ArrayList<RacingLinePoint> deleted = new ArrayList<>();
+
+        RacingLinePoint currPoint;
+
+        for (RacingLinePoint p : line) {
+            if (ContainsPoint(deleted, p)) {
+                continue;
+            }
+            compressedLine.add(p);
+            for (RacingLinePoint p2 : line) {
+                if (distanceBetweenPoints(p, p2) < trim && !deleted.contains(p2) && p != p2) {
+                    deleted.add(p2);
+                }
+            }
+        }
+
+        center.setRacingLinePointsList(compressedLine);
+    }
+
+    private boolean ContainsPoint(ArrayList<RacingLinePoint> list, RacingLinePoint point) {
+        for (RacingLinePoint p: list) {
+            if (p == point) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void calcMiddleLine() {
         ArrayList<Point> longer = outerWall.size() > innerWall.size() ? outerWall : innerWall;
         ArrayList<Point> shorter = outerWall.size() <= innerWall.size() ? outerWall : innerWall;
@@ -247,6 +281,9 @@ public class RacingLineModule implements CarModule {
         int y = Math.abs(end.y - start.y);
         float h = (float) Math.sqrt(x * x + y * y);
         return h;
+    }
+    private float distanceBetweenPoints(RacingLinePoint start, RacingLinePoint end) {
+        return distanceBetweenPoints(new Point(start.getIntX(), start.getIntY()), new Point(end.getIntX(), end.getIntY()));
     }
 
     private RacingLinePoint midPoint(Point outer, Point inner) {
