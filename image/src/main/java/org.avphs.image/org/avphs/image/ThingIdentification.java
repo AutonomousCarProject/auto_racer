@@ -51,6 +51,10 @@ public class ThingIdentification {
             if ((1 & state) == 0) {  // the first bit is for indicating a special state
                 // if not special, do regular stuff
                 --row;  // move to next pixel (one row above previous)
+                if (row < 0) {
+                    state = 0b0001_0000_0000_0000_0000_0000_0000_0001;  // top of image reached, mark unidentified
+                    continue;
+                }
                 currentPixel = posterizedIntImage[row * imageWidth + col];  // get pixel value
 
                 // combine current state and pixel value
