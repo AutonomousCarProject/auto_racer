@@ -1,9 +1,9 @@
 package org.avphs.image;
 
 public class ImageData {
-    int[] wallHeights;
-    int[] wallTypes;
-    int[] wallPosition;
+    public int[] wallHeights;
+    public int[] wallTypes;
+    public int[] wallPosition;
 
     ImageData(){
         wallHeights = new int[640];
