@@ -52,7 +52,18 @@ public class ThingIdentification {
                 // if not special, do regular stuff
                 --row;  // move to next pixel (one row above previous)
                 if (row < 0) {
-                    state = 0b0001_0000_0000_0000_0000_0000_0000_0001;  // top of image reached, mark unidentified
+                    // top of image reached
+                    if (savedNumber0 != 0) {  // if the start of a wall has been seen
+                        // record the base (but the type and height are unknown)
+                        wallStarts[col] = savedNumber0;
+                        wallHeights[col] = -1;
+                        wallTypes[col] = -1;
+
+                        state = 0b0000_0010_0000_0000_0000_0000_0000_0001; // ins2: move to next line
+                    } else {
+                        // otherwise, no wall is recorded
+                        state = 0b0000_0001_0000_0000_0000_0000_0000_0001;  // mark unidentified
+                    }
                     continue;
                 }
                 currentPixel = posterizedIntImage[row * imageWidth + col];  // get pixel value
@@ -76,8 +87,11 @@ public class ThingIdentification {
                         if (col == imageWidth)
                             break;
                         
+                        // reset variables
                         row = imageHeight - 1;
                         state = 0;
+                        savedNumber0 = 0;
+                        savedNumber1 = 0;
                     } else if (instruction == 3) {  // record found+finished wall where wall base is in `savedNumber0`
                         int value = (state >> 16) & 0b1111_1111;  // wall type is encoded in bits 24-16
                         
