@@ -74,12 +74,14 @@ public class CarCore {
         imageModule.init(carData);
         positionTrackingModule.init(carData);
         mapModule.init(carData);
+        racingLineModule.init(carData);
 
         updatingCarModules.add(windowModule);
         updatingCarModules.add(imageModule);
         updatingCarModules.add(positionTrackingModule);
         updatingCarModules.add(drivingModule);
         updatingCarModules.add(mapModule);
+        updatingCarModules.add(racingLineModule);
 
     }
 
@@ -94,7 +96,6 @@ public class CarCore {
                 Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory("Command Listener"));
         commandListeningExecutorService.scheduleAtFixedRate(this::commandListen, 0, Math.round(1000.0 / FPS),
                 TimeUnit.MILLISECONDS);
-
     }
 
     private void update() {

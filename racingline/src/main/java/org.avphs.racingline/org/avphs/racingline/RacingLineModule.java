@@ -4,9 +4,8 @@ import org.avphs.coreinterface.CarCommand;
 import org.avphs.coreinterface.CarData;
 import org.avphs.coreinterface.CarModule;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.*;
+import java.io.*;
 
 public class RacingLineModule implements CarModule {
     private ArrayList<Point> outerWall = new ArrayList<Point>();
@@ -31,8 +30,27 @@ public class RacingLineModule implements CarModule {
     }
 
     @Override
-    public void init(CarData carData) {
-
+    public void init(CarData carData){
+        try {
+            BufferedReader bufread = new BufferedReader(new FileReader("testmap.txt"));
+            StringTokenizer st = new StringTokenizer(bufread.readLine());
+            rows = Integer.parseInt(st.nextToken());
+            columns = Integer.parseInt(st.nextToken());
+            boolean[][] testMap = new boolean[rows][columns];
+            for (int i = 0; i < rows; i++) {
+                String currentRow = bufread.readLine();
+                for (int j = 0; j < columns; j++) {
+                    testMap[i][j] = currentRow.charAt(j) == '1';
+                }
+            }
+            System.out.println("Racing line init");
+            System.out.println("Rows: "+rows+"; Columns: "+columns);
+            makeRacingLine(testMap);
+            bufread.close();
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+        carData.addData("RacingLine",center);
     }
 
     @Override
@@ -71,10 +89,10 @@ public class RacingLineModule implements CarModule {
      * @see RacingLine
      */
     public RacingLine getRacingLine() {
-        if (bezierCurveLine == null) {
+        if (center == null) {
             System.out.println("Warning: Racing line has not yet been created. To create a racing line, run getMiddleLine");
         }
-        return bezierCurveLine;
+        return center;
     }
     //endregion
 
@@ -83,7 +101,6 @@ public class RacingLineModule implements CarModule {
         getWalls();
         calcMiddleLine();
         center.sortPoints();
-        deletePoints(30);
         connectTheDots();
     }
 
@@ -278,6 +295,10 @@ public class RacingLineModule implements CarModule {
                 stopy = (-1*oslope*stopx+pslope*stopx-pslope)/(1+2*stopx);
             } else {
                 stopx = Math.abs(pslope)/(Math.abs(pslope)+Math.abs(oslope));
+                stopy = 0;
+            }
+            if(oslope==0 && pslope==0) {
+                stopx = 0;
                 stopy = 0;
             }
             if(stopx<0||stopx>1) System.out.println("UH OH THERE IS AN ERROR");
