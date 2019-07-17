@@ -47,11 +47,11 @@ public class DriverCons { // TrakSim constant parameters
           D_ShoWallz = true,        // T: search back for distant walls (slower)
           D_StartInCalibrate = false, // T: use this to calibrate servo limits
           D_Log_Draw = false, D_Log_Log = false, D_BlurSpeed = false,
-          D_NoisyMap = false, D_ShoHedLit = false, D_Fax_Log = true,
-          D_MapLogged = true, D_Mini_Log = false;
+          D_NoisyMap = false, D_ShoHedLit = false, D_Fax_Log = false,
+          D_MapLogged = false, D_Mini_Log = false;
 
   public static final int
-          D_Qlog = 0, // Global log enabler (=0 kills most log, -1 enables all) bits:
+          D_Qlog = -1, // Global log enabler (=0 kills most log, -1 enables all) bits:
   //   +1: MapLogged enabled
   //   +2: mouseEntered/mouseClicked
   //   +4: "DrListen="
