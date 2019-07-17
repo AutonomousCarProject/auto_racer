@@ -14,54 +14,65 @@ class MapUtils {
             sin[i] = Math.sin(Math.toRadians(i));
         }
     }
-    public void setupDistanceLookup()
-    {
+
+    public void setupDistanceLookup() {
         //image width as pixel height increases
-        for (int i = 0; i < 220; i++)
-        {
-            imageWidthToPixelHeightLookup[i] = (48.8606 * 224.591) / ((224.591) - (double)i);
-            verticalDistanceLookup[i] = (5811.09)/(224.329 - (double)i);
+        for (int i = 0; i < 220; i++) {
+            imageWidthToPixelHeightLookup[i] = (48.8606 * 224.591) / ((224.591) - (double) i);
+            verticalDistanceLookup[i] = (5811.09) / (224.329 - (double) i);
         }
 
         //height
     }
 
-    public int[] getRealLifePixelDistance(int pixelX, int pixelY)
-    {
+    public int[] getRealLifePixelDistance(int pixelX, int pixelY) {
         //return format is distance ahead y, distance ahead x
         int[] distances = new int[2]; //(x,y) (ahead)
         //Maybe just make into 1 line.
         double imageWidthAtPosition = imageWidthToPixelHeightLookup[pixelY];
-        double xdistance = ((double)(pixelX / 640)  * imageWidthAtPosition);
+        double xdistance = ((double) (pixelX / 640) * imageWidthAtPosition);
         if (pixelX < 320) //if you're going to left
         {
-            distances[0] = ( 0 - ((int)( Math.round(imageWidthAtPosition / 2) - (Math.round(xdistance)))));
-            distances[1] = (int)Math.round(verticalDistanceLookup[pixelY]);
-        }
-        else if (pixelX > 320) //if you're going to right
+            distances[0] = (0 - ((int) (Math.round(imageWidthAtPosition / 2) - (Math.round(xdistance)))));
+            distances[1] = (int) Math.round(verticalDistanceLookup[pixelY]);
+        } else if (pixelX > 320) //if you're going to right
         {
-            distances[0] = (int)((Math.round(xdistance)) - (Math.round(imageWidthAtPosition / 2)));
-            distances[1] = (int)Math.round(verticalDistanceLookup[pixelY]);
-        }
-        else // in centwer
+            distances[0] = (int) ((Math.round(xdistance)) - (Math.round(imageWidthAtPosition / 2)));
+            distances[1] = (int) Math.round(verticalDistanceLookup[pixelY]);
+        } else // in centwer
         {
-            distances[0] = 0; distances[1] = (int)Math.round(verticalDistanceLookup[pixelY]);
+            distances[0] = 0;
+            distances[1] = (int) Math.round(verticalDistanceLookup[pixelY]);
         }
-
         return distances;
     }
 
+        public double getSine ( int angleInDegrees)//get sine value from degree in int from 0 to 360
+        {
+            double result = sin[angleInDegrees];
+            return result;
+        }
+        public void fixTrack( int[] imageInput){ //TODO: Finish later.
+            int previousPoint = imageInput[0]; //390
+            int currentPoint; // keeps things in track
+            int beforeMissing;
+            int afterMissing;
+            for (int i = 0; i < imageInput.length; i++) {
+                currentPoint = imageInput[i];
+                if (currentPoint != 0) {
+                    previousPoint = currentPoint; // self explanatory.
+                } else {
+                    beforeMissing = i - 1; //Keeps track of the previous index before it turned 0.
+                    while (imageInput[i] == 0) { // Only when it reaches a missing hole.
 
+                    }
+                }
+            }
+        }
+        public double getCosine(int angleInDegrees)//get cosine value from degree in int from 0 to 360
+        {
+            double result = cos[angleInDegrees];
+            return result;
+        }
 
-    public double getSine(int angleInDegrees)//get sine value from degree in int from 0 to 360
-    {
-        double result = sin[angleInDegrees];
-        return result;
-    }
-
-    public double getCosine(int angleInDegrees)//get cosine value from degree in int from 0 to 360
-    {
-        double result = cos[angleInDegrees];
-        return result;
-    }
 }
