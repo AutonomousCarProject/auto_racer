@@ -43,6 +43,8 @@ public class RacingLineModule implements CarModule {
                     testMap[i][j] = currentRow.charAt(j) == '1';
                 }
             }
+            System.out.println("Racing line init");
+            System.out.println("Rows: "+rows+"; Columns: "+columns);
             makeRacingLine(testMap);
             bufread.close();
         }catch(IOException e){
