@@ -279,6 +279,10 @@ public class RacingLineModule implements CarModule {
                 stopx = Math.abs(pslope)/(Math.abs(pslope)+Math.abs(oslope));
                 stopy = 0;
             }
+            if(oslope==0 && pslope==0) {
+                stopx = 0;
+                stopy = 0;
+            }
             if(stopx<0||stopx>1) System.out.println("UH OH THERE IS AN ERROR");
             for(float t=0;t<1;t+=iter) {
                 float tt = (t>=0.5f)?t+iter:t;
