@@ -17,7 +17,7 @@ import static org.avphs.coreinterface.CarCommand.stop;
 
 public class DrivingModule implements CarModule {
 
-    private RacingLine[] racingline;
+    private RacingLine[] racingLine;
     private ArrayList<RoadData> roadData = new ArrayList<RoadData>();
     private RacingLinePoint[] racingLinePoints;
     private RoadData currentSegment;
@@ -65,27 +65,9 @@ public class DrivingModule implements CarModule {
         float x = 0; float y = 0;
         if (racingLinePoints == null) {
             try {
-                File file = new File("driving/src/main/java/org.avphs.driving/org/avphs/driving/bruh.txt");
-                Scanner sc = new Scanner(file);
-                int count = 0;
-                while (sc.hasNextLine()) {
-                    count++;
-                    sc.nextLine();
-                }
+                racingLine = new RacingLine[]{(RacingLine)carData.getModuleData("RacingLine")};
 
-                racingLinePoints = new RacingLinePoint[count];
-                count = 0;
-
-                sc = new Scanner(file);
-                while (sc.hasNextLine()) {
-                    String s = sc.nextLine();
-                    int pos = s.indexOf(" ");
-                    int nextPos = s.substring(pos+1).indexOf(" ")+pos;
-                    racingLinePoints[count] = new RacingLinePoint(Float.valueOf(s.substring(0,pos)),
-                            Float.valueOf(s.substring(pos+1, nextPos)),
-                            Float.valueOf(s.substring(nextPos+1)));
-                    count++;
-                }
+                racingLinePoints = racingLine[0].getRacingLinePoints();
 
                 analyzeRacingLine();
 
