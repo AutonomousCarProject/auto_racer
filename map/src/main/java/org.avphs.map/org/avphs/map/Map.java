@@ -20,7 +20,7 @@ public class Map {
         // [x][y]
         mapData = new boolean[1000][1000];
 
-        for(int i = 0; i < 1000; i++)
+        /*for(int i = 0; i < 1000; i++)
         {
             for(int j = 0; j < 1000; j++)
             {
@@ -40,7 +40,7 @@ public class Map {
             {
                 mapData[i][j] = false;
             }
-        }
+        }*/
     }
 
     /**
@@ -64,10 +64,26 @@ public class Map {
         JFrame frame = new JFrame("Display");
         frame.setSize(mapData.length, mapData[0].length);
         frame.setVisible(true);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setResizable(false);
         frame.setLayout(new BorderLayout());
         frame.add(new Display(mapData), BorderLayout.CENTER);
+    }
+
+    public void setValueAtIndex(float xlocation, float ylocation, boolean value)
+    {
+        int x = Math.round(xlocation); int y = Math.round(ylocation);
+        mapData[x][ y] = value;
+        mapData[x][ y + 1] = value;
+        mapData[x][ y - 1] = value;
+
+        mapData[x + 1][ y] = value;
+        mapData[x + 1][ y + 1] = value;
+        mapData[x + 1][ y - 1] = value;
+
+        mapData[x - 1][ y] = value;
+        mapData[x - 1][ y + 1] = value;
+        mapData[x - 1][ y - 1] = value;
     }
 
 }

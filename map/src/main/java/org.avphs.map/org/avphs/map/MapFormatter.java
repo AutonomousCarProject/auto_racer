@@ -15,12 +15,26 @@ public class MapFormatter {
 
     private Map map; //Map to be formatted
 
+    public MapUtils utils = new MapUtils();
+
+    private ArrayList<int[]> gapCoords = new ArrayList<int[]>(); // Stores coordinate locations of gaps on track.
+
     float[] pos = new float[2]; //position of car from position group
 
     float angle; // angle of car
 
+    private float[] pixelToDistanceLookup; // = (lookup table will be here) index = pixel height value = real life distance
 
 
+    public float calcDistance(int pixelheight)
+    {
+        float distance;
+        double a = 249.679; double d = 6.24099;
+
+        distance = (float)((a * d)/(a - (double)pixelheight));
+        return distance;
+
+    }
 
     public MapFormatter(Map map){
         this.map = map;
@@ -38,6 +52,116 @@ public class MapFormatter {
      */
     public void AddData(float[] pos, float angle, int[] bottomPoints){
         //TODO: actually have a way to interpret these points being sent in
+        //Assuming map is all false to begin with
+        //float c = calcDistance(bottomPoints[319]); //319 is center pixel of wall.
+        //testing other distance calc.
+        //float c = (float)utils.getRealLifePixelDistance(500, bottomPoints[500]);
+        int[] stuffToAddToPos = new int[2];
+        for (int i = 0; i < 5; i++)
+        {
+            stuffToAddToPos = utils.getRealLifePixelDistance(i, bottomPoints[i]);
+            map.setValueAtIndex(pos[0] + stuffToAddToPos[0], pos[1] + stuffToAddToPos[1], true);
+        }
+        for (int i = 634; i < 640; i++)
+        {
+            stuffToAddToPos = utils.getRealLifePixelDistance(i, bottomPoints[i]);
+            map.setValueAtIndex(pos[0] + stuffToAddToPos[0], pos[1] + stuffToAddToPos[1], true);
+        }
+
+        //Note: we probably should be looking at more than just the center or we will have trouble completely building the map.
+        //We will also have to implement a way to fill in holes on map
+        //Formula: x + csin(theta) , b + ccos(theta)
+
+        //ARGS 1 & 2 MIGHT NEED TO BE +/- DEPENDING ON DIRECTION
+        //map.setValueAtIndex((float)( pos[0] + (c * Math.sin(angle))) ,(float)( pos[1] + (c * Math.cos(angle))) , true);
+
+        //c = (float)utils.getRealLifePixelDistance(100, bottomPoints[100]);
+       // map.setValueAtIndex((float)( pos[0] + (c * Math.sin(angle))) ,(float)( pos[1] + (c * Math.cos(angle))) , true);
+
+        //7/15/2019: Ok... we have the code working and detecting outside walls, however, we also need to build the inside walls to complete the track.
+
+    }
+
+    public int scanTrack()
+    {
+        /*scanTrack should scan the outside and inside walls of the track and return the number of gaps in the walls of the track
+        in the map we have created. If there are zero gaps we can then go on to fill the track.
+         */
+
+        gapCoords.clear(); //Clears arraylist to fill with new gap coordinates every time scanTrack is called.
+
+        int numberOfGaps = 0;
+
+        //First scan map array and find first instance of outside track.
+
+        //Start scanning through wall
+
+        //Scan up and down through track.
+
+        //If there is a gap in track walls, add one to gap counter and store point in gapCoords.
+
+        //Find the next closest occurence of the outside track wall.
+
+        //At the end, return total number of gaps in the track.
+
+        return numberOfGaps;
+    }
+
+    public boolean fixTrack(ArrayList<int[]> gapCoordinates)
+    {
+         /*
+        fixTrack should be ran if we found gaps in the walls of the track on our map. After fix track tries to fix the track, it
+        should return whether the track has been fixed or cannot be fixed.
+         */
+
+        boolean fixed = false;// For now I just set as false right away as we MIGHT just be calling this function only when the track is broken to begin with anyways.
+
+        int maxScanDimensions = 20; /*20x20 should be the max dimensions for a scan and fix to take place. Any scan larger will
+        compromise the accuracy of the map.
+        */
+
+        //Go through gapCoords arraylist and visit each location of a gap in the track wall.
+
+        //Connect ends of track wall gap
+
+        //Scan track, and if the track has been fixed, return true. If the track has not been fixed, return false.
+        if (scanTrack() == 0)
+        {
+            fixed = true;
+        }
+
+        return fixed;
+    }
+
+
+
+
+    public void fillTrack()//When the track walls are complete and the track has no gaps, fill in between the walls with track booleans as well.
+    {
+        //7/16/19: This code needs to be changed so that it fills when the walls are more than 1 unit thick. Raymond will explain.
+        boolean trackToggle = false;
+        int counter = 0;
+        for (int i = 0; i < 1000; i++)
+        {
+            for (int j = 0; j < 1000; j++)
+            {
+                if (map.getMap()[i][j])
+                {
+                    if (counter == 0)
+                    {
+                        trackToggle = true;
+                        counter++;
+                    }
+                    else if (counter == 1)
+                    {
+                        trackToggle = false;
+                        counter--;
+                    }
+
+                }
+                map.setValueAtIndex((float) i, (float) j, trackToggle);
+            }
+        }
     }
 
     /**
