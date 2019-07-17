@@ -13,7 +13,7 @@ interface ImageProcessingInterface {
 public class ImageProcessing implements ImageProcessingInterface {
 
 
-    enum PosterColor {
+    public enum PosterColor {
         RED(0xFF0000, (short)0),
         GREEN(0x00FF00, (short)1),
         BLUE(0x0000FF, (short)2),
