@@ -4,13 +4,15 @@ package org.avphs.map;
 import org.avphs.coreinterface.CarCommand;
 import org.avphs.coreinterface.CarData;
 import org.avphs.coreinterface.CarModule;
+import org.avphs.image.ImageData;
 import org.avphs.image.ImageModule;
+import org.avphs.position.PositionData;
 import org.avphs.position.PositionModule;
 
 public class MapModule implements CarModule {
 
-    private ImageModule imageModule;
-    private PositionModule positionModule;
+    private ImageData imageData;
+    private PositionData positionModule;
 
     private Map map = new Map();
     private FakeDataStreamForMap fakedata = new FakeDataStreamForMap();
@@ -27,11 +29,12 @@ public class MapModule implements CarModule {
     }
     @Override
     public void init(CarData carData) {
-        imageModule = (ImageModule) carData.getModuleData("image");
-        System.out.println("Image Module Found" + imageModule.getClass());
-        positionModule = (PositionModule) carData.getModuleData("position");
-        System.out.println("Position Module Found" + positionModule.getClass());
-        //map.showMap();
+
+        //modules are only used in update
+        //DO NOT GET THE MODULES HERE ATM
+       // positionModule = (PositionData)carData.getModuleData("position");
+        //imageData = (ImageData)carData.getModuleData("image");
+
         mapformatter.utils.setupDistanceLookup();
         //mapUtilities.setupSineAndCosine();   --Commented out because we are not using any of these yet
     }
@@ -43,6 +46,12 @@ public class MapModule implements CarModule {
 
     @Override
     public void update(CarData carData) {
+
+        positionModule = (PositionData)carData.getModuleData("position");
+        imageData = (ImageData) carData.getModuleData("image");
+
+
+
         fakedata.updatePos();
         mapformatter.AddData(fakedata.returnPos(), (float)fakedata.runningRadianTotal, fakedata.bottomOuterWallHeights);
         if (fakedata.done) {
