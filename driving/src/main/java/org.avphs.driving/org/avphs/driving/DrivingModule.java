@@ -5,15 +5,10 @@ import org.avphs.coreinterface.CarData;
 import org.avphs.coreinterface.CarModule;
 import org.avphs.racingline.RacingLine;
 import org.avphs.racingline.RacingLinePoint;
-import org.avphs.traksim.TrakSim;
 
 import java.util.ArrayList;
-import java.io.*;
-import java.util.Scanner;
 
-import static org.avphs.coreinterface.CarCommand.accelerate;
-import static org.avphs.coreinterface.CarCommand.steer;
-import static org.avphs.coreinterface.CarCommand.stop;
+import static org.avphs.coreinterface.CarCommand.*;
 
 public class DrivingModule implements CarModule {
 
@@ -56,12 +51,14 @@ public class DrivingModule implements CarModule {
 
         }
         return new CarCommand[] {
-                accelerate(true, throttle), steer(true, angle)
+                accelerate(true, throttle),
+                steer(true, angle)
         };
     }
 
     @Override
     public void update(CarData carData) {
+        /*
         float x = 0; float y = 0;
         if (racingLinePoints == null) {
             try {
@@ -96,7 +93,7 @@ public class DrivingModule implements CarModule {
                 steer.changeCurrentSegment(currentSegment);
                 steer.changeCurrentPos(currentPos);
 
-                speed.initialize(currentSegment, nextSegment);
+                //speed.initialize(currentSegment, nextSegment);
                 speed.setCurrentPos(currentPos);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -112,7 +109,7 @@ public class DrivingModule implements CarModule {
                 count = 0;
             }
             count++;
-        }
+        }//*/
     }
 
     public void tempUpdate(CarData carData){
@@ -235,7 +232,7 @@ public class DrivingModule implements CarModule {
 
     public void getThrottle() { //returns the throttle of the car from 0 to 180
         speed.setCurrentPos(currentPos);
-        speed.newSegment(nextSegment);
+        //speed.newSegment(nextSegment);
 
         throttle = speed.getThrottle();
     }

@@ -92,6 +92,7 @@ public class CarCore {
                 Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory("Command Listener"));
         commandListeningExecutorService.scheduleAtFixedRate(this::commandListen, 0, Math.round(1000.0 / FPS),
                 TimeUnit.MILLISECONDS);
+
     }
 
     private void update() {
