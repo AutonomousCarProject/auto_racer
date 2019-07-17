@@ -73,11 +73,13 @@ public class CarCore {
         drivingModule.init(carData);
         imageModule.init(carData);
         positionTrackingModule.init(carData);
+        racingLineModule.init(carData);
 
         updatingCarModules.add(windowModule);
         updatingCarModules.add(imageModule);
         updatingCarModules.add(positionTrackingModule);
         updatingCarModules.add(drivingModule);
+        updatingCarModules.add(racingLineModule);
 
     }
 

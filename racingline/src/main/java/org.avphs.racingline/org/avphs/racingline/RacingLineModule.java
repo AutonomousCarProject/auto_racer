@@ -4,9 +4,8 @@ import org.avphs.coreinterface.CarCommand;
 import org.avphs.coreinterface.CarData;
 import org.avphs.coreinterface.CarModule;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.*;
+import java.io.*;
 
 public class RacingLineModule implements CarModule {
     private ArrayList<Point> outerWall = new ArrayList<Point>();
@@ -31,8 +30,25 @@ public class RacingLineModule implements CarModule {
     }
 
     @Override
-    public void init(CarData carData) {
-
+    public void init(CarData carData){
+        try {
+            BufferedReader bufread = new BufferedReader(new FileReader("testmap.txt"));
+            StringTokenizer st = new StringTokenizer(bufread.readLine());
+            rows = Integer.parseInt(st.nextToken());
+            columns = Integer.parseInt(st.nextToken());
+            boolean[][] testMap = new boolean[rows][columns];
+            for (int i = 0; i < rows; i++) {
+                String currentRow = bufread.readLine();
+                for (int j = 0; j < columns; j++) {
+                    testMap[i][j] = currentRow.charAt(j) == '1';
+                }
+            }
+            makeRacingLine(testMap);
+            bufread.close();
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+        carData.addData("RacingLine",center);
     }
 
     @Override
@@ -71,10 +87,10 @@ public class RacingLineModule implements CarModule {
      * @see RacingLine
      */
     public RacingLine getRacingLine() {
-        if (bezierCurveLine == null) {
+        if (center == null) {
             System.out.println("Warning: Racing line has not yet been created. To create a racing line, run getMiddleLine");
         }
-        return bezierCurveLine;
+        return center;
     }
     //endregion
 
