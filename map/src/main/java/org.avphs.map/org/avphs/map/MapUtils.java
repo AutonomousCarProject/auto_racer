@@ -1,5 +1,7 @@
 package org.avphs.map;
 
+import java.util.Arrays;
+
 class MapUtils {
     private double[] cos = new double[721];
     private double[] sin = new double[721];
@@ -47,32 +49,43 @@ class MapUtils {
         return distances;
     }
 
-        public double getSine ( int angleInDegrees)//get sine value from degree in int from 0 to 360
-        {
-            double result = sin[angleInDegrees];
-            return result;
-        }
-        public void fixTrack( int[] imageInput){ //TODO: Finish later.
-            int previousPoint = imageInput[0]; //390
-            int currentPoint; // keeps things in track
-            int beforeMissing;
-            int afterMissing;
-            for (int i = 0; i < imageInput.length; i++) {
-                currentPoint = imageInput[i];
-                if (currentPoint != 0) {
-                    previousPoint = currentPoint; // self explanatory.
-                } else {
-                    beforeMissing = i - 1; //Keeps track of the previous index before it turned 0.
-                    while (imageInput[i] == 0) { // Only when it reaches a missing hole.
-
+    public static void fixTrack(int[] imageInput) { //TODO: Finish later.
+        float holeStart = 0, holeStartIndex = 0, holeEnd = 0; // pixel heights of wall at beginning and end of hole
+        if (imageInput[0] != 0){
+            for (int i = 1; i < imageInput.length; i++) {
+                if (imageInput[i] == 0 && imageInput[i - 1] != 0) {
+                    holeStart = imageInput[i - 1];
+                    holeStartIndex = i - 1;
+                } if (imageInput[i] != 0 && imageInput[i - 1] == 0) {
+                    holeEnd = imageInput[i];
+                    float holeLength = i - holeStartIndex;
+                    float step = (holeStart - holeEnd) / holeLength;
+                    for (int j = i - 1; j > holeStartIndex; j--) { //Every time he's adding to itself
+                        imageInput[j] = (int)(holeEnd += step); //if int it's bad
                     }
                 }
             }
+        } else {
+            System.out.println("Debug Statement: There is a hole in the beginning of the image, why?");
         }
-        public double getCosine(int angleInDegrees)//get cosine value from degree in int from 0 to 360
-        {
-            double result = cos[angleInDegrees];
-            return result;
-        }
+    }
 
+    public double getSine(int angleInDegrees)//get sine value from degree in int from 0 to 360
+    {
+        double result = sin[angleInDegrees];
+        return result;
+    }
+
+    public double getCosine(int angleInDegrees)//get cosine value from degree in int from 0 to 360
+    {
+        double result = cos[angleInDegrees];
+        return result;
+    }
+
+    public static void main(String[] args) {
+        int[] testArr = {250, 0, 0, 0, 0, 250, 250, 250, 230, 0, 0, 0,0,0 ,270};
+        fixTrack(testArr);
+        System.out.println(Arrays.toString(testArr));
+    }
 }
+
