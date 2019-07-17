@@ -83,7 +83,6 @@ public class RacingLineModule implements CarModule {
         getWalls();
         calcMiddleLine();
         center.sortPoints();
-        deletePoints(30);
         connectTheDots();
     }
 
