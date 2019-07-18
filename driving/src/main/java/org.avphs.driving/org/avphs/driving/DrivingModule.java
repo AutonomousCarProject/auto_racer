@@ -1,5 +1,6 @@
 package org.avphs.driving;
 
+import org.avphs.calibration.CalibrationModule;
 import org.avphs.coreinterface.CarCommand;
 import org.avphs.coreinterface.CarData;
 import org.avphs.coreinterface.CarModule;
@@ -22,12 +23,19 @@ public class DrivingModule implements CarModule {
     private int throttle = 10;
     private boolean stop = false;
 
-    private int MAX_SPEED;
-    private int MAX_HARD_BRAKE;
     private VectorPoint currentPos;
 
+    /*From speed:*/
+    private final byte MAX_HARD_BRAKE;  //max throttle for braking w/o skidding
+    private final byte FLOOR;           //floor index
+    private int brakeDist;
+    private float[] currentPosOnLine;   //where we "should" be on the racing line. Updates with every getThrottle call.
+    private short throttleForSeg;
+
+    /*From steering*/
+    private final float MAX_DIST_FROM_RL;
+
     // FIXME: THIS WONT EVER NOT THROW A NULL POINTER EXCEPTION!!!!
-    Speed speed = new Speed();
     Steering steer = new Steering();
 
     private int count = 0;
@@ -58,58 +66,26 @@ public class DrivingModule implements CarModule {
 
     @Override
     public void update(CarData carData) {
-        /*
-        float x = 0; float y = 0;
-        if (racingLinePoints == null) {
-            try {
-                File file = new File("driving/src/main/java/org.avphs.driving/org/avphs/driving/bruh.txt");
-                Scanner sc = new Scanner(file);
-                int count = 0;
-                while (sc.hasNextLine()) {
-                    count++;
-                    sc.nextLine();
-                }
 
-                racingLinePoints = new RacingLinePoint[count];
-                count = 0;
+    }
 
-                sc = new Scanner(file);
-                while (sc.hasNextLine()) {
-                    String s = sc.nextLine();
-                    int pos = s.indexOf(" ");
-                    int nextPos = s.substring(pos+1).indexOf(" ")+pos;
-                    racingLinePoints[count] = new RacingLinePoint(Float.valueOf(s.substring(0,pos)),
-                            Float.valueOf(s.substring(pos+1, nextPos)),
-                            Float.valueOf(s.substring(nextPos+1)));
-                    count++;
-                }
+    public DrivingModule(){
+        FLOOR = 0;
+        MAX_HARD_BRAKE = 80; //dummy value
+        MAX_DIST_FROM_RL = 10;
+    }
 
-                analyzeRacingLine();
-
-                currentPos = new VectorPoint(racingLinePoints[0].getX(), racingLinePoints[0].getY(), 90, 90);
-                currentSegment = roadData.get(0);
-                nextSegment = roadData.get(1);
-
-                steer.changeCurrentSegment(currentSegment);
-                steer.changeCurrentPos(currentPos);
-
-                //speed.initialize(currentSegment, nextSegment);
-                speed.setCurrentPos(currentPos);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+    public void initialize(RoadData startSegment, RoadData nextSegment){
+        currentSegment = startSegment;
+        this.nextSegment = nextSegment;
+        if (currentSegment instanceof Straight){
+            brakeDist = CalibrationModule.getSpeedChangeDist(FLOOR, CalibrationModule.getMaxSpeed(FLOOR,
+                    currentSegment.radius), CalibrationModule.getMaxSpeed(FLOOR, nextSegment.radius));
+            throttleForSeg = (short)180;
         } else {
-            currentPos = new VectorPoint(racingLinePoints[count].getX(), racingLinePoints[count].getY(), 90, 90);
-            currentSegment = roadData.get(0);
-            currentSegment();
-            getDirection();
-            getThrottle();
-
-            if (count+1 == racingLinePoints.length){
-                count = 0;
-            }
-            count++;
-        }//*/
+            throttleForSeg = CalibrationModule.getThrottle(FLOOR, currentSegment.radius,
+                    CalibrationModule.getMaxSpeed(FLOOR, currentSegment.radius));
+        }
     }
 
     public void tempUpdate(CarData carData){
@@ -122,8 +98,6 @@ public class DrivingModule implements CarModule {
         getThrottle();
     }
 
-    public DrivingModule(){
-    }
     public Curve findRadiusAndCenter(RacingLinePoint rcl1, RacingLinePoint rcl2, RacingLinePoint rcl3) {
         //computers radius of three points (rcl = racing line point)
         float x12 = rcl1.getX() - rcl2.getX();
@@ -135,8 +109,8 @@ public class DrivingModule implements CarModule {
         float y31 = rcl3.getY() - rcl1.getY();
         float y21 = rcl2.getY() - rcl1.getY();
 
-       float x31 = rcl3.getX() - rcl1.getX();
-       float x21 = rcl2.getX() - rcl1.getX();
+        float x31 = rcl3.getX() - rcl1.getX();
+        float x21 = rcl2.getX() - rcl1.getX();
          // x1^2 - x3^2
         float sx13 =(float)( Math.pow(rcl1.getX(), 2) - Math.pow(rcl3.getX(), 2));
 
@@ -185,7 +159,7 @@ public class DrivingModule implements CarModule {
         }
     }
 
-    public void currentSegment(){
+    public void currentSegment(){   //checks to see if we need to move to a new segment
         float x = currentPos.getX(); float y = currentPos.getY();
         if (currentSegment instanceof Straight){
             Straight seg = (Straight)currentSegment;
@@ -205,7 +179,7 @@ public class DrivingModule implements CarModule {
         }
     }
 
-    public void changeSegment(){
+    public void changeSegment(){    //moves to the new segment
         int pos = roadData.indexOf(currentSegment);
         for (int i = 0; i < 2; i++) {
             pos++;
@@ -218,22 +192,58 @@ public class DrivingModule implements CarModule {
                 nextSegment = roadData.get(pos);
             }
         }
+        if (currentSegment instanceof Straight){
+            brakeDist = CalibrationModule.getSpeedChangeDist(FLOOR, CalibrationModule.getMaxSpeed(FLOOR,
+                    currentSegment.radius), CalibrationModule.getMaxSpeed(FLOOR, nextSegment.radius));
+            throttleForSeg = (short)180;
+        } else {
+            throttleForSeg = CalibrationModule.getThrottle(FLOOR, currentSegment.radius,
+                    CalibrationModule.getMaxSpeed(FLOOR, currentSegment.radius));
+        }
     }
 
-    public void getDirection(){ //returns the direction of the car from 0 to 180
-        steer.changeCurrentPos(currentPos);
-        steer.changeCurrentSegment(currentSegment);
+    private boolean onRacingLine(){  //Returns whether we are close enough to the racing line
+        float distance;
+        if (currentSegment instanceof Straight){
+            Straight segment = (Straight)currentSegment;
+            distance = Calculator.findStraightDistance(currentPos.getX(), currentPos.getY(), segment.getB(),
+                    segment.getSlope());
+        } else {
+            Turn segment = (Turn)currentSegment;
+            distance = Calculator.findTurnDistance(currentPos.getX(),currentPos.getY(), new float[]{segment.getCenterX(),
+                    segment.getCenterY()}, segment.getRadius());
+        }
+        return (distance < MAX_DIST_FROM_RL) || (distance == MAX_DIST_FROM_RL);
+    }
 
-        angle = steer.getAngle();
-        if (angle == (float)-1){
+    /*  Steer function  */
+    public void getDirection(){ //returns the direction of the car from 0 to 180
+        if (onRacingLine()) {
+            if (currentSegment instanceof Straight) {
+                angle = 90;
+            } else {
+                //FIXME: Wait for Calibration to implement
+                angle = CalibrationModule.getAngle(currentSegment.radius);
+            }
+        } else {
+            angle = -1;
             stop = true;
         }
     }
 
+    /*  Speed function  */
     public void getThrottle() { //returns the throttle of the car from 0 to 180
-        speed.setCurrentPos(currentPos);
-        //speed.newSegment(nextSegment);
-
-        throttle = speed.getThrottle();
+        if (currentSegment instanceof Straight){
+            currentPosOnLine = Calculator.findClosestPoint(currentPos.getX(), currentPos.getY(), //Update
+                    ((Straight)currentSegment).getSlope(), ((Straight)currentSegment).getB());     //currentPosOnLine
+            if ((int)Math.sqrt(Math.pow(currentSegment.endX - currentPosOnLine[0], 2.0) //If we're not to the brake
+                    + Math.pow(currentSegment.endY - currentPosOnLine[1], 2.0)) > brakeDist){ //point yet,
+                throttle = 180;     //full throttle
+            } else {
+                throttle = MAX_HARD_BRAKE;
+            }
+        } else {
+            throttle = throttleForSeg;
+        }
     }
 }
