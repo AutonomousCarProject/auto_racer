@@ -5,10 +5,10 @@ public class Steering {
     private VectorPoint currentPos;
     private RoadData currentSegment;
     private short radius;
-    private float maxDistanceFromRacingLine;
+    private final float MAX_DIST_FROM_RL;
 
     public Steering() {
-        maxDistanceFromRacingLine = 10;
+        MAX_DIST_FROM_RL = 10;
     }
 
     public void changeCurrentPos(VectorPoint newCurrentPos) {
@@ -23,12 +23,14 @@ public class Steering {
         float distance;
         if (currentSegment instanceof Straight){
             Straight segment = (Straight)currentSegment;
-            distance = Calculator.findStraightDistance(currentPos.getX(), currentPos.getY(), segment.getB(), segment.getSlope());
+            distance = Calculator.findStraightDistance(currentPos.getX(), currentPos.getY(), segment.getB(),
+                    segment.getSlope());
         } else {
             Turn segment = (Turn)currentSegment;
-            distance = Calculator.findTurnDistance(currentPos.getX(),currentPos.getY(), new float[]{segment.getCenterX(), segment.getCenterY()}, segment.getRadius());
+            distance = Calculator.findTurnDistance(currentPos.getX(),currentPos.getY(), new float[]{segment.getCenterX(),
+                    segment.getCenterY()}, segment.getRadius());
         }
-        return (distance < maxDistanceFromRacingLine) || (distance == maxDistanceFromRacingLine);
+        return (distance < MAX_DIST_FROM_RL) || (distance == MAX_DIST_FROM_RL);
     }
 
     public int getAngle(){
@@ -38,7 +40,7 @@ public class Steering {
             } else {
                 radius = currentSegment.getRadius();
 
-                //FIXME: DONT DO THIS!
+                //FIXME: Wait for Calibration to implement
                 //return CalibrationModule.getAngles(radius);
             }
         } else {
