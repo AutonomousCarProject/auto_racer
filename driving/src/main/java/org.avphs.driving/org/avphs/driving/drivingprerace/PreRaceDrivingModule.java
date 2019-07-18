@@ -2,6 +2,8 @@ package org.avphs.driving.drivingprerace;
 
 import org.avphs.coreinterface.*;
 
+import org.avphs.calibration.CalibrationModule;
+
 import org.avphs.image.ImageData;
 
 import static org.avphs.coreinterface.CarCommand.*;
