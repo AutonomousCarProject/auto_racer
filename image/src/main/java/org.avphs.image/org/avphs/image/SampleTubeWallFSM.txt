@@ -1,0 +1,503 @@
+// Sample FSM to recogize tube-wall (does not recognize hilites)...
+// Assume posterzed grays 0=black,1=v.dk,2=dark,3=m.dk,4=m.lt,5=lite,6=vlt,7=white
+// Assume starting state =1 in floor (not yet seen any wall)
+//   states allocated continuous from 1 (still in floor)
+// State 2: saw black bottom, state 3: confirmed black bottom,
+//  4/5:  saw/confirmed very dark at bottom
+//  6/7:  saw/confirmed dark at bottom
+//  8/9:  saw/confirmed med.dark near bottom
+// 10/11: saw/confirmed med.light near bottom
+// 12/13: saw/confirmed light near bottom
+// 14/15: saw/confirmed very light near bottom
+// 16/17: saw/confirmed white near bottom
+// 18/19: saw/confirmed very light approaching middle
+// 20/21: saw/confirmed light approaching middle
+// 22/23: saw/confirmed med.light approaching middle
+// 24/25: saw/confirmed med.dark approaching middle
+// 26/27: saw/confirmed dark approaching middle
+// 28/29: saw/confirmed very dark approaching middle
+// 30/31: saw/confirmed black at middle
+// 32/33: saw/confirmed very dark leaving middle
+// 34/35: saw/confirmed dark leaving middle
+// 36/37: saw/confirmed med.dark leaving middle
+// 38/39: saw/confirmed med.light approaching top
+// 40/41: saw/confirmed light approaching top
+// 42/43: saw/confirmed very light approaching top
+// 44/45: saw/confirmed white at top
+// 46/47/48/49: saw untimely retrograde bk/vd/dk/md at bottom
+// 50/51/52: saw untimely retrograde ml/lt/vl near middle (unused)
+// 53/54/55/56: saw untimely retrograde bk/vd/dk/md at top
+// 57/58/59: saw untimely retrograde ml/lt/vl at top
+
+// format: state.color = newstate + action -- comment; or else "=fail" or "=accept"
+
+1.0 = 2 + bottom -- black is bottom of tube-wall, save pix row
+1.1 = 4 + bottom -- ditto very dark gray
+1.2 = 6 + bottom -- ditto dark gray
+1.3 = 8          -- ditto medium dark
+1.4 = 1          -- medium light: bottom not yet seen
+1.5 = 1          -- light gray: ditto
+1.6 = 1          -- very light gray: ditto
+1.7 = 1          -- white: ditto
+
+2.0 = 3          -- confirmed start of tube-wall
+2.1 = 5          -- ditto, now lighter
+2.2 = 7          -- ditto
+2.3 = 8          -- distant wall?
+2.4 = 10         -- ditto
+2.5 = 1          -- too soon for light: go back to floor (could test recent botm)
+2.6 = 1          -- too soon for very light: ditto
+2.7 = 1          -- too soon for white: ditto
+//    2/3      4/5     6/7     8/9    10/11   12/13   14/15  16/17
+//  0=black, 1=v.dk, 2=dark, 3=m.dk, 4=m.lt, 5=lite, 6=vlt, 7=white//   30/31    28/29   26/27   24/25   22/23   20/21   18/19//            32/33   34/35   36/37   38/39   40/41   42/43  44/45
+
+3.0 = 3          -- saw solid black, now waiting for lighter
+3.1 = 4          -- got very dark
+3.2 = 6          -- got dark gray
+3.3 = 8          -- getting lighter
+3.4 = 10         -- ditto
+3.5 = 12         -- ditto
+3.6 = fail       -- too soon for very light: not a tube-wall
+3.7 = fail       -- too soon for white: ditto
+
+4.0 = 3          -- hard black next to very dark OK
+4.1 = 5          -- confirmed very dark, now waiting for lighter
+4.2 = 7          -- ditto, now lighter
+4.3 = 9          -- ditto
+4.4 = 10         -- distant wall advances faster
+4.5 = 12         -- ditto
+4.6 = 14         -- ditto
+4.7 = fail       -- too soon for white: not a tube-wall
+
+5.0 = 46         -- retrograde black next to very dark
+5.1 = 5          -- confirmed very dark, now waiting for lighter
+5.2 = 6          -- ditto, now lighter
+5.3 = 8          -- ditto
+5.4 = 10         -- ditto
+5.5 = 12         -- ditto
+5.6 = 14         -- ditto
+5.7 = fail       -- too soon for white: not a tube-wall
+
+6.0 = 46         -- retrograde black next to dark
+6.1 = 47         -- retrograde very dark next to dark
+6.2 = 7          -- confirmed dark
+6.3 = 9          -- ditto, now lighter
+6.4 = 10         -- ditto
+6.5 = 12         -- ditto
+6.6 = 14         -- ditto
+6.7 = 16         -- ditto
+
+7.0 = 46         -- retrograde black next to dark
+7.1 = 47         -- retrograde very dark next to dark
+7.2 = 7          -- confirmed dark
+7.3 = 9          -- ditto, now lighter
+7.4 = 10         -- ditto
+7.5 = 12         -- ditto
+7.6 = 14         -- ditto
+7.7 = 16         -- ditto
+
+//  0=black, 1=v.dk, 2=dark, 3=m.dk, 4=m.lt, 5=lite, 6=vlt, 7=white
+
+8.0 = 46         -- retrograde black next to med.dark
+8.1 = 47         -- retrograde very dark next to med.dark
+8.2 = 48         -- retrograde dark next to med.dark
+8.3 = 9          -- confirmed med.dark
+8.4 = 11         -- ditto, now lighter
+8.5 = 12         -- ditto
+8.6 = 14         -- ditto
+8.7 = 16         -- ditto
+
+9.0 = 46         -- retrograde black next to med.dark
+9.1 = 47         -- retrograde very dark next to med.dark
+9.2 = 48         -- retrograde dark next to med.dark
+9.3 = 9          -- confirmed med.dark
+9.4 = 10         -- ditto, now lighter
+9.5 = 12         -- ditto
+9.6 = 14         -- ditto
+9.7 = 16         -- ditto
+
+10.0 = fail       -- too late for black: not a tube-wall
+10.1 = fail       -- ditto very dark
+10.2 = fail       -- ditto dark
+10.3 = 49         -- retrograde med.dark
+10.4 = 11         -- confirmed med.lite
+10.5 = 12         -- ditto, now lighter
+10.6 = 14         -- ditto
+10.7 = 16         -- ditto
+
+11.0 = fail       -- too late for black: not a tube-wall
+11.1 = fail       -- ditto very dark
+11.2 = 48         -- retrograde dark next to med.lite
+11.3 = 49         -- retrograde med.dark
+11.4 = 11         -- confirmed med.lite
+11.5 = 12         -- ditto, now lighter
+11.6 = 14         -- ditto
+11.7 = 16         -- ditto
+
+12.0 = fail       -- too late for black: not a tube-wall
+12.1 = fail       -- ditto very dark
+12.2 = 26         -- starting back into shadow (dark) of center
+12.3 = 24         -- ditto (med.dark)
+12.4 = 22         -- ditto (med.lite)
+12.5 = 13         -- confirmed lite
+12.6 = 14         -- ditto, now lighter
+12.7 = 16         -- ditto
+
+13.0 = fail       -- too late for black: not a tube-wall
+13.1 = fail       -- ditto very dark
+13.2 = 26         -- starting back into shadow (dark) of center
+13.3 = 24         -- ditto (med.dark)
+13.4 = 22         -- ditto (med.lite)
+13.5 = 13         -- confirmed lite
+13.6 = 14         -- ditto, now lighter
+13.7 = 16         -- ditto
+
+//    2/3      4/5     6/7     8/9    10/11   12/13   14/15  16/17
+//  0=black, 1=v.dk, 2=dark, 3=m.dk, 4=m.lt, 5=lite, 6=vlt, 7=white//   30/31    28/29   26/27   24/25   22/23   20/21   18/19//            32/33   34/35   36/37   38/39   40/41   42/43  44/45
+
+14.0 = fail       -- too late for black: not a tube-wall
+14.1 = fail       -- ditto very dark
+14.2 = 26         -- starting back into shadow (dark) of center
+14.3 = 24         -- ditto (med.dark)
+14.4 = 22         -- ditto (med.lite)
+14.5 = 20         -- ditto lite
+14.6 = 15         -- confirmed very lite
+14.7 = 16         -- ditto, now lighter
+
+15.0 = fail       -- too late for black: not a tube-wall
+15.1 = fail       -- ditto very dark
+15.2 = 26         -- starting back into shadow (dark) of center
+15.3 = 24         -- ditto (med.dark)
+15.4 = 22         -- ditto (med.lite)
+15.5 = 20         -- ditto lite
+15.6 = 15         -- confirmed very lite
+15.7 = 16         -- ditto, now lighter
+
+16.0 = fail       -- too late/early for black: not a tube-wall
+16.1 = fail       -- ditto very dark
+16.2 = fail       -- ditto dark
+16.3 = 24         -- starting back into shadow (med.dark) of center
+16.4 = 22         -- ditto (med.lite)
+16.5 = 20         -- ditto lite
+16.6 = 18         -- ditto very lite
+16.7 = 17         -- confirmed white
+
+17.0 = fail       -- too late/early for black: not a tube-wall
+17.1 = fail       -- ditto very dark
+17.2 = fail       -- ditto dark
+17.3 = 24         -- starting back into shadow (med.dark) of center
+17.4 = 22         -- ditto (med.lite)
+17.5 = 20         -- ditto lite
+17.6 = 18         -- ditto very lite
+17.7 = 17         -- confirmed white
+
+18.0 = fail       -- too late/early for black: not a tube-wall
+18.1 = fail       -- ditto very dark
+18.2 = 26         -- heading into shadow (dark) of center
+18.3 = 24         -- ditto (med.dark)
+18.4 = 22         -- ditto (med.lite)
+18.5 = 20         -- ditto lite
+18.6 = 19         -- confirmed very lite
+18.7 = 17         -- retrograde white next to very lite
+
+19.0 = fail       -- too late/early for black: not a tube-wall
+19.1 = fail       -- ditto very dark
+19.2 = 26         -- heading into shadow (dark) of center
+19.3 = 24         -- ditto (med.dark)
+19.4 = 22         -- ditto (med.lite)
+19.5 = 20         -- ditto lite
+19.6 = 19         -- confirmed very lite
+19.7 = 17         -- retrograde white next to very lite
+
+//  0=black, 1=v.dk, 2=dark, 3=m.dk, 4=m.lt, 5=lite, 6=vlt, 7=white
+
+20.0 = fail       -- too late/early for black: not a tube-wall
+20.1 = 28         -- heading into shadow (very dark) of center
+20.2 = 26         -- ditto (dark)
+20.3 = 24         -- ditto (med.dark)
+20.4 = 22         -- ditto (med.lite)
+20.5 = 21         -- confirmed lite
+20.6 = 19         -- retrograde very lite next to lite
+20.7 = 17         -- retrograde white next to lite
+
+21.0 = fail       -- too late/early for black: not a tube-wall
+21.1 = 28         -- heading into shadow (very dark) of center
+21.2 = 26         -- ditto (dark)
+21.3 = 24         -- ditto (med.dark)
+21.4 = 22         -- ditto (med.lite)
+21.5 = 21         -- confirmed lite
+21.6 = 19         -- retrograde very lite next to lite
+21.7 = 17         -- retrograde white next to lite
+
+22.0 = 30         -- heading into shadow (black) of center
+22.1 = 28         -- ditto (very dark)
+22.2 = 26         -- ditto (dark)
+22.3 = 24         -- ditto (med.dark)
+22.4 = 23         -- confirmed med.lite
+22.5 = 21         -- retrograde lite next to med.lite
+22.6 = 19         -- retrograde very lite next to med.lite
+22.7 = 17         -- retrograde white next to med.lite
+
+23.0 = 30         -- heading into shadow (black) of center
+23.1 = 28         -- ditto (very dark)
+23.2 = 26         -- ditto (dark)
+23.3 = 24         -- ditto (med.dark)
+23.4 = 23         -- confirmed med.lite
+23.5 = 21         -- retrograde lite next to med.lite
+23.6 = 19         -- retrograde very lite next to med.lite
+23.7 = 17         -- retrograde white next to med.lite
+
+24.0 = 30         -- heading into shadow (black) of center
+24.1 = 28         -- ditto (very dark)
+24.2 = 26         -- ditto (dark)
+24.3 = 25         -- confirmed med.dark
+24.4 = 23         -- retrograde med.lite next to med.dark
+24.5 = 21         -- retrograde lite next to med.dark
+24.6 = 19         -- retrograde very lite next to med.dark
+24.7 = 17         -- retrograde white next to med.dark
+
+25.0 = 30         -- heading into shadow (black) of center
+25.1 = 28         -- ditto (very dark)
+25.2 = 26         -- ditto (dark)
+25.3 = 25         -- confirmed med.dark
+25.4 = 23         -- retrograde med.lite next to med.dark
+25.5 = 21         -- retrograde lite next to med.dark
+25.6 = 19         -- retrograde very lite next to med.dark
+25.7 = 17         -- retrograde white next to med.dark
+
+//    2/3      4/5     6/7     8/9    10/11   12/13   14/15  16/17
+//  0=black, 1=v.dk, 2=dark, 3=m.dk, 4=m.lt, 5=lite, 6=vlt, 7=white//   30/31    28/29   26/27   24/25   22/23   20/21   18/19//            32/33   34/35   36/37   38/39   40/41   42/43  44/45
+
+26.0 = 30         -- heading into shadow (black) of center
+26.1 = 28         -- ditto (very dark)
+26.2 = 27         -- confirmed dark
+26.3 = 25         -- retrograde med.dark next to dark
+26.4 = 23         -- retrograde med.lite
+26.5 = 21         -- retrograde lite
+26.6 = fail       -- too late/early for very lite: not a tube-wall
+26.7 = fail       -- ditto white
+
+27.0 = 30         -- heading into shadow (black) of center
+27.1 = 28         -- ditto (very dark)
+27.2 = 27         -- confirmed dark
+27.3 = 25         -- retrograde med.dark next to dark
+27.4 = 23         -- retrograde med.lite
+27.5 = 21         -- retrograde lite
+27.6 = fail       -- too late/early for very lite: not a tube-wall
+27.7 = fail       -- ditto white
+
+28.0 = 30         -- heading into shadow (black) of center
+28.1 = 29         -- confirmed very dark
+28.2 = 27         -- retrograde dark next to very dark
+28.3 = 25         -- retrograde med.dark
+28.4 = fail       -- too late/early for med.lite: not a tube-wall
+28.5 = fail       -- ditto lite
+28.6 = fail       -- ditto very lite
+28.7 = fail       -- ditto white
+
+29.0 = 30         -- heading into shadow (black) of center
+29.1 = 29         -- confirmed very dark
+29.2 = 27         -- retrograde dark next to very dark
+29.3 = 25         -- retrograde med.dark
+29.4 = fail       -- too late/early for med.lite: not a tube-wall
+29.5 = fail       -- ditto lite
+29.6 = fail       -- ditto very lite
+29.7 = fail       -- ditto white
+
+30.0 = 31         -- confirmed black at center
+30.1 = 32         -- getting lighter to very dark
+30.2 = 34         -- getting lighter to dark
+30.3 = 36         -- getting lighter to med.dark
+30.4 = 38         -- getting lighter to med.lite
+30.5 = fail       -- too late/early for lite: not a tube-wall
+30.6 = fail       -- ditto very lite
+30.7 = fail       -- ditto white
+
+31.0 = 31         -- confirmed black at center
+31.1 = 32         -- getting lighter to very dark
+31.2 = 34         -- getting lighter to dark
+31.3 = 36         -- getting lighter to med.dark
+31.4 = 38         -- getting lighter to med.lite
+31.5 = fail       -- too late/early for lite: not a tube-wall
+31.6 = fail       -- ditto very lite
+31.7 = fail       -- ditto white
+
+//    2/3      4/5     6/7     8/9    10/11   12/13   14/15  16/17
+//   30/31    28/29   26/27   24/25   22/23   20/21   18/19//  0=black, 1=v.dk, 2=dark, 3=m.dk, 4=m.lt, 5=lite, 6=vlt, 7=white//            32/33   34/35   36/37   38/39   40/41   42/43  44/45
+
+32.0 = 31         -- back to black
+32.1 = 33         -- confirmed very dark leaving center
+32.2 = 34         -- getting lighter to dark
+32.3 = 36         -- getting lighter to med.dark
+32.4 = 38         -- getting lighter to med.lite
+32.5 = fail       -- too late/early for lite: not a tube-wall
+32.6 = fail       -- ditto very lite
+32.7 = fail       -- ditto white
+
+33.0 = 31         -- back to black
+33.1 = 33         -- confirmed very dark leaving center
+33.2 = 34         -- getting lighter to dark
+33.3 = 36         -- getting lighter to med.dark
+33.4 = 38         -- getting lighter to med.lite
+33.5 = fail       -- too late/early for lite: not a tube-wall
+33.6 = fail       -- ditto very lite
+33.7 = fail       -- ditto white
+
+34.0 = 31         -- back to black
+34.1 = 33         -- back to very dark
+34.2 = 35         -- confirmed dark leaving center
+34.3 = 36         -- getting lighter to med.dark
+34.4 = 38         -- getting lighter to med.lite
+34.5 = 40         -- getting lighter to lite
+34.6 = fail       -- too late/early for very lite: not a tube-wall
+34.7 = fail       -- ditto white
+
+35.0 = 31         -- back to black
+35.1 = 33         -- back to very dark
+35.2 = 35         -- confirmed dark leaving center
+35.3 = 36         -- getting lighter to med.dark
+35.4 = 38         -- getting lighter to med.lite
+35.5 = 40         -- getting lighter to lite
+35.6 = fail       -- too late/early for very lite: not a tube-wall
+35.7 = fail       -- ditto white
+
+36.0 = 31         -- back to black
+36.1 = 33         -- back to very dark
+36.2 = 35         -- back to dark
+36.3 = 37         -- confirmed med.dark leaving center
+36.4 = 38         -- getting lighter to med.lite
+36.5 = 40         -- getting lighter to lite
+36.6 = 42         -- getting lighter to very lite
+36.7 = fail       -- too late/early for white: not a tube-wall
+
+37.0 = 31         -- back to black
+37.1 = 33         -- back to very dark
+37.2 = 35         -- back to dark
+37.3 = 37         -- confirmed med.dark leaving center
+37.4 = 38         -- getting lighter to med.lite
+37.5 = 40         -- getting lighter to lite
+37.6 = 42         -- getting lighter to very lite
+37.7 = fail       -- too late/early for white: not a tube-wall
+
+//    2/3      4/5     6/7     8/9    10/11   12/13   14/15  16/17
+//  0=black, 1=v.dk, 2=dark, 3=m.dk, 4=m.lt, 5=lite, 6=vlt, 7=white//   30/31    28/29   26/27   24/25   22/23   20/21   18/19//            32/33   34/35   36/37   38/39   40/41   42/43  44/45
+
+38.0 = fail       -- retrograde black next to med.lite
+38.1 = fail       -- retrograde very dark next to med.lite
+38.2 = fail       -- retrograde dark next to med.lite
+38.3 = 37         -- back to med.dark
+38.4 = 39         -- confirmed med.lite heading toward top
+38.5 = 40         -- getting lighter to lite
+38.6 = 42         -- getting lighter to very lite
+38.7 = 44         -- getting lighter to white
+
+39.0 = fail       -- retrograde black next to med.lite
+39.1 = fail       -- retrograde very dark next to med.lite
+39.2 = fail       -- retrograde dark next to med.lite
+39.3 = 37         -- back to med.dark
+39.4 = 39         -- confirmed med.lite heading toward top
+39.5 = 40         -- getting lighter to lite
+39.6 = 42         -- getting lighter to very lite
+39.7 = 44         -- getting lighter to white
+
+40.0 = accept     -- black next to lite is probably top
+40.1 = accept     -- very dark next to lite is probably top
+40.2 = accept     -- dark next to lite is probably top
+40.3 = accept     -- med.dark is probably top
+40.4 = 39         -- retrograde med.lite
+40.5 = 41         -- confirmed lite heading toward top
+40.6 = 42         -- getting lighter to very lite
+40.7 = 44         -- getting lighter to white
+
+41.0 = accept     -- black next to lite is probably top
+41.1 = accept     -- very dark next to lite is probably top
+41.2 = accept     -- dark next to lite is probably top
+41.3 = accept     -- med.dark is probably top
+41.4 = 39         -- retrograde med.lite
+41.5 = 41         -- confirmed lite heading toward top
+41.6 = 42         -- getting lighter to very lite
+41.7 = 44         -- getting lighter to white
+
+42.0 = accept     -- black next to lite is probably top
+42.1 = accept     -- very dark next to lite is probably top
+42.2 = accept     -- dark next to lite is probably top
+42.3 = accept     -- med.dark is probably top
+42.4 = 39         -- retrograde med.lite
+42.5 = 41         -- retrograde lite
+42.6 = 43         -- confirmed very lite heading toward top
+42.7 = 44         -- getting lighter to white
+
+43.0 = accept     -- black next to lite is probably top
+43.1 = accept     -- very dark next to lite is probably top
+43.2 = accept     -- dark next to lite is probably top
+43.3 = accept     -- med.dark is probably top
+43.4 = 39         -- retrograde med.lite
+43.5 = 41         -- retrograde lite
+43.6 = 43         -- confirmed very lite heading toward top
+43.7 = 44         -- getting lighter to white
+
+44.0 = accept     -- black next to lite is probably top
+44.1 = accept     -- very dark next to lite is probably top
+44.2 = accept     -- dark next to lite is probably top
+44.3 = accept     -- med.dark is probably top
+44.4 = 39         -- retrograde med.lite
+44.5 = 41         -- retrograde lite
+44.6 = 43         -- retrograde very lite
+44.7 = 45         -- confirmed final white
+
+45.0 = accept     -- black next to lite is probably top
+45.1 = accept     -- very dark next to lite is probably top
+45.2 = accept     -- dark next to lite is probably top
+45.3 = accept     -- med.dark is probably top
+45.4 = 39         -- retrograde med.lite
+45.5 = 41         -- retrograde lite
+45.6 = 43         -- retrograde very lite
+45.7 = 45         -- confirmed final white
+
+//    2/3      4/5     6/7     8/9    10/11   12/13   14/15  16/17
+//  0=black, 1=v.dk, 2=dark, 3=m.dk, 4=m.lt, 5=lite, 6=vlt, 7=white//   30/31    28/29   26/27   24/25   22/23   20/21   18/19//            32/33   34/35   36/37   38/39   40/41   42/43  44/45
+
+46.0 = 3          -- hard black next to very dark OK
+46.1 = 5          -- back to very dark
+46.2 = 7          -- now lighter
+46.3 = 9          -- ditto
+46.4 = 10         -- ditto
+46.5 = 12         -- ditto
+46.6 = fail       -- too soon for very light: not a tube-wall
+46.7 = fail       -- too soon for white: ditto
+
+47.0 = 3          -- hard black next to dark OK
+47.1 = 5          -- very dark next to dark
+47.2 = 7          -- back to dark
+47.3 = 9          -- now lighter
+47.4 = 10         -- ditto
+47.5 = 12         -- ditto
+47.6 = 14         -- ditto
+47.7 = fail       -- too soon for white: not a tube-wall
+
+48.0 = 3          -- hard black next to med.dark OK
+48.1 = 5          -- very dark next to med.dark
+48.2 = 7          -- dark next to med.dark
+48.3 = 9          -- back to med.dark
+48.4 = 10         -- now lighter
+48.5 = 12         -- ditto
+48.6 = 14         -- ditto
+48.7 = 16         -- ditto
+
+49.0 = fail       -- too late for black: not a tube-wall
+49.1 = fail       -- ditto very dark
+49.2 = fail       -- ditto dark
+49.3 = 9          -- back to med.dark
+49.4 = 11         -- back to med.lite
+49.5 = 12         -- back to lite
+49.6 = 14         -- now very lite
+49.7 = 16         -- white
+
+50.0 = fail       -- too late for black: not a tube-wall
+50.1 = fail       -- ditto very dark
+50.2 = fail       -- ditto dark
+50.3 = fail       -- ditto med.dark
+50.4 = 11         -- back to med.lite
+50.5 = 12         -- back to lite
+50.6 = 14         -- back to very lite
+50.7 = 16         -- now white
