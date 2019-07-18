@@ -4,24 +4,18 @@ import java.util.List;
 import java.util.ServiceLoader;
 import java.util.stream.Collectors;
 
-public interface CarModule {
+public interface PreRaceModule {
 
     /**
-     * Gets all instances of all CarModules, should probably only be called once from the Core.
-     * @return A List of all active CarModules.
+     * Gets all instances of all PreRaceModules, should probably only be called once from the Core.
+     * @return A List of all active PreRaceModules.
      */
-    static List<CarModule> getInstances() {
-        return ServiceLoader.load(CarModule.class)
+    static List<PreRaceModule> getInstances() {
+        return ServiceLoader.load(PreRaceModule.class)
                 .stream()
                 .map(ServiceLoader.Provider::get)
                 .collect(Collectors.toList());
     }
-
-    /**
-     * Requests all needed modules from the Core.
-     * @return An array of the requested module classes.
-     */
-    Class[] getDependencies();
 
     /**
      * Called when the Core initializes, before any modules has been run.
