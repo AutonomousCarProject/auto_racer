@@ -36,6 +36,7 @@ public class ImageModule implements CarModule {
 
         WINDOW_HEIGHT = camera.getCamHeight();
         WINDOW_WIDTH = camera.getCamWidth();
+
         bayerImage = new byte[4*WINDOW_WIDTH*WINDOW_HEIGHT];
         rgbImage = new int[WINDOW_HEIGHT*WINDOW_WIDTH];
 
