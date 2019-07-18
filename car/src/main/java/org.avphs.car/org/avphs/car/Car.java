@@ -22,6 +22,11 @@ public class Car implements ClientInterface {
         carData.addData("traksim", ((SimCamera) camera).theSim);
     }
 
+    public void update(CarData carData) {
+        carData.addData("speed", ((ArduinoIO) arduino).getSpeed());
+        carData.addData("steerAngle", ((ArduinoIO) arduino).getAngle());
+    }
+
     @Override
     public void getCameraImage(CarData carData) {
         camera.fetchNextFrame();
