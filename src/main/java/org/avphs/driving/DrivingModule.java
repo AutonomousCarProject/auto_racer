@@ -8,9 +8,7 @@ import org.avphs.racingline.RacingLinePoint;
 
 import java.util.ArrayList;
 
-import static org.avphs.coreinterface.CarCommand.accelerate;
-import static org.avphs.coreinterface.CarCommand.steer;
-import static org.avphs.coreinterface.CarCommand.stop;
+import static org.avphs.coreinterface.CarCommand.*;
 
 public class DrivingModule implements CarModule {
 
@@ -20,16 +18,19 @@ public class DrivingModule implements CarModule {
     private RoadData currentSegment;
     private RoadData nextSegment;
 
-    private int angle = 90;
-    private int throttle = 90;
+    private int angle = 0;
+    private int throttle = 10;
     private boolean stop = false;
 
     private int MAX_SPEED;
     private int MAX_HARD_BRAKE;
     private VectorPoint currentPos;
 
-    Speed speed = new Speed(currentPos, currentSegment, nextSegment);
-    Steering steer = new Steering(currentPos, currentSegment);
+    // FIXME: THIS WONT EVER NOT THROW A NULL POINTER EXCEPTION!!!!
+    Speed speed = new Speed();
+    Steering steer = new Steering();
+
+    private int count = 0;
 
     @Override
     public Class[] getDependencies() {
@@ -37,7 +38,7 @@ public class DrivingModule implements CarModule {
     }
 
     @Override
-    public void init(CarModule... dependencies) {
+    public void init(CarData carData) {
 
     }
 
@@ -50,19 +51,75 @@ public class DrivingModule implements CarModule {
 
         }
         return new CarCommand[] {
-                accelerate(true, throttle), steer(true, angle)
+                accelerate(true, throttle),
+                steer(true, angle)
         };
     }
 
     @Override
     public void update(CarData carData) {
-        //racingLinePoints = (RacingLinePoint[])carData.getModuleData("racingLine");
-        //float[] temp = carData.getModuleData("position");
-        //currentPos = new VectorPoint(temp[0], temp[1], temp[2], temp[3]);
-        //analyzeRacingLine();
-        //currentSegment();
-        //getDirection();
-        //getThrottle();
+        /*
+        float x = 0; float y = 0;
+        if (racingLinePoints == null) {
+            try {
+                File file = new File("driving/src/main/java/org.avphs.driving/org/avphs/driving/bruh.txt");
+                Scanner sc = new Scanner(file);
+                int count = 0;
+                while (sc.hasNextLine()) {
+                    count++;
+                    sc.nextLine();
+                }
+
+                racingLinePoints = new RacingLinePoint[count];
+                count = 0;
+
+                sc = new Scanner(file);
+                while (sc.hasNextLine()) {
+                    String s = sc.nextLine();
+                    int pos = s.indexOf(" ");
+                    int nextPos = s.substring(pos+1).indexOf(" ")+pos;
+                    racingLinePoints[count] = new RacingLinePoint(Float.valueOf(s.substring(0,pos)),
+                            Float.valueOf(s.substring(pos+1, nextPos)),
+                            Float.valueOf(s.substring(nextPos+1)));
+                    count++;
+                }
+
+                analyzeRacingLine();
+
+                currentPos = new VectorPoint(racingLinePoints[0].getX(), racingLinePoints[0].getY(), 90, 90);
+                currentSegment = roadData.get(0);
+                nextSegment = roadData.get(1);
+
+                steer.changeCurrentSegment(currentSegment);
+                steer.changeCurrentPos(currentPos);
+
+                //speed.initialize(currentSegment, nextSegment);
+                speed.setCurrentPos(currentPos);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            currentPos = new VectorPoint(racingLinePoints[count].getX(), racingLinePoints[count].getY(), 90, 90);
+            currentSegment = roadData.get(0);
+            currentSegment();
+            getDirection();
+            getThrottle();
+
+            if (count+1 == racingLinePoints.length){
+                count = 0;
+            }
+            count++;
+        }//*/
+    }
+
+    public void tempUpdate(CarData carData){
+        racingLinePoints = (RacingLinePoint[])carData.getModuleData("racingLine");
+        float[] temp = (float[])carData.getModuleData("position");
+        currentPos = new VectorPoint(temp[0], temp[1], temp[2], temp[3]);
+        analyzeRacingLine();
+        currentSegment();
+        getDirection();
+        getThrottle();
     }
 
     public DrivingModule(){
@@ -117,7 +174,7 @@ public class DrivingModule implements CarModule {
     public void analyzeRacingLine(){
         //RacingLine should eventually have points only on the maxima and minima
         // .getDegree calculates the degree from the current point as a center and a previous and future point, and thus needs to start at second index
-        for (int i = 1; i <  racingLinePoints.length ; i++) {
+        for (int i = 1; i <  racingLinePoints.length-1 ; i++) {
             if (racingLinePoints[i].getDegree() > 170 && racingLinePoints[i].getDegree() < 190) { // 10 is an arbitrary number that needs further numbers
                 roadData.add(new Straight(racingLinePoints[i-1].getX(),racingLinePoints[i-1].getY(),racingLinePoints[i+1].getX(),racingLinePoints[i+1].getY()));
             }
@@ -126,8 +183,6 @@ public class DrivingModule implements CarModule {
                         findRadiusAndCenter(racingLinePoints[i-1],racingLinePoints[i],racingLinePoints[i+1])));
             }
         }
-        //ArrayList<RacingLinePoint> racingLinePoints = new ArrayList<RacingLinePoint>();
-        //racingLine.getRacingLinePoints();
     }
 
     public void currentSegment(){
@@ -151,7 +206,7 @@ public class DrivingModule implements CarModule {
     }
 
     public void changeSegment(){
-        int pos = roadData.indexOf(currentPos);
+        int pos = roadData.indexOf(currentSegment);
         for (int i = 0; i < 2; i++) {
             pos++;
             if (pos == roadData.size()){
@@ -177,7 +232,7 @@ public class DrivingModule implements CarModule {
 
     public void getThrottle() { //returns the throttle of the car from 0 to 180
         speed.setCurrentPos(currentPos);
-        speed.newSegment(nextSegment);
+        //speed.newSegment(nextSegment);
 
         throttle = speed.getThrottle();
     }
