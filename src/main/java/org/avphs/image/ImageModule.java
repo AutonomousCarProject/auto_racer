@@ -1,5 +1,6 @@
 package org.avphs.image;
 
+import fly2cam.FlyCamera;
 import org.avphs.camera.Camera;
 import org.avphs.coreinterface.CarCommand;
 import org.avphs.coreinterface.CarData;
@@ -32,9 +33,12 @@ public class ImageModule implements CarModule {
     public void update(CarData carData) {
         window = (WindowModule) carData.getModuleData("window");
         Camera camera = (Camera) carData.getModuleData("camera");
-        WINDOW_HEIGHT = camera.getCamHeight(); WINDOW_WIDTH = camera.getCamWidth();
+
+        WINDOW_HEIGHT = camera.getCamHeight();
+        WINDOW_WIDTH = camera.getCamWidth();
         bayerImage = new byte[4*WINDOW_WIDTH*WINDOW_HEIGHT];
         rgbImage = new int[WINDOW_HEIGHT*WINDOW_WIDTH];
+
         bayerImage = camera.getBayerImage();
         rgbImage = ImageProcessing.process(bayerImage,WINDOW_WIDTH,WINDOW_HEIGHT);
         window.setWindowImage(rgbImage);

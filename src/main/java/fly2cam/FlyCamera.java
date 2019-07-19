@@ -33,6 +33,13 @@ public class FlyCamera extends CameraBase { // (in Java/fly2cam)
         numRows = 480;
     }
 
+    @Override
+    public byte[] getRawImage() {
+        byte[] img = new byte[4 * numRows * numCols];
+        NextFrame(img);
+        return img;
+    }
+
     /**
      * Gets a text description of an error number.
      *
@@ -118,7 +125,7 @@ public class FlyCamera extends CameraBase { // (in Java/fly2cam)
 
     @Override
     public void NextFrame() {
-        byte[] img = new byte[numRows * numCols];
+        byte[] img = new byte[4 * numRows * numCols];
         NextFrame(img);
         bayerImage = img;
     }
