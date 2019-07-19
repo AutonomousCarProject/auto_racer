@@ -13,7 +13,6 @@ public class TrakSimClient {
     private SimCamera traksim;
     private BufferedImage displayImage;
     private JPanel panel;
-    //private ArduinoIO servos;
     private int simMode = 1;
     private byte[] cameraImage;
 
