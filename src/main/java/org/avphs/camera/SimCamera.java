@@ -17,6 +17,8 @@ import org.avphs.traksim.DriverCons;
 import org.avphs.traksim.HandyOps;
 import org.avphs.traksim.TrakSim;
 
+import static fly2cam.FlyCamera.FrameRate_15;
+
 /**
  * FlyCamera Simulator for TrakSim (but different name)
  * Use this for testing in parallel with fly2cam.FlyCamera

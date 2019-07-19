@@ -19,7 +19,8 @@ public class Car implements ClientInterface {
     }
 
     public void init(CarData carData) {
-        carData.addData("traksim", ((SimCamera) camera).theSim);
+        if (camera instanceof SimCamera)
+            carData.addData("traksim", ((SimCamera) camera).theSim);
     }
 
     @Override

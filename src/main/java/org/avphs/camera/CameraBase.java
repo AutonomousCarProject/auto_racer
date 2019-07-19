@@ -5,16 +5,17 @@ import org.avphs.traksim.DriverCons;
 public class CameraBase implements Camera {
 
     protected byte[] bayerImage;
-    int errorNum; // returns an error number, see ErrorNumberText()
-    int numRows; // (fly2cam) actual number of rows = FlyCap2.fc2Image.rows/2
-    int numCols; // actual number of columns = FlyCap2.fc2Image.cols/2
-    int tile; // see FlyCapture2Defs.fc2BayerTileFormat
+    protected int errorNum; // returns an error number, see ErrorNumberText()
+    protected int numRows; // (fly2cam) actual number of rows = FlyCap2.fc2Image.rows/2
+    protected int numCols; // actual number of columns = FlyCap2.fc2Image.cols/2
+    protected int tile; // see FlyCapture2Defs.fc2BayerTileFormat
     int FrameNum; // counts the number of good frames seen (nobody looks)
-    static final int FrameRate_15 = 3;
     static final int FrameRate_30 = 4;
     public static final int BaseRose = 480;
     public static final int BaseColz = 640;
     public static final int BaseTile = 1;
+
+    //static {System.loadLibrary("FlyCamera");}
 
     public String toString() { // (fly2cam)
         return "fly2cam.FlyCam " + errorNum + ": " + ErrorNumberText(errorNum);
