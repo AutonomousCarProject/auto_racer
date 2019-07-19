@@ -8,8 +8,9 @@ public class CarStart implements Runnable {
 
     public CarStart() {
 
-        CarCore core = new CarCore(new Car(new FlyCamera()));
-        core.init();
+        FlyCamera cam = new fly2cam.FlyCamera();
+        CarCore core = new CarCore(new Car(cam));
+        //core.init();
     }
 
     public static void main(String[] args) {

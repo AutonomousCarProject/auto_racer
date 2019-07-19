@@ -4,7 +4,8 @@ import org.avphs.traksim.DriverCons;
 
 public class CameraBase implements Camera {
 
-    protected byte[] bayerImage = new byte[BaseRose * BaseColz * 4];
+
+    protected byte[] bayerImage;
     protected int errorNum; // returns an error number, see ErrorNumberText()
     protected int numRows; // (fly2cam) actual number of rows = FlyCap2.fc2Image.rows/2
     protected int numCols; // actual number of columns = FlyCap2.fc2Image.cols/2

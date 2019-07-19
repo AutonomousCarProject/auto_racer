@@ -3,7 +3,6 @@
 plugins {
     // Apply the java plugin to add support for Java
     id 'java'
-    id 'com.gradle.build-scan' version '2.3'
     // Apply the application plugin to add support for building a CLI application
     id 'application'
 }
@@ -25,7 +24,7 @@ dependencies {
 
 application {
     // Define the main class for the application
-    mainClassName = 'org.avphs.TrakSimClient'
+    mainClassName = 'org.avphs.test.DrDemo'
 
 
 
@@ -34,9 +33,4 @@ application {
 test {
     // Use TestNG for unit tests
     useTestNG()
-}
-
-buildScan {
-    termsOfServiceUrl = 'https://gradle.com/terms-of-service'
-    termsOfServiceAgree = 'yes'
 }
