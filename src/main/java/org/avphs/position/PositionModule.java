@@ -1,11 +1,16 @@
 package org.avphs.position;
 
+import org.avphs.calibration.CalibrationModule;
 import org.avphs.coreinterface.CarCommand;
 import org.avphs.coreinterface.CarData;
 import org.avphs.coreinterface.CarModule;
+import org.avphs.driving.DrivingModule;
 
 public class PositionModule implements CarModule {
+    private DrivingModule drivingModule;
+    private CalibrationModule calibrationModule;
 
+    private int prevSpins; //deprecated
     private PositionData prevPositionData = new PositionData(new float[]{0, 0}, 0, 0); //WILL BE USED LATER
     private PositionData positionData;
     private float disBetweenAxle = 0;
@@ -16,11 +21,15 @@ public class PositionModule implements CarModule {
 
     @Override
     public Class[] getDependencies() {
-        return null;
+        return new Class[]{
+                CalibrationModule.class, DrivingModule.class
+        };
     }
 
     @Override
-    public void init(CarData carData) {
+    public void init(CarModule... dependencies) {
+        calibrationModule = (CalibrationModule) dependencies[0];
+        drivingModule = (DrivingModule) dependencies[1];
         //THIS WILL BE WHERE WE READ FROM A FILE TO FIND THE INITIAL POSITION
         positionData = new PositionData(new float[]{0, 0}, 0, 0); //TEMPORARY
 
@@ -33,13 +42,12 @@ public class PositionModule implements CarModule {
 
     @Override
     public void update(CarData carData) {
-
         float drivingArcRadius;
-        disBetweenAxle = (float) 32.5f;
+        disBetweenAxle = (float) (CalibrationModule.WHEEL_BASE);
         // find out if this is run before or after driving. If after, good, else: bad.
         Object drivingData = carData.getModuleData("driving");
         wheelAngle = (float) drivingData; //angle of servo
-        distanceTraveled = 0;//getDistance(); //number of wheel turns
+        distanceTraveled = (float) arduinoData.getOdomoter(); //number of wheel turns
         //FIXME find out the error in the servo value, and add that value to "> 90" and subtract from "< 90",defaulted at 2
 
         //FIXME get data from calibration
@@ -120,7 +128,9 @@ public class PositionModule implements CarModule {
         positionData.updatePosition(new float[]{tempx, tempy});
     }
 
-    private float getDistance(){
-        return 0f;
+    //DEPRECATED, TRACKSIM HAS THIS
+    private void updateSpinCount() {
+        //prevSpins = GET SPIN COUNT
+        prevSpins = 0; //temporary
     }
 }
