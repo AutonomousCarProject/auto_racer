@@ -1,16 +1,11 @@
 package org.avphs.position;
 
-import org.avphs.calibration.CalibrationModule;
 import org.avphs.coreinterface.CarCommand;
 import org.avphs.coreinterface.CarData;
 import org.avphs.coreinterface.CarModule;
-import org.avphs.driving.DrivingModule;
 
 public class PositionModule implements CarModule {
-    private DrivingModule drivingModule;
-    private CalibrationModule calibrationModule;
 
-    private int prevSpins; //deprecated
     private PositionData prevPositionData = new PositionData(new float[]{0, 0}, 0, 0); //WILL BE USED LATER
     private PositionData positionData;
     private float disBetweenAxle = 0;
@@ -22,14 +17,12 @@ public class PositionModule implements CarModule {
     @Override
     public Class[] getDependencies() {
         return new Class[]{
-                CalibrationModule.class, DrivingModule.class
+                null
         };
     }
 
     @Override
     public void init(CarModule... dependencies) {
-        calibrationModule = (CalibrationModule) dependencies[0];
-        drivingModule = (DrivingModule) dependencies[1];
         //THIS WILL BE WHERE WE READ FROM A FILE TO FIND THE INITIAL POSITION
         positionData = new PositionData(new float[]{0, 0}, 0, 0); //TEMPORARY
 
@@ -43,7 +36,7 @@ public class PositionModule implements CarModule {
     @Override
     public void update(CarData carData) {
         float drivingArcRadius;
-        disBetweenAxle = (float) (CalibrationModule.WHEEL_BASE);
+        disBetweenAxle = (float) 32.5f;
         // find out if this is run before or after driving. If after, good, else: bad.
         Object drivingData = carData.getModuleData("driving");
         wheelAngle = (float) drivingData; //angle of servo
@@ -126,11 +119,5 @@ public class PositionModule implements CarModule {
         //FIXME x and y are currently in cm, not in the virtual world coordinates.
 
         positionData.updatePosition(new float[]{tempx, tempy});
-    }
-
-    //DEPRECATED, TRACKSIM HAS THIS
-    private void updateSpinCount() {
-        //prevSpins = GET SPIN COUNT
-        prevSpins = 0; //temporary
     }
 }
