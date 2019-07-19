@@ -18,13 +18,15 @@ public class ExampleRunner {
         
         ThingStartState beginWall = new ThingStartState(myTable, wall, firstState);
         
-        initial.bindPlusLoop(beginWall, PosterColor.BLACK);
+        initial.bindPlusLoop(beginWall, 
+                PosterColor.BLACK,
+                PosterColor.GREY1);
         
         firstState.bindPlusLoop(secondState, PosterColor.BLUE);
 
         secondState.bindPlusLoop(thirdState, PosterColor.RED);
         
-        thirdState.bindPlusLoop(firstState, PosterColor.GREEN);
+        thirdState.bindPlusLoop(fourthState, PosterColor.GREEN);
         
         fourthState.bind(success, PosterColor.WHITE);
         
@@ -42,6 +44,7 @@ public class ExampleRunner {
         
         ThingStartState beginWall2 = new ThingStartState(myTable2, wall2, secondState2);
         
+        initial2.bindAll(initial2);
         initial2.bindPlusLoop(beginWall2, PosterColor.BLACK);
         
         secondState2.bindPlusLoop(thirdState2, 
@@ -52,7 +55,7 @@ public class ExampleRunner {
         
         thirdState2.bind(success2, PosterColor.WHITE);
 
-        int[] intTable2 = myTable.generateTable();
+        int[] intTable2 = myTable2.generateTable();
         System.out.println(Table.niceFormat(intTable2));
     }
 }
