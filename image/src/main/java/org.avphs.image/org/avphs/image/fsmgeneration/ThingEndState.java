@@ -3,8 +3,8 @@ package org.avphs.image.fsmgeneration;
 import org.avphs.image.ThingIdentification;
 
 public class ThingEndState extends TerminalState {
-    Thing thing;
-    Table table;
+    private Thing thing;
+    private Table table;
     
     public ThingEndState(Thing thing, Table table) {
         this.thing = thing;

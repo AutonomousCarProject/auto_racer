@@ -3,9 +3,9 @@ package org.avphs.image.fsmgeneration;
 import org.avphs.image.ThingIdentification;
 
 public class ThingStartState extends State {
-    Thing thing;
-    TableState passThrough;
-    Table table;
+    private Thing thing;
+    private TableState passThrough;
+    private Table table;
     
     public ThingStartState(Table table, Thing thing, TableState passThrough) {
         this.table = table;

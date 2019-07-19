@@ -8,16 +8,16 @@ import java.util.HashSet;
 import java.util.Map;
 
 public class Table {
-    HashSet<TableState> tableStates;
-    HashMap<TableState, Integer> stateNumbers;
+    private HashSet<TableState> tableStates;
+    private HashMap<TableState, Integer> stateNumbers;
     
-    HashSet<Thing> things;
-    HashMap<Thing, Integer> thingNumbers;
-    HashMap<Thing, ThingStartState> thingStartStates;
-    HashMap<Thing, ThingEndState> thingEndStates;
+    private HashSet<Thing> things;
+    private HashMap<Thing, Integer> thingNumbers;
+    private HashMap<Thing, ThingStartState> thingStartStates;
+    private HashMap<Thing, ThingEndState> thingEndStates;
     
-    TableState initialState;
-    State defaultState;
+    private TableState initialState;
+    private State defaultState;
     
     public Table() {
         tableStates = new HashSet<>();
@@ -129,6 +129,10 @@ public class Table {
             }
             intTable[stateNum | posterColor.getCode()] = dest.asStateNumber();
         }
+        
+    }
+    
+    public void incorporate(Table otherTable) {
         
     }
     

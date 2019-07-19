@@ -8,8 +8,8 @@ import java.util.Map;
 import java.util.Set;
 
 public class TableState extends State {
-    Table table;
-    String name;
+    private Table table;
+    private String name;
     
     EnumMap<ImageProcessing.PosterColor, State> transitions;
     
