@@ -38,9 +38,17 @@ public class ImageModule implements CarModule {
         WINDOW_WIDTH = camera.getCamWidth();
         bayerImage = new byte[4*WINDOW_WIDTH*WINDOW_HEIGHT];
         rgbImage = new int[WINDOW_HEIGHT*WINDOW_WIDTH];
+        int wallData [][] = new int[2][WINDOW_WIDTH];
+        ImageData data = new ImageData();
 
         bayerImage = camera.getBayerImage();
         rgbImage = ImageProcessing.process(bayerImage,WINDOW_WIDTH,WINDOW_HEIGHT);
+        wallData = WallIdentification.scanImage(rgbImage,WINDOW_WIDTH,WINDOW_HEIGHT,WallIdentification.WallColorSeqs);
+
+        data.wallTop = wallData[0];
+        data.wallBottom = wallData[1];
+
+        carData.addData("image", data);
         window.setWindowImage(rgbImage);
     }
 
