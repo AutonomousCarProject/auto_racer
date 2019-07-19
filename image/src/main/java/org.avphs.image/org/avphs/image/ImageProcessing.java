@@ -32,6 +32,10 @@ public class ImageProcessing implements ImageProcessingInterface {
             this.rgb = rgb;
             this.code = code;
         }
+        
+        public short getCode() {
+            return code;
+        }
     }
 
     static final int[] ColorArr = {

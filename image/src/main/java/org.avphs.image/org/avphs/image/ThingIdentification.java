@@ -1,6 +1,19 @@
 package org.avphs.image;
 
 public class ThingIdentification {
+    public static final int STATE_NUMBER_SIZE = 28;
+    public static final int STATE_NUMBER_OFFSET = 4;
+    
+    public static final int CODE_SPECIAL_TERMINAL = 0b0001;
+    public static final int SPECIAL_INSTR_OFFSET = 24;
+    public static final int WALL_TYPE_OFFSET = 16;
+    public static final int WALL_TYPE_SIZE = 8;
+    public static final int CODE_SAVE_WALL = 3;
+    public static final int CODE_FAIL = 1;
+    
+    public static final int CODE_SPECIAL_PASSTHROUGH = 0b0011;
+    public static final int CODE_SAVE_TO_REG_0 = 0;
+    
     static int imageWidth = 0;
     static int imageHeight = 0;
 
@@ -51,8 +64,7 @@ public class ThingIdentification {
             if ((1 & state) == 0) {  // the first bit is for indicating a special state
                 // if not special, do regular stuff
                 --row;  // move to next pixel (one row above previous)
-                if (row < 0) {
-                    // top of image reached
+                if (row < 0) {  // if at top of image
                     if (savedNumber0 != 0) {  // if the start of a wall has been seen
                         // record the base (but the type and height are unknown)
                         wallStarts[col] = savedNumber0;
