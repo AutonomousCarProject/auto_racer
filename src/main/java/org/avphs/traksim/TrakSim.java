@@ -16,7 +16,7 @@
  */
 package org.avphs.traksim; // (class TrakSim)                  // 2019 July 4
 
-import org.avphs.sbcio.ArduinoIO;
+import org.avphs.sbcio.Arduino;
 import org.avphs.sbcio.fakefirm.SimHookBase;
 
 import java.io.File;
@@ -10398,7 +10398,7 @@ public class TrakSim {
 
     public void GotBytes(byte[] msg, int lxx) {
         if (msg == null) return;
-        if ((((int) msg[0]) & 0xF0) != ArduinoIO.ANALOG_MESSAGE) return;
+    if ((((int) msg[0]) & 0xF0) != Arduino.ANALOG_MESSAGE) return;
         if (msg.length >= 3) {
             SetServo((int) msg[1], (int) msg[2]);
         }
@@ -11177,7 +11177,7 @@ public class TrakSim {
             GasBrake = 0;
             NuData++;
             SerialCalls = new SimHookX();
-            ArduinoIO.HookExtend(SerialCalls);
+            Arduino.HookExtend(SerialCalls);
         }
         nClients++;
     } //~StartPatty

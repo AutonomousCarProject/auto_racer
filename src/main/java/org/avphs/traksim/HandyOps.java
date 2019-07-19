@@ -16,7 +16,7 @@
  */
 package org.avphs.traksim; // (class HandyOps)                    // 2019 May 24
 
-import org.avphs.sbcio.ArduinoIO;
+import org.avphs.sbcio.Arduino;
 
 import java.io.File;
 import java.io.FileReader;
@@ -188,7 +188,7 @@ public class HandyOps { // first some useful debug logging ops..
      * @return       The combined string
      */
     public static String PosTime(String before) {
-        return ArduinoIO.formatMillis(before,0x80000000);} //~PosTime
+        return Arduino.FormatMillis(before,0x80000000);} //~PosTime
 
     /**
      * A safe (no exceptions) non-OOPS way to extract a character from a string.
@@ -213,8 +213,8 @@ public class HandyOps { // first some useful debug logging ops..
      * @return      The time
      */
     public static int TimeSecs(boolean ms2) {
-        if (ms2) return ArduinoIO.getMills();
-        return ArduinoIO.getMills()/1000;} //~TimeSecs
+        if (ms2) return Arduino.GetMills();
+        return Arduino.GetMills()/1000;} //~TimeSecs
 
     /**
      * A safe (no exceptions) way to extract an integer number from a string.
@@ -947,7 +947,7 @@ public class HandyOps { // first some useful debug logging ops..
      * A simple screen capture to a Tiff32 file.
      *
      * @param  seqno   A sequence number to use in the name of the Tiff file
-     * @param  dimz    The height*0x10000+width
+     * @param  tall    The height*0x10000+width
      * @param  pixels  The single-dimensioned array of pixels
      *
      */
