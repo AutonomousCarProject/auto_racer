@@ -22,7 +22,7 @@ public class PositionModule implements CarModule {
     }
 
     @Override
-    public void init(CarModule... dependencies) {
+    public void init(CarData carData) {
         //THIS WILL BE WHERE WE READ FROM A FILE TO FIND THE INITIAL POSITION
         positionData = new PositionData(new float[]{0, 0}, 0, 0); //TEMPORARY
 
