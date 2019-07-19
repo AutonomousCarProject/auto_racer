@@ -119,7 +119,7 @@ public class CalibrationModule implements CarModule {
     }
 
     @Override
-    public void init(CarModule[] dependencies) {
+    public void init(CarData carData) {
 
     }
 

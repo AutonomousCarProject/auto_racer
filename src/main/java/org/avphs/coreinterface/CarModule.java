@@ -1,3 +1,4 @@
+
 package org.avphs.coreinterface;
 
 import java.util.List;
@@ -5,6 +6,7 @@ import java.util.ServiceLoader;
 import java.util.stream.Collectors;
 
 public interface CarModule {
+
     /**
      * Requests all needed modules from the Core.
      * @return An array of the requested module classes.
@@ -13,9 +15,9 @@ public interface CarModule {
 
     /**
      * Called when the Core initializes, before any modules has been run.
-     * @param dependencies An array of this modules dependencies, provided by the Core.
+     * @param carData Of type CarData that holds data from each module.
      */
-    void init(CarModule[] dependencies);
+    void init(CarData carData);
 
     /**
      * Returns this modules current commands to the core.

@@ -21,11 +21,7 @@ public class MapModule implements CarModule {
         };
     }
     @Override
-    public void init(CarModule... dependencies) {
-        imageModule = (ImageModule) dependencies[0];
-        System.out.println("Image Module Found" + imageModule.getClass());
-        positionModule = (PositionModule) dependencies[1];
-        System.out.println("Position Module Found" + positionModule.getClass());
+    public void init(CarData carData) {
     }
 
     @Override

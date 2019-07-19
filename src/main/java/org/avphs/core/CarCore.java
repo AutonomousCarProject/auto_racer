@@ -21,6 +21,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
+import static org.avphs.coreinterface.CarCommandType.*;
+
 public class CarCore {
     private final int FPS = 15;
     private Queue<CarCommand> commandQueue = new PriorityQueue<>();
@@ -55,18 +57,19 @@ public class CarCore {
     }
 
     public void init() {
-        CarModule[] drivingInit = {calibrationModule, racingLineModule};
-        CarModule[] positionInit = {racingLineModule, mapModule};
-
         // FIXME: Make this more dynamic
-        drivingModule.init(drivingInit);
-        imageModule.init(calibrationModule, windowModule);
-        positionTrackingModule.init (positionInit);
+        drivingModule.init(carData);
+        imageModule.init(carData);
+        positionTrackingModule.init(carData);
+        mapModule.init(carData);
+        racingLineModule.init(carData);
 
         updatingCarModules.add(windowModule);
         updatingCarModules.add(imageModule);
         updatingCarModules.add(positionTrackingModule);
         updatingCarModules.add(drivingModule);
+        updatingCarModules.add(mapModule);
+        updatingCarModules.add(racingLineModule);
 
     }
 

@@ -25,7 +25,7 @@ public class PositionModule implements CarModule {
     }
 
     @Override
-    public void init(CarModule... dependencies) {
+    public void init(CarData carData) {
         //imageModule = (ImageModule) dependencies[0];
         //mapModule = (MapModule) dependencies[1];
         //calibrationModule = (CalibrationModule) dependencies[2];
