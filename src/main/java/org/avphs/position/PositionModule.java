@@ -40,7 +40,7 @@ public class PositionModule implements CarModule {
         // find out if this is run before or after driving. If after, good, else: bad.
         Object drivingData = carData.getModuleData("driving");
         wheelAngle = (float) drivingData; //angle of servo
-        distanceTraveled = (float) arduinoData.getOdomoter(); //number of wheel turns
+        distanceTraveled = getDistance(); //number of wheel turns
         //FIXME find out the error in the servo value, and add that value to "> 90" and subtract from "< 90",defaulted at 2
 
         //FIXME get data from calibration
@@ -119,5 +119,9 @@ public class PositionModule implements CarModule {
         //FIXME x and y are currently in cm, not in the virtual world coordinates.
 
         positionData.updatePosition(new float[]{tempx, tempy});
+    }
+
+    private float getDistance(){
+        return 0f;
     }
 }
