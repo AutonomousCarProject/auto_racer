@@ -38,7 +38,7 @@ public class DrivingModule implements CarModule {
     }
 
     @Override
-    public void init(CarData carData) {
+    public void init(CarModule[] dependencies) {
 
     }
 
