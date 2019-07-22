@@ -334,9 +334,9 @@ public class ImageProcessing implements ImageProcessingInterface {
 
     }
 
-    static void PosterToRGB(PosterColor[] inArray, int[] outArray) {
+    static void CodeToRGB(int[] inArray, int[] outArray) {
         for(int i = inArray.length - 1; i >= 0; i --) {
-            outArray[i] = inArray[i].rgb;
+            outArray[i] = ColorArr[inArray[i]];
         }
     }
 
@@ -347,6 +347,8 @@ public class ImageProcessing implements ImageProcessingInterface {
 
     }
 
+    //TrakSim RGGB
+    //Camera GBRG
     static int[] magicloop(byte[] bayer, int width, int height, int dt) {
         int[] rgb = new int[width * height ];
         for(int i = 0; i < height; i++){
@@ -355,7 +357,7 @@ public class ImageProcessing implements ImageProcessingInterface {
                 int g = (int)bayer[2*(2*i*width+j)+1] & 0xFF;
                 int b = (int)bayer[2*((2*i+1)*width+j)+1] & 0xFF;
                 PosterColor posterPix = posterizeChannels(r, g, b, dt);
-                rgb[i*width+j] = posterPix.rgb;
+                rgb[i*width+j] = posterPix.code;
             }
         }
         return rgb;
