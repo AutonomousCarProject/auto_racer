@@ -20,8 +20,8 @@ public class DrivingModule implements CarModule {
     private RoadData currentSegment;
     private RoadData nextSegment;
 
-    private int angle = 90;
-    private int throttle = 90;
+    private int angle = 0;
+    private int throttle = 12;
     private boolean stop = false;
 
     private int MAX_SPEED;
@@ -43,12 +43,12 @@ public class DrivingModule implements CarModule {
 
     @Override
     public CarCommand[] commands() {
-        if (stop){
-            return new CarCommand[] {
-                stop()
-            };
+        //if (stop){
+            //return new CarCommand[] {
+                //stop()
+            //};
 
-        }
+        //}
         return new CarCommand[] {
                 accelerate(true, throttle), steer(true, angle)
         };

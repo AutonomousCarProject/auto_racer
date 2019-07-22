@@ -16,7 +16,12 @@ public class Car implements ClientInterface {
         this.camera = camera;
         camera.Connect(4);
         this.arduino = new Arduino();
-
+        if (arduino.GetFirmwareRev()<0x120000) return; // not HardAta
+        arduino.pinMode(11,Arduino.DEADMAN);
+        // Set the digital input pin 11 as (PWM) DeadMan switch from xmtr
+        arduino.pinMode(10,Arduino.DM_SERVO);
+        // Set the digital output pin 10 as ESC servo under DeadMan control
+        arduino.servoWrite(10,105); // start servo +15 degrees
     }
 
     public void init(CarData carData) {
