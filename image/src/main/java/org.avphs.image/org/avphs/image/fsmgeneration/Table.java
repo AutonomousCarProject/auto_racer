@@ -151,9 +151,11 @@ public class Table {
     }
 
     public static Table combineTables(Table table1, Table table2) {
-        System.out.println(table1.debugTableStates("t1  "));
-        System.out.println(table2.debugTableStates("t2  "));
-        
+//        System.out.println(table1.debugTableStates("t1  "));
+//        System.out.println(table2.debugTableStates("t2  "));
+
+        System.out.println(table1.getInitialState().debug("t1  "));
+        System.out.println(table2.getInitialState().debug("t2  "));
         
         return null;
     }

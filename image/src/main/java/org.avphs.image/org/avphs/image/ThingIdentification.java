@@ -23,7 +23,7 @@ public class ThingIdentification {
         System.out.println("Hello World");
     }
     
-    public void setStateTable(int[] table) {
+    public static void setStateTable(int[] table) {
         stateTable = table;
     }
 
