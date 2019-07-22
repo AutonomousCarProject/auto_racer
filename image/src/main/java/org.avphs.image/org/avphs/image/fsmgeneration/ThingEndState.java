@@ -22,4 +22,9 @@ public class ThingEndState extends TerminalState {
         
         return (base | thingNum);
     }
+
+    @Override
+    public String getName() {
+        return "ThingEndState { thing: " + thing.getName() + " }";
+    }
 }

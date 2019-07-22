@@ -7,4 +7,9 @@ public class FailState extends TerminalState {
     public int asStateNumber() {
         return baseWithInstruction(ThingIdentification.CODE_FAIL);
     }
+
+    @Override
+    public String getName() {
+        return "[FailState]";
+    }
 }

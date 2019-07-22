@@ -30,7 +30,7 @@ public class ExampleRunner {
         
         fourthState.bind(success, PosterColor.WHITE);
         
-        int[] intTable = myTable.generateTable();
+//        int[] intTable = myTable.generateTable();
 //        System.out.println(Table.niceFormat(intTable));
         
         Table myTable2 = new Table();
@@ -55,7 +55,8 @@ public class ExampleRunner {
         
         thirdState2.bind(success2, PosterColor.WHITE);
 
-        int[] intTable2 = myTable2.generateTable();
-        System.out.println(Table.niceFormat(intTable2));
+//        int[] intTable2 = myTable2.generateTable();
+//        System.out.println(Table.niceFormat(intTable2));
+        System.out.println(myTable.debugTableStates(""));
     }
 }

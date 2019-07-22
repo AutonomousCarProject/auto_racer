@@ -22,4 +22,9 @@ public class ThingStartState extends State {
         int topHalf = passThrough.asStateNumber();
         return (topHalf | ThingIdentification.CODE_SPECIAL_PASSTHROUGH | ThingIdentification.CODE_SAVE_TO_REG_0);
     }
+
+    @Override
+    public String getName() {
+        return "ThingStartState { thing: " + thing.getName() + ", passThrough: " + passThrough.getName() + " }";
+    }
 }

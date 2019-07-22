@@ -54,4 +54,36 @@ public class TableState extends State {
     public int asStateNumber() {
         return (table.getStateNumber(this) << ThingIdentification.STATE_NUMBER_OFFSET);
     }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    public Table getTable() {
+        return table;
+    }
+
+    public String debug(String indent) {
+        StringBuilder builder = new StringBuilder();
+        
+        builder.append(indent);
+        builder.append("TableState: ");
+        builder.append(name);
+        builder.append(" {\n");
+        
+        for (ImageProcessing.PosterColor color : ImageProcessing.PosterColor.values()) {
+            builder.append(indent);
+            builder.append("\t");
+            builder.append(String.format("%-8s", color));
+            builder.append(" --> ");
+            builder.append(transitions.get(color).getName());
+            builder.append("\n");
+        }
+        
+        builder.append(indent);
+        builder.append("}");
+        
+        return builder.toString();
+    }
 }
