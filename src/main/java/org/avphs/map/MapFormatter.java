@@ -62,7 +62,7 @@ public class MapFormatter {
         {
             float[] coords;
             coords = utils.getCoordinatesOnMap(i, 480 - bottomPoints[i], pos[0], pos[1], angle);
-            System.out.println("wtf");
+            //System.out.println("wtf");
             map.setValueAtIndex(coords[0], coords[1], true);
         }
         System.out.println("InsidePoints");
