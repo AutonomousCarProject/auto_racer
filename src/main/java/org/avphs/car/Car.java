@@ -14,7 +14,10 @@ public class Car implements ClientInterface {
     {
         this.camera = camera;
         camera.Connect(4);
+<<<<<<< HEAD:src/main/java/org/avphs/car/Car.java
 
+=======
+>>>>>>> 31ddbc5906cd77ad53fea00499b6577be08aed5b:src/main/java/org/avphs/car/Car.java
         this.arduino = new ArduinoIO();
 
     }

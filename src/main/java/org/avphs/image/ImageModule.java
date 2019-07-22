@@ -23,6 +23,7 @@ public class ImageModule implements CarModule {
 
     @Override
     public void init(CarData carData) {
+
     }
 
     @Override
