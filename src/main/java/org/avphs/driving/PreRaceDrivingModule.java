@@ -1,6 +1,6 @@
 package org.avphs.driving;
 
-//import com.sun.scenario.effect.ImageData;
+import org.avphs.image.ImageData;
 
 import org.avphs.coreinterface.CarCommand;
 import org.avphs.coreinterface.CarData;
@@ -20,10 +20,9 @@ public class PreRaceDrivingModule extends PreRaceModule {
     private final int changeAmount = 2;
     private float[] lastDistances;
 
-
     @Override
     public void init(CarData carData) {
-
+        carData.addData("driving", angle);
     }
 
     @Override
@@ -38,9 +37,9 @@ public class PreRaceDrivingModule extends PreRaceModule {
     @Override
     public void update(CarData carData) {
         lastDistances = distances;
-        //ImageData data = (ImageData)carData.getModuleData("image");
-        //float leftDistance = (float)Math.abs(data.wallTop[0] - data.wallPosition[0]);
-        //float rightDistance = (float)Math.abs(data.wallHeights[639] - data.wallPosition[639]);
+        ImageData data = (ImageData)carData.getModuleData("image");
+        float leftDistance = (float)Math.abs(data.wallTop[0] - data.wallBottom[0]);
+        float rightDistance = (float)Math.abs(data.wallTop[639] - data.wallBottom[639]);
         distances = null;
         getAngle();
     }
