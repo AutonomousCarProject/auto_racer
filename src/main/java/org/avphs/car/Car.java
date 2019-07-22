@@ -14,7 +14,12 @@ public class Car implements ClientInterface {
     {
         this.camera = camera;
         camera.Connect(4);
-        this.arduino = new Arduino();
+<<<<<<< HEAD:src/main/java/org/avphs/car/Car.java
+
+=======
+>>>>>>> 31ddbc5906cd77ad53fea00499b6577be08aed5b:src/main/java/org/avphs/car/Car.java
+        this.arduino = new ArduinoIO();
+
     }
 
     public void init(CarData carData) {
@@ -42,7 +47,9 @@ public class Car implements ClientInterface {
     public void stop() {
         accelerate(true, 0);
         steer(true, 0);
-        arduino.Close();
+
+        arduino.close();
+
         camera.Finish();
     }
 }

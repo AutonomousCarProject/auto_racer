@@ -14,6 +14,7 @@ public class ImageModule implements CarModule {
 
     byte[] bayerImage = new byte[4*WINDOW_HEIGHT*WINDOW_WIDTH];
     int[] rgbImage = new int[WINDOW_HEIGHT*WINDOW_HEIGHT];
+    int[] codeImage = new int[WINDOW_HEIGHT*WINDOW_WIDTH];
 
     @Override
     public Class[] getDependencies() {
@@ -22,6 +23,7 @@ public class ImageModule implements CarModule {
 
     @Override
     public void init(CarData carData) {
+
     }
 
     @Override
@@ -31,16 +33,36 @@ public class ImageModule implements CarModule {
 
     @Override
     public void update(CarData carData) {
+        System.out.println("Image");
+
         window = (WindowModule) carData.getModuleData("window");
         Camera camera = (Camera) carData.getModuleData("camera");
 
         WINDOW_HEIGHT = camera.getCamHeight();
         WINDOW_WIDTH = camera.getCamWidth();
         bayerImage = new byte[4*WINDOW_WIDTH*WINDOW_HEIGHT];
+        codeImage = new int[WINDOW_WIDTH*WINDOW_HEIGHT];
         rgbImage = new int[WINDOW_HEIGHT*WINDOW_WIDTH];
+        int wallData [][] = new int[2][WINDOW_WIDTH];
+        ImageData data = new ImageData();
 
         bayerImage = camera.getBayerImage();
-        rgbImage = ImageProcessing.process(bayerImage,WINDOW_WIDTH,WINDOW_HEIGHT);
+        codeImage = ImageProcessing.process(bayerImage,WINDOW_WIDTH,WINDOW_HEIGHT);
+        wallData = WallIdentification.scanImage(codeImage,WINDOW_WIDTH,WINDOW_HEIGHT,WallIdentification.WallColorSeqs);
+        ImageProcessing.CodeToRGB(codeImage, rgbImage);
+
+        data.wallTop = wallData[0];
+        data.wallBottom = wallData[1];
+
+        for(int k = 0; k < wallData[0].length; k++) {
+            if(wallData[0][k] > 0 && wallData[1][k] > 0) {
+                for(int m = wallData[1][k]; m < wallData[0][k]; m ++) {
+                    rgbImage[k + wallData[0].length * m] = WallIdentification.ColorArr[4];
+                }
+            }
+        }
+
+        carData.addData("image", data);
         window.setWindowImage(rgbImage);
     }
 

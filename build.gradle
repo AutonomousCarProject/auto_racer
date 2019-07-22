@@ -28,6 +28,7 @@ application {
     mainClassName = 'org.avphs.test.DrDemo'
 
 
+
 }
 
 buildScan {

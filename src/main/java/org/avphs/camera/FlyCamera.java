@@ -12,7 +12,9 @@ public class FlyCamera extends CameraBase { // (in Java/fly2cam)
     public FlyCamera() { // (in Java/fly2cam)
         try {
             System.loadLibrary("FlyCamera");
+
             //Runtime.getRuntime().loadLibrary("fly2cam/FlyCamera");
+
 
         } catch(Error e){
             System.out.println("FlyCamera not found");
