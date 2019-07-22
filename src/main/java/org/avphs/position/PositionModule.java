@@ -12,6 +12,8 @@ public class PositionModule implements CarModule {
     private float distanceTraveled;
     private float wheelAngle;
     private float deltaPositionAngle;
+    private Object drivingData;
+    private int odometerCount;
 
 
     @Override
@@ -33,16 +35,15 @@ public class PositionModule implements CarModule {
 
     @Override
     public void update(CarData carData) {
-        if (true) return;
         float drivingArcRadius;
-        disBetweenAxle = (float) 32.5f;
+        disBetweenAxle = 32.5f;//FIXME: data from calibration
         // find out if this is run before or after driving. If after, good, else: bad.
-        Object drivingData = carData.getModuleData("driving");
+        drivingData = carData.getModuleData("driving");
+        odometerCount = (int) carData.getModuleData("arduino");
         wheelAngle = (float) drivingData; //angle of servo
-        distanceTraveled = 0;//getDistance(); //number of wheel turns
+        distanceTraveled = odometerCount * .25f; //number of wheel turns FIXME: data from calibraiton
         //FIXME find out the error in the servo value, and add that value to "> 90" and subtract from "< 90",defaulted at 2
 
-        //FIXME get data from calibration
         if (wheelAngle > 91) { //if turning right
             drivingArcRadius = (float) (Math.tan(wheelAngle - 90) * disBetweenAxle);
         } else if (wheelAngle < 89) { //if turning left
@@ -58,21 +59,21 @@ public class PositionModule implements CarModule {
             //if turning
             deltaPositionAngle = (float) (360 * distanceTraveled / (Math.PI * Math.pow(drivingArcRadius, 2)));//compute the length of the path around the circle the car has taken, and then get the angle of that
             if (wheelAngle > 90) {//if turning right
-                computeDirection(deltaPositionAngle);//update direction with delta direction  because clockwise = positive
                 if (deltaPositionAngle <= 90) {
                     computePosition((float) (drivingArcRadius - drivingArcRadius * Math.cos(deltaPositionAngle)), (float) (drivingArcRadius * Math.sin(deltaPositionAngle)));//weird trig stuff because for the unit circle the trig is based on center of circle. Here, the car starts at either (1,0) [turning left] or (-1,0) [turning right]
 
                 } else {//if(deltaPositionAngle > 90), turning left
                     computePosition((float) (drivingArcRadius + drivingArcRadius * Math.cos(deltaPositionAngle)), (float) (drivingArcRadius * Math.sin(deltaPositionAngle)));//weird trig stuff because for the unit circle the trig is based on center of circle. Here, the car starts at either (1,0) [turning left] or (-1,0) [turning right]
                 }
+                computeDirection(deltaPositionAngle);//update direction with delta direction  because clockwise = positive
             }
             if (wheelAngle < 90) {//if turning left
-                computeDirection(-deltaPositionAngle);//update direction with negative turn going left
                 if (deltaPositionAngle <= 90) {
                     computePosition((float) (drivingArcRadius + drivingArcRadius * Math.cos(deltaPositionAngle)), (float) (drivingArcRadius * Math.sin(deltaPositionAngle)));//weird trig stuff because for the unit circle the trig is based on center of circle. Here, the car starts at either (1,0) [turning left] or (-1,0) [turning right]
                 } else {//if(deltaPositionAngle > 90)
                     computePosition((float) (drivingArcRadius - drivingArcRadius * Math.cos(deltaPositionAngle)), (float) (drivingArcRadius * Math.sin(deltaPositionAngle)));//weird trig stuff because for the unit circle the trig is based on center of circle. Here, the car starts at either (1,0) [turning left] or (-1,0) [turning right]
                 }
+                computeDirection(-deltaPositionAngle);//update direction with negative turn going left
             }
         }
 
@@ -103,24 +104,22 @@ public class PositionModule implements CarModule {
     }
 
     private void computeSpeed() {
-        //GET SPIN COUNT - prevSpins;
-        //INSERT calibrationn function to convert shaft spin to distance
-        float speed = 0;//calibration.getDistance_Elapsed(); //0 is temporary
-        //depending on calibration function, this may need conversion to m/s
+        float speed = odometerCount * 30;
         positionData.updateSpeed(speed);
     }
 
     private void computePosition(float x, float y) {
-        float tempdir = positionData.getDirection();
-        tempdir = tempdir + (float) (90 - Math.toDegrees(Math.atan2(positionData.getPosition()[1], positionData.getPosition()[0])));
-        float tempx = (float) (Math.abs(x) * Math.cos(Math.toRadians(tempdir)) + Math.abs(y) * Math.cos(Math.toRadians(tempdir)));
-        float tempy = (float) (Math.abs(x) * Math.sin(Math.toRadians(tempdir)) + Math.abs(y) * Math.sin(Math.toRadians(tempdir)));
         //FIXME x and y are currently in cm, not in the virtual world coordinates.
-
-        positionData.updatePosition(new float[]{tempx, tempy});
+        float[] temp = pol(x,y);
+        temp = cart(temp[0],temp[1] - positionData.getDirection());
+        positionData.updatePosition(temp);
     }
 
-    private float getDistance(){
-        return 0f;
+    private float[] pol(float x, float y){
+        return new float[] {(float) Math.sqrt(x*x + y*y), (float) Math.toDegrees(Math.atan2(y,x))};
+    }
+
+    private float[] cart(float l, float d){
+        return new float[] {(float) (l * Math.cos(Math.toRadians(d))), (float) (l * Math.sin(Math.toRadians(d)))};
     }
 }
