@@ -11,11 +11,6 @@ public class PreRaceModule implements CarModule {
     private float speed=0;
 
     @Override
-    public Class[] getDependencies() {
-        return null;
-    }
-
-    @Override
     public void init(CarData carData) {
 
     }

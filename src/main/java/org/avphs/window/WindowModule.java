@@ -85,11 +85,6 @@ public class WindowModule extends JFrame implements CarModule {
     }
 
     @Override
-    public Class[] getDependencies() {
-        return null;
-    }
-
-    @Override
     public void init(CarData carData) {}
 
     @Override

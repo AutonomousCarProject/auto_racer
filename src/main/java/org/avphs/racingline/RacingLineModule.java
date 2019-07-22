@@ -24,12 +24,6 @@ public class RacingLineModule implements CarModule {
     private int[] dx = {-1, 0, 1, 0,1,-1,-1,1};
     private int[] dy = {0, 1, 0, -1,1,1,-1,-1};
 
-    //region Overrides
-    @Override
-    public Class[] getDependencies() {
-        return null;
-    }
-
     @Override
     public void init(CarData carData){
         try {

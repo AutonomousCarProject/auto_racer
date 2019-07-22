@@ -32,12 +32,6 @@ public class DrivingModule implements CarModule {
     Speed speed = new Speed();
     Steering steer = new Steering(currentPos, currentSegment);
 
-    @Override
-    public Class[] getDependencies() {
-        return null;
-    }
-
-    @Override
     public void init(CarData carData) {
     }
 

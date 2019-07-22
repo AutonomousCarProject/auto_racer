@@ -8,12 +8,6 @@ import java.util.stream.Collectors;
 public interface CarModule {
 
     /**
-     * Requests all needed modules from the Core.
-     * @return An array of the requested module classes.
-     */
-    Class[] getDependencies();
-
-    /**
      * Called when the Core initializes, before any modules has been run.
      * @param carData Of type CarData that holds data from each module.
      */
@@ -25,5 +19,10 @@ public interface CarModule {
      */
     CarCommand[] commands();
 
+    /**
+     * Called once per frame. This is intended to run any code
+     * a module has to run during the race.
+     * @param carData Holds all the data the car has.
+     */
     void update(CarData carData);
 }

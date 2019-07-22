@@ -16,14 +16,7 @@ public class ImageModule implements CarModule {
     int[] rgbImage = new int[WINDOW_HEIGHT*WINDOW_HEIGHT];
     int[] codeImage = new int[WINDOW_HEIGHT*WINDOW_WIDTH];
 
-    @Override
-    public Class[] getDependencies() {
-        return null;
-    }
-
-    @Override
     public void init(CarData carData) {
-
     }
 
     @Override

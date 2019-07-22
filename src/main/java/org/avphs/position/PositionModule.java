@@ -13,13 +13,6 @@ public class PositionModule implements CarModule {
     private float wheelAngle;
     private float deltaPositionAngle;
 
-
-    @Override
-    public Class[] getDependencies() {
-        return null;
-    }
-
-    @Override
     public void init(CarData carData) {
         //THIS WILL BE WHERE WE READ FROM A FILE TO FIND THE INITIAL POSITION
         positionData = new PositionData(new float[]{0, 0}, 0, 0); //TEMPORARY

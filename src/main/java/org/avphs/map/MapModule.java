@@ -19,13 +19,6 @@ public class MapModule implements CarModule {
 
     //private MapUtils mapUtilities = new MapUtils();   --Commented out because we are not using any of these yet
 
-
-    @Override
-    public Class[] getDependencies() {
-        return new Class[] {
-                ImageModule.class, PositionModule.class
-        };
-    }
     @Override
     public void init(CarData carData) {
 
