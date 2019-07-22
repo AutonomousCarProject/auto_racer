@@ -10,48 +10,60 @@ public class Speed {
     * Each time the car moves to a new segment, newSegment will run, setting the next segment up.
     */
 
-    private int brakeDist;
     private final byte MAX_HARD_BRAKE;  //max throttle for braking w/o skidding
     private final byte FLOOR;           //floor index
+    private int brakeDist;
     private VectorPoint currentPos;
-    private RacingLinePoint brakePoint;
+    private float[] currentPosOnLine;   //where we "should" be on the racing line. Updates with every getThrottle call.
     private RoadData currentSegment;
     private RoadData nextSegment;
+    private short throttleForSeg;
 
-    public Speed(VectorPoint currentPos, RoadData currentSegment, RoadData nextSegment){
-        FLOOR = (byte)2;            //dummy value
+    public Speed(){
+        FLOOR = (byte)0;            //dummy value
         MAX_HARD_BRAKE = (byte)80;  //dummy value
-        this.currentPos = currentPos;
-        this.currentSegment = currentSegment;
-        this.nextSegment = nextSegment;
-
-        //  Wait for calibration to fix
-        //brakeDist = CalibrationModule.getSpeedChangeDist(FLOOR, CalibrationModule.getMaxSpeed(FLOOR,
-        //        currentSegment.radius), CalibrationModule.getMaxSpeed(FLOOR, nextSegment.radius));
-
     }
 
     public void setCurrentPos(VectorPoint newCurrentPos){
         currentPos = newCurrentPos;
     }
 
-    public void newSegment(RoadData newNextSeg){
+    public void newSegment(RoadData newNextSeg){ /*Sets up all variables for next segment*/
         currentSegment = nextSegment;
         nextSegment = newNextSeg;
         brakeDist = CalibrationModule.getSpeedChangeDist(FLOOR, CalibrationModule.getMaxSpeed(FLOOR,
                 currentSegment.radius), CalibrationModule.getMaxSpeed(FLOOR, nextSegment.radius));
+        if (currentSegment instanceof Straight){
+            throttleForSeg = (short)180;
+        } else {
+            //throttleForSeg = CalibrationModule.getThrottle(FLOOR, currentSegment.radius,
+                   // CalibrationModule.getMaxSpeed(FLOOR, currentSegment.radius));
+        }
+    }
+
+    public void initialize(RoadData startSegment, RoadData nextSegment){
+        currentSegment = startSegment;
+        this.nextSegment = nextSegment;
+        if (currentSegment instanceof Straight){
+            throttleForSeg = (short)180;
+        } else {
+            //throttleForSeg = CalibrationModule.getThrottle(FLOOR, currentSegment.radius,
+                  //  CalibrationModule.getMaxSpeed(FLOOR, currentSegment.radius));
+        }
     }
 
     public int getThrottle(){
         if (currentSegment instanceof Straight){
-            if (Calculator.findClosestPoint(currentPos.getX(), currentPos.getY(), ((Straight)currentSegment).getSlope(),
-                    ((Straight)currentSegment).getB()) == new float[]{(float)0.1, (float)0.1} /*dummy values*/){
-                return 180;
+            currentPosOnLine = Calculator.findClosestPoint(currentPos.getX(), currentPos.getY(), //Update
+                    ((Straight)currentSegment).getSlope(), ((Straight)currentSegment).getB());     //currentPosOnLine
+            if ((int)Math.sqrt(Math.pow(currentSegment.endX - currentPosOnLine[0], 2.0) //If we're not to the brake
+                    + Math.pow(currentSegment.endY - currentPosOnLine[1], 2.0)) > brakeDist){ //point yet,
+                return 180;     //full throttle
             } else {
                 return MAX_HARD_BRAKE;
             }
         } else {
-            return 90;
+            return throttleForSeg;
         }
     }
 }
