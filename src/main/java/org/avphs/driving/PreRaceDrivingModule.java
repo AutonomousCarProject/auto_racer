@@ -39,16 +39,13 @@ public class PreRaceDrivingModule extends PreRaceModule {
     public void update(CarData carData) {
         lastDistances = distances;
         //ImageData data = (ImageData)carData.getModuleData("image");
-        //float leftDistance = (float)Math.abs(data..wallHeights[0] - data.wallPosition[0]);
-
+        //float leftDistance = (float)Math.abs(data.wallTop[0] - data.wallPosition[0]);
         //float rightDistance = (float)Math.abs(data.wallHeights[639] - data.wallPosition[639]);
-
         distances = null;
         getAngle();
     }
 
-
-    private void getAngle() {
+    private void getAngle(){
         if (distances[0] < minDistance) {
             if (distances[0] < lastDistances[0]) {
                 angle += changeAmount;
@@ -66,9 +63,9 @@ public class PreRaceDrivingModule extends PreRaceModule {
         }
 
 
-        if (angle < 0) {
+        if (angle < 0){
             angle = 0;
-        } else if (angle > 180) {
+        } else if (angle > 180){
             angle = 180;
         }
     }

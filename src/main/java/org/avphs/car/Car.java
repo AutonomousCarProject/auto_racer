@@ -22,11 +22,14 @@ public class Car implements ClientInterface {
         arduino.pinMode(10,Arduino.DM_SERVO);
         // Set the digital output pin 10 as ESC servo under DeadMan control
         arduino.servoWrite(10,105); // start servo +15 degrees
+        arduino.pinMode(8,Arduino.PULSECOUNT);
+        arduino.DoPulseCnt(8,33);
     }
 
     public void init(CarData carData) {
         if (camera instanceof SimCamera)
             carData.addData("traksim", ((SimCamera) camera).theSim);
+
     }
 
     @Override
