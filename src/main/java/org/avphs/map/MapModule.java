@@ -1,10 +1,9 @@
 package org.avphs.map;
 
-
-import com.sun.scenario.effect.ImageData;
 import org.avphs.coreinterface.CarCommand;
 import org.avphs.coreinterface.CarData;
 import org.avphs.coreinterface.CarModule;
+import org.avphs.image.ImageData;
 import org.avphs.image.ImageModule;
 import org.avphs.position.PositionData;
 import org.avphs.position.PositionModule;

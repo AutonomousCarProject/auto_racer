@@ -33,10 +33,6 @@ public class FlyCamera extends CameraBase { // (in Java/fly2cam)
         numRows = 480;
     }
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 31ddbc5906cd77ad53fea00499b6577be08aed5b
     @Override
     public byte[] getRawImage() {
         byte[] img = new byte[4 * numRows * numCols];
