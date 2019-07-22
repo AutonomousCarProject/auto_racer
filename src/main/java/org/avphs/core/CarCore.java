@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 import static org.avphs.coreinterface.CarCommandType.*;
 
 public class CarCore {
-    private final int FPS = 15;
+    public final static int FPS = 15;
     private Queue<CarCommand> commandQueue = new PriorityQueue<>();
     private DrivingModule drivingModule;
     private ImageModule imageModule;
