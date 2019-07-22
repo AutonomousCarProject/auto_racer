@@ -286,7 +286,7 @@ class RacingLineCurve{
 
     //region Getters/Setter
     public RacingLinePoint[] getCurve() {
-        return curve.toArray(RacingLinePoint[]::new);
+        return RacingLineModule.RacingLinePointListToArray(curve);
     }
     public RacingLinePoint getCurveStart() {
         return curveStart;

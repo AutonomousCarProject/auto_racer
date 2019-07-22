@@ -451,6 +451,14 @@ public class RacingLineModule implements CarModule {
         }
         return points;
     }
+    public static RacingLinePoint[] RacingLinePointListToArray(ArrayList<RacingLinePoint> l) {
+        RacingLinePoint[] points = new RacingLinePoint[l.size()];
+
+        for(int i = 0; i < l.size(); i++) {
+            points[i] = l.get(i);
+        }
+        return points;
+    }
 
     public void trimPoints(float trim) {
         RacingLinePoint[] line = center.getRacingLinePoints();
