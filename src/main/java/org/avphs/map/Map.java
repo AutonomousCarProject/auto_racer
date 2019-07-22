@@ -72,20 +72,22 @@ public class Map {
 
     public void setValueAtIndex(float xlocation, float ylocation, boolean value)
     {
-        int x = Math.round(xlocation); int y = Math.round(ylocation);
-        mapGridData[x][ y] = value;
-        mapGridData[x][ y + 1] = value;
-        mapGridData[x][ y - 1] = value;
+        if(!(xlocation == -1 || ylocation == -1)){
+            int x = Math.round(xlocation); int y = Math.round(ylocation);
+            mapGridData[x][ y] = value;
+            mapGridData[x][ y + 1] = value;
+            mapGridData[x][ y - 1] = value;
 
-        mapGridData[x + 1][ y] = value;
-        mapGridData[x + 1][ y + 1] = value;
-        mapGridData[x + 1][ y - 1] = value;
+            mapGridData[x + 1][ y] = value;
+            mapGridData[x + 1][ y + 1] = value;
+            mapGridData[x + 1][ y - 1] = value;
 
-        mapGridData[x - 1][ y] = value;
-        mapGridData[x - 1][ y + 1] = value;
-        mapGridData[x - 1][ y - 1] = value;
+            mapGridData[x - 1][ y] = value;
+            mapGridData[x - 1][ y + 1] = value;
+            mapGridData[x - 1][ y - 1] = value;
 
-        System.out.println("Value set true at: " + x + "," + y + ".");
+            System.out.println("Value set true at: " + x + "," + y + ".");
+        }
     }
 
 }
