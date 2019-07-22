@@ -4,9 +4,13 @@ import org.avphs.camera.Camera;
 import org.avphs.coreinterface.CarCommand;
 import org.avphs.coreinterface.CarData;
 import org.avphs.coreinterface.CarModule;
+import org.avphs.sbcio.Arduino;
+import org.avphs.sbcio.ArduinoData;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.util.function.Function;
@@ -42,8 +46,13 @@ public class WindowModule extends JFrame implements CarModule {
 
         displayImage = new BufferedImage(windowWidth, windowHeight, BufferedImage.TYPE_INT_RGB);
         bufferImage = new BufferedImage(windowWidth, windowHeight, BufferedImage.TYPE_INT_RGB);
-
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.addWindowListener(new WindowAdapter(){
+            public void windowClosing(WindowEvent e){
+                ((ArduinoData)carData.getModuleData("arduino")).closeFunc.accept(null);
+                System.exit(0);
+            }
+        });
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(windowWidth, windowHeight + 25);
         setResizable(true);
         setVisible(true);

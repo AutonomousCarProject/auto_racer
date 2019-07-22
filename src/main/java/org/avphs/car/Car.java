@@ -6,6 +6,7 @@ import org.avphs.core.CarCore;
 import org.avphs.coreinterface.CarData;
 import org.avphs.coreinterface.ClientInterface;
 import org.avphs.sbcio.Arduino;
+import org.avphs.sbcio.ArduinoData;
 import org.avphs.sbcio.fakefirm.UpdateListener;
 
 public class Car implements ClientInterface {
@@ -55,7 +56,7 @@ public class Car implements ClientInterface {
     }
 
     public void init(CarData carData) {
-        carData.addData("arduino", ps.getCount());
+        carData.addData("arduino", new ArduinoData(ps.getCount(),  aVoid -> arduino.Close()));
     }
 
     @Override
