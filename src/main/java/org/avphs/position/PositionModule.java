@@ -16,9 +16,7 @@ public class PositionModule implements CarModule {
 
     @Override
     public Class[] getDependencies() {
-        return new Class[]{
-                null
-        };
+        return null;
     }
 
     @Override
