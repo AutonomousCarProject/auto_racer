@@ -57,6 +57,6 @@ public class ExampleRunner {
 
 //        int[] intTable2 = myTable2.generateTable();
 //        System.out.println(Table.niceFormat(intTable2));
-        System.out.println(myTable.debugTableStates(""));
+        Table.combineTables(myTable, myTable2);
     }
 }

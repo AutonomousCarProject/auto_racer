@@ -137,8 +137,11 @@ public class Table {
         return debugTableStates("");
     }
 
-    public String debugTableStates(String indent) {
-        StringJoiner joiner = new StringJoiner(",\n", indent + "TableStates in Table: {\n", indent + "}");
+    public String debugTableStates(CharSequence indent) {
+        StringJoiner joiner = new StringJoiner(
+                ",\n", 
+                indent + "TableStates in Table: {\n", 
+                "\n" + indent + "}");
 
         for (TableState tableState : tableStates) {
             joiner.add(tableState.debug(indent + "\t"));
@@ -147,52 +150,13 @@ public class Table {
         return joiner.toString();
     }
 
-//    public static Table combine(Table table1, Table table2) {
-//        class Combo {
-//            private boolean isCombo;
-//            private State state1;
-//            private State state2;
-//            
-//            public Combo(State state1) {
-//                this.isCombo = false;
-//                this.state1 = state1;
-//                this.state2 = null;
-//            }
-//            
-//            public Combo(State state1, State state2) {
-//                this.isCombo = true;
-//                this.state1 = state1;
-//                this.state2 = state2;
-//            }
-//
-//            public boolean isCombo() {
-//                return isCombo;
-//            }
-//
-//            public State getState1() {
-//                return state1;
-//            }
-//
-//            public State getState2() {
-//                return state2;
-//            }
-//            
-//            public Combo[] combosFor(TableState tableState1, TableState tableState2) {
-//                Combo[] ret = new Combo[ImageProcessing.PosterColor.values().length];
-//                for (int i = 0; i < ImageProcessing.PosterColor.values().length; i++) {
-//                    ImageProcessing.PosterColor color = ImageProcessing.PosterColor.values()[i];
-//                    ret[i] = new Combo(tableState1.getTransition(color), tableState2.getTransition(color));
-//                }
-//                
-//                return ret;
-//            }
-//        }
-//
-//        Stack<Combo> comboStack = new Stack<>();
-//        
-//        Table finishedTable = new Table();
-//        
-//    }
+    public static Table combineTables(Table table1, Table table2) {
+        System.out.println(table1.debugTableStates("t1  "));
+        System.out.println(table2.debugTableStates("t2  "));
+        
+        
+        return null;
+    }
 
     public static String niceFormat(int[] intTable) {
         StringBuilder builder = new StringBuilder();

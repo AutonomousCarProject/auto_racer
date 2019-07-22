@@ -24,6 +24,10 @@ public class TableState extends State {
         }
     }
     
+    public void copyTransitions(TableState otherState) {
+        this.transitions = otherState.getTransitions();
+    }
+
     public void bindPlusLoop(TableState state, ImageProcessing.PosterColor... color) {
         this.bind(state, color);
         state.bind(state, color);
@@ -50,6 +54,10 @@ public class TableState extends State {
         return transitions.get(color);
     }
 
+    public EnumMap<ImageProcessing.PosterColor, State> getTransitions() {
+        return transitions;
+    }
+
     @Override
     public int asStateNumber() {
         return (table.getStateNumber(this) << ThingIdentification.STATE_NUMBER_OFFSET);
@@ -64,7 +72,7 @@ public class TableState extends State {
         return table;
     }
 
-    public String debug(String indent) {
+    public CharSequence debug(CharSequence indent) {
         StringBuilder builder = new StringBuilder();
         
         builder.append(indent);
@@ -84,6 +92,6 @@ public class TableState extends State {
         builder.append(indent);
         builder.append("}");
         
-        return builder.toString();
+        return builder;
     }
 }
