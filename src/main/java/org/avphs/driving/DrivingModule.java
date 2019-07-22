@@ -57,6 +57,7 @@ public class DrivingModule implements CarModule {
         //currentSegment();
         //getDirection();
         //getThrottle();
+        carData.addData("driving", angle);
     }
 
     public DrivingModule(){

@@ -10238,7 +10238,6 @@ public class TrakSim {
      * turn radius too short, one or both numbers could be below the bottom of
      * the screen, or possibly approximated at the horizon (screen middle).
      *
-     * @param why >0 to log the result
      * @return The row position of the turn radius relative to the car
      * in the low half, and twice the turn radius in the high 16.
      */
