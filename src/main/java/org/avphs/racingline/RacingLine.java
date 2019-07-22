@@ -158,6 +158,9 @@ public class RacingLine {
         }
         return -1;
     }
+    public int GetClosestPointIndex(RacingLinePoint p) {
+        return GetPointIndex(RacingLineModule.ClosestPoint(getRacingLinePoints(), p));
+    }
 
     public static RacingLineCurve[] CurveListToArray(ArrayList<RacingLineCurve> list) {
         RacingLineCurve[] array = new RacingLineCurve[list.size()];

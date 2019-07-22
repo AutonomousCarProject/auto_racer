@@ -589,19 +589,16 @@ public class RacingLineModule implements CarModule {
         return pointList[closestPoint];
     }
     public static RacingLinePoint ClosestPoint(RacingLinePoint[] pointList, RacingLinePoint point) {
-        Point[] newPoints = new Point[pointList.length];
+        int closestPoint = 0;
+        float closestDist = Float.MAX_VALUE;
 
-        for(int p = 0; p < pointList.length; p++) {
-            newPoints[p] = new Point(pointList[p].getIntX(), pointList[p].getIntY());
-        }
-        Point newPoint = ClosestPoint(newPoints, new Point(point.getIntX(), point.getIntY()));
-        RacingLinePoint retPoint = pointList[0];
-        for(int p = 0; p < newPoints.length; p++) {
-            if (newPoints[p].equals(newPoint)) {
-                retPoint = pointList[p];
+        for (int p = 0; p < pointList.length; p++) {
+            if (distanceBetweenPoints(pointList[p], point) < closestDist) {
+                closestDist = distanceBetweenPoints(pointList[p], point);
+                closestPoint = p;
             }
         }
-        return retPoint;
+        return pointList[closestPoint];
     }
 
     private RacingLinePoint midPoint(Point outer, Point inner) {
