@@ -5,6 +5,7 @@ import org.avphs.coreinterface.CarData;
 import org.avphs.coreinterface.CarModule;
 import org.avphs.racingline.RacingLine;
 import org.avphs.racingline.RacingLinePoint;
+import org.avphs.traksim.TrakSim;
 
 import java.util.ArrayList;
 
@@ -38,7 +39,6 @@ public class DrivingModule implements CarModule {
 
     @Override
     public void init(CarData carData) {
-
     }
 
     @Override

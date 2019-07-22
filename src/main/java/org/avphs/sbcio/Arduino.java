@@ -94,7 +94,7 @@ public class Arduino { // Adapted to Java from arduino.cs ... (FakeFirmata)
 
     protected int[] digitalOutputData;
     protected
-    SerialPort surrealPort;
+    SerialPortSwapper surrealPort;
 
     private static UpdateListener PulseCountUpdate = null;
     private static UpdateListener FeedbackUpdate = null;
@@ -211,6 +211,19 @@ public class Arduino { // Adapted to Java from arduino.cs ... (FakeFirmata)
             System.out.println(ex);
         }
     } //~Send3bytes
+
+    public void setServoAngle(int pin, int angle) {
+        byte[] msg = new byte[3];
+        msg[0] = (byte) (ANALOG_MESSAGE); //Type of message. Likely unneeded
+        msg[1] = (byte) (pin); //pin
+        msg[2] = (byte) (angle); //angle
+        try {
+            surrealPort.writeBytes(msg);
+            if (DoMore != null) DoMore.SendBytes(msg, 3);
+        } catch (Exception ex) {
+            System.out.println(ex);
+        }
+    }
 
     /**
      * Verifies that HardAta is installed and returns the "Firmware" version.
@@ -609,7 +622,7 @@ public class Arduino { // Adapted to Java from arduino.cs ... (FakeFirmata)
 
     private void TestSerialInput() {
         int now = GetMills(), nby = now - PrioSeriTime;
-        SerialPort myPort = surrealPort;
+        SerialPortSwapper myPort = surrealPort;
         if (myPort == null) return; // otherwise test for input, fwd to listener..
         PrioSeriTime = now;
         if (SpeakEasy) if (nby > 222) // should be every ms, but seems not..
@@ -731,7 +744,7 @@ public class Arduino { // Adapted to Java from arduino.cs ... (FakeFirmata)
     public Arduino() { // outer class constructor..
         DateFormat sdf = new SimpleDateFormat("yy MMM dd, HH:mm:ss");
         Date now = new Date();
-        surrealPort = new SerialPort(CommPortNo);
+        surrealPort = new SerialPortSwapper(CommPortNo);
         if (SpeakEasy) System.out.println("new Arduino " // time-stamp the log..
                 + CommPortNo + " " + (surrealPort != null) + " -- " + sdf.format(now));
         digitalOutputData = new int[MAX_DATA_BYTES];
