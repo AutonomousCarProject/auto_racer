@@ -1,6 +1,7 @@
 package org.avphs.carclient;
 
 import fly2cam.FlyCamera;
+import org.avphs.camera.SimCamera;
 import org.avphs.core.CarCore;
 import org.avphs.car.Car;
 

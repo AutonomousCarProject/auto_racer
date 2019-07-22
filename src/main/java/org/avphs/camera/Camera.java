@@ -20,8 +20,6 @@ public interface Camera {
 
     byte[] getBayerImage();
 
-    byte[] getRawImage();
-
     int pixTile();
 
     boolean live();
