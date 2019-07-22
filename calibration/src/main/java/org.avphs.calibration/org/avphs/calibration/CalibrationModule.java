@@ -36,7 +36,7 @@ public class CalibrationModule {
     //Helper method to read speed change distance data
     private static byte[][][] readSpeedChangeDistData (){
         byte[][][] rowList = null;
-        try (BufferedReader br = new BufferedReader(new FileReader("DistanceCalculations.txt"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("calibration\\src\\main\\java\\org.avphs.calibration\\org\\avphs\\calibration\\DistanceCalculations.txt"))) {
 
             short numFloors = parseShort(br.readLine());
             short initSpeeds = parseShort(br.readLine());
@@ -63,7 +63,7 @@ public class CalibrationModule {
     //Helper method to read max speed data
     private static byte[][] readMaxSpeedData (){
         byte[][] rowList = null;
-        try (BufferedReader br = new BufferedReader(new FileReader("MaxSpeeds.csv"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("calibration\\src\\main\\java\\org.avphs.calibration\\org\\avphs\\calibration\\MaxSpeeds.txt"))) {
 
             short numFloor = parseShort(br.readLine());
             short numRadii = parseShort(br.readLine());
@@ -89,7 +89,7 @@ public class CalibrationModule {
     private static FishData[][] readFishData() {
 
         FishData[][] rowList = null;
-        try (BufferedReader br = new BufferedReader(new FileReader("CameraData.txt"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("calibration\\src\\main\\java\\org.avphs.calibration\\org\\avphs\\calibration\\CameraData.txt"))) {
 
 
             short xCount = parseShort(br.readLine());
@@ -102,8 +102,8 @@ public class CalibrationModule {
                 String[] lineItems = line.split(" ");
                 for (int j = 0; j < yCount; j += 2) {
                     float deg = Float.parseFloat(lineItems[j]);
-                    float error = Float.parseFloat(lineItems[j + 1]);
-                    rowList[i][j] = new FishData(deg, error);
+                    float dist = Float.parseFloat(lineItems[j + 1]);
+                    rowList[i][j] = new FishData(deg, dist);
                 }
             }
 
@@ -116,7 +116,7 @@ public class CalibrationModule {
     //Helper method to read angle data
     private static short[] readAngleData (){
         short[] rowList = null;
-        try (BufferedReader br = new BufferedReader(new FileReader("AngleData.txt"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("calibration\\src\\main\\java\\org.avphs.calibration\\org\\avphs\\calibration\\AngleData.txt"))) {
 
             short radCount = parseShort(br.readLine());
             rowList = new short[radCount];
@@ -139,7 +139,7 @@ public class CalibrationModule {
     private static short[] readRadiiData (){
         //TODO: FIX
         short[] rowList = null;
-        try (BufferedReader br = new BufferedReader(new FileReader("RadiiData.txt"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("calibration\\src\\main\\java\\org.avphs.calibration\\org\\avphs\\calibration\\RadiiData.txt"))) {
 
             short angleCount = parseShort(br.readLine());
             rowList = new short[angleCount];
@@ -160,7 +160,7 @@ public class CalibrationModule {
 
     private static byte[][][] readThrottleData(){
         byte[][][] rowList = null;
-        try (BufferedReader br = new BufferedReader(new FileReader("ThrottleCalculations.txt"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("calibration\\src\\main\\java\\org.avphs.calibration\\org\\avphs\\calibration\\ThrottleCalculations.txt"))) {
 
             short numFloors = parseShort(br.readLine());
             short radCount = parseShort(br.readLine());
@@ -228,7 +228,7 @@ public class CalibrationModule {
 
     //returns the amount of throttle needed to maintain a given speed on a given floor surface and with a given turn radius
     //0 = go full throttle
-    public static final byte getThrottle (byte floor, byte radius, byte speed){
+    public static final byte getThrottle (byte floor, short radius, byte speed){
         return THROTTLES[floor][radius][speed];
     }
 
