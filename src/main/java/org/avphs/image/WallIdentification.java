@@ -61,10 +61,10 @@ public class WallIdentification {
         for(int i = 0; i < width; i++){
             int currColor = 0;
             int currTop = -1;
-            for(int j = 0; j < height; j++){
+            for(int j = 190; j < height; j++){
                 if((codeArray[j*width + i] == 10 || codeArray[j*width + i] == 11) && currTop == -1){
                     currTop = j;
-                }else if((codeArray[j*width + i] == currColor || codeArray[j*width + i] == currColor + 1 || codeArray[j*width + i] == currColor -1) && currTop != -1){
+                }else if((codeArray[j*width + i] == currColor || codeArray[j*width + i] == currColor + 1 || codeArray[j*width + i] == currColor -1 || codeArray[j*width + i] == currColor + 2 || codeArray[j*width + i] == currColor - 2) && currTop != -1){
                     if(codeArray[j*width + i] == 6){
                         wallTops[i] = currTop;
                         wallBottoms[i] = j;
