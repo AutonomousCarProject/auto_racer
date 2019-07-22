@@ -33,12 +33,13 @@ public class PositionModule implements CarModule {
 
     @Override
     public void update(CarData carData) {
+
         float drivingArcRadius;
         disBetweenAxle = (float) 32.5f;
         // find out if this is run before or after driving. If after, good, else: bad.
         Object drivingData = carData.getModuleData("driving");
         wheelAngle = (float) drivingData; //angle of servo
-        distanceTraveled = getDistance(); //number of wheel turns
+        distanceTraveled = 0;//getDistance(); //number of wheel turns
         //FIXME find out the error in the servo value, and add that value to "> 90" and subtract from "< 90",defaulted at 2
 
         //FIXME get data from calibration
