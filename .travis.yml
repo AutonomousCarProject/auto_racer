@@ -7,7 +7,7 @@ os:
 install: true
 
 jdk:
-  - oraclejdk12
+  - oraclejdk8
 
 script:
   - ./gradlew build --scan -s
