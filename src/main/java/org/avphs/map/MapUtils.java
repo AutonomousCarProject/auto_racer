@@ -14,7 +14,7 @@ class MapUtils {
             sin[i] = Math.sin(Math.toRadians(i));
         }
     }*/
-    public void setupDistanceLookups()
+    public void setupDistanceLookup()
     {
         //image width as pixel height increases
         for (int i = 0; i < 220; i++)
@@ -24,28 +24,6 @@ class MapUtils {
         }
 
         //height
-    }
-
-    public static void fixTrack(int[] imageInput) { //TODO: Finish later.
-        float holeStart = 0, holeStartIndex = 0, holeEnd = 0; // pixel heights of wall at beginning and end of hole
-        if (imageInput[0] != 0){
-            for (int i = 1; i < imageInput.length; i++) {
-                if (imageInput[i] == 0 && imageInput[i - 1] != 0) {
-                    holeStart = imageInput[i - 1];
-                    holeStartIndex = i - 1;
-                } if (imageInput[i] != 0 && imageInput[i - 1] == 0) {
-                    holeEnd = imageInput[i];
-                    float holeLength = i - holeStartIndex;
-                    float step = (holeStart - holeEnd) / holeLength;
-                    for (int j = i - 1; j > holeStartIndex; j--) { //Every time he's adding to itself
-                        imageInput[j] = (int)(holeEnd += step); //if int it's bad
-                    } // CarModule.getModuleData("image")
-                    //returns imageData object, returns top, bottom, type
-                }
-            }
-        } else {
-            System.out.println("Debug Statement: There is a hole in the beginning of the image, why?");
-        }
     }
 
     public float[] getCoordinatesOnMap(int pixelX, int pixelY, float posX, float posY, float angle)
@@ -85,6 +63,28 @@ class MapUtils {
         return coordsOnMap;
     }
 
+
+    public static void fixTrack(int[] imageInput) { //TODO: Finish later.
+        float holeStart = 0, holeStartIndex = 0, holeEnd = 0; // pixel heights of wall at beginning and end of hole
+        if (imageInput[0] != 0){
+            for (int i = 1; i < imageInput.length; i++) {
+                if (imageInput[i] == 0 && imageInput[i - 1] != 0) {
+                    holeStart = imageInput[i - 1];
+                    holeStartIndex = i - 1;
+                } if (imageInput[i] != 0 && imageInput[i - 1] == 0) {
+                    holeEnd = imageInput[i];
+                    float holeLength = i - holeStartIndex;
+                    float step = (holeStart - holeEnd) / holeLength;
+                    for (int j = i - 1; j > holeStartIndex; j--) { //Every time he's adding to itself
+                        imageInput[j] = (int)(holeEnd += step); //if int it's bad
+                    } // CarModule.getModuleData("image")
+                    //returns imageData object, returns top, bottom, type
+                }
+            }
+        } else {
+            System.out.println("Debug Statement: There is a hole in the beginning of the image, why?");
+        }
+    }
 
 
     /*public double getSine(int angleInDegrees)//get sine value from degree in int from 0 to 360
