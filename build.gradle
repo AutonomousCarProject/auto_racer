@@ -1,9 +1,9 @@
 
-/*
+
 plugins {
     // Apply the java plugin to add support for Java
     id 'java'
-
+    id 'com.gradle.build-scan' version '1.15.1'
     // Apply the application plugin to add support for building a CLI application
     id 'application'
 }
@@ -14,58 +14,29 @@ repositories {
     jcenter()
 }
 
+
+
 dependencies {
 
     // Use TestNG framework, also requires calling test.useTestNG() below
     testImplementation 'org.testng:testng:6.14.3'
+    implementation group: 'org.scream3r', name: 'jssc', version: '2.8.0'
 }
 
 application {
     // Define the main class for the application
-    mainClassName = 'org.avphs.App'
-}
+    mainClassName = 'org.avphs.test.DrDemo'
 
-test {
-    // Use TestNG for unit tests
-    useTestNG()
-}
-*/
 
-plugins {
-    id 'com.gradle.build-scan' version '2.3'
-}
 
-subprojects {
-    tasks.withType(Jar) {
-        destinationDir = file("$rootDir/mods")
-    }
-    afterEvaluate { Project project ->
-        repositories {
-            jcenter()
-        }
-
-        //targetCompatibility = '12'
-
-        if (project.hasProperty("moduleName")) {
-            compileJava {
-                destinationDir = project.file("build/mods")
-                options.compilerArgs = [
-                    '--module-path', classpath.asPath,
-                    '--module-source-path', sourceSets.main.java.srcDirs.join(System.getProperty('path.separator')),
-                    '-m', moduleName,
-                ]
-                doLast {
-                    copy {
-                        from file(new File(destinationDir,  moduleName))
-                        into sourceSets.main.java.outputDir.absolutePath
-                    }
-                }
-            }
-        }
-    }
 }
 
 buildScan {
     termsOfServiceUrl = 'https://gradle.com/terms-of-service'
     termsOfServiceAgree = 'yes'
+}
+
+test {
+    // Use TestNG for unit tests
+    useTestNG()
 }
