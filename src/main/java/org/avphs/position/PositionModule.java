@@ -39,7 +39,7 @@ public class PositionModule implements CarModule {
         // find out if this is run before or after driving. If after, good, else: bad.
 
         wheelAngle = drivingData; //angle of servo
-        distanceTraveled = odometerCount * .25f; //number of wheel turns FIXME: data from calibraiton
+        distanceTraveled = odometerCount * 15f; //number of wheel turns FIXME: data from calibraiton
 
         //FIXME find out the error in the servo value, and add that value to "> 90" and subtract from "< 90",defaulted at 2
         if (wheelAngle > 91) { //if turning right
@@ -103,7 +103,7 @@ public class PositionModule implements CarModule {
 
     private void computeSpeed(int odometerCount) {
         //FIXME: data from calibration
-        float speed = odometerCount * .5f * 30f;//*30 because convert odometerCount per 33.33 milliseoncs to OdometerCount per second.
+        float speed = odometerCount * .15f * 30f;//*30 because convert odometerCount per 33.33 milliseoncs to OdometerCount per second.
         positionData.updateSpeed(speed);
     }
 
@@ -114,11 +114,11 @@ public class PositionModule implements CarModule {
         positionData.updatePosition(temp);
     }
 
-    private float[] pol(float x, float y){
+    private float[] pol(float x, float y){//to polar coordinates
         return new float[] {(float) Math.sqrt(x*x + y*y), (float) Math.toDegrees(Math.atan2(y,x))};
     }
 
-    private float[] cart(float l, float d){
+    private float[] cart(float l, float d){//to cartesian
         return new float[] {(float) (l * Math.cos(Math.toRadians(d))), (float) (l * Math.sin(Math.toRadians(d)))};
     }
 }
