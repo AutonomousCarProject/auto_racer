@@ -12,8 +12,6 @@ public class PositionModule implements CarModule {
     private float distanceTraveled;
     private float wheelAngle;
     private float deltaPositionAngle;
-    private Object drivingData;
-    private int odometerCount;
 
     public void init(CarData carData) {
         //THIS WILL BE WHERE WE READ FROM A FILE TO FIND THE INITIAL POSITION
@@ -28,15 +26,21 @@ public class PositionModule implements CarModule {
 
     @Override
     public void update(CarData carData) {
+        int odom = (int) carData.getModuleData("arduino");
+        float steer = (float) carData.getModuleData("driving");
+        computePosition(odom,steer);
+        carData.addData("position", positionData);
+    }
+
+    private void computePosition(int odometerCount, float drivingData){
         float drivingArcRadius;
         disBetweenAxle = 32.5f;//FIXME: data from calibration
         // find out if this is run before or after driving. If after, good, else: bad.
-        drivingData = carData.getModuleData("driving");
-        odometerCount = (int) carData.getModuleData("arduino");
-        wheelAngle = (float) drivingData; //angle of servo
-        distanceTraveled = odometerCount * .25f; //number of wheel turns FIXME: data from calibraiton
-        //FIXME find out the error in the servo value, and add that value to "> 90" and subtract from "< 90",defaulted at 2
 
+        wheelAngle = drivingData; //angle of servo
+        distanceTraveled = odometerCount * .25f; //number of wheel turns FIXME: data from calibraiton
+
+        //FIXME find out the error in the servo value, and add that value to "> 90" and subtract from "< 90",defaulted at 2
         if (wheelAngle > 91) { //if turning right
             drivingArcRadius = (float) (Math.tan(wheelAngle - 90) * disBetweenAxle);
         } else if (wheelAngle < 89) { //if turning left
@@ -47,24 +51,24 @@ public class PositionModule implements CarModule {
         }
         if (drivingArcRadius == 0) {
             //just drive straight forward
-            computePosition(0, distanceTraveled);
+            convertPosition(0, distanceTraveled);
         } else {
             //if turning
             deltaPositionAngle = (float) (360 * distanceTraveled / (Math.PI * Math.pow(drivingArcRadius, 2)));//compute the length of the path around the circle the car has taken, and then get the angle of that
             if (wheelAngle > 90) {//if turning right
                 if (deltaPositionAngle <= 90) {
-                    computePosition((float) (drivingArcRadius - drivingArcRadius * Math.cos(deltaPositionAngle)), (float) (drivingArcRadius * Math.sin(deltaPositionAngle)));//weird trig stuff because for the unit circle the trig is based on center of circle. Here, the car starts at either (1,0) [turning left] or (-1,0) [turning right]
+                    convertPosition((float) (drivingArcRadius - drivingArcRadius * Math.cos(deltaPositionAngle)), (float) (drivingArcRadius * Math.sin(deltaPositionAngle)));//weird trig stuff because for the unit circle the trig is based on center of circle. Here, the car starts at either (1,0) [turning left] or (-1,0) [turning right]
 
                 } else {//if(deltaPositionAngle > 90), turning left
-                    computePosition((float) (drivingArcRadius + drivingArcRadius * Math.cos(deltaPositionAngle)), (float) (drivingArcRadius * Math.sin(deltaPositionAngle)));//weird trig stuff because for the unit circle the trig is based on center of circle. Here, the car starts at either (1,0) [turning left] or (-1,0) [turning right]
+                    convertPosition((float) (drivingArcRadius + drivingArcRadius * Math.cos(deltaPositionAngle)), (float) (drivingArcRadius * Math.sin(deltaPositionAngle)));//weird trig stuff because for the unit circle the trig is based on center of circle. Here, the car starts at either (1,0) [turning left] or (-1,0) [turning right]
                 }
                 computeDirection(deltaPositionAngle);//update direction with delta direction  because clockwise = positive
             }
             if (wheelAngle < 90) {//if turning left
                 if (deltaPositionAngle <= 90) {
-                    computePosition((float) (drivingArcRadius + drivingArcRadius * Math.cos(deltaPositionAngle)), (float) (drivingArcRadius * Math.sin(deltaPositionAngle)));//weird trig stuff because for the unit circle the trig is based on center of circle. Here, the car starts at either (1,0) [turning left] or (-1,0) [turning right]
+                    convertPosition((float) (drivingArcRadius + drivingArcRadius * Math.cos(deltaPositionAngle)), (float) (drivingArcRadius * Math.sin(deltaPositionAngle)));//weird trig stuff because for the unit circle the trig is based on center of circle. Here, the car starts at either (1,0) [turning left] or (-1,0) [turning right]
                 } else {//if(deltaPositionAngle > 90)
-                    computePosition((float) (drivingArcRadius - drivingArcRadius * Math.cos(deltaPositionAngle)), (float) (drivingArcRadius * Math.sin(deltaPositionAngle)));//weird trig stuff because for the unit circle the trig is based on center of circle. Here, the car starts at either (1,0) [turning left] or (-1,0) [turning right]
+                    convertPosition((float) (drivingArcRadius - drivingArcRadius * Math.cos(deltaPositionAngle)), (float) (drivingArcRadius * Math.sin(deltaPositionAngle)));//weird trig stuff because for the unit circle the trig is based on center of circle. Here, the car starts at either (1,0) [turning left] or (-1,0) [turning right]
                 }
                 computeDirection(-deltaPositionAngle);//update direction with negative turn going left
             }
@@ -77,8 +81,7 @@ public class PositionModule implements CarModule {
         } else {
             computeDirection(deltaPositionAngle + 90);
         }
-        computeSpeed();
-        carData.addData("position", positionData);
+        computeSpeed(odometerCount);
 
         //THIS WILL BE USED LATER
         prevPositionData.updateAll(positionData.getPosition(), positionData.getDirection(), positionData.getSpeed());
@@ -96,12 +99,13 @@ public class PositionModule implements CarModule {
         positionData.updateDirection(direction);
     }
 
-    private void computeSpeed() {
-        float speed = odometerCount * 30;
+    private void computeSpeed(int odometerCount) {
+        //FIXME: data from calibration
+        float speed = odometerCount * .5f * 30f;//*30 because convert odometerCount per 33.33 milliseoncs to OdometerCount per second.
         positionData.updateSpeed(speed);
     }
 
-    private void computePosition(float x, float y) {
+    private void convertPosition(float x, float y) {
         //FIXME x and y are currently in cm, not in the virtual world coordinates.
         float[] temp = pol(x,y);
         temp = cart(temp[0],temp[1] - positionData.getDirection());
