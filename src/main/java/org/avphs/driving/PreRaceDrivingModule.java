@@ -22,7 +22,7 @@ public class PreRaceDrivingModule extends PreRaceModule {
 
     @Override
     public void init(CarData carData) {
-
+        carData.addData("driving", angle);
     }
 
     @Override
