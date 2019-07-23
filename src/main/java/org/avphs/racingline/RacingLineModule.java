@@ -624,18 +624,6 @@ public class RacingLineModule implements CarModule {
 
         RacingLineCurve boundedBezier = new RacingLineCurve();
 
-        // Test Data //
-        //p1x = 500;
-        //p1y = 50;
-        //p2x = 50;
-        //p2y = 50;
-        //p3x = 50;
-        //p3y = 500;
-        //
-        //qxx = 200;
-        //qyy = 100;
-        // Test Data //
-
         float o3x = p3x - p2x;
         float o1x = p1x - p2x;
         float o2x = 0;
@@ -744,7 +732,7 @@ public class RacingLineModule implements CarModule {
     }
 
     public static float distance(float a, float b, float c, float d) {
-        //(a,b) (c,d)
+
         return (float) Math.sqrt((c - a) * (c - a) + (d - b) * (d - b));
     }
 
