@@ -26,12 +26,12 @@ abstract class CarCore {
         //Start Updating Modules
         final ScheduledExecutorService carExecutorService =
                 Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory("Module Updater"));
-        carExecutorService.scheduleAtFixedRate(this::update, 0, Math.round(1000.0 / DrivingCore.FPS), TimeUnit.MILLISECONDS);
+        carExecutorService.scheduleAtFixedRate(this::update, 0, Math.round(1000.0 / RacingCore.FPS), TimeUnit.MILLISECONDS);
 
         // Start Listening for Commands
         final ScheduledExecutorService commandListeningExecutorService =
                 Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory("Command Listener"));
-        commandListeningExecutorService.scheduleAtFixedRate(this::commandListen, 0, Math.round(1000.0 / DrivingCore.FPS),
+        commandListeningExecutorService.scheduleAtFixedRate(this::commandListen, 0, Math.round(1000.0 / RacingCore.FPS),
                 TimeUnit.MILLISECONDS);
     }
 

@@ -23,9 +23,9 @@ import java.util.concurrent.TimeUnit;
 
 import static org.avphs.coreinterface.CarCommandType.*;
 
-public class DrivingCore extends CarCore {
+public class RacingCore extends CarCore {
 
-    public DrivingCore(Car car) {
+    public RacingCore(Car car) {
         super(car);
 
         this.car.init(carData);
