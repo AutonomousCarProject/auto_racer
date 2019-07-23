@@ -6,7 +6,6 @@ import org.avphs.coreinterface.CarData;
 import org.avphs.coreinterface.CarModule;
 import org.avphs.coreinterface.CloseHook;
 import org.avphs.window.WindowModule;
-import org.omg.SendingContext.RunTime;
 
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
