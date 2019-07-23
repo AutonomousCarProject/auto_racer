@@ -55,7 +55,15 @@ public class WallIdentification {
             {10,11,10,9,8,9,10,9,10,9,8,6}
     };
 
-    static int[][] scanImage(int[] codeArray, int width, int height, int[][] wallColors) {
+    /**
+     *
+     * @param codeArray Image where colors are represented by the numbers outlined in ColorArr
+     * @param width Width of Image
+     * @param height Height of Image
+     * Takes image in and searches for tube walls
+     * @return 2D array with 2 rows, top coordinates of watt and bottom coordinates of wall
+     */
+    static int[][] scanImage(int[] codeArray, int width, int height) {
         int[] wallBottoms = new int[width];
         int[] wallTops = new int[width];
         for(int i = 0; i < width; i++){
@@ -63,16 +71,21 @@ public class WallIdentification {
             int currTop = -1;
             for(int j = 190; j < height; j++){
                 if((codeArray[j*width + i] == 10 || codeArray[j*width + i] == 11) && currTop == -1){
-                    currTop = j;
+                    //Looks for white or light grey as the top of a wall, checks if it has not found the top of a wall
+                    currTop = j; // Sets the top of the wall to where it thinks it is
                 }else if((codeArray[j*width + i] == currColor || codeArray[j*width + i] == currColor + 1 || codeArray[j*width + i] == currColor -1 || codeArray[j*width + i] == currColor + 2 || codeArray[j*width + i] == currColor - 2) && currTop != -1){
+                    //Makes sure the colors don't jump more than two shades of grey to count as a wall
                     if(codeArray[j*width + i] == 6){
+                        //Black signifies the end of a wall
                         wallTops[i] = currTop;
                         wallBottoms[i] = j;
                         break;
                     }
                 }else{
+                    //Resets currTop to signify it has not found a wall
                     currTop = -1;
                 }
+                //Advances currColor to the color of the pixel
                 currColor = codeArray[j*width + i];
             }
         }
@@ -84,9 +97,19 @@ public class WallIdentification {
         return out;
     }
 
+    /**
+     *
+     * @param inArrayTop Input of top coordinates
+     * @param inArrayBottom Input of bottom coordinates
+     * @param outArrayTop Output of top coordinates without outliers
+     * @param outArrayBottom Output of bottom coordinates without outliers
+     * Removes outliers from our detected wall data
+     * @see WallIdentification.scanImage()
+     */
     static void removeOutliers(int[] inArrayTop, int[] inArrayBottom, int[] outArrayTop, int[] outArrayBottom){
         double topMean = 0, bottomMean = 0;
         int topCount = 0, bottomCount = 0;
+        //Calculate the mean for the top and bottom coordinates
         for(int i = 0; i < inArrayTop.length; i++){
             if(inArrayTop[i] != 0){
                 topMean += inArrayTop[i];
@@ -99,6 +122,7 @@ public class WallIdentification {
         }
         topMean /= topCount;
         bottomMean /= bottomCount;
+        //Calculate the standard deviation for top and bottom coordinates
         int[] topVariance = new int[inArrayTop.length];
         int[] bottomVariance = new int[inArrayTop.length];
         double topStddev = 0, bottomStddev = 0;
@@ -121,6 +145,7 @@ public class WallIdentification {
         topStddev = Math.sqrt(topStddev);
         bottomStddev /= bottomCount;
         bottomStddev = Math.sqrt(bottomStddev);
+        //Finds outliers based on one standard deviation away from the mean
         for(int i = 0; i < inArrayTop.length; i++){
             if(inArrayTop[i] > topMean + topStddev || inArrayTop[i] < topMean - topStddev || inArrayBottom[i] > bottomMean + bottomStddev || inArrayBottom[i] < bottomMean - bottomStddev){
                 outArrayTop[i] = 0;
@@ -132,6 +157,10 @@ public class WallIdentification {
         }
     }
 
+    /**
+     * Uses linear interpolation to fill in gaps in wall detection
+     * @param arr Top and bottom wall coordinates
+     */
     static void fillEmptySpaces(int[][] arr){
         int x1 = 0; int x2 = 0; int y1 = 0; int y2 = 0;
         for(int i = 1; i < arr[0].length - 2; i++){
