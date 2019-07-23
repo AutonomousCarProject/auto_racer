@@ -2,6 +2,7 @@
 *.iml
 */out
 out
+bin
 
 ### Gradle ###
 .gradle
