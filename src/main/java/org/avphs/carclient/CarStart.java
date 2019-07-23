@@ -9,7 +9,7 @@ public class CarStart implements Runnable {
     public CarStart() {
 
         FlyCamera cam = new fly2cam.FlyCamera();
-        RacingCore core = new RacingCore(new Car(cam));
+        new RacingCore(new Car(cam), true);
         //core.init();
     }
 

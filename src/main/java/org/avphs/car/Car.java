@@ -1,6 +1,7 @@
 package org.avphs.car;
 
 import org.avphs.camera.Camera;
+import org.avphs.core.CarCore;
 import org.avphs.core.RacingCore;
 import org.avphs.coreinterface.CarData;
 import org.avphs.coreinterface.ClientInterface;
@@ -41,7 +42,7 @@ public class Car implements ClientInterface {
         camera.Connect(4);
         this.arduino = new Arduino();
 
-        fps = RacingCore.getFPS();
+        fps = CarCore.FPS;
 
         if (arduino.GetFirmwareRev()<0x120000) return; // not HardAta
         arduino.pinMode(11,Arduino.DEADMAN);

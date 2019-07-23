@@ -6,8 +6,12 @@ import org.avphs.image.ImageModule;
 import org.avphs.map.MapModule;
 import org.avphs.position.PositionModule;
 import org.avphs.racingline.RacingLineModule;
-import org.avphs.window.WindowModule;
 
+/**
+ * RacingCore is run during the race.
+ * @author kevin
+ * @see org.avphs.core.CarCore
+ */
 public class RacingCore extends CarCore {
 
     public RacingCore(Car car, boolean showWindow) {
