@@ -27,13 +27,12 @@ public class WindowModule extends JFrame implements CarModule {
 
     public WindowModule(CarData carData) {
         this.carData = carData;
-        init();
-        update(carData);
     }
 
     public WindowModule() {}
 
-    private void init() {
+    @Override
+    public void init(CarData carData) {
         carData.addData("window", this);
         try {
             camera = (Camera) carData.getModuleData("camera");
@@ -83,9 +82,6 @@ public class WindowModule extends JFrame implements CarModule {
     public void setWindowImage(int[] image) {
         pixels = image;
     }
-
-    @Override
-    public void init(CarData carData) {}
 
     @Override
     public CarCommand[] commands() {

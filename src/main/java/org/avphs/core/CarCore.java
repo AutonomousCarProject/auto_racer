@@ -1,89 +1,45 @@
 package org.avphs.core;
 
-import org.avphs.calibration.CalibrationModule;
 import org.avphs.car.Car;
 import org.avphs.coreinterface.CarCommand;
 import org.avphs.coreinterface.CarData;
 import org.avphs.coreinterface.CarModule;
-import org.avphs.driving.DrivingModule;
-import org.avphs.image.ImageModule;
-import org.avphs.map.MapModule;
-import org.avphs.position.PositionModule;
-import org.avphs.racingline.RacingLineModule;
-import org.avphs.window.WindowModule;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.PriorityQueue;
-import java.util.Queue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
-import static org.avphs.coreinterface.CarCommandType.*;
-
-public class CarCore {
-    public final static int FPS = 15;
-    private Queue<CarCommand> commandQueue = new PriorityQueue<>();
-    private DrivingModule drivingModule;
-    private ImageModule imageModule;
-    private PositionModule positionTrackingModule;
-    private RacingLineModule racingLineModule;
-    private CalibrationModule calibrationModule;
-    private MapModule mapModule;
-    private WindowModule windowModule;
-    private CarData carData;
-    private Car car;
-    private ArrayList<CarModule> updatingCarModules = new ArrayList<>();
+abstract class CarCore {
+    public static final int FPS = 15;
+    protected CarData carData;
+    protected Car car;
+    ArrayList<CarModule> updatingCarModules = new ArrayList<>();
 
     public CarCore(Car car) {
-        this.car = car;
-
         carData = new CarData();
-        this.car.init(carData);
-
-        drivingModule = new DrivingModule();
-        imageModule = new ImageModule();
-        positionTrackingModule = new PositionModule();
-        racingLineModule = new RacingLineModule();
-        calibrationModule = new CalibrationModule();
-        mapModule = new MapModule();
-        car.getCameraImage(carData);
-        windowModule = new WindowModule(carData);
-
-        init();
-        startModules();
-    }
-
-    public void init() {
-        // FIXME: Make this more dynamic
-        drivingModule.init(carData);
-        imageModule.init(carData);
-        positionTrackingModule.init(carData);
-        mapModule.init(carData);
-        racingLineModule.init(carData);
-
-        updatingCarModules.add(windowModule);
-        updatingCarModules.add(imageModule);
-        updatingCarModules.add(positionTrackingModule);
-        updatingCarModules.add(drivingModule);
-        updatingCarModules.add(mapModule);
-        updatingCarModules.add(racingLineModule);
-
+        this.car = car;
     }
 
     public void startModules() {
         //Start Updating Modules
         final ScheduledExecutorService carExecutorService =
                 Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory("Module Updater"));
-        carExecutorService.scheduleAtFixedRate(this::update, 0, Math.round(1000.0 / FPS), TimeUnit.MILLISECONDS);
+        carExecutorService.scheduleAtFixedRate(this::update, 0, Math.round(1000.0 / DrivingCore.FPS), TimeUnit.MILLISECONDS);
 
         // Start Listening for Commands
         final ScheduledExecutorService commandListeningExecutorService =
                 Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory("Command Listener"));
-        commandListeningExecutorService.scheduleAtFixedRate(this::commandListen, 0, Math.round(1000.0 / FPS),
+        commandListeningExecutorService.scheduleAtFixedRate(this::commandListen, 0, Math.round(1000.0 / DrivingCore.FPS),
                 TimeUnit.MILLISECONDS);
+    }
+
+    public void init() {
+        car.getCameraImage(carData);
+        for (CarModule carModule : updatingCarModules) {
+            carModule.init(carData);
+        }
     }
 
     private void update() {
@@ -124,5 +80,10 @@ public class CarCore {
         public Thread newThread(Runnable r) {
             return new Thread(r, name);
         }
+    }
+
+
+    public static int getFPS() {
+        return FPS;
     }
 }
