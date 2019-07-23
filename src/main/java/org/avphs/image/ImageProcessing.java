@@ -68,18 +68,44 @@ public class ImageProcessing implements ImageProcessingInterface {
     public void loadImage() {
     }
 
+    /**
+     *
+     * @param rgb Rgb value (no alpha)
+     * Takes rgb value and extracts red value
+     * @return Red value (0-255)
+     */
     static int getRed(int rgb) {
         return (rgb >> 16) & 0xFF;
     }
 
+    /**
+     *
+     * @param rgb RGB value (no alpha)
+     *            Take rgb value and extracts green value
+     * @return Green value (0-255)
+     */
     static int getGreen(int rgb) {
         return (rgb >> 8) & 0xFF;
     }
 
+    /**
+     *
+     * @param rgb RGB Value (no alpha)
+     * Takes rgb value and extracts blue value
+     * @return Blue value (0-255)
+     */
     static int getBlue(int rgb) {
         return rgb & 0xFF;
     }
 
+    /**
+     *
+     * @param red Red value (0-255)
+     * @param green Green value (0-255)
+     * @param blue Blue value (0-255)
+     * Synthesizes red, green and blue values into one RGB value
+     * @return RGB value
+     */
     static int combineRGB(int red, int green, int blue) {
         return blue + (green << 8) + (red << 16);
     }
@@ -104,16 +130,40 @@ public class ImageProcessing implements ImageProcessingInterface {
         }
     }
 
-    static int[] debayer(byte[] bayer, int width, int height) {
+    /**
+     *
+     * @param bayer 1D array of the bayer image
+     * @param width width of image
+     * @param height height of image
+     * @param tile tiling pattern 0 -> RGGB, 1 -> GBRG
+     * Debayers an image
+     * @return Debayered image in RGB format
+     */
+    static int[] debayer(byte[] bayer, int width, int height, int tile) {
         int[] rgb = new int[width * height ];
-        for(int i = 0; i < height; i++){
-            for(int j = 0; j < width; j++){
-                int r = (int)bayer[2*(2*i*width+j)] & 0xFF;
-                int g = (int)bayer[2*(2*i*width+j)+1] & 0xFF;
-                int b = (int)bayer[2*((2*i+1)*width+j)+1] & 0xFF;
-                int pix = (r << 16) + (g << 8) + b;
-                rgb[i*width+j] = pix;
-            }
+        switch(tile) {
+            case 0:
+                for (int i = 0; i < height; i++) {
+                    for (int j = 0; j < width; j++) {
+                         int r = (int) bayer[2 * (2 * i * width + j)] & 0xFF;
+                         int g = (int) bayer[2 * (2 * i * width + j) + 1] & 0xFF;
+                         int b = (int) bayer[2 * ((2 * i + 1) * width + j) + 1] & 0xFF;
+                        int pix = (r << 16) + (g << 8) + b;
+                        rgb[i * width + j] = pix;
+                    }
+                }
+                break;
+            case 1:
+                for (int i = 0; i < height; i++) {
+                    for (int j = 0; j < width; j++) {
+                        int r = (int) bayer[2 * ((2 * i +1) * width + j)] & 0xFF;
+                        int g = (int) bayer[2 * (2 * i * width + j)] & 0xFF;
+                        int b = (int) bayer[2 * ((2 * i) * width + j) + 1] & 0xFF;
+                        int pix = (r << 16) + (g << 8) + b;
+                        rgb[i * width + j] = pix;
+                    }
+                }
+                break;
         }
         return rgb;
     }
