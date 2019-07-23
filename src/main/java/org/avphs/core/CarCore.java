@@ -4,6 +4,7 @@ import org.avphs.car.Car;
 import org.avphs.coreinterface.CarCommand;
 import org.avphs.coreinterface.CarData;
 import org.avphs.coreinterface.CarModule;
+import org.avphs.window.WindowModule;
 
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
@@ -12,26 +13,31 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 abstract class CarCore {
-    public static final int FPS = 15;
+    private static final int FPS = 15;
     protected CarData carData;
     protected Car car;
     ArrayList<CarModule> updatingCarModules = new ArrayList<>();
 
-    public CarCore(Car car) {
+    CarCore(Car car, boolean showWindow) {
         carData = new CarData();
         this.car = car;
+        car.init(carData);
+
+        if (showWindow) {
+            updatingCarModules.add(new WindowModule(carData));
+        }
     }
 
-    public void startModules() {
+    void startUpdatingModules() {
         //Start Updating Modules
         final ScheduledExecutorService carExecutorService =
                 Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory("Module Updater"));
-        carExecutorService.scheduleAtFixedRate(this::update, 0, Math.round(1000.0 / RacingCore.FPS), TimeUnit.MILLISECONDS);
+        carExecutorService.scheduleAtFixedRate(this::update, 0, Math.round(1000.0 / FPS), TimeUnit.MILLISECONDS);
 
         // Start Listening for Commands
         final ScheduledExecutorService commandListeningExecutorService =
                 Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory("Command Listener"));
-        commandListeningExecutorService.scheduleAtFixedRate(this::commandListen, 0, Math.round(1000.0 / RacingCore.FPS),
+        commandListeningExecutorService.scheduleAtFixedRate(this::commandListen, 0, Math.round(1000.0 / FPS),
                 TimeUnit.MILLISECONDS);
     }
 
@@ -72,7 +78,7 @@ abstract class CarCore {
     public static class NamedThreadFactory implements ThreadFactory {
         private final String name;
 
-        public NamedThreadFactory(String name) {
+        private NamedThreadFactory(String name) {
             this.name = name;
         }
 
