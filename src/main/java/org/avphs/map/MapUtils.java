@@ -4,6 +4,10 @@ class MapUtils {
     // private double[] cos = new double[721];
     // private double[] sin = new double[721];
 
+    final static boolean ERROR_LOGGING = true;//turn off for actual race
+
+
+
     private float[] getImageWidthBasedOnPixelHeight_Lookup = new float[481];
     private float[] getStraightAheadDistanceFromPixelHeight_Lookup = new float[481];
 
@@ -17,10 +21,15 @@ class MapUtils {
     public void setupDistanceLookup()
     {
         //image width as pixel height increases
-        for (int i = 0; i < 220; i++)
+        for (int i = 0; i < 480; i++)
         {
-            getImageWidthBasedOnPixelHeight_Lookup[i] = (float)((48.8606 * 224.591) / ((224.591) - (float)i));
-            getStraightAheadDistanceFromPixelHeight_Lookup[i] = (float)((5811.09)/(224.329 - (float)i));
+            if(i > 224){
+                getImageWidthBasedOnPixelHeight_Lookup[i] = -1;
+                getStraightAheadDistanceFromPixelHeight_Lookup[i] = -1;
+            } else {
+                getImageWidthBasedOnPixelHeight_Lookup[i] = (float) ((48.8606 * 224.591) / ((224.591) - (float) i));
+                getStraightAheadDistanceFromPixelHeight_Lookup[i] = (float) ((5811.09) / (224.329 - (float) i));
+            }
         }
 
         //height
@@ -28,6 +37,12 @@ class MapUtils {
 
     public float[] getCoordinatesOnMap(int pixelX, int pixelY, float posX, float posY, float angle)
     {
+        if(pixelY > 224){
+            if (ERROR_LOGGING)
+                System.out.println("Y pixel was too high to be accurate, so it was skipped");
+            return new float[]{-1,-1};
+        }
+
         //return format is distance ahead y, distance ahead x
         if (angle < 0) {
             angle += 360;
