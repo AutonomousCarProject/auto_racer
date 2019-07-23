@@ -108,7 +108,6 @@ public class RacingLineModule implements CarModule {
         calcMiddleLine();
         center.sortPoints();
         trimSortedPoints(20);
-        System.out.println(center.getRacingLinePoints().length);
         connectTheDots();
     }
     public void closeTrack(int dist) {
