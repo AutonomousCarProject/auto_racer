@@ -4,19 +4,13 @@ import org.avphs.car.Car;
 import org.avphs.image.ImageModule;
 
 public class CalibrationCore extends CarCore {
-    public static enum CalibrationMode {
-        TurnRad,
-        PixelHeight,
-        Fish,
-        Throttle,
-        TurnSpeed,
-        SpeedChange
-    }
-    public CalibrationCore(Car car, CalibrationMode mode) {
+    public CalibrationCore(Car car, boolean needsCamera) {
         super(car, false);
 
         // Add Run-time Modules
-        updatingCarModules.add(new ImageModule());
+        if(needsCamera){
+            updatingCarModules.add(new ImageModule());
+        }
 
         init();
         startUpdatingModules();
