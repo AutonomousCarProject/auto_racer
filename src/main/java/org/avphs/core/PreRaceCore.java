@@ -1,6 +1,7 @@
 package org.avphs.core;
 
 import org.avphs.car.Car;
+import org.avphs.image.ImageModule;
 
 /**
  * PreRaceCore is run before the race to create the map.
@@ -13,6 +14,7 @@ public class PreRaceCore extends CarCore {
         super(car, showWindow);
 
         // Add Run-time Modules
+        updatingCarModules.add(new ImageModule());
 
         init();
         startUpdatingModules();
