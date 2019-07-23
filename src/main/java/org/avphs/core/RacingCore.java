@@ -7,6 +7,7 @@ import org.avphs.image.ImageModule;
 import org.avphs.map.MapModule;
 import org.avphs.position.PositionModule;
 import org.avphs.racingline.RacingLineModule;
+import org.avphs.passing.PassingModule;
 
 /**
  * RacingCore is run during the race.
@@ -25,6 +26,7 @@ public class RacingCore extends CarCore {
         updatingCarModules.add(new RacingLineModule());
         updatingCarModules.add(new MapModule());
         updatingCarModules.add(new ObjectDetectionModule());
+        updatingCarModules.add(new PassingModule());
 
         init();
         startUpdatingModules();

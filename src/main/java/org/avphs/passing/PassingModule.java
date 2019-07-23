@@ -18,4 +18,8 @@ public class PassingModule implements CarModule {
     public void update(CarData carData) {
         System.out.println("Passing update");
     }
+
+    public PassingModule() {
+
+    }
 }
