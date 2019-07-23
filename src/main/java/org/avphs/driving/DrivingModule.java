@@ -63,6 +63,7 @@ public class DrivingModule implements CarModule {
         //currentSegment();
         //getDirection();
         //getThrottle();
+        carData.addData("driving", new float[]{0,0});
     }
 
     public DrivingModule(){
