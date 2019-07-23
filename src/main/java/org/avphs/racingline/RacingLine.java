@@ -111,8 +111,6 @@ public class RacingLine {
     }
 
     private ArrayList<RacingLineCurve> SplitCurves(ArrayList<RacingLineCurve> curves, float maxSmoothDistance) {
-        System.out.println("In: " + curves.size());
-
         ArrayList<RacingLineCurve> splitCurves = new ArrayList<>();
         ArrayList<RacingLineCurve> unsortedCurves = curves;
 
@@ -158,29 +156,22 @@ public class RacingLine {
             }
         }
 
-        System.out.println("Out: " + splitCurves.size());
         return splitCurves;
     }
 
     private ArrayList<RacingLineCurve> RefineCurves(ArrayList<RacingLineCurve> curves, int minCurvePoints) {
         ArrayList<RacingLineCurve> refinedCurves = new ArrayList<>();
 
-        System.out.println(curves.size());
         for (RacingLineCurve c: curves) {
-            System.out.println(curves.indexOf(c) + ": " + c.getCurve().length);
-
             if (c.getCurve().length < minCurvePoints) {
-                System.out.println("Too short\n");
                 continue;
             }
             c.setEndPoints();
 
-            //System.out.println(c.getCurveStart().getCoords() + " " + c.getCurveEnd().getCoords());
             int start = GetPointIndex(c.getCurveStart());
             int end = GetPointIndex(c.getCurveEnd());
 
             if (start == -1 || end == -1) {
-                System.out.println("Start: " + start + ", End: " + end);
                 continue;
             }
 
@@ -199,8 +190,6 @@ public class RacingLine {
             }
             newCurve.CalculatePoints();
             refinedCurves.add(newCurve);
-
-            System.out.println("\n");
         }
 
         return refinedCurves;
