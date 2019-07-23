@@ -40,12 +40,17 @@ public class MoveForward {
             dist = data.count;
             wallHeights.add(imageData.wallBottom[320] - imageData.wallTop[320]);
             distances.add(dist);
-
             if(dist < 1){
                 break;
             }
         }
         car.stop();
 
+        for(int i = 0; i < wallHeights.size(); i++){
+            System.out.print("Wall Heights:\n");
+            System.out.print(wallHeights);
+            System.out.print("\n\nDistances from wall:\n");
+            System.out.print(distances);
+        }
     }
 }
