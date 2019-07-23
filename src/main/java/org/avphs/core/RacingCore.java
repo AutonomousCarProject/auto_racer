@@ -1,6 +1,7 @@
 package org.avphs.core;
 
 import org.avphs.car.Car;
+import org.avphs.detection.ObjectDetectionModule;
 import org.avphs.driving.DrivingModule;
 import org.avphs.image.ImageModule;
 import org.avphs.map.MapModule;
@@ -23,6 +24,7 @@ public class RacingCore extends CarCore {
         updatingCarModules.add(new PositionModule());
         updatingCarModules.add(new RacingLineModule());
         updatingCarModules.add(new MapModule());
+        updatingCarModules.add(new ObjectDetectionModule());
 
         init();
         startUpdatingModules();
