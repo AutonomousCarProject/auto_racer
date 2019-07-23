@@ -11160,9 +11160,11 @@ public class TrakSim {
                 else break;
             } //~while
             SetStart(Vramp, Hramp, RampA);
+            System.out.println("??");
             // Vposn = Vramp; Hposn = Hramp; Facing = RampA;
             if (!LoadTrackInfo()) { // calls BuildMap
-                System.out.println("Unable to load track map");
+                System.out.println("stupid error");
+                System.out.println("???");
                 System.exit(3);
             }
             if (false) if (Mini_Log) if (Qlog < 0) if (MapIndex != null)
