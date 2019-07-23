@@ -6,7 +6,7 @@ import org.avphs.coreinterface.CarCommand;
 import org.avphs.coreinterface.CarData;
 import org.avphs.coreinterface.CarModule;
 
-public class CalibrationModule implements CarModule {
+public class CalibrationModule {
 
     //Helper method to read speed change distance data
     private static byte[][][] reedSpeedChangeDistData() {
@@ -113,25 +113,6 @@ public class CalibrationModule implements CarModule {
         return ANGLES[rad];
     }
 
-    @Override
-    public Class[] getDependencies() {
-        return new Class[0];
-    }
-
-    @Override
-    public void init(CarData carData) {
-
-    }
-
-    @Override
-    public CarCommand[] commands() {
-        return new CarCommand[0];
-    }
-
-    @Override
-    public void update(CarData carData) {
-
-    }
 /*
     static class pulseListener implements UpdateListener{ //adds listener for pulse
         int prior; //previous pulse read

@@ -1,79 +1,50 @@
 package org.avphs.core;
 
-import org.avphs.calibration.CalibrationModule;
 import org.avphs.car.Car;
 import org.avphs.coreinterface.CarCommand;
 import org.avphs.coreinterface.CarData;
 import org.avphs.coreinterface.CarModule;
-import org.avphs.driving.DrivingModule;
-import org.avphs.image.ImageModule;
-import org.avphs.map.MapModule;
-import org.avphs.position.PositionModule;
-import org.avphs.racingline.RacingLineModule;
 import org.avphs.window.WindowModule;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.PriorityQueue;
-import java.util.Queue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
-import static org.avphs.coreinterface.CarCommandType.*;
+/**
+ * This Class is the core for both PreRaceCore as well as RacingCore.
+ *
+ * @author kevin
+ * @see PreRaceCore
+ * @see RacingCore
+ */
+public abstract class CarCore {
+    public static final int FPS = 15; // Frames per second car Tries to run
+    protected CarData carData; // The data from all of the modules.
+    protected Car car; // the object that can actually control the car.
+    ArrayList<CarModule> updatingCarModules = new ArrayList<>(); // All of the modules that will be run each frame.
 
-public class CarCore {
-    public final static int FPS = 15;
-    private Queue<CarCommand> commandQueue = new PriorityQueue<>();
-    private DrivingModule drivingModule;
-    private ImageModule imageModule;
-    private PositionModule positionTrackingModule;
-    private RacingLineModule racingLineModule;
-    private CalibrationModule calibrationModule;
-    private MapModule mapModule;
-    private WindowModule windowModule;
-    private CarData carData;
-    private Car car;
-    private ArrayList<CarModule> updatingCarModules = new ArrayList<>();
-
-    public CarCore(Car car) {
-        this.car = car;
-
+    /**
+     * Constructor that instantiates the car.
+     * @param car the object that controls the car.
+     * @param showWindow True for the JFrame window to appear, false for it not to appear.
+     */
+    CarCore(Car car, boolean showWindow) {
         carData = new CarData();
-        this.car.init(carData);
+        this.car = car;
+        car.init(carData);
 
-        drivingModule = new DrivingModule();
-        imageModule = new ImageModule();
-        positionTrackingModule = new PositionModule();
-        racingLineModule = new RacingLineModule();
-        calibrationModule = new CalibrationModule();
-        mapModule = new MapModule();
-        car.getCameraImage(carData);
-        windowModule = new WindowModule(carData);
-
-        init();
-        startModules();
+        if (showWindow) {
+            updatingCarModules.add(new WindowModule(carData));
+        }
     }
 
-    public void init() {
-        // FIXME: Make this more dynamic
-        drivingModule.init(carData);
-        imageModule.init(carData);
-        positionTrackingModule.init(carData);
-        mapModule.init(carData);
-        racingLineModule.init(carData);
-
-        updatingCarModules.add(windowModule);
-        updatingCarModules.add(imageModule);
-        updatingCarModules.add(positionTrackingModule);
-        updatingCarModules.add(drivingModule);
-        updatingCarModules.add(mapModule);
-        updatingCarModules.add(racingLineModule);
-
-    }
-
-    public void startModules() {
+    /**
+     * Begins the threads that update each module in updatingCarModules.
+     * This Method is called only once during initialization.
+     */
+    void startUpdatingModules() {
         //Start Updating Modules
         final ScheduledExecutorService carExecutorService =
                 Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory("Module Updater"));
@@ -86,6 +57,21 @@ public class CarCore {
                 TimeUnit.MILLISECONDS);
     }
 
+    /**
+     * Goes through each module in updatingCarModules, and initializes it. An image is
+     * also fetched from the car, and stored in carData.
+     */
+    public void init() {
+        car.getCameraImage(carData);
+        for (CarModule carModule : updatingCarModules) {
+            carModule.init(carData);
+        }
+    }
+
+    /**
+     * This method is called each frame, and updates all of the car modules. During this
+     * process, and image is fetched from the car and stored in carData.
+     */
     private void update() {
         car.getCameraImage(carData);
         for (CarModule module : updatingCarModules) {
@@ -93,6 +79,11 @@ public class CarCore {
         }
     }
 
+    /**
+     * This function is called once every frame time. It checks for any commands
+     * a module has called.
+     * NOTE: this function can be out of sync with update, this will likely run faster.
+     */
     private void commandListen() {
         for (CarModule module : updatingCarModules) {
             if (module.commands() != null) {
@@ -113,10 +104,15 @@ public class CarCore {
         }
     }
 
+    /**
+     * This class provides a named thread. Great for profiling code.
+     * @author kevin
+     * @see java.util.concurrent.ThreadFactory
+     */
     public static class NamedThreadFactory implements ThreadFactory {
         private final String name;
 
-        public NamedThreadFactory(String name) {
+        private NamedThreadFactory(String name) {
             this.name = name;
         }
 

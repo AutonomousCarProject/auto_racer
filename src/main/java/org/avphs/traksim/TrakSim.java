@@ -113,10 +113,10 @@ public class TrakSim {
             CameraHi = DriverCons.D_CameraHi, CentoGrav = DriverCons.D_CentoGrav,
             fMapTall = (double) MapTall, fMapWide = (double) MapWide,
     // TurnRadius is measured at servo position = min(LeftSteer,RiteSteer)
-    NormdRad = (256.0 / TurnRadius) * ((LeftSteer < RiteSteer)
-            ? (double) LeftSteer : (double) RiteSteer),
+    NormdRad = 256.0/(TurnRadius * ((LeftSteer<RiteSteer)
+            ? (double)LeftSteer : (double)RiteSteer)),
     // NormdRad: scale factor to calc acceleration from servo steering angle
-    fTurn4m = NormdRad * (180.0 / 256.0 / Math.PI), // =180/(r*pi) -> degs/degs/m
+    fTurn4m = NormdRad * 180.0/(256.0 * Math.PI), // =180/(r*pi) -> degs/degs/m
     // fTurn4m scales forward advance at given steer into degrees of turn:
     // advance pi*TR meters @ st=max turns car 180, @ st=0 turns 0;
     // assume turn is linear in both steer posn & travel dist (probly not)
@@ -10238,7 +10238,6 @@ public class TrakSim {
      * turn radius too short, one or both numbers could be below the bottom of
      * the screen, or possibly approximated at the horizon (screen middle).
      *
-     * @param why >0 to log the result
      * @return The row position of the turn radius relative to the car
      * in the low half, and twice the turn radius in the high 16.
      */
@@ -11161,9 +11160,11 @@ public class TrakSim {
                 else break;
             } //~while
             SetStart(Vramp, Hramp, RampA);
+            System.out.println("??");
             // Vposn = Vramp; Hposn = Hramp; Facing = RampA;
             if (!LoadTrackInfo()) { // calls BuildMap
-                System.out.println("Unable to load track map");
+                System.out.println("stupid error");
+                System.out.println("???");
                 System.exit(3);
             }
             if (false) if (Mini_Log) if (Qlog < 0) if (MapIndex != null)

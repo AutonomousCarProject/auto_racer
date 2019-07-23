@@ -16,14 +16,9 @@ public class ImageModule implements CarModule {
     int[] rgbImage = new int[WINDOW_HEIGHT*WINDOW_HEIGHT];
     int[] codeImage = new int[WINDOW_HEIGHT*WINDOW_WIDTH];
 
-    @Override
-    public Class[] getDependencies() {
-        return null;
-    }
-
-    @Override
     public void init(CarData carData) {
-
+        ImageData data = new ImageData();
+        carData.addData("image", data);
     }
 
     @Override
@@ -51,8 +46,8 @@ public class ImageModule implements CarModule {
         wallData = WallIdentification.scanImage(codeImage,WINDOW_WIDTH,WINDOW_HEIGHT,WallIdentification.WallColorSeqs);
         ImageProcessing.CodeToRGB(codeImage, rgbImage);
 
-        data.wallTop = wallData[0];
-        data.wallBottom = wallData[1];
+        data.wallTop = wallData[1];
+        data.wallBottom = wallData[0];
 
         for(int k = 0; k < wallData[0].length; k++) {
             if(wallData[0][k] > 0 && wallData[1][k] > 0) {

@@ -56,11 +56,11 @@ public class RacingLine {
     //endregion
 
     //region Find Curves
-    public void FindCurves(float minStraightAngle, float maxDistance, int minCurvePoints) {
+    public void FindCurves(float minStraightAngle, float maxDistance, float maxSmoothDistance, int minCurvePoints) {
         ArrayList<RacingLinePoint> potentialCurves = FindPotentialCurves(minStraightAngle);
-        ArrayList<RacingLineCurve> splitCurves = SplitCurves(potentialCurves, maxDistance);
+        ArrayList<RacingLineCurve> sortedCurves = SortCurves(potentialCurves, maxDistance);
+        ArrayList<RacingLineCurve> splitCurves = SplitCurves(sortedCurves, maxSmoothDistance);
         ArrayList<RacingLineCurve> refinedCurves = RefineCurves(splitCurves, minCurvePoints);
-        CurveCalculations(refinedCurves);
 
         RacingLineCurves = CurveListToArray(refinedCurves);
     }
@@ -77,7 +77,7 @@ public class RacingLine {
         return newCurves;
     }
 
-    private ArrayList<RacingLineCurve> SplitCurves(ArrayList<RacingLinePoint> potentialCurves, float accuracy) {
+    private ArrayList<RacingLineCurve> SortCurves(ArrayList<RacingLinePoint> potentialCurves, float accuracy) {
         ArrayList<RacingLineCurve> sortedCurves = new ArrayList<>();
         ArrayList<RacingLinePoint> checked = new ArrayList<>();
         RacingLineCurve currCurve = new RacingLineCurve();
@@ -110,6 +110,55 @@ public class RacingLine {
         return sortedCurves;
     }
 
+    private ArrayList<RacingLineCurve> SplitCurves(ArrayList<RacingLineCurve> curves, float maxSmoothDistance) {
+        ArrayList<RacingLineCurve> splitCurves = new ArrayList<>();
+        ArrayList<RacingLineCurve> unsortedCurves = curves;
+
+        while (unsortedCurves.size() > 0) {
+            RacingLinePoint[] currCurve = unsortedCurves.get(0).getCurve();
+            float currDir = Math.signum(currCurve[0].getDegree());
+
+            boolean breakCurve = false;
+
+            for (int p = 0; p < currCurve.length; p++) {
+                if (Math.signum(currCurve[p].getDegree()) != currDir) {
+                    for (int check = p; check < currCurve.length; check++) {
+                        if (currCurve[p].distanceToPoint(currCurve[check]) > maxSmoothDistance) {
+                            breakCurve = true;
+                            break;
+                        } else if (Math.signum(currCurve[check].getDegree()) == currDir) {
+                            break;
+                        }
+                    }
+
+                    if (breakCurve) {
+                        RacingLinePoint[] newCurve = new RacingLinePoint[currCurve.length - p];
+                        RacingLinePoint[] addCurve = new RacingLinePoint[p];
+
+                        for (int i = 0; i < currCurve.length; i++) {
+                            if (i < p) {
+                                addCurve[i] = currCurve[i];
+                            } else {
+                                newCurve[i - p] = currCurve[i];
+                            }
+                        }
+                        unsortedCurves.get(0).setCurve(newCurve);
+                        RacingLineCurve rc = new RacingLineCurve(addCurve);
+                        splitCurves.add(new RacingLineCurve(addCurve));
+                        break;
+                    }
+                }
+            }
+
+            if (!breakCurve) {
+                splitCurves.add(unsortedCurves.get(0));
+                unsortedCurves.remove(0);
+            }
+        }
+
+        return splitCurves;
+    }
+
     private ArrayList<RacingLineCurve> RefineCurves(ArrayList<RacingLineCurve> curves, int minCurvePoints) {
         ArrayList<RacingLineCurve> refinedCurves = new ArrayList<>();
 
@@ -118,8 +167,14 @@ public class RacingLine {
                 continue;
             }
             c.setEndPoints();
+
             int start = GetPointIndex(c.getCurveStart());
             int end = GetPointIndex(c.getCurveEnd());
+
+            if (start == -1 || end == -1) {
+                continue;
+            }
+
             RacingLineCurve newCurve = new RacingLineCurve();
 
             if (start > end) {
@@ -133,20 +188,49 @@ public class RacingLine {
             for (int p = start; p < end + 1; p++) {
                 newCurve.AddPoint(RacingLinePointsList.get(p));
             }
+            newCurve.CalculatePoints();
             refinedCurves.add(newCurve);
         }
 
         return refinedCurves;
     }
 
-    private void CurveCalculations(ArrayList<RacingLineCurve> curves) {
-        for (RacingLineCurve rc: curves) {
-            rc.setEndPoints();
-            rc.setMidPoints();
-            rc.setCurveDir();
-            rc.setCurveConstraint();
-            rc.CalculateBoundedBezier();
+    public void MergeLineWithCurves() {
+        ArrayList<RacingLinePoint> currPointList = RacingLinePointsList;
+
+        for(RacingLineCurve c: RacingLineCurves) {
+            RacingLinePoint[] currCurve = c.getCurve();
+
+            int start = -1, end = -1;
+            float minStartDist = Integer.MAX_VALUE;
+            float minEndDist = Integer.MAX_VALUE;
+
+            for (int p = 0; p < RacingLinePointsList.size(); p++) {
+                if (RacingLinePointsList.get(p).distanceToPoint(currCurve[0]) < minStartDist) {
+                    start = p;
+                    minStartDist = RacingLinePointsList.get(p).distanceToPoint(currCurve[0]);
+                } else if (RacingLinePointsList.get(p).distanceToPoint(currCurve[currCurve.length - 1]) < minEndDist) {
+                    end = p;
+                    minEndDist = RacingLinePointsList.get(p).distanceToPoint(currCurve[currCurve.length - 1]);
+                }
+            }
+
+            ArrayList<RacingLinePoint> newPointList = new ArrayList<>();
+
+            for (int s = 0; s < start; s++) {
+                newPointList.add(currPointList.get(s));
+            }
+            for (int curve = 0; curve < currCurve.length; curve++) {
+                newPointList.add(currCurve[curve]);
+            }
+            for (int e = end; e < currPointList.size(); e++) {
+                newPointList.add(currPointList.get(e));
+            }
+            currPointList = newPointList;
         }
+
+        RacingLinePointsList = currPointList;
+        getRacingLinePoints();
     }
     //endregion
 
@@ -419,7 +503,7 @@ class RacingLineCurve{
         setMidPoints();
         setCurveDir();
         setCurveConstraint();
-        CalculateBoundedBezier();
+        //CalculateBoundedBezier();
     }
 
     public String getCurvePrint() {

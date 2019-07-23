@@ -1,8 +1,8 @@
 package org.avphs.car;
 
 import org.avphs.camera.Camera;
-import org.avphs.camera.SimCamera;
 import org.avphs.core.CarCore;
+import org.avphs.core.RacingCore;
 import org.avphs.coreinterface.CarData;
 import org.avphs.coreinterface.ClientInterface;
 import org.avphs.sbcio.Arduino;
