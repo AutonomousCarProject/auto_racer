@@ -3,6 +3,7 @@ package org.avphs.position;
 import org.avphs.coreinterface.CarCommand;
 import org.avphs.coreinterface.CarData;
 import org.avphs.coreinterface.CarModule;
+import org.avphs.sbcio.ArduinoData;
 
 public class PositionModule implements CarModule {
 
@@ -26,9 +27,9 @@ public class PositionModule implements CarModule {
 
     @Override
     public void update(CarData carData) {
-        int odom = (int) carData.getModuleData("arduino");
+        ArduinoData odom = (ArduinoData) carData.getModuleData("arduino");
         float steer = (float) carData.getModuleData("driving");
-        computePosition(odom,steer);
+        computePosition(odom.count,steer);
         carData.addData("position", positionData);
     }
 
