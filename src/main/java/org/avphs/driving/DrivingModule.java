@@ -33,6 +33,7 @@ public class DrivingModule implements CarModule {
     Steering steer = new Steering(currentPos, currentSegment);
 
     public void init(CarData carData) {
+        carData.addData("driving", angle);
     }
 
     @Override
