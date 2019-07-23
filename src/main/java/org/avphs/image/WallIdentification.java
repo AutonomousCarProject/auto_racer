@@ -76,8 +76,95 @@ public class WallIdentification {
                 currColor = codeArray[j*width + i];
             }
         }
-        int[][] out = {wallBottoms, wallTops};
+        int[] newWallTops = new int[width];
+        int[] newWallBottoms = new int[width];
+        removeOutliers(wallTops, wallBottoms, newWallTops, newWallBottoms);
+        int[][] out = {newWallBottoms, newWallTops};
+        fillEmptySpaces(out);
         return out;
     }
+
+    static void removeOutliers(int[] inArrayTop, int[] inArrayBottom, int[] outArrayTop, int[] outArrayBottom){
+        double topMean = 0, bottomMean = 0;
+        int topCount = 0, bottomCount = 0;
+        for(int i = 0; i < inArrayTop.length; i++){
+            if(inArrayTop[i] != 0){
+                topMean += inArrayTop[i];
+                topCount++;
+            }
+            if(inArrayBottom[i] != 0){
+                bottomMean += inArrayBottom[i];
+                bottomCount++;
+            }
+        }
+        topMean /= topCount;
+        bottomMean /= bottomCount;
+        int[] topVariance = new int[inArrayTop.length];
+        int[] bottomVariance = new int[inArrayTop.length];
+        double topStddev = 0, bottomStddev = 0;
+        for(int i = 0; i < inArrayTop.length; i++){
+            if(inArrayTop[i] != 0){
+                topVariance[i] = (inArrayTop[i] - (int)topMean) * (inArrayTop[i] - (int)topMean);
+            }else{
+                topVariance[i] = 0;
+            }
+            topStddev += topVariance[i];
+            if(inArrayBottom[i] != 0){
+                bottomVariance[i] = (inArrayBottom[i] - (int)bottomMean) * (inArrayBottom[i] - (int)bottomMean);
+            }else{
+                bottomVariance[i] = 0;
+            }
+            bottomStddev += bottomVariance[i];
+
+        }
+        topStddev /= topCount;
+        topStddev = Math.sqrt(topStddev);
+        bottomStddev /= bottomCount;
+        bottomStddev = Math.sqrt(bottomStddev);
+        for(int i = 0; i < inArrayTop.length; i++){
+            if(inArrayTop[i] > topMean + topStddev || inArrayTop[i] < topMean - topStddev || inArrayBottom[i] > bottomMean + bottomStddev || inArrayBottom[i] < bottomMean - bottomStddev){
+                outArrayTop[i] = 0;
+                outArrayBottom[i] = 0;
+            }else{
+                outArrayTop[i] = inArrayTop[i];
+                outArrayBottom[i] = inArrayBottom[i];
+            }
+        }
+    }
+
+    static void fillEmptySpaces(int[][] arr){
+        int x1 = 0; int x2 = 0; int y1 = 0; int y2 = 0;
+        for(int i = 1; i < arr[0].length - 2; i++){
+            if(arr[0][i] == 0){
+                if(arr[0][i-1] != 0){
+                    x1 = i-1;
+                    y1 = arr[0][i-1];
+                    int j = i + 1;
+                    while(arr[0][j] == 0 && j < arr[0].length - 1){
+                        j++;
+                    }
+                    x2 = j;
+                    y2 = arr[0][j];
+
+                    for(int k = x1; k < x2; k++){
+                        arr[0][k] = ((y1-y2)/(x1-x2)) * (k - x1) + y1;
+                    }
+
+                    y1 = arr[1][i-1];
+                    y2 = arr[1][j];
+
+                    for(int k = x1; k < x2; k++){
+                        arr[1][k] = ((y1-y2)/(x1-x2)) * (k - x1) + y1;
+                    }
+                    i = x2;
+                    //drawPixel(a, x1, y1, width, 3);
+                    System.out.println("x1, y1 =" + x1 + " " + y1 + " x2, y2 =" + x2 + " " + y2);
+
+                }
+            }
+        }
+    }
+
+
 
 }
