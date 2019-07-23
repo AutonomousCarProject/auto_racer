@@ -5,6 +5,7 @@ import org.avphs.coreinterface.CarData;
 import org.avphs.coreinterface.CarModule;
 
 public class ObjectDetectionModule implements CarModule {
+    ObjectData data = new ObjectData();
     @Override
     public void init(CarData carData) {
 
@@ -13,10 +14,11 @@ public class ObjectDetectionModule implements CarModule {
     @Override
     public CarCommand[] commands() {
         return new CarCommand[0];
+
     }
 
     @Override
     public void update(CarData carData) {
-
+        carData.addData("objectDetection", data);
     }
 }
