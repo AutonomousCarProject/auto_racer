@@ -12,8 +12,6 @@ public class RacingLineModule implements CarModule {
     private static ArrayList<Point> innerWall = new ArrayList<Point>();
     private HashSet<Point> allWalls = new HashSet<Point>();
     private RacingLine center = new RacingLine();
-    private RacingLine bezierCurveLine = new RacingLine();
-    private RacingLine boundedBezier = new RacingLine();
 
     private boolean[][] map;
     private boolean[][] walls;
@@ -71,7 +69,6 @@ public class RacingLineModule implements CarModule {
         MakeMap(_map);
         getMiddleLine();
         WindowCurve bezierCurve = new WindowCurve(center);
-        bezierCurveLine = new RacingLine(bezierCurve.getPoints());
     }
 
     //Ensures that the map always has a buffer of nontrack - neccesary for BFS functions
@@ -540,23 +537,6 @@ public class RacingLineModule implements CarModule {
             }
         }
         System.out.println("CALC MIDDLE LINE TIMES: "+times);
-        /*
-        ArrayList<Point> longer = outerWall.size() > innerWall.size() ? outerWall : innerWall;
-        ArrayList<Point> shorter = outerWall.size() <= innerWall.size() ? outerWall : innerWall;
-        for (int i = 0; i < longer.size(); i++) {
-            int closePoint = -1;
-            float dist = rows + columns;
-            for (int j = 0; j < shorter.size(); j++) {
-                float testDist = distanceBetweenPoints(longer.get(i), shorter.get(j));
-                if (testDist < dist && intersect(longer.get(i), shorter.get(j)) <= 5) {
-                    closePoint = j;
-                    dist = testDist;
-                }
-            }
-            if (closePoint >= 0) {
-                center.addPoint(midPoint(longer.get(i), shorter.get(closePoint)));
-            }
-        }*/
     }
 
     public static float distanceBetweenPoints(Point start, Point end) {
