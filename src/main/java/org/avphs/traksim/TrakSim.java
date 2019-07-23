@@ -113,10 +113,10 @@ public class TrakSim {
             CameraHi = DriverCons.D_CameraHi, CentoGrav = DriverCons.D_CentoGrav,
             fMapTall = (double) MapTall, fMapWide = (double) MapWide,
     // TurnRadius is measured at servo position = min(LeftSteer,RiteSteer)
-    NormdRad = (256.0 / TurnRadius) * ((LeftSteer < RiteSteer)
-            ? (double) LeftSteer : (double) RiteSteer),
+    NormdRad = 256.0/(TurnRadius * ((LeftSteer<RiteSteer)
+            ? (double)LeftSteer : (double)RiteSteer)),
     // NormdRad: scale factor to calc acceleration from servo steering angle
-    fTurn4m = NormdRad * (180.0 / 256.0 / Math.PI), // =180/(r*pi) -> degs/degs/m
+    fTurn4m = NormdRad * 180.0/(256.0 * Math.PI), // =180/(r*pi) -> degs/degs/m
     // fTurn4m scales forward advance at given steer into degrees of turn:
     // advance pi*TR meters @ st=max turns car 180, @ st=0 turns 0;
     // assume turn is linear in both steer posn & travel dist (probly not)
