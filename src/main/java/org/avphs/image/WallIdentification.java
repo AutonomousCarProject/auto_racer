@@ -99,6 +99,53 @@ public class WallIdentification {
 
     /**
      *
+     * @param bayer Bayer array to process (from camera).
+     * @param width Width of image.
+     * @param height Height of image.
+     * @param dt The difference threshold with which to determine color.
+     * @return Array of wall tops and bottoms.
+     */
+    static int[][] magicloop(byte[] bayer, int width, int height, int dt) {
+        int[] wallBottoms = new int[width];
+        int[] wallTops = new int[width];
+        for(int i = 0; i < width; i++){
+            int currColor = 0;
+            int currTop = -1;
+            for(int j = 0; j < height; j++){
+                int r = (int)bayer[2*(2*i*width+j)] & 0xFF;
+                int g = (int)bayer[2*(2*i*width+j)+1] & 0xFF;
+                int b = (int)bayer[2*((2*i+1)*width+j)+1] & 0xFF;
+                ImageProcessing.PosterColor posterPix = ImageProcessing.posterizeChannels(r, g, b, dt);
+                int currentColor = posterPix.code;
+                if((currentColor == 10 || currentColor == 11) && currTop == -1){
+                    //Looks for white or light grey as the top of a wall, checks if it has not found the top of a wall
+                    currTop = j; // Sets the top of the wall to where it thinks it is
+                }else if((currentColor == currColor || currentColor == currColor + 1 || currentColor == currColor -1 || currentColor == currColor + 2 || currentColor == currColor - 2) && currTop != -1){
+                    //Makes sure the colors don't jump more than two shades of grey to count as a wall
+                    if(currentColor == 6){
+                        //Black signifies the end of a wall
+                        wallTops[i] = currTop;
+                        wallBottoms[i] = j;
+                        break;
+                    }
+                }else{
+                    //Resets currTop to signify it has not found a wall
+                    currTop = -1;
+                }
+                //Advances currColor to the color of the pixel
+                currColor = currentColor;
+            }
+        }
+        int[] newWallTops = new int[width];
+        int[] newWallBottoms = new int[width];
+        removeOutliers(wallTops, wallBottoms, newWallTops, newWallBottoms);
+        int[][] out = {newWallBottoms, newWallTops};
+        fillEmptySpaces(out);
+        return out;
+    }
+
+    /**
+     *
      * @param inArrayTop Input of top coordinates
      * @param inArrayBottom Input of bottom coordinates
      * @param outArrayTop Output of top coordinates without outliers
