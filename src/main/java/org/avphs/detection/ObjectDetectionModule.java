@@ -21,14 +21,11 @@ public class ObjectDetectionModule implements CarModule {
     @Override
     public CarCommand[] commands() {
         return new CarCommand[0];
+
     }
 
     @Override
     public void update(CarData carData) {
-        imageData = (ImageData)carData.getModuleData("image");
-        map = (Map)carData.getModuleData("map");
-        positionData = (PositionData)carData.getModuleData("position");
-
         carData.addData("objectDetection", data);
     }
 }
