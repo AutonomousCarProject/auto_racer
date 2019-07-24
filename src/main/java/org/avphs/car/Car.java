@@ -67,12 +67,12 @@ public class Car implements ClientInterface {
 
     @Override
     public void accelerate(boolean absolute, int angle) {
-        arduino.setServoAngle(camera.getSpeedServoPin(), angle + 90);
+        arduino.servoWrite(camera.getSpeedServoPin(), angle + 90);
     }
 
     @Override
     public void steer(boolean absolute, int angle) {
-        arduino.setServoAngle(camera.getSteerServoPin(), angle + 90);
+        arduino.servoWrite(camera.getSteerServoPin(), angle + 90);
     }
 
     @Override
