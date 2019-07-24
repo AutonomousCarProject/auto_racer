@@ -45,7 +45,8 @@ public class ImageModule implements CarModule {
         carData.addData("image",inProgressData);
 
         bayerImage = camera.getBayerImage();
-        wallData = WallIdentification.magicloop(bayerImage,WINDOW_WIDTH,WINDOW_HEIGHT,65);
+        codeImage = ImageProcessing.process(bayerImage, WINDOW_WIDTH,WINDOW_HEIGHT);
+        wallData = WallIdentification.scanImage(codeImage,WINDOW_WIDTH,WINDOW_HEIGHT);
         ImageProcessing.CodeToRGB(codeImage, rgbImage);
 
         data.wallTop = wallData[1];
