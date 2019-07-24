@@ -3,6 +3,7 @@ package org.avphs.racingline;
 import org.avphs.coreinterface.CarCommand;
 import org.avphs.coreinterface.CarData;
 import org.avphs.coreinterface.CarModule;
+import org.avphs.detection.ObjectData;
 
 import java.util.*;
 import java.io.*;
@@ -21,6 +22,10 @@ public class RacingLineModule implements CarModule {
     private int rows, columns;
     private int[] dx = {-1, 0, 1, 0,1,-1,-1,1};
     private int[] dy = {0, 1, 0, -1,1,1,-1,-1};
+    private Obstacle box = new Obstacle();
+
+    private RacingLine modifiedCenter;
+    private ObjectData obstacle;
 
     @Override
     public void init(CarData carData){
@@ -44,7 +49,7 @@ public class RacingLineModule implements CarModule {
         }catch(IOException e){
             e.printStackTrace();
         }
-        carData.addData("RacingLine",center);
+        carData.addData("RacingLine", center);
     }
 
     @Override
@@ -54,6 +59,13 @@ public class RacingLineModule implements CarModule {
 
     @Override
     public void update(CarData carData) {
+        System.out.println("Passing update");
+        obstacle = (ObjectData) carData.getModuleData("detection");
+
+        //box.update();
+        //pass();
+
+        carData.addData("RacingLine", modifiedCenter != null ? modifiedCenter : center);
 
     }
     //endregion
@@ -98,6 +110,37 @@ public class RacingLineModule implements CarModule {
             System.out.println("Warning: Racing line has not yet been created. To create a racing line, run getMiddleLine");
         }
         return center;
+    }
+    //endregion
+    //region passing
+    public void pass() {
+        RacingLinePoint[] line = center.getRacingLinePoints();
+        int o1x = box.bb[0].x;
+        int o1y = box.bb[0].y;
+        int o2x = box.bb[box.bb.length-1].x;
+        int o2y = box.bb[box.bb.length-1].y;
+        float threshold = 60;
+        int bob = 0;
+        for(RacingLinePoint c: line) {
+            float dist1 = (float)Math.sqrt((c.getX()-o1x)*(c.getX()-o1x)+(c.getY()-o1y)*(c.getY()-o1y));
+            float dist2 = (float)Math.sqrt((c.getX()-o2x)*(c.getX()-o2x)+(c.getY()-o2y)*(c.getY()-o2y));
+            float boxcx = (o1x+o2x)/2;
+            float boxcy = (o1y+o2y)/2;
+            float dist3 = (float)Math.sqrt((c.getInner().x-boxcx)*(c.getInner().x-boxcx)+(c.getInner().y-boxcy)*(c.getInner().y-boxcy));
+            float dist4 = (float)Math.sqrt((c.getOuter().x-boxcx)*(c.getOuter().x-boxcx)+(c.getOuter().y-boxcy)*(c.getOuter().y-boxcy));
+            if(dist1 < threshold || dist2 < threshold) {
+                c.setPass(true);
+                if(dist3 < dist4) bob = 1;
+                else bob = -1;
+                float t = 0.5f;
+                //change this
+                t+=bob*(0.4-0.2*(dist1/threshold)-0.2*(dist2/threshold));
+                c.setPassX(t*c.getOuter().x+(1-t)*c.getInner().x);
+                c.setPassY(t*c.getOuter().y+(1-t)*c.getInner().y);
+            } else {
+                c.setPass(false);
+            }
+        }
     }
     //endregion
 
@@ -785,6 +828,66 @@ class Point {
         if (y != other.y)
             return false;
         return true;
+    }
+}
+
+class Obstacle {
+    Point[] bb;
+
+    int x, y;//in map, leftmost point
+    private float dx, dy;
+
+    public Obstacle() {
+        dx = 0;
+        dy = 0;
+
+    }
+
+    public void update() {
+        for(Point c: bb) {
+            c.x += dx;
+            c.y += dy;
+        }
+    }
+
+    public Point[] getBb() {
+        return bb;
+    }
+
+    public void setBb(Point[] bb) {
+        this.bb = bb;
+    }
+
+    public float getX() {
+        return x;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    public float getDX() {
+        return dx;
+    }
+
+    public void setDX(float a) {
+        this.dx = a;
+    }
+
+    public float getDY() {
+        return dy;
+    }
+
+    public void setDY(float a) {
+        this.dy = a;
     }
 }
 
