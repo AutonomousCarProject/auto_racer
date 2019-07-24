@@ -21,11 +21,13 @@ dependencies {
     // Use TestNG framework, also requires calling test.useTestNG() below
     testImplementation 'org.testng:testng:6.14.3'
     implementation group: 'org.scream3r', name: 'jssc', version: '2.8.0'
+    compile group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'
+
 }
 
 application {
     // Define the main class for the application
-    mainClassName = 'org.avphs.test.DrDemo'
+    mainClassName = 'org.avphs.carclient.CarStart'
 
 
 
