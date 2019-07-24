@@ -69,7 +69,7 @@ public class WallIdentification {
         for(int i = 0; i < width; i++){
             int currColor = 0;
             int currTop = -1;
-            for(int j = 190; j < height; j++){
+            for(int j = 0; j < height; j++){
                 if((codeArray[j*width + i] == 10 || codeArray[j*width + i] == 11) && currTop == -1){
                     //Looks for white or light grey as the top of a wall, checks if it has not found the top of a wall
                     currTop = j; // Sets the top of the wall to where it thinks it is
@@ -112,9 +112,9 @@ public class WallIdentification {
             int currColor = 0;
             int currTop = -1;
             for(int j = 0; j < height; j++){
-                int r = (int)bayer[2*(2*i*width+j)] & 0xFF;
-                int g = (int)bayer[2*(2*i*width+j)+1] & 0xFF;
-                int b = (int)bayer[2*((2*i+1)*width+j)+1] & 0xFF;
+                int r = (int)bayer[2*(2*j*width+i)] & 0xFF;
+                int g = (int)bayer[2*(2*j*width+i)+1] & 0xFF;
+                int b = (int)bayer[2*((2*j+1)*width+i)+1] & 0xFF;
                 ImageProcessing.PosterColor posterPix = ImageProcessing.posterizeChannels(r, g, b, dt);
                 int currentColor = posterPix.code;
                 if((currentColor == 10 || currentColor == 11) && currTop == -1){
