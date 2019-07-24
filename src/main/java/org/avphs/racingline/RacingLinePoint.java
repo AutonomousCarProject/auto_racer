@@ -4,7 +4,9 @@ import java.util.Objects;
 
 public class RacingLinePoint {
     private float x, y, degree;
-
+    private Point outer, inner;
+    private boolean pass = false;
+    private float passx,passy;
     //region Constructors
     public RacingLinePoint() {
         setX(0);
@@ -110,6 +112,39 @@ public class RacingLinePoint {
     @Override
     public int hashCode() {
         return Objects.hash(x, y);
+    }
+    //endregion
+
+    //passing region
+    public void setOuter(Point a) {
+        outer = a;
+    }
+    public void setInner(Point a) {
+        inner = a;
+    }
+    public Point getOuter() {
+        return outer;
+    }
+    public Point getInner() {
+        return inner;
+    }
+    public void setPass(boolean a) {
+        pass = a;
+    }
+    public void setPassX(float a) {
+        passx = a;
+    }
+    public void setPassY(float a) {
+        passy = a;
+    }
+    public boolean getPass() {
+        return pass;
+    }
+    public float getPassX() {
+        return passx;
+    }
+    public float getPassY() {
+        return passy;
     }
     //endregion
 }
