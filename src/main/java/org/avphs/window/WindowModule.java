@@ -4,7 +4,7 @@ import org.avphs.camera.Camera;
 import org.avphs.coreinterface.CarCommand;
 import org.avphs.coreinterface.CarData;
 import org.avphs.coreinterface.CarModule;
-import org.avphs.sbcio.Arduino;
+import org.avphs.position.PositionCarTesting;
 import org.avphs.sbcio.ArduinoData;
 
 import javax.swing.*;
@@ -13,8 +13,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
-import java.util.function.Function;
-import java.util.function.Predicate;
+import java.io.IOException;
 
 public class WindowModule extends JFrame implements CarModule {
     private Camera camera;
@@ -29,7 +28,8 @@ public class WindowModule extends JFrame implements CarModule {
         this.carData = carData;
     }
 
-    public WindowModule() {}
+    public WindowModule() {
+    }
 
     @Override
     public void init(CarData carData) {
@@ -45,9 +45,18 @@ public class WindowModule extends JFrame implements CarModule {
 
         displayImage = new BufferedImage(windowWidth, windowHeight, BufferedImage.TYPE_INT_RGB);
         bufferImage = new BufferedImage(windowWidth, windowHeight, BufferedImage.TYPE_INT_RGB);
-        this.addWindowListener(new WindowAdapter(){
-            public void windowClosing(WindowEvent e){
-                ((ArduinoData)carData.getModuleData("arduino")).closeFunc.accept(null);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                ((ArduinoData) carData.getModuleData("arduino")).closeFunc.accept(null);
+
+                //FOR POSITION TRACKING CAR TESTING
+                try {
+                    ((PositionCarTesting) carData.getModuleData("pct")).close();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+
                 System.exit(0);
             }
         });
@@ -60,7 +69,7 @@ public class WindowModule extends JFrame implements CarModule {
 
     @Override
     public void update(CarData carData) {
-        update(this.getGraphics());
+        update(getGraphics());
     }
 
     @Override
