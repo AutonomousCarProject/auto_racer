@@ -1,54 +1,41 @@
 package org.avphs.detection;
 
 public class Obstacle {
-    Point[] bbc;
-    float x, y;//in map, leftmost point
+    Point[] corners;
+
     //MIGHT NOT USE
-    float speed; //scalar
-    float direction; //in relative to north on the map
+    //vector for speed
 
+    float dy;
+    float dx;
 
+    public Point[] getClosestCorners(){
+        //TODO: make this function lol
+        return new Point[]{new Point(), new Point()};
+    }
 
-    public Point[] getBBC() {
-        return bbc;
+    public Point[] getCorners() {
+        return corners;
     } // Bounding Cox Controller getter
 
-    public void setBbc(Point[] bbc) {
-        this.bbc = bbc;
+    public void setCorners(Point[] corners) {
+        this.corners = corners;
     } // Bounding Box Controller setter
 
-    public float getX() {
-        return x;
+    public float getDy() {
+        return dy;
     }
 
-    public void setX(float x) {
-        this.x = x;
+    public void setDy(float dy) {
+        this.dy = dy;
     }
 
-    public float getY() {
-        return y;
+    public float getDx() {
+        return dx;
     }
 
-    public void setY(float y) {
-        this.y = y;
+    public void setDx(float dx) {
+        this.dx = dx;
     }
-
-    public float getSpeed() {
-        return speed;
-    }
-
-    public void setSpeed(float speed) {
-        this.speed = speed;
-    }
-
-    public float getDirection() {
-        return direction;
-    }
-
-    public void setDirection(float direction) {
-        this.direction = direction;
-    }
-
-
 
 }
