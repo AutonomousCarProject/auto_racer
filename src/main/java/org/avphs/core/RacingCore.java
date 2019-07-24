@@ -5,6 +5,7 @@ import org.avphs.detection.ObjectDetectionModule;
 import org.avphs.driving.DrivingModule;
 import org.avphs.image.ImageModule;
 import org.avphs.map.MapModule;
+import org.avphs.map.MapRacingModule;
 import org.avphs.position.PositionModule;
 import org.avphs.racingline.RacingLineModule;
 import org.avphs.passing.PassingModule;
@@ -24,7 +25,7 @@ public class RacingCore extends CarCore {
         updatingCarModules.add(new ImageModule());
         updatingCarModules.add(new PositionModule());
         updatingCarModules.add(new RacingLineModule());
-        updatingCarModules.add(new MapModule());
+        updatingCarModules.add(new MapRacingModule());
         updatingCarModules.add(new ObjectDetectionModule());
         updatingCarModules.add(new PassingModule());
 
