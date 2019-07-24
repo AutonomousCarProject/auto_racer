@@ -1,26 +1,21 @@
 package org.avphs.detection;
 
-import java.awt.geom.Point2D;
-
 public class Obstacle {
-    Point[] bb;
-
+    Point[] bbc;
     float x, y;//in map, leftmost point
-
-
     //MIGHT NOT USE
     float speed; //scalar
     float direction; //in relative to north on the map
 
 
 
-    public Point[] getBb() {
-        return bb;
-    }
+    public Point[] getBBC() {
+        return bbc;
+    } // Bounding Cox Controller getter
 
-    public void setBb(Point[] bb) {
-        this.bb = bb;
-    }
+    public void setBbc(Point[] bbc) {
+        this.bbc = bbc;
+    } // Bounding Box Controller setter
 
     public float getX() {
         return x;
