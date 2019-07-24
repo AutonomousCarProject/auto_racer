@@ -43,7 +43,7 @@ public class MapModule implements CarModule {
         imageData = (ImageData) carData.getModuleData("image");
 
 
-
+        /*
         fakedata.updatePos();
         mapformatter.AddData(fakedata.returnPos(), (float)fakedata.runningRadianTotal, fakedata.bottomOuterWallHeights);
         if (fakedata.done) {
@@ -53,6 +53,7 @@ public class MapModule implements CarModule {
             }
 
         }
+        */
     }
 
     public Map getMap(){return map;}
