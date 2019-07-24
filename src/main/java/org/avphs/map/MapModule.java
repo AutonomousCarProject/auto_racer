@@ -9,6 +9,11 @@ import org.avphs.image.ImageModule;
 import org.avphs.position.PositionData;
 import org.avphs.position.PositionModule;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
 public class MapModule implements CarModule, CloseHook {
 
     private ImageData imageData;
@@ -62,6 +67,22 @@ public class MapModule implements CarModule, CloseHook {
 
     @Override
     public void onClose() {
-        System.out.println("OGENISOI EJOSIGJSOGI  I AM CLOSIN RIGHT NOW!!!!");
+        try{
+            boolean[][] m = map.getMap();
+            FileWriter f = new FileWriter("src/main/java/org/avphs/map/map.txt");
+            f.write(m.length + "  " + m[0].length + "\n");
+            for(int i = 0; i < map.getMap().length; i++){
+                 for (int j = 0; j < m[0].length; j++){
+                    if(m[i][j])f.write('1');
+                    else f.write('0');
+                 }
+                 f.write('\n');
+            }
+
+            f.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
