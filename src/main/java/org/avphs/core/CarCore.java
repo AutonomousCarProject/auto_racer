@@ -69,7 +69,7 @@ public abstract class CarCore {
     }
 
     /**
-     * This method is called each frame, and updates all of the car modules. During this
+     * T-his method is called each frame, and updates all of the car modules. During this
      * process, and image is fetched from the car and stored in carData.
      */
     private void update() {

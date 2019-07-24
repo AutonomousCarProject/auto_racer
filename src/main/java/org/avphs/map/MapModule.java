@@ -21,7 +21,7 @@ public class MapModule implements CarModule {
 
     @Override
     public void init(CarData carData) {
-
+        carData.addData("map", map);
         //modules are only used in update
         //DO NOT GET THE MODULES HERE ATM
         // positionModule = (PositionData)carData.getModuleData("position");
@@ -38,12 +38,12 @@ public class MapModule implements CarModule {
 
     @Override
     public void update(CarData carData) {
-
+        carData.addData("map", map);
         positionModule = (PositionData)carData.getModuleData("position");
         imageData = (ImageData) carData.getModuleData("image");
 
 
-
+        /*
         fakedata.updatePos();
         mapformatter.AddData(fakedata.returnPos(), (float)fakedata.runningRadianTotal, fakedata.bottomOuterWallHeights);
         if (fakedata.done) {
@@ -53,6 +53,7 @@ public class MapModule implements CarModule {
             }
 
         }
+        */
     }
 
     public Map getMap(){return map;}
