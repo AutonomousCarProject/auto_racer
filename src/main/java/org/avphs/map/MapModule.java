@@ -3,12 +3,13 @@ package org.avphs.map;
 import org.avphs.coreinterface.CarCommand;
 import org.avphs.coreinterface.CarData;
 import org.avphs.coreinterface.CarModule;
+import org.avphs.coreinterface.CloseHook;
 import org.avphs.image.ImageData;
 import org.avphs.image.ImageModule;
 import org.avphs.position.PositionData;
 import org.avphs.position.PositionModule;
 
-public class MapModule implements CarModule {
+public class MapModule implements CarModule, CloseHook {
 
     private ImageData imageData;
     private PositionData positionModule;
@@ -59,4 +60,8 @@ public class MapModule implements CarModule {
     public Map getMap(){return map;}
 
 
+    @Override
+    public void onClose() {
+        System.out.println("OGENISOI EJOSIGJSOGI  I AM CLOSIN RIGHT NOW!!!!");
+    }
 }

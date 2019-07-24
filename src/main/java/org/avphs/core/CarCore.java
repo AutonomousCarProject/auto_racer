@@ -4,13 +4,16 @@ import org.avphs.car.Car;
 import org.avphs.coreinterface.CarCommand;
 import org.avphs.coreinterface.CarData;
 import org.avphs.coreinterface.CarModule;
+import org.avphs.coreinterface.CloseHook;
 import org.avphs.window.WindowModule;
+import org.omg.SendingContext.RunTime;
 
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 /**
  * This Class is the core for both PreRaceCore as well as RacingCore.
@@ -24,7 +27,8 @@ public abstract class CarCore {
     protected CarData carData; // The data from all of the modules.
     protected Car car; // the object that can actually control the car.
     ArrayList<CarModule> updatingCarModules = new ArrayList<>(); // All of the modules that will be run each frame.
-
+    ArrayList<CloseHook> closeHookModules = new ArrayList<>();
+    ScheduledExecutorService carExecutorService;
     /**
      * Constructor that instantiates the car.
      * @param car the object that controls the car.
@@ -38,6 +42,17 @@ public abstract class CarCore {
         if (showWindow) {
             updatingCarModules.add(new WindowModule(carData));
         }
+
+        Runtime.getRuntime().addShutdownHook(new ShutdownHook());
+    }
+
+    public class ShutdownHook extends Thread {
+        @Override
+        public void run() {
+            for (CloseHook carModule : closeHookModules) {
+                carModule.onClose();
+            }
+        }
     }
 
     /**
@@ -46,7 +61,7 @@ public abstract class CarCore {
      */
     void startUpdatingModules() {
         //Start Updating Modules
-        final ScheduledExecutorService carExecutorService =
+         carExecutorService =
                 Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory("Module Updater"));
         carExecutorService.scheduleAtFixedRate(this::update, 0, Math.round(1000.0 / FPS), TimeUnit.MILLISECONDS);
 
@@ -65,6 +80,9 @@ public abstract class CarCore {
         car.getCameraImage(carData);
         for (CarModule carModule : updatingCarModules) {
             carModule.init(carData);
+            if (carModule instanceof CloseHook) {
+                closeHookModules.add((CloseHook) carModule);
+            }
         }
     }
 
