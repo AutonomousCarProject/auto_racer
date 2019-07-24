@@ -41,7 +41,7 @@ public class FakeDataStreamForMap {
             timeSinceLastUpdate = System.currentTimeMillis();
             if (System.currentTimeMillis() < (timeSinceLastUpdate + frameRate))
             {
-                System.out.println(runningRadianTotal);
+                //System.out.println(runningRadianTotal);
                 runningRadianTotal += stepRadian;
                 updateXPos(); updateYPos();
                 //Export data from image.
@@ -52,8 +52,8 @@ public class FakeDataStreamForMap {
         {
             done = true;
         }
-        System.out.println(xPosition + "," + yPosition);
-        System.out.println(runningRadianTotal);
+        //System.out.println(xPosition + "," + yPosition);
+        //System.out.println(runningRadianTotal);
     }
 
     public FakeDataStreamForMap(double xpos, double ypos)//If we want to change starting position.

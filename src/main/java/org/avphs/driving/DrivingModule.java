@@ -44,9 +44,10 @@ public class DrivingModule implements CarModule {
             //};
 
         //}
-        return new CarCommand[] {
+       /* return new CarCommand[] {
                 accelerate(true, throttle), steer(true, angle)
-        };
+        };*/
+       return null;
     }
 
     @Override

@@ -7,7 +7,7 @@ import org.avphs.coreinterface.CarModule;
 public class PassingModule implements CarModule {
     //region Overrides
     public void init(CarData carData) {
-        System.out.println("Passing init");
+        //System.out.println("Passing init");
     }
 
     @Override
@@ -17,7 +17,7 @@ public class PassingModule implements CarModule {
 
     @Override
     public void update(CarData carData) {
-        System.out.println("Passing update");
+        //System.out.println("Passing update");
     }
     //endregion
 

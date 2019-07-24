@@ -86,7 +86,7 @@ public class Map {
             mapGridData[x - 1][ y + 1] = value;
             mapGridData[x - 1][ y - 1] = value;
 
-            System.out.println("Value set true at: " + x + "," + y + ".");
+            //System.out.println("Value set true at: " + x + "," + y + ".");
         }
     }
 

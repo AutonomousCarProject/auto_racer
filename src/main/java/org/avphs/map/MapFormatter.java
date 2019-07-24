@@ -65,7 +65,7 @@ public class MapFormatter {
             //System.out.println("wtf");
             map.setValueAtIndex(coords[0], coords[1], true);
         }
-        System.out.println("InsidePoints");
+        //System.out.println("InsidePoints");
         for (int i = 637; i < 640; i++)
         {
             float[] coords;
@@ -75,7 +75,7 @@ public class MapFormatter {
             map.setValueAtIndex(coords[0], coords[1], true);
 
         }
-        System.out.println("OutsidePoints");
+        //System.out.println("OutsidePoints");
 
         //Note: we probably should be looking at more than just the center or we will have trouble completely building the map.
         //We will also have to implement a way to fill in holes on map

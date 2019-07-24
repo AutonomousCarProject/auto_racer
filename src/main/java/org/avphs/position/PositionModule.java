@@ -4,6 +4,10 @@ import org.avphs.coreinterface.CarCommand;
 import org.avphs.coreinterface.CarData;
 import org.avphs.coreinterface.CarModule;
 import org.avphs.sbcio.ArduinoData;
+import org.avphs.traksim.TrakSim;
+
+import static org.avphs.coreinterface.CarCommand.accelerate;
+import static org.avphs.coreinterface.CarCommand.steer;
 
 public class PositionModule implements CarModule {
 
@@ -13,16 +17,21 @@ public class PositionModule implements CarModule {
     private float distanceTraveled;
     private float wheelAngle;
     private float deltaPositionAngle;
+    private TrakSim ts;
+    private int angle;
 
     public void init(CarData carData) {
         //THIS WILL BE WHERE WE READ FROM A FILE TO FIND THE INITIAL POSITION
         positionData = new PositionData(new float[]{0, 0}, 0, 0); //TEMPORARY
-
+        ts = new TrakSim();
     }
 
     @Override
     public CarCommand[] commands() {
-        return null;
+        return new CarCommand[] {
+                accelerate(true, 15),
+                steer(true, angle)
+        };
     }
 
     @Override
@@ -31,6 +40,16 @@ public class PositionModule implements CarModule {
         int steer = (int) carData.getModuleData("driving");
         computePosition(odom.count,steer);
         carData.addData("position", positionData);
+        System.out.println("total distance: " + ts.GetDistance(false));
+        if(ts.GetDistance(false) > 33 && ts.GetDistance(false) < 105){
+            angle = 15;
+        }
+        else if (ts.GetDistance(false) > 105 && ts.GetDistance(false) < 135){
+            angle = 0;
+        }
+        else if(ts.GetDistance(false) > 138){
+            angle = -15;
+        }
     }
 
     private void computePosition(int odometerCount, float drivingData){

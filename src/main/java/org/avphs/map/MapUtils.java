@@ -39,7 +39,7 @@ class MapUtils {
     {
         if(pixelY > 224){
             if (ERROR_LOGGING)
-                System.out.println("Y pixel was too high to be accurate, so it was skipped");
+                //System.out.println("Y pixel was too high to be accurate, so it was skipped");
             return new float[]{-1,-1};
         }
 
@@ -72,9 +72,9 @@ class MapUtils {
         float diagonalLength = (float)(Math.sqrt(Math.pow(distanceToTheLeftOrRight, 2) + Math.pow(getStraightAheadDistanceFromPixelHeight_Lookup[pixelY], 2)));
 
         coordsOnMap[0] = (posX + (float)(diagonalLength * Math.sin(Math.atan(distanceToTheLeftOrRight / getStraightAheadDistanceFromPixelHeight_Lookup[pixelY]) + angle)));
-        System.out.println(coordsOnMap[0]);
+        //System.out.println(coordsOnMap[0]);
         coordsOnMap[1] = (posY + (float)(diagonalLength * Math.cos(Math.atan(distanceToTheLeftOrRight / getStraightAheadDistanceFromPixelHeight_Lookup[pixelY]) + angle)));
-        System.out.println(coordsOnMap[1]);
+        //System.out.println(coordsOnMap[1]);
         return coordsOnMap;
     }
 
@@ -97,7 +97,7 @@ class MapUtils {
                 }
             }
         } else {
-            System.out.println("Debug Statement: There is a hole in the beginning of the image, why?");
+            //System.out.println("Debug Statement: There is a hole in the beginning of the image, why?");
         }
     }
 

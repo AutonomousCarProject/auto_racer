@@ -28,7 +28,7 @@ public class ImageModule implements CarModule {
 
     @Override
     public void update(CarData carData) {
-        System.out.println("Image");
+        //System.out.println("Image");
 
         window = (WindowModule) carData.getModuleData("window");
         Camera camera = (Camera) carData.getModuleData("camera");

@@ -37,8 +37,8 @@ public class RacingLineModule implements CarModule {
                     testMap[i][j] = currentRow.charAt(j) == '1';
                 }
             }
-            System.out.println("Racing line init");
-            System.out.println("Rows: "+rows+"; Columns: "+columns);
+            //System.out.println("Racing line init");
+            //System.out.println("Rows: "+rows+"; Columns: "+columns);
             makeRacingLine(testMap);
             bufread.close();
         }catch(IOException e){
@@ -173,8 +173,8 @@ public class RacingLineModule implements CarModule {
         int isomej = innerWall.get(0).y;
         innerWall.clear();
         BFS(imini,isomej);
-        System.out.println("OUTER WALL: "+outerWall.size());
-        System.out.println("INNER WALL: "+innerWall.size());
+        //System.out.println("OUTER WALL: "+outerWall.size());
+        //System.out.println("INNER WALL: "+innerWall.size());
     }
 
     private void BFS(int startx, int starty) {
@@ -415,7 +415,7 @@ public class RacingLineModule implements CarModule {
                 connected.add(new RacingLinePoint((int)cux,(int)cuy));
             }
         }
-        System.out.println("PRE REMOVAL SIZE: "+connected.size());
+        //System.out.println("PRE REMOVAL SIZE: "+connected.size());
         for(int i=0;i<connected.size();i++) {
             int j = (i+1)%connected.size();
             RacingLinePoint c = connected.get(i);
