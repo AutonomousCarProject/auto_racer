@@ -17,6 +17,14 @@ public class ThingStartState extends State {
         return passThrough;
     }
 
+    public void setPassThrough(TableState passThrough) {
+        this.passThrough = passThrough;
+    }
+
+    public Thing getThing() {
+        return thing;
+    }
+
     @Override
     public int asStateNumber() {
         int topHalf = passThrough.asStateNumber();

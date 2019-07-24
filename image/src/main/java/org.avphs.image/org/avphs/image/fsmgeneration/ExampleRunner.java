@@ -5,7 +5,7 @@ import org.avphs.image.ImageProcessing.PosterColor;
 
 public class ExampleRunner {
     public static void main(String[] args) {
-        Table myTable = new Table();
+        Table myTable = new Table("table1");
         Thing wall = myTable.newNamedThing("wall");
         
         ThingEndState success = new ThingEndState(wall, myTable);
@@ -33,7 +33,7 @@ public class ExampleRunner {
 //        int[] intTable = myTable.generateTable();
 //        System.out.println(Table.niceFormat(intTable));
         
-        Table myTable2 = new Table();
+        Table myTable2 = new Table("table2");
         Thing wall2 = myTable2.newNamedThing("wall_2");
         
         ThingEndState success2 = new ThingEndState(wall2, myTable2);
@@ -57,6 +57,6 @@ public class ExampleRunner {
 
 //        int[] intTable2 = myTable2.generateTable();
 //        System.out.println(Table.niceFormat(intTable2));
-        Table.combineTables(myTable, myTable2);
+        System.out.println(Table.combineTables(myTable, myTable2).debugTableStates());
     }
 }

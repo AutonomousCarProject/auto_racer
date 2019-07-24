@@ -65,7 +65,7 @@ public class TableState extends State {
 
     @Override
     public String getName() {
-        return name;
+        return table.getName() + ":" + name;
     }
 
     public Table getTable() {

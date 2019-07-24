@@ -27,4 +27,8 @@ public class ThingEndState extends TerminalState {
     public String getName() {
         return "ThingEndState { thing: " + thing.getName() + " }";
     }
+
+    public Thing getThing() {
+        return thing;
+    }
 }
