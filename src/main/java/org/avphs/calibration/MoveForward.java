@@ -54,10 +54,10 @@ public class MoveForward {
 
             writer.println(wallHeights.size());
             writer.print("\n");
-            Interpolater interpolater = new Interpolater(distances, wallHeights);
+            //Interpolater interpolater = new Interpolater(distances, wallHeights);
             for(int i = 0; i < wallHeights.size(); i++){
                 writer.print(' ');
-                writer.print(Interpolater.getY(i));
+               // writer.print(Interpolater.getY(i));
             }
         } catch(IOException e) {
             while(true){
