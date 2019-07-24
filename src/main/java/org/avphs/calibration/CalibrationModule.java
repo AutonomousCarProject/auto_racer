@@ -38,6 +38,10 @@ public class CalibrationModule {
 
     public static final double  RIM_TO_RIM = 26.4;
 
+    public static final double  SUSPENSION_HEIGHT = 1;
+
+    public static final double  CM_PER_ROTATION = 1;
+
     //Helper method to read speed change distance data
     private static byte[][][] readSpeedChangeDistData (){
         byte[][][] rowList = null;
