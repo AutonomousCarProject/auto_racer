@@ -10,7 +10,7 @@ import java.io.*;
 
 import static java.lang.Thread.sleep;
 
-public class MaxSpeedGenerator {
+public class ThrottleDataGenerator {
     public static void main(String[] args) throws InterruptedException {
 
         Camera cam = null;
