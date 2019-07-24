@@ -2,7 +2,6 @@ package org.avphs.image.fsmgeneration;
 
 import org.avphs.image.ImageProcessing;
 
-import java.security.cert.CertificateParsingException;
 import java.util.*;
 
 public class Table {
@@ -36,7 +35,7 @@ public class Table {
 
         defaultState = new FailState();
 
-        initialState = newNamedState("initial_state");
+        initialState = newNamedState("initial");
     }
 
     public String getName() {
@@ -64,7 +63,7 @@ public class Table {
     }
 
     public TableState newState() {
-        String name = "_s" + tableStates.size();
+        String name = "state" + tableStates.size();
         return this.newNamedState(name);
     }
 
@@ -163,85 +162,6 @@ public class Table {
         return joiner.toString();
     }
 
-    /**
-     * makes a deep copy of a all parts of a graph reachable from a given base node
-     * @param baseNode base node from which to start clone
-     * @return base node of new cloned graph
-     */
-    public TableState cloneBranch(TableState baseNode) {
-        HashMap<TableState, TableState> tableStateMap = new HashMap<>();
-        HashMap<Thing, Thing> thingMap = new HashMap<>();
-
-        ArrayDeque<TableState> queue = new ArrayDeque<>();
-        queue.add(baseNode);
-
-        while (!queue.isEmpty()) {
-            TableState state = queue.pop();
-            tableStateMap.put(state, this.newNamedState("_copy_of_(" + state.getName() + ")"));
-
-            for (State trans : state.getTransitions().values()) {
-                if (trans instanceof TableState) {
-                    if (!tableStateMap.containsKey(trans)) {
-                        queue.add((TableState) trans);
-                    }
-                } else if (trans instanceof ThingStartState) {
-                    TableState passThrough = ((ThingStartState) trans).getPassThrough();
-                    if (!tableStateMap.containsKey(passThrough)) {
-                        queue.add(passThrough);
-                    }
-                }
-            }
-        }
-
-        FailState newFail = new FailState();
-        for (Map.Entry<TableState, TableState> entry : tableStateMap.entrySet()) {
-            TableState oldTableState = entry.getKey();
-            TableState newTableState = entry.getValue();
-
-            for (ImageProcessing.PosterColor posterColor : ImageProcessing.PosterColor.values()) {
-                State otherDest = oldTableState.getTransition(posterColor);
-                if (otherDest instanceof FailState) {
-                    newTableState.bind(newFail, posterColor);
-                } 
-                else if (otherDest instanceof ThingEndState) {
-                    Thing newThing = thingMap.computeIfAbsent(
-                            ((ThingEndState) otherDest).getThing(),
-                            thing -> this.newNamedThing("_copy_of_(" + thing.getName() + ")")
-                    );
-
-                    newTableState.bind(
-                            new ThingEndState(newThing, this),
-                            posterColor
-                    );
-                } 
-                else if (otherDest instanceof TableState) {
-                    newTableState.bind(tableStateMap.get(otherDest), posterColor);
-                } 
-                else if (otherDest instanceof ThingStartState) {
-                    Thing newThing = thingMap.computeIfAbsent(
-                            ((ThingStartState) otherDest).getThing(),
-                            thing -> this.newNamedThing("_copy_of_(" + thing.getName() + ")")
-                    );
-                    TableState newPassThrough = tableStateMap.get(((ThingStartState) otherDest).getPassThrough());
-
-                    newTableState.bind(
-                            new ThingStartState(
-                                    this,
-                                    newThing,
-                                    newPassThrough
-                            ),
-                            posterColor
-                    );
-                } else {
-                    System.err.println("you forgot to handle one of the cases you buffoon");
-                }
-            }
-        }
-
-        System.out.println(tableStateMap.size());
-        return tableStateMap.get(baseNode);
-    }
-
     public static Table combineTables(Table table1, Table table2) {
 //        System.out.println(table1.debugTableStates("t1  "));
 //        System.out.println(table2.debugTableStates("t2  "));
@@ -250,7 +170,6 @@ public class Table {
         System.out.println(table2.getInitialState().debug("t2  "));
 
         HashMap<HashSet<TableState>, TableState> tableStateMapping = new HashMap<>();
-        HashMap<TableState, TableState> cloned = new HashMap<>();
 
         abstract class Pair {
             State s1;
@@ -305,7 +224,7 @@ public class Table {
         }
 
         Table newTable = new Table(
-                "combined_table("
+                "t("
                         + table1.getName()
                         + "+"
                         + table2.getName()
@@ -321,7 +240,7 @@ public class Table {
         }
         
         FailState failState = new FailState();
-        TableState placeHolder = newTable.newNamedState("placeholder_state");
+        TableState placeHolder = newTable.newNamedState("PLACEHOLDER");
         
         Class[] precedence = {
                 ThingEndState.class, 
@@ -357,7 +276,7 @@ public class Table {
                     System.out.println("merging two `ThingEndState`s");
                     endBind = new ThingEndState(
                             new Thing(
-                                    "combo_of_("
+                                    "comboThing("
                                             + s1ThingEndState.getThing().getName()
                                             + "+"
                                             + s2ThingEndState.getThing().getName()
@@ -368,7 +287,7 @@ public class Table {
                 } 
                 else {
                     endBind = new ThingEndState(
-                            new Thing("copy_of_(" + s1ThingEndState.getName() + ")"),
+                            new Thing("copyThing(" + s1ThingEndState.getThing().getName() + ")"),
                             newTable
                     );
                     
@@ -386,7 +305,7 @@ public class Table {
                     ThingStartState newThingStartState = new ThingStartState(
                             newTable,
                             newTable.newNamedThing(
-                                    "combo_of_("
+                                    "comboThing("
                                             + s1ThingStartState.getThing().getName()
                                             + "+"
                                             + s2ThingStartState.getThing().getName()
@@ -410,7 +329,7 @@ public class Table {
                     
                     ThingStartState newThingStartState = new ThingStartState(
                             newTable,
-                            newTable.newNamedThing("copy_of_(" + s1ThingStartState.getThing().getName() + ")"),
+                            newTable.newNamedThing("copyThing(" + s1ThingStartState.getThing().getName() + ")"),
                             placeHolder
                     );
 
@@ -419,21 +338,14 @@ public class Table {
                     queue.add(
                             new PairWithBeginThing(
                                     newThingStartState,
-                                    s2TableState,
-                                    s1ThingStartState.getPassThrough()
+                                    s1ThingStartState.getPassThrough(),
+                                    s2TableState
                             )
                     );
                 } else {
-                    endBind = new ThingStartState(
-                            newTable,
-                            newTable.newNamedThing("copy_of_(" + s1ThingStartState.getThing().getName() + ")"),
-                            cloned.computeIfAbsent(
-                                    s1ThingStartState.getPassThrough(),
-                                    tableState -> newTable.cloneBranch(
-                                            s1ThingStartState.getPassThrough()
-                                    )
-                            )
-                    );
+                    endBind = placeHolder;
+                    p.s2 = placeHolder;
+                    queue.add(p);
                 }
             }
             else if (p.s1 instanceof TableState) {
@@ -453,9 +365,16 @@ public class Table {
                     }
 
                     if (foundExisting == null) {
-                        TableState newChildTableState = newTable.newNamedState(
-                                "child_of_(" + s1TableState.getName() + "+" + s2TableState.getName() + ")"
-                        );
+                        TableState newChildTableState;
+                        if (s2TableState.equals(placeHolder)) {
+                            newChildTableState = newTable.newNamedState(
+                                    "copied(" + s1TableState.getName(true) + ")"
+                            );
+                        } else {
+                            newChildTableState = newTable.newNamedState(
+                                    "merged(" + s1TableState.getName(true) + "+" + s2TableState.getName(true) + ")"
+                            );
+                        }
                         tableStateMapping.put(mapKey, newChildTableState);
 
                         endBind = newChildTableState;
@@ -474,10 +393,9 @@ public class Table {
                         endBind = foundExisting;
                     }
                 } else {
-                    endBind = cloned.computeIfAbsent(
-                            s1TableState,
-                            tableState -> newTable.cloneBranch(s1TableState)
-                    );
+                    endBind = placeHolder;
+                    p.s2 = placeHolder;
+                    queue.add(p);
                 }
             } else {
                 endBind = failState;
@@ -489,16 +407,52 @@ public class Table {
                 System.out.println(
                         "Binding "
                                 + p.getOrigin().getName()
-                                + p.getOrigin().hashCode()
+//                                + p.getOrigin().hashCode()
                                 + " --> "
                                 + endBind.getName()
-                                + endBind.hashCode()
+//                                + endBind.hashCode()
                 );
                 p.bind(endBind);
             }
         }
 
         return newTable;
+    }
+
+    public void generateImage() {
+        this.asDotGraph().outputImage(this.name, System.getProperty("user.dir") + "/image/out/images");
+    }
+
+    public void generateImage(String path, String name) {
+        this.asDotGraph().outputImage(name, path);
+    }
+    
+    public Digraph asDotGraph() {
+        Digraph digraph = new Digraph();
+        for (TableState tableState : tableStates) {
+            for (ImageProcessing.PosterColor color : ImageProcessing.PosterColor.values()) {
+                State destination = tableState.getTransition(color);
+                if (destination instanceof ThingStartState) {
+                    ThingStartState thingStartState = (ThingStartState) destination;
+                    EdgeStatement entry = new EdgeStatement(tableState.getName(), thingStartState.getPassThrough().getName());
+                    entry.addColor(color);
+                    entry.addLabel(
+                            "+ start("
+                            + thingStartState.getThing().getName()
+                            + ")"
+                    );
+                    
+                    digraph.addEntry(entry);
+                } else if (!(destination instanceof FailState)) {
+                    EdgeStatement entry = new EdgeStatement(tableState.getName(), destination.getName());
+                    entry.addColor(color);
+                    
+                    digraph.addEntry(entry);
+                }
+            }
+        }
+        
+        return digraph;
     }
 
     public static String niceFormat(int[] intTable) {

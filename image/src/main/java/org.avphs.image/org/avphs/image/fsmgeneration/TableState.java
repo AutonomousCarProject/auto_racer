@@ -65,7 +65,15 @@ public class TableState extends State {
 
     @Override
     public String getName() {
-        return table.getName() + ":" + name;
+        return getName(false);
+    }
+    
+    public String getName(boolean includeName) {
+        if (includeName) {
+            return table.getName() + ":" + name;
+        } else {
+            return name;
+        }
     }
 
     public Table getTable() {

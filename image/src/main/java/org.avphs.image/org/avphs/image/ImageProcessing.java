@@ -32,7 +32,11 @@ public class ImageProcessing implements ImageProcessingInterface {
             this.rgb = rgb;
             this.code = code;
         }
-        
+
+        public int getRgb() {
+            return rgb;
+        }
+
         public short getCode() {
             return code;
         }

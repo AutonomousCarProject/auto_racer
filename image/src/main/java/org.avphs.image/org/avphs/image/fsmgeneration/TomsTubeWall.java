@@ -16,7 +16,7 @@ public class TomsTubeWall {
     static FailState failState;
 
     public static void main(String[] args) {
-        Table tomsTable = new Table();
+        Table tomsTable = new Table("tomsTable");
         Thing tubeWall = tomsTable.newNamedThing("tube_wall");
         FailState fail = new FailState();
         State success = new ThingEndState(tubeWall, tomsTable);
@@ -31,17 +31,8 @@ public class TomsTubeWall {
         ImageProcessing.PosterColor c6 = ImageProcessing.PosterColor.GREY4;
         ImageProcessing.PosterColor c7 = ImageProcessing.PosterColor.WHITE;
         
-//        ImageProcessing.PosterColor c0 = ImageProcessing.PosterColor.RED;
-//        ImageProcessing.PosterColor c1 = ImageProcessing.PosterColor.GREEN;
-//        ImageProcessing.PosterColor c2 = ImageProcessing.PosterColor.BLUE;
-//        ImageProcessing.PosterColor c3 = ImageProcessing.PosterColor.CYAN;
-//        ImageProcessing.PosterColor c4 = ImageProcessing.PosterColor.MAGENTA;
-//        ImageProcessing.PosterColor c5 = ImageProcessing.PosterColor.YELLOW;
-//        ImageProcessing.PosterColor c6 = ImageProcessing.PosterColor.BLACK;
-//        ImageProcessing.PosterColor c7 = ImageProcessing.PosterColor.GREY1;
-
-//        series = new ImageProcessing.PosterColor[]{c0, c1, c2, c3, c4, c5, c6, c7};
-        series = ImageProcessing.PosterColor.values();
+        series = new ImageProcessing.PosterColor[]{c0, c1, c2, c3, c4, c5, c6, c7};
+//        series = ImageProcessing.PosterColor.values();
 
         TableState[] s = new TableState[51];
         for (int i = 0; i < 51; i++) {
@@ -92,6 +83,7 @@ public class TomsTubeWall {
         }
 
         System.out.println(tomsTable.debugTableStates());
+        tomsTable.generateImage();
     }
     
 }
