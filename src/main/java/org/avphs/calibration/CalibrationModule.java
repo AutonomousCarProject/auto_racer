@@ -28,6 +28,18 @@ public class CalibrationModule {
     }
     */
 
+    private static float readTable(String filepath, int index1, int index2, int index3){
+        return (float)0;
+    }
+
+    private static float readTable(String filepath, int index1, int index2){
+        return (float)0;
+    }
+
+    private static float readTable(String filepath, int index1){
+        return filepath[index1];
+    }
+
     //Camera view angle width in degrees
     //TODO:Find real value
     public static final float CAMERA_VIEW_ANGLE = 100;
