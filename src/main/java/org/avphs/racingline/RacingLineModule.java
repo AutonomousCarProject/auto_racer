@@ -4,6 +4,7 @@ import org.avphs.coreinterface.CarCommand;
 import org.avphs.coreinterface.CarData;
 import org.avphs.coreinterface.CarModule;
 import org.avphs.detection.ObjectData;
+import org.avphs.detection.Obstacle;
 
 import java.util.*;
 import java.io.*;
@@ -22,10 +23,9 @@ public class RacingLineModule implements CarModule {
     private int rows, columns;
     private int[] dx = {-1, 0, 1, 0,1,-1,-1,1};
     private int[] dy = {0, 1, 0, -1,1,1,-1,-1};
-    private Obstacle box = new Obstacle();
 
+    private ObjectData obstacles = new ObjectData();
     private RacingLine modifiedCenter;
-    private ObjectData obstacle;
 
     @Override
     public void init(CarData carData){
@@ -59,14 +59,14 @@ public class RacingLineModule implements CarModule {
 
     @Override
     public void update(CarData carData) {
-        System.out.println("RacingLine");
-        obstacle = (ObjectData) carData.getModuleData("detection");
+        System.out.println("Passing update");
+        obstacles = (ObjectData) carData.getModuleData("detection");
 
-        //box.update();
-        //pass();
+        //obstacle.update();
+        //CheckPassingLine();
 
         carData.addData("RacingLine", modifiedCenter != null ? modifiedCenter : center);
-        System.out.println("RacingLine END");
+
     }
     //endregion
 
@@ -112,15 +112,27 @@ public class RacingLineModule implements CarModule {
         return center;
     }
     //endregion
-    //region passing
-    public void pass() {
+
+    //region Passing
+    public RacingLine CheckPassingLine() {
+        if (obstacles.getObstacles().size() == 0) {
+            return center;
+        }
+        removeUnoriginal();
+        pass(obstacles.getObstacles().get(0));
+        connectTheDots();
+        return center;
+    }
+    private void pass(Obstacle obstacle) {
+        removeUnoriginal();
         RacingLinePoint[] line = center.getRacingLinePoints();
-        int o1x = box.bb[0].x;
-        int o1y = box.bb[0].y;
-        int o2x = box.bb[box.bb.length-1].x;
-        int o2y = box.bb[box.bb.length-1].y;
-        float threshold = 60;
+        int o1x = (int)obstacle.getCorners()[0].x;
+        int o1y = (int)obstacle.getCorners()[0].y;
+        int o2x = (int)obstacle.getCorners()[obstacle.getCorners().length-1].x;
+        int o2y = (int)obstacle.getCorners()[obstacle.getCorners().length-1].y;
+        float threshold = 90;
         int bob = 0;
+        float mindist = 1000000;
         for(RacingLinePoint c: line) {
             float dist1 = (float)Math.sqrt((c.getX()-o1x)*(c.getX()-o1x)+(c.getY()-o1y)*(c.getY()-o1y));
             float dist2 = (float)Math.sqrt((c.getX()-o2x)*(c.getX()-o2x)+(c.getY()-o2y)*(c.getY()-o2y));
@@ -128,10 +140,17 @@ public class RacingLineModule implements CarModule {
             float boxcy = (o1y+o2y)/2;
             float dist3 = (float)Math.sqrt((c.getInner().x-boxcx)*(c.getInner().x-boxcx)+(c.getInner().y-boxcy)*(c.getInner().y-boxcy));
             float dist4 = (float)Math.sqrt((c.getOuter().x-boxcx)*(c.getOuter().x-boxcx)+(c.getOuter().y-boxcy)*(c.getOuter().y-boxcy));
-            if(dist1 < threshold || dist2 < threshold) {
-                c.setPass(true);
+            if(dist1<mindist||dist2<mindist) {
+                mindist = Math.min(dist1, dist2);
                 if(dist3 < dist4) bob = 1;
                 else bob = -1;
+            }
+        }
+        for(RacingLinePoint c: line) {
+            float dist1 = (float)Math.sqrt((c.getX()-o1x)*(c.getX()-o1x)+(c.getY()-o1y)*(c.getY()-o1y));
+            float dist2 = (float)Math.sqrt((c.getX()-o2x)*(c.getX()-o2x)+(c.getY()-o2y)*(c.getY()-o2y));
+            if(dist1 < threshold || dist2 < threshold) {
+                c.setPass(true);
                 float t = 0.5f;
                 //change this
                 t+=bob*(0.4-0.2*(dist1/threshold)-0.2*(dist2/threshold));
@@ -151,6 +170,8 @@ public class RacingLineModule implements CarModule {
         calcMiddleLine();
         center.sortPoints();
         trimSortedPoints(20);
+        //connectTheDots();
+        makeOriginal();
         connectTheDots();
     }
     public void closeTrack(int dist) {
@@ -373,13 +394,28 @@ public class RacingLineModule implements CarModule {
         //System.out.println("HOLA "+ (RacingLinePoints.length-1));
         center.setRacingLinePointsList(compressedLine);
     }
-
+    private void makeOriginal() {
+        RacingLinePoint[] array = center.getRacingLinePoints();
+        for(RacingLinePoint c: array) {
+            c.setOriginal(true);
+        }
+    }
+    private void removeUnoriginal() {
+        RacingLinePoint[] array = center.getRacingLinePoints();
+        ArrayList<RacingLinePoint> original = new ArrayList<RacingLinePoint>();
+        for(RacingLinePoint c: array) {
+            if(c.getOriginal()) {
+                original.add(c);
+            }
+        }
+        center.setRacingLinePointsList(original);
+    }
     private void connectTheDots() {
         RacingLinePoint[] array = center.getRacingLinePoints();
         int size = array.length;
         CurvePoint[] curves = new CurvePoint[size];
         ArrayList<RacingLinePoint> connected = new ArrayList<RacingLinePoint>();
-        System.out.println("PRE CONNECT THE DOTS SIZE: "+size);
+        //System.out.println("PRE CONNECT THE DOTS SIZE: "+size);
         for(int i=0;i<size;i++) {
             curves[i] = array[i].toCurvePoint();
         }
@@ -399,8 +435,8 @@ public class RacingLineModule implements CarModule {
             CurvePoint next = curves[(i+1)%size];
             cux = c.getX();
             cuy = c.getY();
-            RacingLinePoint aaa = new RacingLinePoint(cux,cuy);
-            connected.add(aaa);
+            //RacingLinePoint aaa = new RacingLinePoint(cux,cuy);
+            connected.add(array[i]);
             //translate && rotate
             float px = (float)Math.sqrt((next.getX()-c.getX())*(next.getX()-c.getX())+
                     (next.getY()-c.getY())*(next.getY()-c.getY()));
@@ -458,21 +494,21 @@ public class RacingLineModule implements CarModule {
                 connected.add(new RacingLinePoint((int)cux,(int)cuy));
             }
         }
-        System.out.println("PRE REMOVAL SIZE: "+connected.size());
+        //System.out.println("PRE REMOVAL SIZE: "+connected.size());
         for(int i=0;i<connected.size();i++) {
             int j = (i+1)%connected.size();
             RacingLinePoint c = connected.get(i);
             RacingLinePoint d = connected.get(j);
             if(c.getX() == d.getX() && c.getY() == d.getY()) {
-				/*if(d.testoriginal) {
-					connected.remove(i);
-					continue;
-				}*/
+                if(d.getOriginal()) {
+                    connected.remove(i);
+                    continue;
+                }
                 connected.remove(j);
                 i--;
             }
         }
-        System.out.println("SIZE: "+connected.size());
+        //System.out.println("SIZE: "+connected.size());
         center.setRacingLinePointsList(connected);
     }
 
@@ -569,7 +605,11 @@ public class RacingLineModule implements CarModule {
                 }
             }
             if(closePoint >= 0) {
-                center.addPoint(midPoint(longer.get(i),shorter.get(closePoint)));
+                RacingLinePoint newpoint = midPoint(longer.get(i),shorter.get(closePoint));
+                newpoint.setOuter(outerWall.get(i));
+                newpoint.setInner(innerWall.get(closePoint));
+                newpoint.setOriginal(true);
+                center.addPoint(newpoint);
                 start = (closePoint+ssize-ssize/10)%ssize;
                 range = ssize/5;
                 times++;
@@ -831,7 +871,7 @@ class Point {
     }
 }
 
-class Obstacle {
+/*class Obstacle extends org.avphs.detection.Obstacle {
     Point[] bb;
 
     int x, y;//in map, leftmost point
@@ -857,39 +897,31 @@ class Obstacle {
     public void setBb(Point[] bb) {
         this.bb = bb;
     }
-
     public float getX() {
         return x;
     }
-
     public void setX(int x) {
         this.x = x;
     }
-
     public int getY() {
         return y;
     }
-
     public void setY(int y) {
         this.y = y;
     }
-
     public float getDX() {
         return dx;
     }
-
     public void setDX(float a) {
         this.dx = a;
     }
-
     public float getDY() {
         return dy;
     }
-
     public void setDY(float a) {
         this.dy = a;
     }
-}
+}*/
 
 class WindowCurve {
 
