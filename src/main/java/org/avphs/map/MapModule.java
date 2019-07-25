@@ -7,6 +7,7 @@ import org.avphs.coreinterface.CloseHook;
 import org.avphs.image.ImageData;
 import org.avphs.position.PositionData;
 import org.avphs.traksim.TrakSim;
+import org.avphs.position.PositionModule;
 
 import java.io.FileWriter;
 import java.io.IOException;
