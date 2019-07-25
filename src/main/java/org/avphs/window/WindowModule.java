@@ -4,7 +4,6 @@ import org.avphs.camera.Camera;
 import org.avphs.coreinterface.CarCommand;
 import org.avphs.coreinterface.CarData;
 import org.avphs.coreinterface.CarModule;
-import org.avphs.position.PositionCarTesting;
 import org.avphs.sbcio.ArduinoData;
 
 import javax.swing.*;
@@ -13,7 +12,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
-import java.io.IOException;
 
 public class WindowModule extends JFrame implements CarModule {
     private Camera camera;
@@ -49,14 +47,6 @@ public class WindowModule extends JFrame implements CarModule {
             @Override
             public void windowClosing(WindowEvent e) {
                 ((ArduinoData) carData.getModuleData("arduino")).closeFunc.accept(null);
-
-                //FOR POSITION TRACKING CAR TESTING
-                try {
-                    ((PositionCarTesting) carData.getModuleData("pct")).close();
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-
                 System.exit(0);
             }
         });

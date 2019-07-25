@@ -3,11 +3,12 @@ package org.avphs.position;
 import org.avphs.coreinterface.CarCommand;
 import org.avphs.coreinterface.CarData;
 import org.avphs.coreinterface.CarModule;
+import org.avphs.coreinterface.CloseHook;
 import org.avphs.sbcio.ArduinoData;
 
 import java.io.IOException;
 
-public class PositionModule implements CarModule {
+public class PositionModule implements CarModule, CloseHook {
 
     private PositionData prevPositionData = new PositionData(new float[]{0, 0}, 0, 0); //WILL BE USED LATER
     private PositionData positionData;
@@ -18,7 +19,7 @@ public class PositionModule implements CarModule {
 
 
     //FOR TESTING THE CAR
-    PositionCarTesting pct = new PositionCarTesting();
+    private PositionCarTesting pct = new PositionCarTesting();
 
     public PositionModule() throws IOException {
     }
@@ -43,12 +44,12 @@ public class PositionModule implements CarModule {
     public void update(CarData carData) throws IOException {
         ArduinoData odom = (ArduinoData) carData.getModuleData("arduino");
         int steer = (int) carData.getModuleData("driving");
-        computePosition(odom.count, steer);
+        computePosition(odom.getOdomCount(), steer);
         carData.addData("position", positionData);
 
 
         //FOR CAR TESTING
-        pct.writeToFile(positionData.getPosition()[0], positionData.getPosition()[1], positionData.getDirection(), odom.count, steer);
+        pct.writeToFile(positionData.getPosition()[0], positionData.getPosition()[1], positionData.getDirection(), odom.getOdomCount(), steer);
 
     }
 
@@ -138,6 +139,16 @@ public class PositionModule implements CarModule {
 
     private float[] cart(float l, float d) {
         return new float[]{(float) (l * Math.cos(Math.toRadians(d))), (float) (l * Math.sin(Math.toRadians(d)))};
+    }
+
+
+    @Override
+    public void onClose() {
+        try {
+            pct.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
