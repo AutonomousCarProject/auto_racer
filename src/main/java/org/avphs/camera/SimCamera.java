@@ -45,8 +45,8 @@ public class SimCamera extends CameraBase {
 
     public SimCamera() {
         if (NoisyFaker) {
-            System.out.println(HandyOps.Dec2Log("apw3.SimCamera ", CamHight,
-                    HandyOps.Dec2Log("/", CamWidth, "")));
+            /*System.out.println(HandyOps.Dec2Log("apw3.SimCamera ", CamHight,
+                    HandyOps.Dec2Log("/", CamWidth, "")));*/
         }
         theSim = new TrakSim();
         numRows = CamHight;
@@ -73,7 +73,7 @@ public class SimCamera extends CameraBase {
     public void Finish() { // required at end to prevent memory leaks (SimCam)
         errorNum = 0;
         if (NoisyFaker || errorNum < 0) // NF=Mini_Log
-            System.out.println(HandyOps.Dec2Log(" (SimCam) --> Finis ", errorNum, ""));
+            //System.out.println(HandyOps.Dec2Log(" (SimCam) --> Finis ", errorNum, ""));
         numRows = 0;
         numCols = 0;
         tile = 0;

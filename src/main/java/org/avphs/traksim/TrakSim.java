@@ -21,6 +21,7 @@ import org.avphs.sbcio.fakefirm.SimHookBase;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.sql.SQLOutput;
 
 /**
  * The main TrakSim Car Simulator class..

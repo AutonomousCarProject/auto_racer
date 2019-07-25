@@ -6,8 +6,7 @@ import org.avphs.coreinterface.CarModule;
 import org.avphs.sbcio.ArduinoData;
 import org.avphs.traksim.TrakSim;
 
-import static org.avphs.coreinterface.CarCommand.accelerate;
-import static org.avphs.coreinterface.CarCommand.steer;
+import java.util.ArrayList;
 
 public class PositionModule implements CarModule {
 
@@ -20,6 +19,7 @@ public class PositionModule implements CarModule {
     private TrakSim ts;
     private int angle;
 
+
     public void init(CarData carData) {
         //THIS WILL BE WHERE WE READ FROM A FILE TO FIND THE INITIAL POSITION
         positionData = new PositionData(new float[]{0, 0}, 0, 0); //TEMPORARY
@@ -29,8 +29,8 @@ public class PositionModule implements CarModule {
     @Override
     public CarCommand[] commands() {
         return new CarCommand[] {
-                accelerate(true, 15),
-                steer(true, angle)
+                CarCommand.accelerate(true, 15),
+                CarCommand.steer(true, angle)
         };
     }
 
@@ -38,9 +38,9 @@ public class PositionModule implements CarModule {
     public void update(CarData carData) {
         ArduinoData odom = (ArduinoData) carData.getModuleData("arduino");
         int steer = (int) carData.getModuleData("driving");
-        computePosition(odom.count,steer);
+        //computePosition(odom.count,steer);
+        computePosition((float)ts.GetDistance(false), angle);
         carData.addData("position", positionData);
-        System.out.println("total distance: " + ts.GetDistance(false));
         if(ts.GetDistance(false) > 33 && ts.GetDistance(false) < 105){
             angle = 15;
         }
@@ -52,13 +52,15 @@ public class PositionModule implements CarModule {
         }
     }
 
-    private void computePosition(int odometerCount, float drivingData){
+    private void computePosition(float odometerCount, float drivingData){
         float drivingArcRadius;
         disBetweenAxle = 32.5f;//FIXME: data from calibration
         // find out if this is run before or after driving. If after, good, else: bad.
 
-        wheelAngle = drivingData; //angle of servo
-        distanceTraveled = odometerCount * .25f; //number of wheel turns FIXME: data from calibraiton
+        //wheelAngle = drivingData; //angle of servo
+        wheelAngle = drivingData + 90;
+        //distanceTraveled = odometerCount * 15f; //number of wheel turns FIXME: data from calibraiton
+        distanceTraveled = odometerCount * 8f; //used for tracksim for conversion from park meters to meters. may need to fix
 
         //FIXME find out the error in the servo value, and add that value to "> 90" and subtract from "< 90",defaulted at 2
         if (wheelAngle > 91) { //if turning right
@@ -105,6 +107,7 @@ public class PositionModule implements CarModule {
 
         //THIS WILL BE USED LATER
         prevPositionData.updateAll(positionData.getPosition(), positionData.getDirection(), positionData.getSpeed());
+        System.out.println("Position = ("+Math.round(positionData.getPosition()[0])+","+positionData.getPosition()[1]+")");
 
     }
 
@@ -119,9 +122,9 @@ public class PositionModule implements CarModule {
         positionData.updateDirection(direction);
     }
 
-    private void computeSpeed(int odometerCount) {
+    private void computeSpeed(float odometerCount) {
         //FIXME: data from calibration
-        float speed = odometerCount * .5f * 30f;//*30 because convert odometerCount per 33.33 milliseoncs to OdometerCount per second.
+        float speed = odometerCount * .15f * 30f;//*30 because convert odometerCount per 33.33 milliseoncs to OdometerCount per second.
         positionData.updateSpeed(speed);
     }
 
@@ -132,11 +135,11 @@ public class PositionModule implements CarModule {
         positionData.updatePosition(temp);
     }
 
-    private float[] pol(float x, float y){
+    private float[] pol(float x, float y){//to polar coordinates
         return new float[] {(float) Math.sqrt(x*x + y*y), (float) Math.toDegrees(Math.atan2(y,x))};
     }
 
-    private float[] cart(float l, float d){
+    private float[] cart(float l, float d){//to cartesian
         return new float[] {(float) (l * Math.cos(Math.toRadians(d))), (float) (l * Math.sin(Math.toRadians(d)))};
     }
 }

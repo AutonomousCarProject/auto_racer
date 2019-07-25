@@ -645,7 +645,7 @@ public class HandyOps { // first some useful debug logging ops..
             HardEndian++;
             if (Int4bytes(false,(byte)0,(byte)0,(byte)0,(byte)1) !=1)
                 HardEndian = -HardEndian;
-            if (Qlog<0) System.out.println(Dec2Log("** Int4by = ",HardEndian," **"));} //~if
+            if (Qlog<0) /*System.out.println(Dec2Log("** Int4by = ",HardEndian," **"))*/;} //~if
         if ((HardEndian>0) == LiLEfi) // flip-Endian..
             return (( (( ((( (int)by3)&255)<<8) | ((int)by2)&255)<<8)
                     | ((int)by1)&255)<<8) | ((int)by0)&255;

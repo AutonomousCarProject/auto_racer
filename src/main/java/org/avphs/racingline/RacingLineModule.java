@@ -336,7 +336,7 @@ public class RacingLineModule implements CarModule {
         int size = array.length;
         CurvePoint[] curves = new CurvePoint[size];
         ArrayList<RacingLinePoint> connected = new ArrayList<RacingLinePoint>();
-        System.out.println("PRE CONNECT THE DOTS SIZE: "+size);
+        //System.out.println("PRE CONNECT THE DOTS SIZE: "+size);
         for(int i=0;i<size;i++) {
             curves[i] = array[i].toCurvePoint();
         }
