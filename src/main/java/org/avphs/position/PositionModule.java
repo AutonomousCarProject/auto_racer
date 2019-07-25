@@ -56,8 +56,8 @@ public class PositionModule implements CarModule {
         } else {
             //if turning
             deltaPositionAngle = (float) (360 * distanceTraveled / (Math.PI * Math.pow(drivingArcRadius, 2)));//compute the length of the path around the circle the car has taken, and then get the angle of that
-            if (wheelAngle > 90) {//if turning right
-                if (deltaPositionAngle <= 90) {
+            if (wheelAngle > 91) {//if turning right
+                if (deltaPositionAngle <= 89) {
                     convertPosition((float) (drivingArcRadius - drivingArcRadius * Math.cos(deltaPositionAngle)), (float) (drivingArcRadius * Math.sin(deltaPositionAngle)));//weird trig stuff because for the unit circle the trig is based on center of circle. Here, the car starts at either (1,0) [turning left] or (-1,0) [turning right]
 
                 } else {//if(deltaPositionAngle > 90), turning left
@@ -65,8 +65,8 @@ public class PositionModule implements CarModule {
                 }
                 computeDirection(deltaPositionAngle);//update direction with delta direction  because clockwise = positive
             }
-            if (wheelAngle < 90) {//if turning left
-                if (deltaPositionAngle <= 90) {
+            if (wheelAngle < 91) {//if turning left
+                if (deltaPositionAngle <= 89) {
                     convertPosition((float) (drivingArcRadius + drivingArcRadius * Math.cos(deltaPositionAngle)), (float) (drivingArcRadius * Math.sin(deltaPositionAngle)));//weird trig stuff because for the unit circle the trig is based on center of circle. Here, the car starts at either (1,0) [turning left] or (-1,0) [turning right]
                 } else {//if(deltaPositionAngle > 90)
                     convertPosition((float) (drivingArcRadius - drivingArcRadius * Math.cos(deltaPositionAngle)), (float) (drivingArcRadius * Math.sin(deltaPositionAngle)));//weird trig stuff because for the unit circle the trig is based on center of circle. Here, the car starts at either (1,0) [turning left] or (-1,0) [turning right]
@@ -77,7 +77,7 @@ public class PositionModule implements CarModule {
 
 
         //ORDER OF FUNCTION CALLING THAT HAPPENS EVERY TIME
-        if (wheelAngle > 90) {
+        if (wheelAngle > 91) {
             computeDirection(deltaPositionAngle - 90);
         } else {
             computeDirection(deltaPositionAngle + 90);
