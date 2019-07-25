@@ -51,6 +51,7 @@ public class DrivingModule implements CarModule {
 
     @Override
     public void update(CarData carData) {
+        System.out.println("Driving");
         //racingLinePoints = (RacingLinePoint[])carData.getModuleData("racingLine");
         //float[] temp = carData.getModuleData("position");
         //currentPos = new VectorPoint(temp[0], temp[1], temp[2], temp[3]);
@@ -59,6 +60,7 @@ public class DrivingModule implements CarModule {
         //getDirection();
         //getThrottle();
         carData.addData("driving", angle);
+        System.out.println("Driving END");
     }
 
     public DrivingModule(){

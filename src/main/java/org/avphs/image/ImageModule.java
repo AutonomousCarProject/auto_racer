@@ -62,6 +62,7 @@ public class ImageModule implements CarModule {
 
         carData.addData("image", data);
         window.setWindowImage(rgbImage);
+        System.out.println("Image END");
     }
 
 

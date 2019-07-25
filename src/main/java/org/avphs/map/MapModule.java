@@ -39,6 +39,7 @@ public class MapModule implements CarModule, CloseHook {
 
     @Override
     public void update(CarData carData) {
+        System.out.println("Map");
         carData.addData("map", map);
         positionModule = (PositionData)carData.getModuleData("position");
         imageData = (ImageData) carData.getModuleData("image");
@@ -55,6 +56,7 @@ public class MapModule implements CarModule, CloseHook {
 
         }
         */
+        System.out.println("Map END");
     }
 
     public Map getMap(){return map;}

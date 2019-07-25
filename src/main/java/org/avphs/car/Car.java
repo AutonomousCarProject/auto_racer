@@ -14,6 +14,7 @@ public class Car implements ClientInterface {
     private Arduino arduino;
     private int fps;
     PulseListener ps = new PulseListener();
+    private final int DRIVESHAFT_PIN = 8;
 
     private class PulseListener implements UpdateListener {
 
@@ -24,7 +25,7 @@ public class Car implements ClientInterface {
         }
 
         public void pinUpdated(int pin, int value) {
-            if (pin == 8) {
+            if (pin == DRIVESHAFT_PIN) {
                 if (value + prior > 0){
                     prior = value;
                 }

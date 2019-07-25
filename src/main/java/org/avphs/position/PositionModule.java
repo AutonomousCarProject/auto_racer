@@ -27,10 +27,12 @@ public class PositionModule implements CarModule {
 
     @Override
     public void update(CarData carData) {
+        System.out.println("Position");
         ArduinoData odom = (ArduinoData) carData.getModuleData("arduino");
         int steer = (int) carData.getModuleData("driving");
         computePosition(odom.count,steer);
         carData.addData("position", positionData);
+        System.out.println("Position END");
     }
 
     private void computePosition(int odometerCount, float drivingData){

@@ -59,14 +59,14 @@ public class RacingLineModule implements CarModule {
 
     @Override
     public void update(CarData carData) {
-        System.out.println("Passing update");
+        System.out.println("RacingLine");
         obstacle = (ObjectData) carData.getModuleData("detection");
 
         //box.update();
         //pass();
 
         carData.addData("RacingLine", modifiedCenter != null ? modifiedCenter : center);
-
+        System.out.println("RacingLine END");
     }
     //endregion
 
