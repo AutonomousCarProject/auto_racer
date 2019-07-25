@@ -53,7 +53,7 @@ public class ThrottleDataGenerator {
 
     //new line
     //increase number by 1
-//first number is throttle to go at 0 cm/s
+    //first number is throttle to go at 0 cm/s
     //second is throttle to go at .5cm/s
     //third is throttle to go at 1cm/s etc. etc.
     //maxSpeed CHANGES DEPENDS ON UNITS OF SPEEDVALUES (cm/s?) AS DOES desiredSpeed
