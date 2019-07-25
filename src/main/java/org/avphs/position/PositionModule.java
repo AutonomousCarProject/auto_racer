@@ -118,7 +118,11 @@ public class PositionModule implements CarModule, CloseHook {
 
     private void convertPosition(float x, float y) {
         //FIXME x and y are currently in cm, not in the virtual world coordinates.
+<<<<<<< HEAD
         if(!(x == 0 && y == 0)){
+=======
+        if(x != 0) {
+>>>>>>> yeet
             float[] temp = pol(x, y);
             temp = cart(temp[0], temp[1] - positionData.getDirection());
             positionData.updatePosition(temp);
