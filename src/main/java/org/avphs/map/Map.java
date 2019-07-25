@@ -71,7 +71,7 @@ public class Map {
 
     public void showMap() {
         JFrame frame = new JFrame("Display");
-        frame.setSize(mapGridData.length, mapGridData[0].length);
+        frame.setSize((int)(mapGridData.length*Display.scale), (int)(mapGridData[0].length*Display.scale));
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setResizable(false);
