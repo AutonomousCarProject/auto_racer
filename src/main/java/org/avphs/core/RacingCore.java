@@ -5,7 +5,11 @@ import org.avphs.detection.ObjectDetectionModule;
 import org.avphs.driving.DrivingModule;
 import org.avphs.image.ImageModule;
 import org.avphs.map.MapModule;
+<<<<<<< HEAD
 import org.avphs.passing.PassingModule;
+=======
+import org.avphs.map.MapRacingModule;
+>>>>>>> 8268a831282fbc3b81dca313568e7ca6b6d9b674
 import org.avphs.position.PositionModule;
 import org.avphs.racingline.RacingLineModule;
 
