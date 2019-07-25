@@ -1,7 +1,5 @@
 package org.avphs.map;
 
-import java.util.ArrayList;
-
 /**
  * This class is to simplify the map making process and allow for more organized data storage.
  * It will contain functions for map creation, and map updating.
@@ -18,24 +16,6 @@ public class MapFormatter {
     public MapUtils utils = new MapUtils();
 
     // private ArrayList<int[]> gapCoords = new ArrayList<int[]>(); // Stores coordinate locations of gaps on track.
-
-    float[] pos = new float[2]; //position of car from position group
-
-    float angle; // angle of car
-
-    // private float[] pixelToDistanceLookup; // = (lookup table will be here) index = pixel height value = real life distance
-
-
-
-    /*@Deprecated public float calcDistance(int pixelheight)
-    {
-        float distance;
-        double a = 249.679; double d = 6.24099;
-
-        distance = (float)((a * d)/(a - (double)pixelheight));
-        return distance;
-
-    }*/
 
     public MapFormatter(Map map){
         this.map = map;
@@ -58,24 +38,43 @@ public class MapFormatter {
         //testing other distance calc.
         //float c = (float)utils.getRealLifePixelDistance(500, bottomPoints[500]);
 
-        for (int i = 1; i < 4; i++)
+        map.setValueAtIndex(pos[0], pos[1], true);
+
+        for (int i = 1; i < 10; i++)//First 100 pixels on the left side
         {
-            float[] coords;
-            coords = utils.getCoordinatesOnMap(i, 480 - bottomPoints[i], pos[0], pos[1], angle);
-            //System.out.println("wtf");
-            map.setValueAtIndex(coords[0], coords[1], true);
+            if (bottomPoints[i] > MapUtils.Y_HEIGHT_PIXEL_THRESHOLD)//Threshold for lowest pixel height which gives us good data.
+            {
+                //System.out.println("Good Inside Pixel Height Value (" + (480 - bottomPoints[i]) + ")");
+                float[] coords;
+                coords = utils.getCoordinatesOnMap(i, 480 - bottomPoints[i], pos[0], pos[1], angle);
+                //System.out.println("wtf");
+                map.setValueAtIndex(coords[0], coords[1], true);
+
+            }
+            else
+            {
+                //System.out.println("Bad Inside Pixel Height Value (" + (480 - bottomPoints[i]) + ")");
+            }
+
         }
-        System.out.println("InsidePoints");
-        for (int i = 637; i < 640; i++)
+        //System.out.println("InsidePoints Done");
+        for (int i = 630; i < 640; i++)//Last 100 Pixels on the right side.
         {
-            float[] coords;
-
-            coords = utils.getCoordinatesOnMap(i, 480 - bottomPoints[i], pos[0], pos[1], angle);
-
-            map.setValueAtIndex(coords[0], coords[1], true);
+            if (bottomPoints[i] > 300)
+            {
+                //System.out.println("Good Outside Pixel Height Value (" + (480 - bottomPoints[i]) + ")");
+                float[] coords;
+                coords = utils.getCoordinatesOnMap(i, 480 - bottomPoints[i], pos[0], pos[1], angle);
+                //System.out.println("wtf");
+                map.setValueAtIndex(coords[0], coords[1], true);
+            }
+            else
+            {
+                //System.out.println("Bad Outside Pixel Height Value (" + (480 - bottomPoints[i]) + ")");
+            }
 
         }
-        System.out.println("OutsidePoints");
+        //System.out.println("OutsidePoints Done");
 
         //Note: we probably should be looking at more than just the center or we will have trouble completely building the map.
         //We will also have to implement a way to fill in holes on map
@@ -147,7 +146,7 @@ public class MapFormatter {
 
 
 
-    public void fillTrack()//When the track walls are complete and the track has no gaps, fill in between the walls with track booleans as well.
+    @Deprecated public void fillTrack()//When the track walls are complete and the track has no gaps, fill in between the walls with track booleans as well.
     {
         //7/16/19: This code needs to be changed so that it fills when the walls are more than 1 unit thick. Raymond will explain.
         boolean trackToggle = false;
@@ -181,6 +180,12 @@ public class MapFormatter {
         //TODO: calcutlate/build map
 
         return map;
+
+    }
+
+
+    public void expandTrackFiveCarLengthsToTheLeftAndRightOfCurrentPos(float[] pos, float angle)
+    {
 
     }
 }
