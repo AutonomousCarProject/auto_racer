@@ -43,9 +43,9 @@ public class PositionModule implements CarModule {
 
         //FIXME find out the error in the servo value, and add that value to "> 90" and subtract from "< 90",defaulted at 2
         if (wheelAngle > 91) { //if turning right
-            drivingArcRadius = (float) (Math.tan(wheelAngle - 90) * disBetweenAxle);
+            drivingArcRadius = (float) (Math.tan(Math.toRadians(180 - wheelAngle)) * disBetweenAxle);
         } else if (wheelAngle < 89) { //if turning left
-            drivingArcRadius = (float) (Math.tan(wheelAngle + 90) * disBetweenAxle);
+            drivingArcRadius = (float) (Math.tan(Math.toRadians(wheelAngle)) * disBetweenAxle);
         }//
         else {
             drivingArcRadius = 0;
@@ -56,31 +56,19 @@ public class PositionModule implements CarModule {
         } else {
             //if turning
             deltaPositionAngle = (float) (360 * distanceTraveled / (Math.PI * Math.pow(drivingArcRadius, 2)));//compute the length of the path around the circle the car has taken, and then get the angle of that
-            if (wheelAngle > 91) {//if turning right
-                if (deltaPositionAngle <= 89) {
-                    convertPosition((float) (drivingArcRadius - drivingArcRadius * Math.cos(deltaPositionAngle)), (float) (drivingArcRadius * Math.sin(deltaPositionAngle)));//weird trig stuff because for the unit circle the trig is based on center of circle. Here, the car starts at either (1,0) [turning left] or (-1,0) [turning right]
+            if (deltaPositionAngle < 90 || deltaPositionAngle > 270) {
+                convertPosition((float) (drivingArcRadius - drivingArcRadius * Math.cos(Math.toRadians(deltaPositionAngle))), (float) (drivingArcRadius * Math.sin(Math.toRadians(deltaPositionAngle))));//weird trig stuff because for the unit circle the trig is based on center of circle. Here, the car starts at either (1,0) [turning left] or (-1,0) [turning right]
 
-                } else {//if(deltaPositionAngle > 90), turning left
-                    convertPosition((float) (drivingArcRadius + drivingArcRadius * Math.cos(deltaPositionAngle)), (float) (drivingArcRadius * Math.sin(deltaPositionAngle)));//weird trig stuff because for the unit circle the trig is based on center of circle. Here, the car starts at either (1,0) [turning left] or (-1,0) [turning right]
-                }
+            } else {//if(deltaPositionAngle > 90), turning left
+                convertPosition((float) (drivingArcRadius + drivingArcRadius * Math.cos(deltaPositionAngle)), (float) (drivingArcRadius * Math.sin(deltaPositionAngle)));//weird trig stuff because for the unit circle the trig is based on center of circle. Here, the car starts at either (1,0) [turning left] or (-1,0) [turning right]
+            }
+
+            if (wheelAngle > 91) {//if turning right
                 computeDirection(deltaPositionAngle);//update direction with delta direction  because clockwise = positive
             }
             if (wheelAngle < 91) {//if turning left
-                if (deltaPositionAngle <= 89) {
-                    convertPosition((float) (drivingArcRadius + drivingArcRadius * Math.cos(deltaPositionAngle)), (float) (drivingArcRadius * Math.sin(deltaPositionAngle)));//weird trig stuff because for the unit circle the trig is based on center of circle. Here, the car starts at either (1,0) [turning left] or (-1,0) [turning right]
-                } else {//if(deltaPositionAngle > 90)
-                    convertPosition((float) (drivingArcRadius - drivingArcRadius * Math.cos(deltaPositionAngle)), (float) (drivingArcRadius * Math.sin(deltaPositionAngle)));//weird trig stuff because for the unit circle the trig is based on center of circle. Here, the car starts at either (1,0) [turning left] or (-1,0) [turning right]
-                }
                 computeDirection(-deltaPositionAngle);//update direction with negative turn going left
             }
-        }
-
-
-        //ORDER OF FUNCTION CALLING THAT HAPPENS EVERY TIME
-        if (wheelAngle > 91) {
-            computeDirection(deltaPositionAngle - 90);
-        } else {
-            computeDirection(deltaPositionAngle + 90);
         }
         computeSpeed(odometerCount);
 
