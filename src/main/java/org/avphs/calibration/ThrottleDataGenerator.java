@@ -18,12 +18,12 @@ public class ThrottleDataGenerator {
         CarData carData = new CarData();
         CalibrationCore core = new CalibrationCore(car, false);
 
-        //NEVER SET THROTTLE WITH ANGLE MORE THAN 90 (im keeping it capped to 89 to be safe)
-        float[] speedValues = new float[89];
+        //NEVER SET THROTTLE WITH ANGLE MORE THAN 60 (im keeping it capped to 59 to be safe)
+        float[] speedValues = new float[59];
         boolean speedChanged;
         int lastSpeed = 0;
         int lastOdom;
-        for (int i = 0; i < 89; i++) {
+        for (int i = 0; i < 59; i++) {
             speedChanged = true;
             while (speedChanged) {
                 lastOdom = ((ArduinoData) carData.getModuleData("arduino")).count;
