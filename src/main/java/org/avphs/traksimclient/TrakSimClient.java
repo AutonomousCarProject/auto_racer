@@ -1,5 +1,6 @@
 package org.avphs.traksimclient;
 
+import org.avphs.camera.FakeCamera;
 import org.avphs.camera.SimCamera;
 import org.avphs.car.Car;
 import org.avphs.core.RacingCore;
