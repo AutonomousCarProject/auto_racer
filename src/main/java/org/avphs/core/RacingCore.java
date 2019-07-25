@@ -32,7 +32,7 @@ public class RacingCore extends CarCore {
             e.printStackTrace();
         }
         updatingCarModules.add(new RacingLineModule());
-        updatingCarModules.add(new MapRacingModule());
+        updatingCarModules.add(new MapModule());
         updatingCarModules.add(new ObjectDetectionModule());
         updatingCarModules.add(new PassingModule());
 
