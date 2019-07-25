@@ -9,8 +9,8 @@ class MapUtils {
     private float[] pixelHeightToY = new float[481]; // lookup table for a pixel height, returns straight ahead distance on map
 
     public final static int
-            IMAGE_SIDE_THRESHOLD = 10, //the amount of pixels in from the sides of the image we look
-            Y_HEIGHT_PIXEL_THRESHOLD = 300, //amount to pixels up we look for wall recognition
+            IMAGE_SIDE_THRESHOLD = 5, //the amount of pixels in from the sides of the image we look
+            Y_HEIGHT_PIXEL_THRESHOLD = 270, //amount to pixels up we look for wall recognition
             IMAGE_WIDTH = 640,
             IMAGE_HEIGHT = 480;
 
