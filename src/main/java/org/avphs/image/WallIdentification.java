@@ -1,6 +1,9 @@
 package org.avphs.image;
 
 public class WallIdentification {
+
+    static final int wallNum = 2;
+
     static final int[] ColorArr = {
             0xFF0000, //RED     0
             0x00FF00, //GREEN   1
@@ -91,7 +94,7 @@ public class WallIdentification {
         }
         int[] newWallTops = new int[width];
         int[] newWallBottoms = new int[width];
-        removeOutliers(wallTops, wallBottoms, newWallTops, newWallBottoms);
+        //removeOutliers(wallTops, wallBottoms, newWallTops, newWallBottoms);
         int[][] out = {newWallBottoms, newWallTops};
         fillEmptySpaces(out);
         return out;
@@ -109,10 +112,12 @@ public class WallIdentification {
     static int[][] magicloop(byte[] bayer, int width, int height, int dt, int tile) {
         int[] wallBottoms = new int[width];
         int[] wallTops = new int[width];
-        for(int i = 0; i < width; i++){
+        int[] wallType = new int[width];
+        for(int i = 0; i < 640; i++){
             int currColor = -1;
             int currTop = -1;
-            for(int j = 0; j < height; j++){
+            boolean ftcWall = true;
+            for(int j = 0; j < 480; j++){
                 int r = 0,g = 0,b = 0;
                 switch(tile){
                     case 0:
@@ -137,11 +142,20 @@ public class WallIdentification {
                         //Black signifies the end of a wall
                         wallTops[i] = currTop;
                         wallBottoms[i] = j;
+                        wallType[i] = 1;
                         break;
                     }
                 }else{
                     //Resets currTop to signify it has not found a wall
                     currTop = -1;
+                }
+                if(pixelColor == 0 && ftcWall && j > 1){
+                    wallTops[i] = 0;
+                    wallBottoms[i] = j;
+                    wallType[i] = 2;
+                    break;
+                }else if(currColor != pixelColor && j > 1){
+                    ftcWall = false;
                 }
 
 
@@ -151,9 +165,9 @@ public class WallIdentification {
         }
         int[] newWallTops = new int[width];
         int[] newWallBottoms = new int[width];
-        removeOutliers(wallTops, wallBottoms, newWallTops, newWallBottoms);
-        int[][] out = {newWallBottoms, newWallTops};
-        fillEmptySpaces(out);
+        removeOutliers(wallTops, wallBottoms, newWallTops, newWallBottoms,wallType);
+        int[][] out = {wallBottoms, wallTops};
+        //fillEmptySpaces(out);
         return out;
     }
 
@@ -166,48 +180,50 @@ public class WallIdentification {
      * Removes outliers from our detected wall data
      *
      */
-    static void removeOutliers(int[] inArrayTop, int[] inArrayBottom, int[] outArrayTop, int[] outArrayBottom){
-        double topMean = 0, bottomMean = 0;
-        int topCount = 0, bottomCount = 0;
+    static void removeOutliers(int[] inArrayTop, int[] inArrayBottom, int[] outArrayTop, int[] outArrayBottom, int[]wallTypes){
+        double topMean[] = new double[wallNum + 1], bottomMean[] = new double[wallNum + 1];
+        int topCount[] = new int[wallNum + 1], bottomCount[] = new int [wallNum + 1];
         //Calculate the mean for the top and bottom coordinates
         for(int i = 0; i < inArrayTop.length; i++){
             if(inArrayTop[i] != 0){
-                topMean += inArrayTop[i];
-                topCount++;
+                topMean[wallTypes[i]] += inArrayTop[i];
+                topCount[wallTypes[i]]++;
             }
             if(inArrayBottom[i] != 0){
-                bottomMean += inArrayBottom[i];
-                bottomCount++;
+                bottomMean[wallTypes[i]] += inArrayBottom[i];
+                bottomCount[wallTypes[i]]++;
             }
         }
-        topMean /= topCount;
-        bottomMean /= bottomCount;
+        topMean[1] /= topCount[1];
+        bottomMean[1] /= bottomCount[1];
+        topMean[2] /= topCount[2];
+        bottomMean[2] /= bottomCount[2];
         //Calculate the standard deviation for top and bottom coordinates
-        int[] topVariance = new int[inArrayTop.length];
-        int[] bottomVariance = new int[inArrayTop.length];
-        double topStddev = 0, bottomStddev = 0;
+        int[][] topVariance = new int[wallNum + 1][inArrayTop.length];
+        int[][] bottomVariance = new int[wallNum + 1][inArrayTop.length];
+        double topStddev[] = new double[wallNum+1], bottomStddev[] = new double[wallNum+1];
         for(int i = 0; i < inArrayTop.length; i++){
             if(inArrayTop[i] != 0){
-                topVariance[i] = (inArrayTop[i] - (int)topMean) * (inArrayTop[i] - (int)topMean);
+                topVariance[wallTypes[i]][i] = (inArrayTop[i] - (int)topMean[wallTypes[i]]) * (inArrayTop[i] - (int)topMean[wallTypes[i]]);
             }else{
-                topVariance[i] = 0;
+                topVariance[wallTypes[i]][i] = 0;
             }
-            topStddev += topVariance[i];
+            topStddev[wallTypes[i]] += topVariance[wallTypes[i]][i];
             if(inArrayBottom[i] != 0){
-                bottomVariance[i] = (inArrayBottom[i] - (int)bottomMean) * (inArrayBottom[i] - (int)bottomMean);
+                bottomVariance[wallTypes[i]][i] = (inArrayBottom[i] - (int)bottomMean[wallTypes[i]]) * (inArrayBottom[i] - (int)bottomMean[wallTypes[i]]);
             }else{
-                bottomVariance[i] = 0;
+                bottomVariance[wallTypes[i]][i] = 0;
             }
-            bottomStddev += bottomVariance[i];
+            bottomStddev[wallTypes[i]] += bottomVariance[wallTypes[i]][i];
 
         }
-        topStddev /= topCount;
-        topStddev = Math.sqrt(topStddev);
-        bottomStddev /= bottomCount;
-        bottomStddev = Math.sqrt(bottomStddev);
+        topStddev[1] /= topCount[1];
+        topStddev[1] = Math.sqrt(topStddev[1]);
+        bottomStddev[1] /= bottomCount[1];
+        bottomStddev[1] = Math.sqrt(bottomStddev[1]);
         //Finds outliers based on one standard deviation away from the mean
         for(int i = 0; i < inArrayTop.length; i++){
-            if(inArrayTop[i] > topMean + topStddev || inArrayTop[i] < topMean - topStddev || inArrayBottom[i] > bottomMean + bottomStddev || inArrayBottom[i] < bottomMean - bottomStddev){
+            if(inArrayTop[i] > topMean[wallTypes[i]] + topStddev[wallTypes[i]] || inArrayTop[i] < topMean[wallTypes[i]] - topStddev[wallTypes[i]] || inArrayBottom[i] > bottomMean[wallTypes[i]] + bottomStddev[wallTypes[i]] || inArrayBottom[i] < bottomMean[wallTypes[i]] - bottomStddev[wallTypes[i]]){
                 outArrayTop[i] = 0;
                 outArrayBottom[i] = 0;
             }else{
