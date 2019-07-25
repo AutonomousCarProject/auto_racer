@@ -63,7 +63,9 @@ public class SimCamera extends CameraBase {
      */
     public void NextFrame() { // fills pixels, false if can't (SimCam)
         theSim.SimStep(1);
-        bayerImage = theSim.GetSimFrame(numRows, numCols);
+        byte[] test = new byte[numRows * numCols * 4];
+        theSim.GetSimFrame(numRows, numCols, test);
+        bayerImage = test;
     } //~NextFrame // in apw3.SimCamera
 
     /**
