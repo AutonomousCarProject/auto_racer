@@ -1,6 +1,7 @@
 package org.avphs.core;
 
 import org.avphs.car.Car;
+import org.avphs.driving.prerace.PreRaceDrivingModule;
 import org.avphs.image.ImageModule;
 import org.avphs.map.MapModule;
 import org.avphs.map.MapRacingModule;
@@ -18,6 +19,7 @@ public class PreRaceCore extends CarCore {
         // Add Run-time Modules
         updatingCarModules.add(new ImageModule());
         updatingCarModules.add(new MapModule());
+        updatingCarModules.add(new PreRaceDrivingModule());
 
         init();
         startUpdatingModules();
