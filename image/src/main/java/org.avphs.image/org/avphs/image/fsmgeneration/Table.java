@@ -450,7 +450,17 @@ public class Table {
                     digraph.addEntry(entry);
                 }
             }
+//            NodeStatement nodeStatement = new NodeStatement(tableState.getName());
+//            String tooltip = tableState.debug("").toString();
+//            tooltip = tooltip.replace("\n", "\\n");
+//            nodeStatement.addAttribute("tooltip", "\"" + tooltip + "\"");
+//            digraph.addNodeStatement(nodeStatement);
         }
+        
+        NodeStatement initialAttributes = new NodeStatement(initialState.getName(false));
+        initialAttributes.addAttribute("shape", "diamond");
+        
+        digraph.addNodeStatement(initialAttributes);
         
         return digraph;
     }

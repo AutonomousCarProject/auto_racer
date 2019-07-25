@@ -31,8 +31,8 @@ public class TomsTubeWall {
         ImageProcessing.PosterColor c6 = ImageProcessing.PosterColor.GREY4;
         ImageProcessing.PosterColor c7 = ImageProcessing.PosterColor.WHITE;
         
-        series = new ImageProcessing.PosterColor[]{c0, c1, c2, c3, c4, c5, c6, c7};
-//        series = ImageProcessing.PosterColor.values();
+//        series = new ImageProcessing.PosterColor[]{c0, c1, c2, c3, c4, c5, c6, c7};
+        series = ImageProcessing.PosterColor.values();
 
         TableState[] s = new TableState[51];
         for (int i = 0; i < 51; i++) {
@@ -82,6 +82,7 @@ public class TomsTubeWall {
             e.printStackTrace();
         }
 
+        tomsTable.setInitialState(s[1]);
         System.out.println(tomsTable.debugTableStates());
         tomsTable.generateImage();
     }

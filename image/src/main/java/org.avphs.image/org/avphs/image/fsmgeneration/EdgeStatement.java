@@ -49,6 +49,10 @@ public class EdgeStatement {
         labels.add(label);
     }
     
+    public void addAttribute(String key, String value) {
+        attributes.put(key, value);
+    }
+    
     public boolean isSameEdge(EdgeStatement other) {
         return (source.equals(other.getSource()) && destination.equals(other.getDestination()));
     }
@@ -65,17 +69,18 @@ public class EdgeStatement {
         builder.append("\"");
         
         if (!colors.isEmpty()) {
-            builder.append(" ");
-            StringJoiner joiner = new StringJoiner(":", "[color = \"", "\"]");
+            StringJoiner joiner = new StringJoiner(":", " [color = \"", "\"]");
+            StringJoiner tooltip = new StringJoiner(", ", " [tooltip = \"", "\"]");
             for (ImageProcessing.PosterColor color : colors) {
                 joiner.add(Digraph.colorNameMap[color.getCode()]);
+                tooltip.add(color.toString());
             }
             builder.append(joiner.toString());
+            builder.append(tooltip.toString());
         }
         
         if (!labels.isEmpty()) {
-            builder.append(" ");
-            StringJoiner joiner = new StringJoiner("\\n", "[label = \"", "\"]");
+            StringJoiner joiner = new StringJoiner("\\n", " [label = \"", "\"]");
             for (String label : labels) {
                 joiner.add(label);
             }

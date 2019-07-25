@@ -20,14 +20,16 @@ public class Digraph {
             "gray90"
     };
     
-    private ArrayList<EdgeStatement> entries;
+    private ArrayList<EdgeStatement> edgeStatements;
+    private ArrayList<NodeStatement> nodeStatements;
     
     public Digraph() {
-        entries = new ArrayList<>();
+        edgeStatements = new ArrayList<>();
+        nodeStatements = new ArrayList<>();
     }
     
     public void addEntry(EdgeStatement edgeStatement) {
-        for (EdgeStatement entry : entries) {
+        for (EdgeStatement entry : edgeStatements) {
             if (entry.isSameEdge(edgeStatement)) {
                 entry.getColors().addAll(edgeStatement.getColors());
                 entry.getLabels().addAll(edgeStatement.getLabels());
@@ -35,15 +37,29 @@ public class Digraph {
                 return;
             }
         }
-        entries.add(edgeStatement);
+        edgeStatements.add(edgeStatement);
+    }
+    
+    public void addNodeStatement(NodeStatement nodeStatement) {
+        for (NodeStatement statement : nodeStatements) {
+            if (statement.getNodeName().equals(nodeStatement.getNodeName())) {
+                statement.getAttributes().putAll(nodeStatement.getAttributes());
+                return;
+            }
+        }
+        nodeStatements.add(nodeStatement);
     }
 
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("digraph {\n");
-        for (EdgeStatement entry : entries) {
+        for (EdgeStatement entry : edgeStatements) {
             builder.append(entry.toString());
+            builder.append("\n");
+        }
+        for (NodeStatement nodeStatement : nodeStatements) {
+            builder.append(nodeStatement.toString());
             builder.append("\n");
         }
         builder.append("}");
@@ -61,6 +77,8 @@ public class Digraph {
                 "C:\\Program Files (x86)\\Graphviz2.38\\bin\\dot.exe",
                 "-Glabelloc=t",
                 "-Glabel=\"" + name + "\"",
+                "-Epenwidth=4",
+                "-Nshape=circle",
                 "-Tsvg",
                 "-o" + path + "\\" + name + ".svg"
         );
@@ -73,5 +91,9 @@ public class Digraph {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    
+    public static String quote(String s) {
+        return "\"" + s + "\"";
     }
 }
