@@ -14,7 +14,7 @@
  * than LattePanda, you can substitute package noJSSC, which has the same
  * APIs (as used by FakeFirmata) but does nothing.
  */
-package org.avphs.traksim; // (class DriverCons)                // 2019 May 18
+package org.avphs.traksim; // (class DriverCons)                // 2019 July 24
 
 /**
  * Separate Java file for Driving Simulator constants.
@@ -29,7 +29,7 @@ public class DriverCons { // TrakSim constant parameters
 
   public static final boolean // options & diagnostic switches..
           D_LiveCam = false,         // F: omit connecting to FlyCamera
-          D_Fault = true,        // T: default start; F: easy run mode
+          D_Fault = false,        // T: default start; F: easy run mode
           D_StartLive = !D_Fault,   // T: start in live camera if possible
           D_FixedSpeed = D_Fault,   // ignore speed control, assume fMinSpeed
           D_StayInTrack = D_Fault,  // ignore steering control, stay centered in track
@@ -45,13 +45,14 @@ public class DriverCons { // TrakSim constant parameters
           D_Postrize = true,        // T: include Tom Pittman's Speedy Posterize code
           D_TestTimes = false,      // T: run example time-test code
           D_ShoWallz = true,        // T: search back for distant walls (slower)
+          D_RightOnly = false,      // T: Stay-In-Track hugs right edge
           D_StartInCalibrate = false, // T: use this to calibrate servo limits
           D_Log_Draw = false, D_Log_Log = false, D_BlurSpeed = false,
           D_NoisyMap = false, D_ShoHedLit = false, D_Fax_Log = true,
           D_MapLogged = true, D_Mini_Log = false;
 
   public static final int
-          D_Qlog = 0, // Global log enabler (=0 kills most log, -1 enables all) bits:
+          D_Qlog = 3, // Global log enabler (=0 kills most log, -1 enables all) bits:
   //   +1: MapLogged enabled
   //   +2: mouseEntered/mouseClicked
   //   +4: "DrListen="
@@ -94,7 +95,7 @@ public class DriverCons { // TrakSim constant parameters
           D_Crummy = 255,    // (power of 2) size of BreadCrumbs list for map display
           D_PebblSize = 1,   // default 2^x = size in park cm of carpet/track pebbles
           D_PebContrast = 6, // default pebble texture contrast, 0..9 (<0: none)
-          D_CheckerBd = 0;   // (power of 2) =1 to checker 1x1m, =2 for 2x2, =0 off
+          D_CheckerBd = 1;   // (power of 2) =1 to checker 1x1m, =2 for 2x2, =0 off
 
   public static final double D_TurnRadius = 7.0, // nom. meters in park coords
   // measured at servo position = min(LeftSteer,RiteSteer)

@@ -15,7 +15,7 @@ public class Car implements ClientInterface {
     private int fps;
     PulseListener ps = new PulseListener();
 
-    private class PulseListener implements UpdateListener{
+    private class PulseListener implements UpdateListener {
 
         private int prior;
 
@@ -57,6 +57,10 @@ public class Car implements ClientInterface {
 
     public void init(CarData carData) {
         carData.addData("arduino", new ArduinoData(ps.getCount(),  aVoid -> arduino.Close()));
+    }
+
+    public void update(CarData carData) {
+
     }
 
     @Override

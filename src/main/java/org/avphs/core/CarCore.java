@@ -91,6 +91,7 @@ public abstract class CarCore {
      * process, and image is fetched from the car and stored in carData.
      */
     private void update() {
+        car.update(carData);
         car.getCameraImage(carData);
         for (CarModule module : updatingCarModules) {
             module.update(carData);
