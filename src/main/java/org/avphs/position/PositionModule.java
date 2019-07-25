@@ -103,15 +103,17 @@ public class PositionModule implements CarModule {
 
     private void computeSpeed(int odometerCount) {
         //FIXME: data from calibration
-        float speed = odometerCount * .15f * 30f;//*30 because convert odometerCount per 33.33 milliseoncs to OdometerCount per second.
+        float speed = odometerCount * .15f * 30f;//*30 because convert odometerCount per 33.33 milliseconds to OdometerCount per second.
         positionData.updateSpeed(speed);
     }
 
     private void convertPosition(float x, float y) {
         //FIXME x and y are currently in cm, not in the virtual world coordinates.
-        float[] temp = pol(x,y);
-        temp = cart(temp[0],temp[1] - positionData.getDirection());
-        positionData.updatePosition(temp);
+        if(x != 0) {
+            float[] temp = pol(x, y);
+            temp = cart(temp[0], temp[1] - positionData.getDirection());
+            positionData.updatePosition(temp);
+        }
     }
 
     private float[] pol(float x, float y){//to polar coordinates
