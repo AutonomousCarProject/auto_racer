@@ -2,7 +2,6 @@ package org.avphs.car;
 
 import org.avphs.camera.Camera;
 import org.avphs.core.CarCore;
-import org.avphs.core.RacingCore;
 import org.avphs.coreinterface.CarData;
 import org.avphs.coreinterface.ClientInterface;
 import org.avphs.sbcio.Arduino;
@@ -20,10 +19,11 @@ public class Car implements ClientInterface {
 
         private int prior;
 
-        public PulseListener(){
+        public PulseListener() {
             prior = 0;
         }
 
+        @Override
         public void pinUpdated(int pin, int value) {
             if (pin == DRIVESHAFT_PIN) {
                 if (value + prior > 0){
@@ -32,36 +32,37 @@ public class Car implements ClientInterface {
             }
         }
 
-        public int getCount(){
+        public int getCount() {
             return prior;
         }
     }
 
-    public Car(Camera camera)
-    {
+    public Car(Camera camera) {
         this.camera = camera;
         camera.Connect(4);
-        this.arduino = new Arduino();
+        arduino = new Arduino();
 
         fps = CarCore.FPS;
 
-        if (arduino.GetFirmwareRev()<0x120000) return; // not HardAta
-        arduino.pinMode(11,Arduino.DEADMAN);
+        if (arduino.GetFirmwareRev() < 0x120000) {
+            return; // not HardAta
+        }
+        arduino.pinMode(11, Arduino.DEADMAN);
         // Set the digital input pin 11 as (PWM) DeadMan switch from xmtr
-        arduino.pinMode(10,Arduino.DM_SERVO);
+        arduino.pinMode(10, Arduino.DM_SERVO);
         // Set the digital output pin 10 as ESC servo under DeadMan control
-        arduino.servoWrite(10,105); // start servo +15 degrees
+        arduino.servoWrite(10, 105); // start servo +15 degrees
         arduino.addInputListener(Arduino.REPORT_PULSECOUNT, ps);
-        arduino.pinMode(8,Arduino.PULSECOUNT);
-        arduino.DoPulseCnt(8,1000/fps/2);
+        arduino.pinMode(8, Arduino.PULSECOUNT);
+        arduino.DoPulseCnt(8, 1000 / fps / 2);
     }
 
     public void init(CarData carData) {
-        carData.addData("arduino", new ArduinoData(ps.getCount(),  aVoid -> arduino.Close()));
+        carData.addData("arduino", new ArduinoData(ps.getCount(), aVoid -> arduino.Close()));
     }
 
     public void update(CarData carData) {
-
+        ((ArduinoData) carData.getModuleData("arduino")).addOdomCount(ps.getCount());
     }
 
     @Override
