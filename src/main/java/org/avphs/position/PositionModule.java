@@ -3,9 +3,12 @@ package org.avphs.position;
 import org.avphs.coreinterface.CarCommand;
 import org.avphs.coreinterface.CarData;
 import org.avphs.coreinterface.CarModule;
+import org.avphs.coreinterface.CloseHook;
 import org.avphs.sbcio.ArduinoData;
 
-public class PositionModule implements CarModule {
+import java.io.IOException;
+
+public class PositionModule implements CarModule, CloseHook {
 
     private PositionData prevPositionData = new PositionData(new float[]{0, 0}, 0, 0); //WILL BE USED LATER
     private PositionData positionData;
@@ -14,10 +17,22 @@ public class PositionModule implements CarModule {
     private float wheelAngle;
     private float deltaPositionAngle;
 
+
+    //FOR TESTING THE CAR
+    private PositionCarTesting pct = new PositionCarTesting();
+
+    public PositionModule() throws IOException {
+    }
+
+
+    @Override
     public void init(CarData carData) {
         //THIS WILL BE WHERE WE READ FROM A FILE TO FIND THE INITIAL POSITION
         positionData = new PositionData(new float[]{0, 0}, 0, 0); //TEMPORARY
 
+
+        //FOR TESTING THE CAR
+        carData.addData("pct", pct);
     }
 
     @Override
@@ -26,14 +41,19 @@ public class PositionModule implements CarModule {
     }
 
     @Override
-    public void update(CarData carData) {
+    public void update(CarData carData) throws IOException {
         ArduinoData odom = (ArduinoData) carData.getModuleData("arduino");
         int steer = (int) carData.getModuleData("driving");
-        computePosition(odom.count,steer);
+        computePosition(odom.getOdomCount(), steer);
         carData.addData("position", positionData);
+
+
+        //FOR CAR TESTING
+        pct.writeToFile(positionData.getPosition()[0], positionData.getPosition()[1], positionData.getDirection(), odom.getOdomCount(), steer);
+
     }
 
-    private void computePosition(int odometerCount, float drivingData){
+    private void computePosition(int odometerCount, float drivingData) {
         float drivingArcRadius;
         disBetweenAxle = 32.5f;//FIXME: data from calibration
         // find out if this is run before or after driving. If after, good, else: bad.
@@ -108,16 +128,28 @@ public class PositionModule implements CarModule {
 
     private void convertPosition(float x, float y) {
         //FIXME x and y are currently in cm, not in the virtual world coordinates.
-        float[] temp = pol(x,y);
-        temp = cart(temp[0],temp[1] - positionData.getDirection());
+        float[] temp = pol(x, y);
+        temp = cart(temp[0], temp[1] - positionData.getDirection());
         positionData.updatePosition(temp);
     }
 
-    private float[] pol(float x, float y){
-        return new float[] {(float) Math.sqrt(x*x + y*y), (float) Math.toDegrees(Math.atan2(y,x))};
+    private float[] pol(float x, float y) {
+        return new float[]{(float) Math.sqrt(x * x + y * y), (float) Math.toDegrees(Math.atan2(y, x))};
     }
 
-    private float[] cart(float l, float d){
-        return new float[] {(float) (l * Math.cos(Math.toRadians(d))), (float) (l * Math.sin(Math.toRadians(d)))};
+    private float[] cart(float l, float d) {
+        return new float[]{(float) (l * Math.cos(Math.toRadians(d))), (float) (l * Math.sin(Math.toRadians(d)))};
     }
+
+
+    @Override
+    public void onClose() {
+        try {
+            pct.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 }
