@@ -13,6 +13,8 @@ import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
+import org.apache.commons.math3.analysis.polynomials.PolynomialFunctionLagrangeForm;
+
 public class MoveForward {
 
     public MoveForward(){
@@ -31,20 +33,20 @@ public class MoveForward {
         CalibrationCore core = new CalibrationCore(car, true);
         ImageData imageData = (ImageData) carData.getModuleData("image");
 
-        ArrayList<Integer> wallHeights = new ArrayList<Integer>();
-        ArrayList<Integer> distances = new ArrayList<Integer>();
+        ArrayList<Double> wallHeights = new ArrayList<>();
+        ArrayList<Double> distances = new ArrayList<>();
         ArduinoData data;
-        int dist;
+        double dist = 100;
 
         car.accelerate(true, 10);
         car.steer(true, 0);
 
-        try (PrintWriter writer = new PrintWriter("C:\\Users\\daqua\\Documents\\Code\\Sourcetree\\NWAPW_racing\\src\\main\\java\\org\\avphs\\calibration\\PixelData.txt",
+        try (PrintWriter writer = new PrintWriter(/*"src\\main\\java\\org\\avphs\\calibration\\*/"PixelData.txt",
                 StandardCharsets.UTF_8)) {
             while(true){
                 data = (ArduinoData)carData.getModuleData("arduino");
-                dist = data.count;
-                wallHeights.add(imageData.wallBottom[320] - imageData.wallTop[320]);
+                dist -= data.count * CalibrationModule.CM_PER_ROTATION;
+                wallHeights.add((double)imageData.wallBottom[320] - imageData.wallTop[320]);
                 distances.add(dist);
                 if(dist < 1){
                     break;
@@ -54,16 +56,24 @@ public class MoveForward {
 
             writer.println(wallHeights.size());
             writer.print("\n");
-            //Interpolater interpolater = new Interpolater(distances, wallHeights);
+
+            double[] wallHeightsArray = new double[wallHeights.size()];
+            double[] distancesArray = new double[distances.size()];
             for(int i = 0; i < wallHeights.size(); i++){
+                wallHeightsArray[i] = wallHeights.get(i);
+                distancesArray[i] = distances.get(i);
+            }
+            PolynomialFunctionLagrangeForm interp = new PolynomialFunctionLagrangeForm(wallHeightsArray, distancesArray);
+
+            for(double i = 0; i < wallHeights.size(); i++){
                 writer.print(' ');
-               // writer.print(Interpolater.getY(i));
+                writer.print(interp.value(i));
             }
         } catch(IOException e) {
             while(true){
                 data = (ArduinoData)carData.getModuleData("arduino");
-                dist = data.count;
-                wallHeights.add(imageData.wallBottom[320] - imageData.wallTop[320]);
+                dist -= data.count * CalibrationModule.CM_PER_ROTATION;
+                wallHeights.add((double)imageData.wallBottom[320] - imageData.wallTop[320]);
                 distances.add(dist);
                 if(dist < 1){
                     break;
@@ -78,6 +88,5 @@ public class MoveForward {
                 System.out.print(distances);
             }
         }
-
     }
 }
