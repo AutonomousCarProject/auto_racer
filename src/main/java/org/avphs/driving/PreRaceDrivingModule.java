@@ -11,8 +11,8 @@ import static org.avphs.coreinterface.CarCommand.steer;
 
 public class PreRaceDrivingModule extends PreRaceModule {
 
-    private int angle = 90;
-    private final int speed = 91;
+    private int angle = 0;
+    private final int speed = 0;
 
     //necessary in all cases
     private float[] distances = new float[]{1000, 1000};
