@@ -127,13 +127,13 @@ public class WallIdentification {
                         break;
                 }
                 ImageProcessing.PosterColor posterPix = ImageProcessing.posterizeChannels(r, g, b, dt);
-                int currentColor = posterPix.code;
-                if((currentColor == 10 || currentColor == 11) && currTop == -1){
+                int pixelColor = posterPix.code;
+                if((pixelColor == 10 || pixelColor == 11) && currTop == -1){
                     //Looks for white or light grey as the top of a wall, checks if it has not found the top of a wall
                     currTop = j; // Sets the top of the wall to where it thinks it is
-                }else if((currentColor == currColor || currentColor == currColor + 1 || currentColor == currColor -1 || currentColor == currColor + 2 || currentColor == currColor - 2) && currTop != -1){
+                }else if((pixelColor == currColor || pixelColor == currColor + 1 || pixelColor == currColor -1 || pixelColor == currColor + 2 || pixelColor == currColor - 2) && currTop != -1){
                     //Makes sure the colors don't jump more than two shades of grey to count as a wall
-                    if(currentColor == 6){
+                    if(pixelColor == 6){
                         //Black signifies the end of a wall
                         wallTops[i] = currTop;
                         wallBottoms[i] = j;
@@ -144,8 +144,9 @@ public class WallIdentification {
                     currTop = -1;
                 }
 
+
                 //Advances currColor to the color of the pixel
-                currColor = currentColor;
+                currColor = pixelColor;
             }
         }
         int[] newWallTops = new int[width];
