@@ -5,13 +5,11 @@ import org.avphs.coreinterface.CarData;
 import org.avphs.coreinterface.CarModule;
 import org.avphs.racingline.RacingLine;
 import org.avphs.racingline.RacingLinePoint;
-import org.avphs.traksim.TrakSim;
 
 import java.util.ArrayList;
 
 import static org.avphs.coreinterface.CarCommand.accelerate;
 import static org.avphs.coreinterface.CarCommand.steer;
-import static org.avphs.coreinterface.CarCommand.stop;
 
 public class DrivingModule implements CarModule {
 

@@ -15,7 +15,7 @@ package org.avphs.camera; // (class SimCamera)                   // 2018 May 25
 
 import org.avphs.traksim.DriverCons;
 import org.avphs.traksim.HandyOps;
-import org.avphs.traksim.TrakSim;
+import org.avphs.traksim.OldTrakSim;
 
 import static fly2cam.FlyCamera.FrameRate_15;
 
@@ -41,14 +41,14 @@ public class SimCamera extends CameraBase {
     private static final boolean
             NoisyFaker = DriverCons.D_Mini_Log && (DriverCons.D_Qlog < 0);
 
-    public TrakSim theSim;
+    public OldTrakSim theSim;
 
     public SimCamera() {
         if (NoisyFaker) {
             System.out.println(HandyOps.Dec2Log("apw3.SimCamera ", CamHight,
                     HandyOps.Dec2Log("/", CamWidth, "")));
         }
-        theSim = new TrakSim();
+        theSim = new OldTrakSim();
         numRows = CamHight;
         numCols = CamWidth;
         tile = SimTile;
@@ -64,8 +64,8 @@ public class SimCamera extends CameraBase {
     public void NextFrame() { // fills pixels, false if can't (SimCam)
         theSim.SimStep(1);
         byte[] test = new byte[numRows * numCols * 4];
-        theSim.GetSimFrame(numRows, numCols, test);
-        bayerImage = test;
+        bayerImage = theSim.GetSimFrame(numRows, numCols);
+        //bayerImage = test;
     } //~NextFrame // in apw3.SimCamera
 
     /**

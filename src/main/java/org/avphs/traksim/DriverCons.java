@@ -45,7 +45,7 @@ public class DriverCons { // TrakSim constant parameters
           D_Postrize = true,        // T: include Tom Pittman's Speedy Posterize code
           D_TestTimes = false,      // T: run example time-test code
           D_ShoWallz = true,        // T: search back for distant walls (slower)
-          D_RightOnly = false,      // T: Stay-In-Track hugs right edge
+          D_RightOnly = true,      // T: Stay-In-Track hugs right edge
           D_StartInCalibrate = false, // T: use this to calibrate servo limits
           D_Log_Draw = false, D_Log_Log = false, D_BlurSpeed = false,
           D_NoisyMap = false, D_ShoHedLit = false, D_Fax_Log = true,

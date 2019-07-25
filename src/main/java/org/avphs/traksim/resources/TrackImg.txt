@@ -1,5 +1,6 @@
 "Porto F1/10"
--- Index: move one of these lines to the front to use that track (19July4)...
+"Figure-8"
+-- Index: move one of these lines to the front to use that track (19July24)...
 "Figure-8"
 "MSB Garage (open)"
 "MSB Carpet (open)"
@@ -476,7 +477,7 @@ B 12 20   1  -- drop track bucket near top
 
 . . . . . . . . -- end of descriptor -- . . . . . . . . . . . . . . . .
 
-0x300080 0x9AAA8777 0x80028 270 0 "Porto F1/10" -- 2019 June 26
+0x300080 0x9AAA8777 0x80028 270 0 "Porto F1/10" -- 2019 July 24
 --0x300080 0x9AAA1777 0xE0040 100 12,9 "Porto F1/10" -- 2019 May 25
 
 // "Porto" Portugal F1/10 race track -- Uses "19Jun25" image file
@@ -575,11 +576,11 @@ F 1 1 23 62 0
 -- . -- look & see
 
 // Track edges..
-W 2 32     -- start at finish line
-A 21       -- to 2,11
-L 8        -- to 10,2
+W 3 33     -- start at finish line
+A 22       -- to 2,11
+L 7        -- to 10,2
 A 1        -- to 11,2
-L 8        -- to 20,10
+L 7        -- to 20,10
 A 1        -- to 20,11
 L 8  35    -- to 19.0,16.875
 R 16 90-50 -- to 14,27
@@ -587,25 +588,25 @@ A 8        -- to 14,35
 R 16 40    -- to 19.0,46.875
 L 8  90-60 -- to 20,50
 A 1        -- to 20,51
-L 8        -- to 12,60
+L 7        -- to 12,60
 A 1        -- to 11,60
-L 8        -- to 2,50
-A 21       -- to 2,32
+L 7        -- to 2,50
+A 22       -- to 2,32
 
 I
-E 8 32     -- start inside boundary
+E 7 32     -- start inside boundary
 A 18       -- to 8,50
-R 2        -- to 10,53
+R 3        -- to 10,53
 A 1        -- to 11,53
-R 2        -- to 14,51
+R 3        -- to 14,51
 R 3  30    -- to 13.875,49.0
-W 10.2 41
-W 10.2 21
-W 13.7 14
+W 9.7 41
+W 9.7 21
+W 14.7 14
 R 3  90-60 -- to 14,12
-R 2        -- to 12,9
+R 3        -- to 12,9
 A 1        -- to 11,9
-R 2        -- to 8,11
+R 3        -- to 8,11
 A 21       -- to 8,32
 
 -- . -- look & see
