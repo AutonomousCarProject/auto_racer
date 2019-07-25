@@ -6,7 +6,6 @@ import org.avphs.car.Car;
 import org.avphs.core.CalibrationCore;
 import org.avphs.coreinterface.CarData;
 import org.avphs.sbcio.ArduinoData;
-import org.avphs.camera.SimCamera;
 
 import java.io.*;
 
@@ -29,10 +28,10 @@ public class ThrottleDataGenerator {
             speedChanged = true;
             while (speedChanged) {
                 System.out.println(carData.getModuleData("arduino"));
-                lastOdom = ((ArduinoData) carData.getModuleData("arduino")).count;
+                lastOdom = ((ArduinoData) carData.getModuleData("arduino")).getOdomCount();
                 car.accelerate(true, i);
                 sleep(1000);
-                int thisSpeed = ((ArduinoData) carData.getModuleData("arduino")).count - lastOdom;
+                int thisSpeed = ((ArduinoData) carData.getModuleData("arduino")).getOdomCount() - lastOdom;
                 speedChanged = false;
                 if (thisSpeed > lastSpeed) {
                     speedChanged = true;
