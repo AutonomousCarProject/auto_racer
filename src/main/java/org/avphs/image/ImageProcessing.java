@@ -438,15 +438,26 @@ public class ImageProcessing{
      * @param width Width of image.
      * @param height Height of image.
      * @param dt The difference threshold with which to determine color.
+     * @param tile Tile pattern of the bayering 0 -> RGGB, 1 -> GBRG
      * @return Array of posterized RGB values.
      */
-    static int[] magicloop(byte[] bayer, int width, int height, int dt) {
+    static int[] magicloop(byte[] bayer, int width, int height, int dt, int tile) {
         int[] rgb = new int[width * height ];
         for(int i = 0; i < height; i++){
             for(int j = 0; j < width; j++){
-                int r = (int)bayer[2*(2*i*width+j)] & 0xFF;
-                int g = (int)bayer[2*(2*i*width+j)+1] & 0xFF;
-                int b = (int)bayer[2*((2*i+1)*width+j)+1] & 0xFF;
+                int r = 0, g = 0, b = 0;
+                switch(tile){
+                    case 0:
+                        r = (int)bayer[2*(2*i*width+j)] & 0xFF;
+                        g = (int)bayer[2*(2*i*width+j)+1] & 0xFF;
+                        b = (int)bayer[2*((2*i+1)*width+j)+1] & 0xFF;
+                        break;
+                    case 1:
+                        r = (int)bayer[2*(2*(i+1)*width+j)] & 0xFF;
+                        g = (int)bayer[2*(2*i*width+j)] & 0xFF;
+                        b = (int)bayer[2*((2*i)*width+j)+1] & 0xFF;
+                        break;
+                }
                 PosterColor posterPix = posterizeChannels(r, g, b, dt);
                 rgb[i*width+j] = posterPix.code;
             }
@@ -462,7 +473,7 @@ public class ImageProcessing{
      * @return Array of posterized RGB values.
      */
     static int[] process(byte[] bayerArray, int width, int height) {
-        return magicloop(bayerArray, width, height, 65);
+        return magicloop(bayerArray, width, height, 65, 0);
     }
 
 }

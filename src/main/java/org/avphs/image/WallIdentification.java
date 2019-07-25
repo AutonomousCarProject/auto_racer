@@ -103,18 +103,29 @@ public class WallIdentification {
      * @param width Width of image.
      * @param height Height of image.
      * @param dt The difference threshold with which to determine color.
+     * @param tile The tile pattern of the bayering 0 -> RGGB, 1 -> GBRG
      * @return Array of wall tops and bottoms.
      */
-    static int[][] magicloop(byte[] bayer, int width, int height, int dt) {
+    static int[][] magicloop(byte[] bayer, int width, int height, int dt, int tile) {
         int[] wallBottoms = new int[width];
         int[] wallTops = new int[width];
         for(int i = 0; i < width; i++){
-            int currColor = 0;
+            int currColor = -1;
             int currTop = -1;
             for(int j = 0; j < height; j++){
-                int r = (int)bayer[2*(2*j*width+i)] & 0xFF;
-                int g = (int)bayer[2*(2*j*width+i)+1] & 0xFF;
-                int b = (int)bayer[2*((2*j+1)*width+i)+1] & 0xFF;
+                int r = 0,g = 0,b = 0;
+                switch(tile){
+                    case 0:
+                        r = (int)bayer[2*(2*j*width+i)] & 0xFF;
+                        g = (int)bayer[2*(2*j*width+i)+1] & 0xFF;
+                        b = (int)bayer[2*((2*j+1)*width+i)+1] & 0xFF;
+                        break;
+                    case 1:
+                        r = (int)bayer[2*(2*(j+1)*width+i)] & 0xFF;
+                        g = (int)bayer[2*(2*j*width+i)] & 0xFF;
+                        b = (int)bayer[2*((2*j)*width+i)+1] & 0xFF;
+                        break;
+                }
                 ImageProcessing.PosterColor posterPix = ImageProcessing.posterizeChannels(r, g, b, dt);
                 int currentColor = posterPix.code;
                 if((currentColor == 10 || currentColor == 11) && currTop == -1){
@@ -132,6 +143,7 @@ public class WallIdentification {
                     //Resets currTop to signify it has not found a wall
                     currTop = -1;
                 }
+
                 //Advances currColor to the color of the pixel
                 currColor = currentColor;
             }
@@ -151,7 +163,7 @@ public class WallIdentification {
      * @param outArrayTop Output of top coordinates without outliers
      * @param outArrayBottom Output of bottom coordinates without outliers
      * Removes outliers from our detected wall data
-     * @see WallIdentification.scanImage()
+     *
      */
     static void removeOutliers(int[] inArrayTop, int[] inArrayBottom, int[] outArrayTop, int[] outArrayBottom){
         double topMean = 0, bottomMean = 0;

@@ -45,7 +45,7 @@ public class ImageModule implements CarModule {
         carData.addData("image",inProgressData);
 
         bayerImage = camera.getBayerImage();
-        wallData = WallIdentification.magicloop(bayerImage,WINDOW_WIDTH,WINDOW_HEIGHT,65);
+        wallData = WallIdentification.magicloop(bayerImage,WINDOW_WIDTH,WINDOW_HEIGHT,65, 0);
         rgbImage = ImageProcessing.debayer(bayerImage,WINDOW_WIDTH,WINDOW_HEIGHT,0);
 
         data.wallTop = wallData[1];
@@ -54,7 +54,7 @@ public class ImageModule implements CarModule {
         for(int k = 0; k < wallData[0].length; k++) {
             if(wallData[0][k] > 0 && wallData[1][k] > 0) {
                 for(int m = wallData[1][k]; m < wallData[0][k]; m ++) {
-                    rgbImage[k + wallData[0].length * m] = WallIdentification.ColorArr[4];
+                    if(k < 640) rgbImage[k + wallData[0].length * m] = WallIdentification.ColorArr[4];
                 }
             }
         }
