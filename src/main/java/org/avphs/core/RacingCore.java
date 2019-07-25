@@ -6,7 +6,6 @@ import org.avphs.detection.ObjectDetectionModule;
 import org.avphs.driving.DrivingModule;
 import org.avphs.image.ImageModule;
 import org.avphs.map.MapModule;
-import org.avphs.map.MapRacingModule;
 import org.avphs.position.PositionModule;
 import org.avphs.racingline.RacingLineModule;
 import org.avphs.window.WindowModule;
@@ -48,8 +47,7 @@ public class RacingCore extends CarCore {
         objectDetectionModule = new ObjectDetectionModule();
         racingLineModule = new RacingLineModule();
         drivingModule = new DrivingModule(car);
-        mapModule = new MapRacingModule();
-
+        mapModule = new MapModule();
 
         // Image - No one.
         // Position- Image
@@ -98,14 +96,13 @@ public class RacingCore extends CarCore {
                 }, objectDetectExecutor);
 
         CompletableFuture.allOf(futurePosition, objDetection)
-                .thenAccept(v -> {
-                    drivingModule.update(carData);
-                    car.update(carData);
-                })
+                .thenAccept(v -> drivingModule.update(carData))
                 .exceptionally(ex -> {
                     ex.printStackTrace();
                     return null;
                 })
                 .join();
+
+        CompletableFuture.runAsync(() -> mapModule.update(carData));
     }
 }
