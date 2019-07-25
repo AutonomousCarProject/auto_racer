@@ -41,7 +41,7 @@ public class MoveForward {
         car.accelerate(true, 10);
         car.steer(true, 0);
 
-        try (PrintWriter writer = new PrintWriter("C:\\Users\\daqua\\Documents\\Code\\Sourcetree\\NWAPW_racing\\src\\main\\java\\org\\avphs\\calibration\\PixelData.txt",
+        try (PrintWriter writer = new PrintWriter(/*"src\\main\\java\\org\\avphs\\calibration\\*/"PixelData.txt",
                 StandardCharsets.UTF_8)) {
             while(true){
                 data = (ArduinoData)carData.getModuleData("arduino");
