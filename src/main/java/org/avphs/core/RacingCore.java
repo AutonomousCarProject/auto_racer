@@ -25,7 +25,7 @@ public class RacingCore extends CarCore {
         updatingCarModules.add(new ImageModule());
         updatingCarModules.add(new PositionModule());
         updatingCarModules.add(new RacingLineModule());
-        updatingCarModules.add(new MapRacingModule());
+        updatingCarModules.add(new MapModule());
         updatingCarModules.add(new ObjectDetectionModule());
         updatingCarModules.add(new PassingModule());
 
