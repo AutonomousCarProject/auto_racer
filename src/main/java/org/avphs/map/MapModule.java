@@ -23,13 +23,15 @@ public class MapModule implements CarModule, CloseHook {
     //Modes 2&3 are debugging modes
     //2: Debugging in TrakSim
     //3: Debugging using FakeDataStream
+    //4: Debugging in TrakSim using only position tracking
     private final int MAP_X_DIMENSION = 1500;
+    private final int MAP_Y_DIMENSION = 1500;
     private final float STARTING_ANGLE = 270.0f;
 
-    private final int MAP_Y_DIMENSION = 1500;
+
     //One unit in the array = 1cm. This means that 1500x1500 is equal to a 15m by 15m room.
 
-    private final float MODIFIED_CAR_X_STARTING_POSITION = 500.0f;
+    private final float MODIFIED_CAR_X_STARTING_POSITION = 0.0f;
     private final float MODIFIED_CAR_Y_STARTING_POSITION = 0.0f;
     //These numbers are added to the (0,0) origin to indicate the starting position of the car in the room.
 
@@ -63,6 +65,7 @@ public class MapModule implements CarModule, CloseHook {
             case 3:
                 fakedata = new FakeDataStreamForMap();
             case 2:
+            case 4:
             case 0:
                 mapformatter.utils.setupDistanceLookup();
                 break;
@@ -70,6 +73,7 @@ public class MapModule implements CarModule, CloseHook {
         }
     }
 
+    @Override
     public void update(CarData carData) {
         //positionModule = (PositionData)carData.getModuleData("position");
         // imageData = (ImageData) carData.getModuleData("image");
@@ -77,6 +81,8 @@ public class MapModule implements CarModule, CloseHook {
 
         //For Testing in traksim
         //System.out.println(trakSimData.GetPosn(true))
+
+        //System.out.println(trakSimData.GetFacing());
 
         switch (MAP_MODE)//Updating statements used for each map mode.
         {
@@ -97,9 +103,9 @@ public class MapModule implements CarModule, CloseHook {
                 //System.out.println(trakSimData.GetPosn(true));
                 float[] pos = new float[2];
 
-                pos[0] = (float)(( trakSimData.GetPosn(true) * 12.5) + 200);//Convert TrakSim x position to map position
+                pos[0] = (float)(( trakSimData.GetPosn(true) * 12.5) + MODIFIED_CAR_X_STARTING_POSITION);//Convert TrakSim x position to map position
 
-                pos[1] = (float)(( trakSimData.GetPosn(false) * 12.5));//Convert Traksim y position to map position
+                pos[1] = (float)(( trakSimData.GetPosn(false) * 12.5) + MODIFIED_CAR_Y_STARTING_POSITION);//Convert Traksim y position to map position
 
 
 
@@ -138,7 +144,7 @@ public class MapModule implements CarModule, CloseHook {
                 if (cycleCounter % 200 == 0)//Show map developing
                 {
                     map.showMap();
-                }*/
+                }//*/
 
                 break;
             case 3:
@@ -153,6 +159,55 @@ public class MapModule implements CarModule, CloseHook {
                     }
 
                 }
+                break;
+            case 4:
+
+                //System.out.println(trakSimData.GetPosn(true));
+                float[] pos1 = new float[2];
+
+                pos1[0] = (float)(( trakSimData.GetPosn(true) * 12.5) + MODIFIED_CAR_X_STARTING_POSITION);//Convert TrakSim x position to map position
+
+                pos1[1] = (float)(( trakSimData.GetPosn(false) * 12.5) + MODIFIED_CAR_Y_STARTING_POSITION);//Convert Traksim y position to map position
+
+
+
+                //System.out.println("Current Pos: " + pos[0] + ", "+ pos[1]);
+
+
+                //This converts a traksim angle to one more like what position tracking would give us
+                float currentAngle1; float trakSimAngle1 = (float)trakSimData.GetFacing();
+
+                //Converts TrakSimAngle to Angle Resembling what we would get from Pos Tracking
+                if (trakSimAngle1 < STARTING_ANGLE)
+                {
+                    currentAngle1 = (360.0f - (STARTING_ANGLE - trakSimAngle1));
+                }
+                else if (trakSimAngle1 > STARTING_ANGLE)
+                {
+                    currentAngle1 = (trakSimAngle1 - STARTING_ANGLE);
+                }
+                else
+                {
+                    currentAngle1 = 0.0f;
+                }
+
+
+                //System.out.println("Current Angle: " + currentAngle);
+
+                mapformatter.expandTrackFiveCarLengthsToTheLeftAndRightOfCurrentPos(pos1, currentAngle1);
+
+                cycleCounter++;
+
+                /**
+                 * THINGY
+                 * ============================
+                 */
+                ///*
+                if (cycleCounter % 200 == 0)//Show map developing
+                {
+                    map.showMap();
+                }//*/
+
                 break;
         }
         carData.addData("map", map);
