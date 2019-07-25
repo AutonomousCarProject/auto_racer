@@ -6,7 +6,6 @@ import org.avphs.car.Car;
 import org.avphs.core.CalibrationCore;
 import org.avphs.coreinterface.CarData;
 import org.avphs.sbcio.ArduinoData;
-
 import java.io.*;
 
 import static java.lang.Thread.sleep;
