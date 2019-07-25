@@ -36,7 +36,7 @@ public class MoveForward {
         ArrayList<Double> wallHeights = new ArrayList<>();
         ArrayList<Double> distances = new ArrayList<>();
         ArduinoData data;
-        int dist;
+        double dist = 100;
 
         car.accelerate(true, 10);
         car.steer(true, 0);
@@ -45,9 +45,9 @@ public class MoveForward {
                 StandardCharsets.UTF_8)) {
             while(true){
                 data = (ArduinoData)carData.getModuleData("arduino");
-                dist = data.count;
+                dist -= data.count * CalibrationModule.CM_PER_ROTATION;
                 wallHeights.add((double)imageData.wallBottom[320] - imageData.wallTop[320]);
-                distances.add((double)dist);
+                distances.add(dist);
                 if(dist < 1){
                     break;
                 }
@@ -72,9 +72,9 @@ public class MoveForward {
         } catch(IOException e) {
             while(true){
                 data = (ArduinoData)carData.getModuleData("arduino");
-                dist = data.count;
+                dist -= data.count * CalibrationModule.CM_PER_ROTATION;
                 wallHeights.add((double)imageData.wallBottom[320] - imageData.wallTop[320]);
-                distances.add((double)dist);
+                distances.add(dist);
                 if(dist < 1){
                     break;
                 }
