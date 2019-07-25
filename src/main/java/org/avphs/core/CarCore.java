@@ -7,6 +7,7 @@ import org.avphs.coreinterface.CarModule;
 import org.avphs.coreinterface.CloseHook;
 import org.avphs.window.WindowModule;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -94,7 +95,11 @@ public abstract class CarCore {
         car.update(carData);
         car.getCameraImage(carData);
         for (CarModule module : updatingCarModules) {
-            module.update(carData);
+            try {
+                module.update(carData);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
