@@ -41,9 +41,8 @@ public class ThrottleDataGenerator {
             //TODO: needs to be converted from driveshaft spins to distance
             /**
              * Wheel Radius is 5 cm therefore wheel circumfrence is 2PiR
-             * Each Rotation of driveshaft nets driveShaftToDistance cm (less if skidding or what not)
+             * 2* Math.PI * 5;
              */
-            double driveShaftToDistance = 2* Math.PI * 5;
             speedValues[i] = lastSpeed;
         }
 
