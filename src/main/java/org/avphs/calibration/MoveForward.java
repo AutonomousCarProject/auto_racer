@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.io.*;
 
 import org.apache.commons.math3.analysis.polynomials.PolynomialFunctionLagrangeForm;
 
@@ -41,8 +42,7 @@ public class MoveForward {
         car.accelerate(true, 10);
         car.steer(true, 0);
 
-        try (PrintWriter writer = new PrintWriter("C:\\Users\\daqua\\Documents\\Code\\Sourcetree\\NWAPW_racing\\src\\main\\java\\org\\avphs\\calibration\\PixelData.txt",
-                StandardCharsets.UTF_8)) {
+        try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter("test.txt")))) {
             while(true){
                 data = (ArduinoData)carData.getModuleData("arduino");
                 dist = data.count;
