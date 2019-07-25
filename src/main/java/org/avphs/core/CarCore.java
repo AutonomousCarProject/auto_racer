@@ -12,7 +12,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 
 /**
  * This Class is the core for both PreRaceCore as well as RacingCore.
@@ -28,9 +27,11 @@ public abstract class CarCore {
     ArrayList<CarModule> updatingCarModules = new ArrayList<>(); // All of the modules that will be run each frame.
     ArrayList<CloseHook> closeHookModules = new ArrayList<>();
     ScheduledExecutorService carExecutorService;
+
     /**
      * Constructor that instantiates the car.
-     * @param car the object that controls the car.
+     *
+     * @param car        the object that controls the car.
      * @param showWindow True for the JFrame window to appear, false for it not to appear.
      */
     CarCore(Car car, boolean showWindow) {
@@ -60,7 +61,7 @@ public abstract class CarCore {
      */
     void startUpdatingModules() {
         //Start Updating Modules
-         carExecutorService =
+        carExecutorService =
                 Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory("Module Updater"));
         carExecutorService.scheduleAtFixedRate(this::update, 0, Math.round(1000.0 / FPS), TimeUnit.MILLISECONDS);
 
@@ -124,6 +125,7 @@ public abstract class CarCore {
 
     /**
      * This class provides a named thread. Great for profiling code.
+     *
      * @author kevin
      * @see java.util.concurrent.ThreadFactory
      */
