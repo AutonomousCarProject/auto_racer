@@ -78,10 +78,10 @@ public class MapModule implements CarModule, CloseHook {
     @Override
     public void update(CarData carData) {
         //positionModule = (PositionData)carData.getModuleData("position");
-       // imageData = (ImageData) carData.getModuleData("image");
+        // imageData = (ImageData) carData.getModuleData("image");
         //System.out.println("Anything");
 
-         //For Testing in traksim
+        //For Testing in traksim
         //System.out.println(trakSimData.GetPosn(true))
 
         switch (MAP_MODE)//Updating statements used for each map mode.
@@ -134,9 +134,14 @@ public class MapModule implements CarModule, CloseHook {
 
                 mapformatter.AddData(pos, currentAngle, imageData.wallBottom);
 
-         cycleCounter++;
+                cycleCounter++;
 
-                /*if (cycleCounter % 100 == 0)//Show map developing
+                /**
+                 * THINGY
+                 * ============================
+                 */
+                /*
+                if (cycleCounter % 200 == 0)//Show map developing
                 {
                     map.showMap();
                 }*/
@@ -170,11 +175,11 @@ public class MapModule implements CarModule, CloseHook {
             FileWriter f = new FileWriter("src/main/java/org/avphs/map/map.txt");
             f.write(m.length + "  " + m[0].length + "\n");
             for(int i = 0; i < map.getMap().length; i++){
-                 for (int j = 0; j < m[0].length; j++){
+                for (int j = 0; j < m[0].length; j++){
                     if(m[i][j])f.write('1');
                     else f.write('0');
-                 }
-                 f.write('\n');
+                }
+                f.write('\n');
             }
 
             f.close();
