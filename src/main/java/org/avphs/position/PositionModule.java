@@ -19,10 +19,9 @@ public class PositionModule implements CarModule {
     private TrakSim ts;
     private int angle;
 
-
     public void init(CarData carData) {
         //THIS WILL BE WHERE WE READ FROM A FILE TO FIND THE INITIAL POSITION
-        positionData = new PositionData(new float[]{0, 0}, 0, 0); //TEMPORARY
+        positionData = new PositionData(new float[]{40.0f,56.0f}, 0, 0); //TEMPORARY
         ts = new TrakSim();
     }
 
@@ -60,13 +59,15 @@ public class PositionModule implements CarModule {
         //wheelAngle = drivingData; //angle of servo
         wheelAngle = drivingData + 90;
         //distanceTraveled = odometerCount * 15f; //number of wheel turns FIXME: data from calibraiton
-        distanceTraveled = odometerCount * 8f; //used for tracksim for conversion from park meters to meters. may need to fix
+        distanceTraveled = odometerCount; //park meters
 
         //FIXME find out the error in the servo value, and add that value to "> 90" and subtract from "< 90",defaulted at 2
         if (wheelAngle > 91) { //if turning right
-            drivingArcRadius = (float) (Math.tan(wheelAngle - 90) * disBetweenAxle);
+            //drivingArcRadius = (float) (Math.tan(wheelAngle - 90) * disBetweenAxle);
+            drivingArcRadius = (float)(360.0 / (2*Math.PI));
         } else if (wheelAngle < 89) { //if turning left
-            drivingArcRadius = (float) (Math.tan(wheelAngle + 90) * disBetweenAxle);
+            //drivingArcRadius = (float) (Math.tan(wheelAngle + 90) * disBetweenAxle);
+            drivingArcRadius = (float)(360.0 / (2*Math.PI));
         }//
         else {
             drivingArcRadius = 0;
@@ -130,9 +131,11 @@ public class PositionModule implements CarModule {
 
     private void convertPosition(float x, float y) {
         //FIXME x and y are currently in cm, not in the virtual world coordinates.
-        float[] temp = pol(x,y);
-        temp = cart(temp[0],temp[1] - positionData.getDirection());
-        positionData.updatePosition(temp);
+        if(x != 0){
+            float[] temp = pol(x,y);
+            temp = cart(temp[0],temp[1] - positionData.getDirection());
+            positionData.updatePosition(temp);
+        }
     }
 
     private float[] pol(float x, float y){//to polar coordinates

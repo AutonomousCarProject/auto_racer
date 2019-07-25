@@ -792,9 +792,9 @@ public class HandyOps { // first some useful debug logging ops..
                                 xData[here+3]);
                         if ((zx&~0x01010001) !=0) why = why|8192;} //~if
                     else if (info==320) why = why|128; // ColorMap (should be none)
-                    if (NoisyTif) if (logy) System.out.println(Dec2Log("  @@ ",thar,
+                    if (NoisyTif) if (logy) /*System.out.println(Dec2Log("  @@ ",thar,
                             Int2Log(": ",info,Int2Log(" = ",zx,IffyStr(why==prio,aStr,
-                                    Int2Log(" ! ",why,aStr))))) );
+                                    Int2Log(" ! ",why,aStr))))) );*/
                     here = here+4;} //~for // (extract Tiff info)
                 aStr = " = ";
                 if (why>11) break;
