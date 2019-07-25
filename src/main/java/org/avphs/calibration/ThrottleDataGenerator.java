@@ -1,6 +1,7 @@
 package org.avphs.calibration;
 
 import org.avphs.camera.Camera;
+import org.avphs.camera.SimCamera;
 import org.avphs.car.Car;
 import org.avphs.core.CalibrationCore;
 import org.avphs.coreinterface.CarData;
@@ -14,7 +15,7 @@ public class ThrottleDataGenerator {
     public static void main(String[] args) throws InterruptedException {
 
         Camera cam = null;
-        Car car = new Car(cam);
+        Car car = new Car(new SimCamera());
         CarData carData = new CarData();
         CalibrationCore core = new CalibrationCore(car, false);
 
