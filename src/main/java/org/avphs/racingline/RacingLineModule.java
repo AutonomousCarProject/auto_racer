@@ -136,9 +136,10 @@ public class RacingLineModule implements CarModule {
         if (obstacles.getObstacles().size() == 0) {
             return center;
         }
-        removeUnoriginal();
+        //removeUnoriginal();
         pass(obstacles.getObstacles().get(0));
-        connectTheDots();
+        getAngles();
+        //connectTheDots();
         return center;
     }
 
@@ -198,7 +199,8 @@ public class RacingLineModule implements CarModule {
         center.sortPoints();
         trimSortedPoints(20);
         makeOriginal();
-        connectTheDots();
+        getAngles();
+        //connectTheDots();
     }
 
     /**
@@ -397,6 +399,26 @@ public class RacingLineModule implements CarModule {
         RacingLinePoint[] array = center.getRacingLinePoints();
         for(RacingLinePoint c: array) {
             c.setOriginal(true);
+        }
+    }
+
+    private void getAngles() {
+        RacingLinePoint[] array = center.getRacingLinePoints();
+        for(int i=0;i<array.length;i++) {
+            int j = (i+1)%array.length;
+            int h = (i+array.length-1)%array.length;
+            RacingLinePoint c = array[i];
+            RacingLinePoint d = array[j];
+            RacingLinePoint b = array[h];
+            float ax = d.getX() - c.getX();
+            float ay = d.getY() - c.getY();
+            float bx = b.getX() - c.getX();
+            float by = b.getY() - c.getY();
+            float dot = ax*bx+ay*by;
+            float cosangle = dot/((float)Math.sqrt(ax*ax+ay*ay))/((float)Math.sqrt(bx*bx+by*by));
+            float angle = (float)Math.acos(cosangle);
+            angle *= (180f/3.14159265358979323846264338327950277419716939937105f);
+            c.setDegree(angle);
         }
     }
 

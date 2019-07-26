@@ -136,15 +136,17 @@ public class DrivingModule implements CarModule {
     }
 
     public void analyzeRacingLine(){
+        roadData.clear();
         //RacingLine should eventually have points only on the maxima and minima
         // .getDegree calculates the degree from the current point as a center and a previous and future point, and thus needs to start at second index
-        for (int i = 1; i <  racingLinePoints.length ; i++) {
+        int n = racingLinePoints.length;
+        for (int i = 0; i < n; i++) {
             if (racingLinePoints[i].getDegree() > 170 && racingLinePoints[i].getDegree() < 190) { // 10 is an arbitrary number that needs further numbers
-                roadData.add(new Straight(racingLinePoints[i-1].getX(),racingLinePoints[i-1].getY(),racingLinePoints[i+1].getX(),racingLinePoints[i+1].getY()));
+                roadData.add(new Straight(racingLinePoints[(i+n-1)%n].getX(),racingLinePoints[(i+n-1)%n].getY(),racingLinePoints[i].getX(),racingLinePoints[i].getY()));
             }
             else  {
-                roadData.add(new Turn(racingLinePoints[i-1].getX(),racingLinePoints[i-1].getY(),racingLinePoints[i+1].getX(),racingLinePoints[i+1].getY(),
-                        findRadiusAndCenter(racingLinePoints[i-1],racingLinePoints[i],racingLinePoints[i+1])));
+                roadData.add(new Turn(racingLinePoints[(i+n-1)%n].getX(),racingLinePoints[(i+n-1)%n].getY(),racingLinePoints[(i+1)%n].getX(),racingLinePoints[(i+1)%n].getY(),
+                        findRadiusAndCenter(racingLinePoints[(i+n-1)%n],racingLinePoints[i],racingLinePoints[(i+1)%n])));
             }
         }
         //ArrayList<RacingLinePoint> racingLinePoints = new ArrayList<RacingLinePoint>();
