@@ -6,14 +6,12 @@ import org.avphs.coreinterface.CarData;
 import org.avphs.coreinterface.CarModule;
 import org.avphs.coreinterface.CloseHook;
 import org.avphs.window.WindowModule;
-import org.omg.SendingContext.RunTime;
 
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 
 /**
  * This Class is the core for both PreRaceCore as well as RacingCore.
