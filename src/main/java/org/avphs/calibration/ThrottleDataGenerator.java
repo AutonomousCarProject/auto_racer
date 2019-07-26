@@ -15,8 +15,9 @@ public class ThrottleDataGenerator {
     public static void main(String[] args) throws InterruptedException {
 
         Camera cam = null;
-        Car car = new Car(new SimCamera());
         CarData carData = new CarData();
+        Car car = new Car(new SimCamera());
+        car.init(carData);
         CalibrationCore core = new CalibrationCore(car, false);
 
         //NEVER SET THROTTLE WITH ANGLE MORE THAN 60 (im keeping it capped to 59 to be safe)
@@ -24,13 +25,16 @@ public class ThrottleDataGenerator {
         boolean speedChanged;
         int lastSpeed = 0;
         int lastOdom;
-        for (int i = 0; i < 59; i++) {
+        for (int i = 1; i < 59; i++) {
             speedChanged = true;
             while (speedChanged) {
                 System.out.println(carData.getModuleData("arduino"));
+                car.update(carData);
                 lastOdom = ((ArduinoData) carData.getModuleData("arduino")).getOdomCount();
                 car.accelerate(true, i);
                 sleep(1000);
+                car.update(carData);
+
                 int thisSpeed = ((ArduinoData) carData.getModuleData("arduino")).getOdomCount() - lastOdom;
                 speedChanged = false;
                 if (thisSpeed > lastSpeed) {
