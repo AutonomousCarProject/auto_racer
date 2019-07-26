@@ -7,7 +7,7 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Random;
 
-public class Interpolator {
+public class interpolation3d {
 	//number of terms in the desired polynomial
 	int vars = 3;
 	//degree of polynomial
@@ -30,12 +30,33 @@ public class Interpolator {
 	//mutate amount
 	double m = 1;
 
-	public Interpolator(double[] x, double[] y, int maxError) {
-		double[] arr = new double[x.length];
-		interp(x, arr, y, maxError);
-	}
-	public Interpolator(double[] x, double[] y, double[] z, int maxError) {
-		interp(x, y, z, maxError);
+	public interpolation3d(double[] x, double[] y, double[] z, int maxError) throws IOException {
+		//INPUT
+		n = x.length;
+		input = new double[n][2];
+		output = new double[n];
+		for(int i=0;i<n;i++) {
+			//X INPUT
+			input[i][0] = x[i];
+			//Y INPUT
+			input[i][1] = y[i];
+			//Z INPUT / OUTPUT
+			output[i] = z[i];
+		}
+		//Scanner in = new Scanner(System.in);
+		help();
+		initializebots();
+		double err = maxError + 100;
+		int iteration = 0;
+		while (err > maxError && iteration < 100){
+			addlayer();
+			err = bestbot.score;
+			iteration++;
+		}
+
+		if(err > maxError){
+			System.out.println("Could not create a good curve fit!");
+		}
 
 		/*while(true) {
 			System.out.print(":");
@@ -82,40 +103,7 @@ public class Interpolator {
 		}
 		in.close();*/
 	}
-
-
-	public void interp(double[] x, double[] y, double[] z, int maxError){
-		//INPUT
-		n = x.length;
-		input = new double[n][2];
-		output = new double[n];
-		for(int i=0;i<n;i++) {
-			//X INPUT
-			input[i][0] = x[i];
-			//Y INPUT
-			input[i][1] = y[i];
-			//Z INPUT / OUTPUT
-			output[i] = z[i];
-		}
-		//Scanner in = new Scanner(System.in);
-		initializebots();
-		double err = maxError + 100;
-		int iteration = 0;
-		while (err > maxError && iteration < 100){
-
-			addlayer();
-			run(10);
-			err = bestbot.score;
-			iteration++;
-		}
-
-		if(err > maxError){
-			System.out.println("Could not create a good curve fit!");
-		}
-	}
-
-
-	/*public void help() {
+	public void help() {
 		System.out.println("help - display commands help");
 		System.out.println("init - initialize bots randomly");
 		System.out.println("run n - run n trials");
@@ -124,7 +112,7 @@ public class Interpolator {
 		System.out.println("display - display info");
 		System.out.println("save - save 640 x 640 array to file");
 		System.out.println("exit - quit program");
-	}*/
+	}
 	//initialize the bots randomly
 	public void initializebots() {
 		for(int i=0;i<size;i++) {
@@ -136,11 +124,6 @@ public class Interpolator {
 		}
 		System.out.println("bots initialized");
 	}
-
-	public double query(double x) {
-		return query(x, 0);
-	}
-
 	public double query(double a, double b) {
 		double[] pass = pass(a,b);
 		double res = 0;
@@ -150,7 +133,7 @@ public class Interpolator {
 		return res;
 	}
 	//run
-	public void run(int numtrials) {
+	public void run(int numtrials) throws IOException {
 		System.out.println("running "+numtrials+" trials...");
 		for(int trial=0;trial<trials;trial++) {
 			double[][] pass = new double[n][vars];
@@ -228,7 +211,7 @@ public class Interpolator {
 			y[i] = Math.random()*10-5;
 			z[i] = function(x[i],y[i]);
 		}
-		new Interpolator(x,y,z, 5);
+		new interpolation3d(x,y,z, 5);
 	}
 	public static double function(double a, double b) {
 		return 1+a*a*a+b*b*b+a*b;
