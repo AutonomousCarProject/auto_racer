@@ -51,6 +51,7 @@ public class ImageModule implements CarModule {
 
         data.wallTop = wallData[1];
         data.wallBottom = wallData[0];
+        data.wallTypes = wallData[2];
 
 
         for(int k = 0; k < wallData[0].length; k++) {
