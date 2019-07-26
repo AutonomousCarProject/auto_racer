@@ -188,10 +188,16 @@ public class MapFormatter {
     {
         float[] coords = new float[2];
 
-        coords[0] = (float)(pos[0] + (4 * Math.cos(angle)));
-        coords[1] = (float)(pos[1] + (4 * Math.sin(angle)));
+        float diff1 = pos[0]; float diff2 = pos[1];
+        pos[0] = 0; pos[1] = 0;
 
-        map.setValueAtIndex(coords[1], (0 - coords[0]), true);
-        map.setValueAtIndex((0 - coords[1]), coords[0], true);
+        coords[0] = (float)(pos[0] + (20 * Math.cos(angle)));
+        coords[1] = (float)(pos[1] + (20 * Math.sin(angle)));
+
+
+
+        map.setValueAtIndex(coords[1] + diff2, (0 - coords[0]) + diff1, true);
+        map.setValueAtIndex((0 - coords[1]) + diff2, coords[0] + diff1, true);
+        //System.out.println("set");
     }
 }
