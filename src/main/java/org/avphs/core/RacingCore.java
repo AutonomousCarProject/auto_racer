@@ -4,6 +4,7 @@ import org.avphs.car.Car;
 import org.avphs.detection.ObjectDetectionModule;
 import org.avphs.driving.DrivingModule;
 import org.avphs.image.ImageModule;
+import org.avphs.map.MapModule;
 import org.avphs.map.MapRacingModule;
 import org.avphs.passing.PassingModule;
 import org.avphs.position.PositionModule;
