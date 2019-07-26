@@ -57,86 +57,8 @@ public class PositionModule implements CarModule {
     }
 
     private void computePosition(float odometerCount, float drivingData){
-        float drivingArcRadius;
-        disBetweenAxle = 32.5f;//FIXME: data from calibration
-        // find out if this is run before or after driving. If after, good, else: bad.
 
-        wheelAngle = drivingData + 90; //angle of servo
-        distanceTraveled = odometerCount; //in park meters
+        System.out.println("Position = ("+(positionData.getPosition()[0])+","+(positionData.getPosition()[1])+")");
 
-        //FIXME find out the error in the servo value, and add that value to "> 90" and subtract from "< 90",defaulted at 2
-        if (wheelAngle > 91) { //if turning right
-            drivingArcRadius = (float) (disBetweenAxle / Math.cos(Math.toRadians(-wheelAngle)));
-        } else if (wheelAngle < 89) { //if turning left
-            drivingArcRadius = (float) (disBetweenAxle / Math.cos(Math.toRadians(wheelAngle)));
-        }//
-        else {
-            drivingArcRadius = 0;
-        }
-        if (drivingArcRadius == 0) {
-            //just drive straight forward
-            convertPosition(0, distanceTraveled);
-        } else {
-            //if turning
-            deltaPositionAngle = (float) (360 * distanceTraveled / (Math.PI * Math.pow(drivingArcRadius, 2)));//compute the length of the path around the circle the car has taken, and then get the angle of that
-            if (deltaPositionAngle < 90 || deltaPositionAngle > 270) {
-                convertPosition((float) (drivingArcRadius - drivingArcRadius * Math.cos(Math.toRadians(deltaPositionAngle))), (float) (drivingArcRadius * Math.sin(Math.toRadians(deltaPositionAngle))));//weird trig stuff because for the unit circle the trig is based on center of circle. Here, the car starts at either (1,0) [turning left] or (-1,0) [turning right]
-
-            } else {//if(deltaPositionAngle > 90), turning left
-                convertPosition((float) (drivingArcRadius + drivingArcRadius * Math.cos(deltaPositionAngle)), (float) (drivingArcRadius * Math.sin(deltaPositionAngle)));//weird trig stuff because for the unit circle the trig is based on center of circle. Here, the car starts at either (1,0) [turning left] or (-1,0) [turning right]
-            }
-
-            if (wheelAngle > 91) {//if turning right
-                computeDirection(deltaPositionAngle);//update direction with delta direction  because clockwise = positive
-            }
-            if (wheelAngle < 91) {//if turning left
-                computeDirection(-deltaPositionAngle);//update direction with negative turn going left
-            }
-        }
-        //computeSpeed(odometerCount);
-
-        //THIS WILL BE USED LATER
-        prevPositionData.updateAll(positionData.getPosition(), positionData.getDirection(), positionData.getSpeed());
-        System.out.println("Position = ("+(positionData.getPosition()[0] + 40.0f)+","+(positionData.getPosition()[1]+56.0f)+")");
-
-    }
-
-    private void computeDirection(float newDirection) {
-        float direction = positionData.getDirection();
-        direction += newDirection;
-        if (direction >= 360) {
-            direction -= 360;
-        } else if (direction < 0) {
-            direction += 360;
-        }
-        positionData.updateDirection(direction);
-    }
-
-    private void computeSpeed(int odometerCount) {
-        //FIXME: data from calibration
-        float speed = odometerCount * .15f * 30f;//*30 because convert odometerCount per 33.33 milliseconds to OdometerCount per second.
-        positionData.updateSpeed(speed);
-    }
-
-    private void convertPosition(float x, float y) {
-        //FIXME x and y are currently in cm, not in the virtual world coordinates.
-        if(!(x == 0 && y == 0)) {
-            float[] pos = positionData.getPosition();
-            float[] temp = pol(x, y);
-            temp = cart(temp[0], temp[1] - positionData.getDirection());
-            //System.out.println("x"+temp[0]);
-            //System.out.println("y"+temp[1]);
-            pos[0] += temp[0];
-            pos[1] += temp[1];
-            positionData.updatePosition(temp);
-        }
-    }
-
-    private float[] pol(float x, float y){//to polar coordinates
-        return new float[] {(float) Math.sqrt(x*x + y*y), (float) Math.toDegrees(Math.atan2(y,x))};
-    }
-
-    private float[] cart(float l, float d){//to cartesian
-        return new float[] {(float) (l * Math.cos(Math.toRadians(d))), (float) (l * Math.sin(Math.toRadians(d)))};
     }
 }
