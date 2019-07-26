@@ -27,8 +27,8 @@ public class RacingLine {
     //endregion
 
     //region Getters/Setters
-    /*
-    Returns an array of RacingLinePoint that makes up the racing line.
+    /**
+     * Returns an array of RacingLinePoint that makes up the racing line.
      */
     public RacingLinePoint[] getRacingLinePoints() {
         if (RacingLinePoints == null) {
@@ -39,8 +39,8 @@ public class RacingLine {
         }
         return RacingLinePoints;
     }
-    /*
-    Returns an ArrayList of RacingLinePoint that makes up the racing line.
+    /**
+     * Returns an ArrayList of RacingLinePoint that makes up the racing line.
      */
     public ArrayList<RacingLinePoint> getRacingLinePointsList() {
         return RacingLinePointsList;
@@ -54,8 +54,8 @@ public class RacingLine {
         RacingLinePointsList.add(newPoint);
     }
     //endregion
-    /*
-    Sorts the racing line.
+    /**
+     * Sorts the racing line.
      */
     public void sortPoints() {
         ArrayList<RacingLinePoint> orderedRacingLine = new ArrayList<RacingLinePoint>();
