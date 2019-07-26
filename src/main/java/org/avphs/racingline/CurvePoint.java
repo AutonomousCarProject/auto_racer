@@ -11,6 +11,11 @@ public class CurvePoint {
         x = a;
         y = b;
     }
+
+    /**
+     * Initializes values for CurvePoint.
+     * Should only be called after previous and next have been set.
+     */
     public void start() {
         pdx = x - previous.getX();
         pdy = y - previous.getY();
@@ -24,10 +29,10 @@ public class CurvePoint {
         tdx = tdn[0];
         tdy = tdn[1];
     }
-    public float magnitude(float a, float b) {
+    private float magnitude(float a, float b) {
         return (float)Math.sqrt(a*a+b*b);
     }
-    public float[] normalise(float a, float b) {
+    private float[] normalise(float a, float b) {
         float magn = magnitude(a,b);
         return new float[] {a/magn,b/magn};
     }
@@ -62,6 +67,10 @@ public class CurvePoint {
     public void setPrevious(CurvePoint a) {
         previous = a;
     }
+
+    /**
+     * Converts this CurvePoint to a RacingLinePoint. 
+     */
     public RacingLinePoint toRacingLinePoint() {
         return new RacingLinePoint(x,y);
     }
