@@ -68,6 +68,10 @@ public class CalibrationModule {
     //turn the car to this angle to make it go in a straight line
     public static final int STRAIGHT_ANGLE = 7;
 
+
+    //turn the car to this angle to make it go in a straight line
+    public static final int STRAIGHT_ANGLE = 7;
+
     //Helper method to read speed change distance data
     private static byte[][][] readSpeedChangeDistData (){
         byte[][][] rowList = null;

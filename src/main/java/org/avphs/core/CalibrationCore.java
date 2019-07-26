@@ -127,4 +127,39 @@ public class CalibrationCore extends CarCore {
         }
         car.stop();
     }
+
+    public void runTime(){
+        Scanner sc = new Scanner(System.in);
+        LOOP:
+        while (true){
+            System.out.println("Please input a command");
+            System.out.println("Type 'help' for help");
+            String line = sc.nextLine();
+            switch(line){
+                case "help":
+                    System.out.println("'stop' will stop all functions and close the program");
+                    System.out.println("'CameraDataGenerator'");
+                    System.out.println("'3DInterpolation'");
+                    System.out.println("'MoveForward'");
+                    System.out.println("'help' prints this little blurb");
+                    break;
+                case "CameraDataGenerator":
+                    //updatingCarModules.add(new CameraDataGenerator());
+                    break;
+                case "3DInterpolation":
+                    break;
+                case "MoveForward":
+                    break;
+                case "BrakeTest":
+                    break;
+                case "ThrottleDataGenerator":
+                    //updatingCarModules.add(new ThrottleDataGenerator(car));
+                    break;
+                case "stop":
+                    System.out.println("Stopping all calibration functions!");
+                    break LOOP;
+            }
+        }
+        car.stop();
+    }
 }
