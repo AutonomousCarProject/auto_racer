@@ -1,3 +1,7 @@
+/**
+ * This class consists of a point object with variables x and y, and methods hashCode and equals.
+ */
+
 package org.avphs.racingline;
 
 class Point {
@@ -13,6 +17,10 @@ class Point {
         y = _y;
     }
 
+    /**
+     * Used for hashmap insertion.
+     * @return result
+     */
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -22,6 +30,12 @@ class Point {
         return result;
     }
 
+
+    /**
+     * Checks if a point is equal to another point.
+     * @param obj
+     * @return result
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
