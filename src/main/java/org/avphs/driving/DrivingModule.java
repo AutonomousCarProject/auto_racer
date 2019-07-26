@@ -1,5 +1,6 @@
 package org.avphs.driving;
 
+import org.avphs.car.Car;
 import org.avphs.coreinterface.CarCommand;
 import org.avphs.coreinterface.CarData;
 import org.avphs.coreinterface.CarModule;
@@ -24,6 +25,7 @@ public class DrivingModule implements CarModule {
     private int angle = 0;
     private int throttle = 12;
     private boolean stop = false;
+    private final Car car;
 
     private VectorPoint currentPos;
 
@@ -37,6 +39,14 @@ public class DrivingModule implements CarModule {
     /*From steering*/
     private final float MAX_DIST_FROM_RL;
 
+    public DrivingModule(Car car) {
+        this.car = car;
+        FLOOR = 0;
+        MAX_HARD_BRAKE = 80; //dummy value
+        MAX_DIST_FROM_RL = 10;
+    }
+
+    @Override
     public void init(CarData carData) {
         carData.addData("driving", angle);
         racingLinePoints = (RacingLinePoint[])carData.getModuleData("racingLine");
@@ -47,19 +57,6 @@ public class DrivingModule implements CarModule {
     }
 
     @Override
-    public CarCommand[] commands() {
-        if (stop){
-            return new CarCommand[] {
-                stop()
-            };
-
-        }
-        return new CarCommand[] {
-                accelerate(true, throttle), steer(true, angle)
-        };
-    }
-
-    @Override
     public void update(CarData carData) {
         PositionData posData = (PositionData)carData.getModuleData("position");
         currentPos = new VectorPoint(posData.getPosition(), posData.getDirection(), posData.getSpeed());
@@ -67,14 +64,8 @@ public class DrivingModule implements CarModule {
         getDirection();
         getThrottle();
         carData.addData("driving", angle);
-    }
-
-
-
-    public DrivingModule(){
-        FLOOR = 0;
-        MAX_HARD_BRAKE = 80; //dummy value
-        MAX_DIST_FROM_RL = 10;
+        car.accelerate(true, throttle);
+        car.steer(true, angle);
     }
 
     private void initialize() {
