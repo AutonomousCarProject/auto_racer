@@ -37,13 +37,13 @@ public class PositionModule implements CarModule {
 
     @Override
     public void update(CarData carData) {
-        if(cumulatedDistance > 33 && cumulatedDistance < 103){
+        if(cumulatedDistance > 33 && cumulatedDistance < 104){
             angle = 15;
         }
-        else if (cumulatedDistance > 103 && cumulatedDistance < 135){
+        else if (cumulatedDistance > 104 && cumulatedDistance < 137){
             angle = 0;
         }
-        else if(cumulatedDistance > 138){
+        else if(cumulatedDistance > 137){
             angle = -15;
         }
 
@@ -97,7 +97,7 @@ public class PositionModule implements CarModule {
 
         //THIS WILL BE USED LATER
         prevPositionData.updateAll(positionData.getPosition(), positionData.getDirection(), positionData.getSpeed());
-        System.out.println("Position = ("+Math.round(positionData.getPosition()[0])+","+positionData.getPosition()[1]+")");
+        System.out.println("Position = ("+(positionData.getPosition()[0] + 40.0f)+","+(positionData.getPosition()[1]+56.0f)+")");
 
     }
 
@@ -120,9 +120,14 @@ public class PositionModule implements CarModule {
 
     private void convertPosition(float x, float y) {
         //FIXME x and y are currently in cm, not in the virtual world coordinates.
-        if(x != 0 && y != 0) {
+        if(!(x == 0 && y == 0)) {
+            float[] pos = positionData.getPosition();
             float[] temp = pol(x, y);
             temp = cart(temp[0], temp[1] - positionData.getDirection());
+            //System.out.println("x"+temp[0]);
+            //System.out.println("y"+temp[1]);
+            pos[0] += temp[0];
+            pos[1] += temp[1];
             positionData.updatePosition(temp);
         }
     }
