@@ -1,4 +1,4 @@
-Position        Direction       Odometer        WheelAngle      
+Position        Direction       Odometer        WheelAngle
 (0, 0)          0               0               0
 (0, 0)          0               0               -1
 (0, 0)          0               0               -1
