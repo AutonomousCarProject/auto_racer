@@ -9,7 +9,6 @@ import org.avphs.coreinterface.CarData;
 import org.avphs.sbcio.ArduinoData;
 
 import java.io.*;
-import java.sql.SQLOutput;
 import java.util.*;
 
 import static java.lang.Thread.sleep;
@@ -64,16 +63,25 @@ public class ThrottleDataGenerator {
             }
         }
     }
-    static long calibrateAcceleration(float topSpeed) throws InterruptedException {
-//        Returns a long of the time it takes to get to the maximum speed of the car in milliseconds. Could later be modified to find individual increments
-//        Not currently in use.
-         long startTime = System.currentTimeMillis();
-         car.accelerate(true, 60);
-         while (((ArduinoData) carData.getModuleData("arduino")).count <= topSpeed) {
-             System.out.println("Accelerating");
+    static long[] calibrateAcceleration(float [] speedValues) throws InterruptedException {
+/**
+ * Takes in a float of the speed values used in @calibrateThrottle and then finds the the time to reach max speed,
+ * and additionally  the time to reach each speed from 0. Each index is ordered the time to get from 0 to that
+ * corresponding speed in speedValues.length
+ * All in Milliseconds
+ */
+        long [] allAccelerationTimes =  new long [speedValues.length];
+         for(int i=0 ; i < speedValues.length ; i++ ) {
+             long startTime = System.currentTimeMillis();
+             car.accelerate(true, i);
+             while (((ArduinoData) carData.getModuleData("arduino")).count <= speedValues[i]) {
+                 System.out.println("Accelerating");
+             }
+             allAccelerationTimes [i] = System.currentTimeMillis() - startTime;
+             car.accelerate(true, 0);
+             Thread.sleep(4000);
          }
-        long accelTimeMillis= System.currentTimeMillis()-startTime;
-        return accelTimeMillis;
+        return allAccelerationTimes;
     }
 
     static float[] calibrateThrottle() throws InterruptedException {
