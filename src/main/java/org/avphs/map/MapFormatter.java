@@ -40,7 +40,7 @@ public class MapFormatter {
 
         map.setValueAtIndex(pos[0], pos[1], true);
 
-        for (int i = 1; i < 10; i++)//First 100 pixels on the left side
+        for (int i = 1; i < 4; i++)//First 100 pixels on the left side
         {
             if (bottomPoints[i] > MapUtils.Y_HEIGHT_PIXEL_THRESHOLD)//Threshold for lowest pixel height which gives us good data.
             {
@@ -58,9 +58,9 @@ public class MapFormatter {
 
         }
         //System.out.println("InsidePoints Done");
-        for (int i = 630; i < 640; i++)//Last 100 Pixels on the right side.
+        for (int i = 636; i < 640; i++)//Last 100 Pixels on the right side.
         {
-            if (bottomPoints[i] > 300)
+            if (bottomPoints[i] > 280)
             {
                 //System.out.println("Good Outside Pixel Height Value (" + (480 - bottomPoints[i]) + ")");
                 float[] coords;
@@ -186,6 +186,12 @@ public class MapFormatter {
 
     public void expandTrackFiveCarLengthsToTheLeftAndRightOfCurrentPos(float[] pos, float angle)
     {
+        float[] coords = new float[2];
 
+        coords[0] = (float)(pos[0] + (4 * Math.cos(angle)));
+        coords[1] = (float)(pos[1] + (4 * Math.sin(angle)));
+
+        map.setValueAtIndex(coords[1], (0 - coords[0]), true);
+        map.setValueAtIndex((0 - coords[1]), coords[0], true);
     }
 }

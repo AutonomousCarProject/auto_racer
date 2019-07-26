@@ -8,7 +8,7 @@ class MapUtils {
     private float[] pixelHeightToX = new float[481]; // lookup table for a pixel height, returns width on map
     private float[] pixelHeightToY = new float[481]; // lookup table for a pixel height, returns straight ahead distance on map
 
-    public final static int Y_HEIGHT_PIXEL_THRESHOLD = 300;
+    public final static int Y_HEIGHT_PIXEL_THRESHOLD = 280;
 
     // why do we even need this - eric
     /*public void setupSineAndCosine(){ // Run before car starts so we dont have to calc sines and cosines
@@ -65,9 +65,33 @@ class MapUtils {
 
         float diagonalLength = (float)(Math.sqrt(Math.pow(distanceToTheLeftOrRight, 2) + Math.pow(pixelHeightToY[pixelY], 2)));
 
-        if (angle > 180)
+        if (0 <= angle && angle < 90 )
         {
-            coordsOnMap[0] = (posX - (float)(diagonalLength * Math.sin(Math.atan(distanceToTheLeftOrRight / pixelHeightToY[pixelY]) + angle)));
+            coordsOnMap[0] = (posX  - (float)(diagonalLength * Math.sin(Math.atan(distanceToTheLeftOrRight / pixelHeightToY[pixelY]) + angle)));
+            coordsOnMap[1] = (posY + (float)(diagonalLength * Math.cos(Math.atan(distanceToTheLeftOrRight / pixelHeightToY[pixelY]) + angle)));
+        }
+        else if (90 <= angle && angle < 180)
+        {
+            coordsOnMap[0] = (posX  + (float)(diagonalLength * Math.sin(Math.atan(distanceToTheLeftOrRight / pixelHeightToY[pixelY]) + angle)));
+            coordsOnMap[1] = (posY + (float)(diagonalLength * Math.cos(Math.atan(distanceToTheLeftOrRight / pixelHeightToY[pixelY]) + angle)));
+        }
+        else if (180 <= angle && angle < 270)
+        {
+            coordsOnMap[0] = (posX  - (float)(diagonalLength * Math.sin(Math.atan(distanceToTheLeftOrRight / pixelHeightToY[pixelY]) + angle)));
+            coordsOnMap[1] = (posY - (float)(diagonalLength * Math.cos(Math.atan(distanceToTheLeftOrRight / pixelHeightToY[pixelY]) + angle)));
+        }
+        else
+        {
+            coordsOnMap[0] = (posX  - (float)(diagonalLength * Math.sin(Math.atan(distanceToTheLeftOrRight / pixelHeightToY[pixelY]) + angle)));
+            coordsOnMap[1] = (posY + (float)(diagonalLength * Math.cos(Math.atan(distanceToTheLeftOrRight / pixelHeightToY[pixelY]) + angle)));
+        }
+
+
+
+
+        /*if (angle > 180)
+        {
+            coordsOnMap[0] = (posX  (float)(diagonalLength * Math.sin(Math.atan(distanceToTheLeftOrRight / pixelHeightToY[pixelY]) + angle)));
         }
         else
         {
@@ -76,7 +100,7 @@ class MapUtils {
 
         //System.out.println("X Pos of Wall on Map: " + coordsOnMap[0]);
         coordsOnMap[1] = (posY + (float)(diagonalLength * Math.cos(Math.atan(distanceToTheLeftOrRight / pixelHeightToY[pixelY]) + angle)));
-       // System.out.println("Y Pos of Wall on Map: " + coordsOnMap[1]);
+       // System.out.println("Y Pos of Wall on Map: " + coordsOnMap[1]);*/
         return coordsOnMap;
     }
 
