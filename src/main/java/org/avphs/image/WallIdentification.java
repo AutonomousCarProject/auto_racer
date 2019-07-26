@@ -69,7 +69,7 @@ public class WallIdentification {
         for(int i = 0; i < width; i++){
             int currColor = 0;
             int currTop = -1;
-            for(int j = 190; j < height; j++){
+            for(int j = 0; j < height; j++){
                 if((codeArray[j*width + i] == 10 || codeArray[j*width + i] == 11) && currTop == -1){
                     //Looks for white or light grey as the top of a wall, checks if it has not found the top of a wall
                     currTop = j; // Sets the top of the wall to where it thinks it is
