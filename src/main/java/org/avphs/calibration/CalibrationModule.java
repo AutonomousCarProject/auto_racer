@@ -42,6 +42,10 @@ public class CalibrationModule {
 
     public static final double  CM_PER_ROTATION = 0.096; //approximation (from DriverCons)
 
+
+    //turn the car to this angle to make it go in a straight line
+    public static final int STRAIGHT_ANGLE = 7;
+
     //Helper method to read speed change distance data
     private static byte[][][] readSpeedChangeDistData (){
         byte[][][] rowList = null;
@@ -74,7 +78,6 @@ public class CalibrationModule {
         byte[][] rowList = null;
         try (BufferedReader br = new BufferedReader(new FileReader("calibration\\src\\main\\java\\org.avphs\\calibration\\MaxSpeeds.txt"))) {
 
-            short numFloors = Short.parseShort(br.readLine());
             short initSpeeds = Short.parseShort(br.readLine());
             short finalSpeeds = Short.parseShort(br.readLine());
 
