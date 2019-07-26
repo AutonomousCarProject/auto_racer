@@ -408,7 +408,7 @@ public class Arduino { // Adapted to Java from arduino.cs ... (FakeFirmata)
             return; // not a valid pin
         }
         /*  Old version:  */
-        /*if (ArduPiModes[pin & 15] != whom){
+        if (ArduPiModes[pin & 15] != whom){
             while (true) {
                 if (whom == Arduino.INPUT){
                     whom = Arduino.REPORT_DIGITAL; // = 0xD0 (208)
@@ -420,8 +420,9 @@ public class Arduino { // Adapted to Java from arduino.cs ... (FakeFirmata)
                 OpenPinInput(pin, whom);
                 break;
             } //~while
-        }*/
+        }
         /*  New Version:  */
+      /*
         if (ArduPiModes[pin & 15] != whom && whom == Arduino.REPORT_VERSION && whom == Arduino.PULSECOUNT){
             if (whom == Arduino.INPUT){
                 whom = Arduino.REPORT_DIGITAL;
@@ -430,6 +431,7 @@ public class Arduino { // Adapted to Java from arduino.cs ... (FakeFirmata)
             }
             OpenPinInput(pin, whom);
         }
+        */
         Send3bytes(SET_PIN_MODE, pin, mode);
     } //~pinMode // SET_PIN_MODE = 0xF4 (244)
 
