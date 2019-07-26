@@ -63,9 +63,9 @@ public class PositionModule implements CarModule, CloseHook {
 
         //FIXME find out the error in the servo value, and add that value to "> 90" and subtract from "< 90",defaulted at 2
         if (wheelAngle > 91) { //if turning right
-            drivingArcRadius = (float) (Math.tan(Math.toRadians(180 - wheelAngle)) * disBetweenAxle);
+            drivingArcRadius = (float) (disBetweenAxle / Math.cos(Math.toRadians(-wheelAngle)));
         } else if (wheelAngle < 89) { //if turning left
-            drivingArcRadius = (float) (Math.tan(Math.toRadians(wheelAngle)) * disBetweenAxle);
+            drivingArcRadius = (float) (disBetweenAxle / Math.cos(Math.toRadians(wheelAngle)));
         }//
         else {
             drivingArcRadius = 0;
@@ -80,7 +80,7 @@ public class PositionModule implements CarModule, CloseHook {
                 convertPosition((float) (drivingArcRadius - drivingArcRadius * Math.cos(Math.toRadians(deltaPositionAngle))), (float) (drivingArcRadius * Math.sin(Math.toRadians(deltaPositionAngle))));//weird trig stuff because for the unit circle the trig is based on center of circle. Here, the car starts at either (1,0) [turning left] or (-1,0) [turning right]
 
             } else {//if(deltaPositionAngle > 90), turning left
-                convertPosition((float) (drivingArcRadius + drivingArcRadius * Math.cos(deltaPositionAngle)), (float) (drivingArcRadius * Math.sin(deltaPositionAngle)));//weird trig stuff because for the unit circle the trig is based on center of circle. Here, the car starts at either (1,0) [turning left] or (-1,0) [turning right]
+                convertPosition((float) (drivingArcRadius + drivingArcRadius * Math.cos(Math.toRadians(deltaPositionAngle))), (float) (drivingArcRadius * Math.sin(Math.toRadians(deltaPositionAngle))));//weird trig stuff because for the unit circle the trig is based on center of circle. Here, the car starts at either (1,0) [turning left] or (-1,0) [turning right]
             }
 
             if (wheelAngle > 91) {//if turning right
