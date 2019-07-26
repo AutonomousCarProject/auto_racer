@@ -22,7 +22,7 @@ public class PositionModule implements CarModule, CloseHook {
     //FOR TESTING THE CAR
     private PositionCarTesting pct = new PositionCarTesting();
 
-    public PositionModule() throws IOException {
+    public PositionModule() {
     }
 
 

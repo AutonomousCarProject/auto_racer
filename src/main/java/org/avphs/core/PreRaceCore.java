@@ -14,7 +14,7 @@ import org.avphs.map.MapRacingModule;
 public class PreRaceCore extends CarCore {
 
     public PreRaceCore(Car car, boolean showWindow) {
-        super(car, showWindow);
+        super(car);
 
         // Add Run-time Modules
         updatingCarModules.add(new ImageModule());

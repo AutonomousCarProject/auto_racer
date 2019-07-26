@@ -16,14 +16,10 @@ public class ImageModule implements CarModule {
     int[] rgbImage = new int[WINDOW_HEIGHT*WINDOW_HEIGHT];
     int[] codeImage = new int[WINDOW_HEIGHT*WINDOW_WIDTH];
 
+    @Override
     public void init(CarData carData) {
         ImageData data = new ImageData();
         carData.addData("image", data);
-    }
-
-    @Override
-    public CarCommand[] commands() {
-        return null;
     }
 
     @Override

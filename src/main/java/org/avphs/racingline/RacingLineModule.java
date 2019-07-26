@@ -53,12 +53,6 @@ public class RacingLineModule implements CarModule {
         carData.addData("RacingLine", center);
     }
 
-    @Override
-    public CarCommand[] commands() {
-        return null;
-    }
-
-    @Override
     public void update(CarData carData) {
         System.out.println("Passing update");
         obstacles = (ObjectData) carData.getModuleData("detection");

@@ -81,9 +81,4 @@ public class WindowModule extends JFrame implements CarModule {
     public void setWindowImage(int[] image) {
         pixels = image;
     }
-
-    @Override
-    public CarCommand[] commands() {
-        return null;
-    }
 }
