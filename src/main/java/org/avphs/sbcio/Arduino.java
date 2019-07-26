@@ -37,8 +37,8 @@ public class Arduino { // Adapted to Java from arduino.cs ... (FakeFirmata)
     protected static boolean GoodOpen = false; // -- [Consistency Check!]
 
     public static final String CommPortNo = "COM5"; // or maybe "COM3"
-    public static final boolean SpeakEasy = true, // enables logging
-            LogAllPcnts = true; // always log pulse counts & DeadMan
+    public static final boolean SpeakEasy = false, // enables logging
+            LogAllPcnts = false; // always log pulse counts & DeadMan
 
     public static final int MAX_DATA_BYTES = 64, // =64 in LattePanda's Arduino.cs
             MDB_msk = MAX_DATA_BYTES - 1, SpeakHard = 15; // cf SpokeHard
