@@ -66,9 +66,9 @@ public class PositionModule implements CarModule {
 
         //FIXME find out the error in the servo value, and add that value to "> 90" and subtract from "< 90",defaulted at 2
         if (wheelAngle > 91) { //if turning right
-            drivingArcRadius = (float) (Math.tan(Math.toRadians(180 - wheelAngle)) * disBetweenAxle);
+            drivingArcRadius = (float) (disBetweenAxle / Math.cos(Math.toRadians(-wheelAngle)));
         } else if (wheelAngle < 89) { //if turning left
-            drivingArcRadius = (float) (Math.tan(Math.toRadians(wheelAngle)) * disBetweenAxle);
+            drivingArcRadius = (float) (disBetweenAxle / Math.cos(Math.toRadians(wheelAngle)));
         }//
         else {
             drivingArcRadius = 0;
