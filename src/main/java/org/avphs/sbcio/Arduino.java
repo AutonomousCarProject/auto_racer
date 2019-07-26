@@ -18,7 +18,6 @@ package org.avphs.sbcio; // (class Arduino)                 // 2019 April 18
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import java.sql.Driver;
 import java.util.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -435,6 +434,7 @@ public class Arduino { // Adapted to Java from arduino.cs ... (FakeFirmata)
                 OpenPinInput(pin, whom);
             }
         }
+        */
         Send3bytes(SET_PIN_MODE, pin, mode);
     } //~pinMode // SET_PIN_MODE = 0xF4 (244)
 
