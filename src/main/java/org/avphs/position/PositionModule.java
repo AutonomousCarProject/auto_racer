@@ -37,13 +37,6 @@ public class PositionModule implements CarModule {
 
     @Override
     public void update(CarData carData) {
-        ArduinoData odom = (ArduinoData) carData.getModuleData("arduino");
-        int steer = (int) carData.getModuleData("driving");
-        cumulatedDistance += (float)ts.GetDistance(false);
-        computePosition((float)ts.GetDistance(true), angle);
-        carData.addData("position", positionData);
-
-
         if(cumulatedDistance > 33 && cumulatedDistance < 103){
             angle = 15;
         }
@@ -53,6 +46,14 @@ public class PositionModule implements CarModule {
         else if(cumulatedDistance > 138){
             angle = -15;
         }
+
+        ArduinoData odom = (ArduinoData) carData.getModuleData("arduino");
+        int steer = (int) carData.getModuleData("driving");
+        cumulatedDistance += (float)ts.GetDistance(false);
+        //System.out.println(ts.GetDistance(false));
+        computePosition((float)ts.GetDistance(true), angle);
+        carData.addData("position", positionData);
+
     }
 
     private void computePosition(float odometerCount, float drivingData){
