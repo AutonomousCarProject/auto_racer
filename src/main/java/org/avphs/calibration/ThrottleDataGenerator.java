@@ -9,6 +9,7 @@ import org.avphs.coreinterface.CarData;
 import org.avphs.sbcio.ArduinoData;
 
 import java.io.*;
+import java.sql.SQLOutput;
 import java.util.*;
 
 import static java.lang.Thread.sleep;
@@ -63,6 +64,17 @@ public class ThrottleDataGenerator {
             }
         }
     }
+    static long calibrateAcceleration(float topSpeed) throws InterruptedException {
+//        Returns a long of the time it takes to get to the maximum speed of the car in milliseconds. Could later be modified to find individual increments
+//        Not currently in use.
+         long startTime = System.currentTimeMillis();
+         car.accelerate(true, 60);
+         while (((ArduinoData) carData.getModuleData("arduino")).count <= topSpeed) {
+             System.out.println("Accelerating");
+         }
+        long accelTimeMillis= System.currentTimeMillis()-startTime;
+        return accelTimeMillis;
+    }
 
     static float[] calibrateThrottle() throws InterruptedException {
         //Throttle angle 60 is the max
@@ -84,7 +96,7 @@ public class ThrottleDataGenerator {
                 lastSpeed = thisSpeed;
             }
             speedValues[i] = lastSpeed;
-            //System.out.println("Throttle: " + i + " = " + lastSpeed + " cm/s");
+//            System.out.println("Throttle: " + i + " = " + lastSpeed + " cm/s");
         }
         car.accelerate(true, 0);
         for (int i = 0; i < speedValues.length; i++) {
