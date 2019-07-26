@@ -16,6 +16,6 @@ public class ArduinoData {
     }
 
     public void setOdomCount(int add) {
-        count += add;
+        count = add;
     }
 }
