@@ -17,20 +17,19 @@ import java.io.IOException;
 
 public class MapModule implements CarModule, CloseHook {
 
-    private final int MAP_MODE = 3;
+    private final int MAP_MODE = 2;
     //0: Mapping while driving close to the walls
     //1: Mapping by driving through the center of the track and expanding the track 5 carlengths out
     //Modes 2&3 are debugging modes
     //2: Debugging in TrakSim
     //3: Debugging using FakeDataStream
-    //4: Debugging in TrakSim using only position tracking
     private final int MAP_X_DIMENSION = 1500;
     private final float STARTING_ANGLE = 270.0f;
 
     private final int MAP_Y_DIMENSION = 1500;
     //One unit in the array = 1cm. This means that 1500x1500 is equal to a 15m by 15m room.
 
-    private final float MODIFIED_CAR_X_STARTING_POSITION = 0.0f;
+    private final float MODIFIED_CAR_X_STARTING_POSITION = 500.0f;
     private final float MODIFIED_CAR_Y_STARTING_POSITION = 0.0f;
     //These numbers are added to the (0,0) origin to indicate the starting position of the car in the room.
 
