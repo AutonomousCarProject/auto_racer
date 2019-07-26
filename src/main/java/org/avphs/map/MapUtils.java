@@ -46,65 +46,20 @@ class MapUtils {
             angle += 360;
         }
 
-        float[] coordsOnMap = new float[2]; //(x,y) (ahead)
-        //Maybe just make into 1 line.
+        float[] coordsOnMap = new float[2]; //(x,y) These are the Coordinates of wall that are being exported
+
+        //Y
         float getImageWidthAtGivenPixelHeight = pixelHeightToX[pixelY];
-        float distanceToTheLeftOrRight = ((float)(getImageWidthAtGivenPixelHeight / 2));//Because we are only looking at the first and last few pixels
-        //System.out.println(pixelHeightToX[10]);
 
-        // System.out.println(pixelX + "," + pixelY + "," + posX + "," +posY + "," +angle + "," + getImageWidthAtGivenPixelHeight + "," + distanceToTheLeftOrRight);
-        if (pixelX < 320) //if you're going to left
-        {
-            distanceToTheLeftOrRight = (0 - distanceToTheLeftOrRight);
-        }
-        else if (pixelX > 320) //if you're going to right
-        {
-            //No change, stays positive
-        }
-        else // in center
-        {
-            coordsOnMap[0] = posX + 0; coordsOnMap[1] =  pixelHeightToY[pixelY];
-            return coordsOnMap;
-        }
+       //X
+        float distanceToTheLeftOrRight = ((getImageWidthAtGivenPixelHeight / 2));//Because we are only looking at the first and last few pixels
 
-        float diagonalLength = (float)(Math.sqrt(Math.pow(distanceToTheLeftOrRight, 2) + Math.pow(pixelHeightToY[pixelY], 2)));
-
-        if (0 <= angle && angle < 90 )
-        {
-            coordsOnMap[0] = (posX  - (float)(diagonalLength * Math.sin(Math.atan(distanceToTheLeftOrRight / pixelHeightToY[pixelY]) + angle)));
-            coordsOnMap[1] = (posY + (float)(diagonalLength * Math.cos(Math.atan(distanceToTheLeftOrRight / pixelHeightToY[pixelY]) + angle)));
-        }
-        else if (90 <= angle && angle < 180)
-        {
-            coordsOnMap[0] = (posX  + (float)(diagonalLength * Math.sin(Math.atan(distanceToTheLeftOrRight / pixelHeightToY[pixelY]) + angle)));
-            coordsOnMap[1] = (posY + (float)(diagonalLength * Math.cos(Math.atan(distanceToTheLeftOrRight / pixelHeightToY[pixelY]) + angle)));
-        }
-        else if (180 <= angle && angle < 270)
-        {
-            coordsOnMap[0] = (posX  - (float)(diagonalLength * Math.sin(Math.atan(distanceToTheLeftOrRight / pixelHeightToY[pixelY]) + angle)));
-            coordsOnMap[1] = (posY - (float)(diagonalLength * Math.cos(Math.atan(distanceToTheLeftOrRight / pixelHeightToY[pixelY]) + angle)));
-        }
-        else
-        {
-            coordsOnMap[0] = (posX  - (float)(diagonalLength * Math.sin(Math.atan(distanceToTheLeftOrRight / pixelHeightToY[pixelY]) + angle)));
-            coordsOnMap[1] = (posY + (float)(diagonalLength * Math.cos(Math.atan(distanceToTheLeftOrRight / pixelHeightToY[pixelY]) + angle)));
-        }
+        //Pos[0] is a, pos[1] is b (a,b)
+        //angle is the angle from starting position, starting position is 0.0 degrees
+        //Need to calculate coordinates of the wall. coordsOnMap[0] is x coord of wall. coordsOnMap[1] is y coord of wall.
 
 
 
-
-        /*if (angle > 180)
-        {
-            coordsOnMap[0] = (posX  (float)(diagonalLength * Math.sin(Math.atan(distanceToTheLeftOrRight / pixelHeightToY[pixelY]) + angle)));
-        }
-        else
-        {
-            coordsOnMap[0] = (posX + (float)(diagonalLength * Math.sin(Math.atan(distanceToTheLeftOrRight / pixelHeightToY[pixelY]) + angle)));
-        }
-
-        //System.out.println("X Pos of Wall on Map: " + coordsOnMap[0]);
-        coordsOnMap[1] = (posY + (float)(diagonalLength * Math.cos(Math.atan(distanceToTheLeftOrRight / pixelHeightToY[pixelY]) + angle)));
-       // System.out.println("Y Pos of Wall on Map: " + coordsOnMap[1]);
         return coordsOnMap;
     }
 
