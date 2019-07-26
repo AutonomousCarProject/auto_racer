@@ -7,6 +7,7 @@ public class RacingLinePoint {
     private Point outer, inner;
     private boolean pass = false;
     private float passx,passy;
+    private boolean original = false;
     //region Constructors
     public RacingLinePoint() {
         setX(0);
@@ -92,7 +93,8 @@ public class RacingLinePoint {
     }
 
     public CurvePoint toCurvePoint() {
-        return new CurvePoint(Math.round(x),  Math.round(y));
+        if(!pass) return new CurvePoint((int)x,(int)y);
+        else return new CurvePoint((int)passx,(int)passy);
     }
 
     public String getCoords() {
@@ -115,7 +117,7 @@ public class RacingLinePoint {
     }
     //endregion
 
-    //passing region
+    //region Passing
     public void setOuter(Point a) {
         outer = a;
     }
@@ -145,6 +147,12 @@ public class RacingLinePoint {
     }
     public float getPassY() {
         return passy;
+    }
+    public void setOriginal(boolean a) {
+        original = a;
+    }
+    public boolean getOriginal() {
+        return original;
     }
     //endregion
 }
