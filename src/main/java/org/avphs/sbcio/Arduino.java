@@ -186,8 +186,8 @@ public class Arduino { // Adapted to Java from arduino.cs ... (FakeFirmata)
         SpokeHard++;
         if (more < 0){
             more = (data >> 7) & 127;
-            if (logy) System.out.println("F%%F/Send3by " + comm + " " + data
-                    + " .. => " + info + " " + more + FormatMillis(" @ ", 0x80000000));
+//            if (logy) System.out.println("F%%F/Send3by " + comm + " " + data
+//                    + " .. => " + info + " " + more + FormatMillis(" @ ", 0x80000000));
             data = info;
         } else if (logy){
             System.out.println("F%%F/Send3by " + comm + " " + data + " " + more +

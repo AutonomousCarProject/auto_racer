@@ -19,7 +19,6 @@ public class ThrottleDataGenerator {
         Car car = new Car(new SimCamera());
         car.init(carData);
         CalibrationCore core = new CalibrationCore(car, false);
-
         //NEVER SET THROTTLE WITH ANGLE MORE THAN 60 (im keeping it capped to 59 to be safe)
         float[] speedValues = new float[59];
         boolean speedChanged;
@@ -28,13 +27,12 @@ public class ThrottleDataGenerator {
         for (int i = 1; i < 59; i++) {
             speedChanged = true;
             while (speedChanged) {
-                System.out.println(carData.getModuleData("arduino"));
+//                System.out.println(carData.getModuleData("arduino"));
                 car.update(carData);
                 lastOdom = ((ArduinoData) carData.getModuleData("arduino")).getOdomCount();
                 car.accelerate(true, i);
-                sleep(1000);
-                car.update(carData);
 
+                car.update(carData);
                 int thisSpeed = ((ArduinoData) carData.getModuleData("arduino")).getOdomCount() - lastOdom;
                 speedChanged = false;
                 if (thisSpeed > lastSpeed) {
@@ -44,14 +42,18 @@ public class ThrottleDataGenerator {
                 }
                 lastSpeed = thisSpeed;
             }
+
             //TODO: needs to be converted from driveshaft spins to distance
-            /**
-             * Wheel Radius is 5 cm therefore wheel circumfrence is 2PiR
-             * 2* Math.PI * 5;
-             */
             speedValues[i] = lastSpeed;
         }
+        try {
+            File file = new File("C:\\Users\\PhillipM\\Documents\\File.txt");
+            writeSpeedThrottlesToFile(file, speedValues);
 
+        } catch (IOException e) {
+            e.printStackTrace();
+
+        }
 
     }
 
@@ -61,7 +63,8 @@ public class ThrottleDataGenerator {
     //second is throttle to go at .5cm/s
     //third is throttle to go at 1cm/s etc. etc.
     //maxSpeed CHANGES DEPENDS ON UNITS OF SPEEDVALUES (cm/s?) AS DOES desiredSpeed
-    private void writeSpeedThrottlesToFile(String filename, float[] speedValues) throws IOException {
+    private static void writeSpeedThrottlesToFile(File filename, float[] speedValues) throws IOException {
+
         float maxSpeed = 0;
         for (int i = 0; i < speedValues.length; i++) {
             if (speedValues[i] > maxSpeed) {
@@ -95,7 +98,7 @@ public class ThrottleDataGenerator {
         float increment = .5f;
         outerloop:
         for (float desiredSpeed = 0; desiredSpeed < maxSpeed + increment; desiredSpeed += increment) {
-            for (int i = 0; i < speedValues.length; i++) {
+            for (int i = 1; i < speedValues.length; i++) {
                 if (i != 0 && speedValues[i] == 0) {
                     break outerloop;
                 } else {
