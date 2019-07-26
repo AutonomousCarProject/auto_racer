@@ -70,12 +70,6 @@ public class MapModule implements CarModule, CloseHook {
         }
     }
 
-    @Override
-    public CarCommand[] commands() {
-        return null;
-    }
-
-    @Override
     public void update(CarData carData) {
         //positionModule = (PositionData)carData.getModuleData("position");
         // imageData = (ImageData) carData.getModuleData("image");

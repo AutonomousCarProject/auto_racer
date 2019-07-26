@@ -59,17 +59,20 @@ public class Car implements ClientInterface {
     }
 
     public void init(CarData carData) {
+        getCameraImage(carData);
         carData.addData("arduino", new ArduinoData(ps.getCount(), aVoid -> arduino.Close()));
+        carData.addData("camera", camera);
     }
 
     public void update(CarData carData) {
+        camera.NextFrame();
         ((ArduinoData) carData.getModuleData("arduino")).setOdomCount(ps.getCount());
+        carData.addData("arduino", new ArduinoData(ps.getCount(),  aVoid -> arduino.Close()));
     }
 
     @Override
     public void getCameraImage(CarData carData) {
         camera.NextFrame();
-        carData.addData("camera", camera);
     }
 
     @Override

@@ -25,24 +25,22 @@ public abstract class CarCore {
     public static final int FPS = 15; // Frames per second car Tries to run
     protected CarData carData; // The data from all of the modules.
     protected Car car; // the object that can actually control the car.
+    long targetMillsPerFrame = Math.round(1000.0 / FPS);
+    private ArrayList<CloseHook> closeHookModules = new ArrayList<>();
+    private ScheduledExecutorService carExecutorService;
     ArrayList<CarModule> updatingCarModules = new ArrayList<>(); // All of the modules that will be run each frame.
-    ArrayList<CloseHook> closeHookModules = new ArrayList<>();
-    ScheduledExecutorService carExecutorService;
     private boolean closing;
+
     /**
      * Constructor that instantiates the car.
-     *
-     * @param car        the object that controls the car.
-     * @param showWindow True for the JFrame window to appear, false for it not to appear.
+     * @param car the object that controls the car.
      */
-    CarCore(Car car, boolean showWindow) {
+    CarCore(Car car) {
+
         carData = new CarData();
         this.car = car;
         car.init(carData);
 
-        if (showWindow) {
-            updatingCarModules.add(new WindowModule(carData));
-        }
 
         Runtime.getRuntime().addShutdownHook(new ShutdownHook());
     }
@@ -66,12 +64,6 @@ public abstract class CarCore {
         carExecutorService =
                 Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory("Module Updater"));
         carExecutorService.scheduleAtFixedRate(this::update, 0, Math.round(1000.0 / FPS), TimeUnit.MILLISECONDS);
-
-        // Start Listening for Commands
-        final ScheduledExecutorService commandListeningExecutorService =
-                Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory("Command Listener"));
-        commandListeningExecutorService.scheduleAtFixedRate(this::commandListen, 0, Math.round(1000.0 / FPS),
-                TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -98,36 +90,7 @@ public abstract class CarCore {
         car.update(carData);
         car.getCameraImage(carData);
         for (CarModule module : updatingCarModules) {
-            try {
-                module.update(carData);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    /**
-     * This function is called once every frame time. It checks for any commands
-     * a module has called.
-     * NOTE: this function can be out of sync with update, this will likely run faster.
-     */
-    private void commandListen() {
-        for (CarModule module : updatingCarModules) {
-            if (module.commands() != null) {
-                for (CarCommand command : module.commands()) {
-                    switch (command.command) {
-                        case STOP_COMMAND:
-                            car.stop();
-                            break;
-                        case STEER_COMMAND:
-                            car.steer((boolean) command.parameters[0], (int) command.parameters[1]);
-                            break;
-                        case ACCELERATE_COMMAND:
-                            car.accelerate((boolean) command.parameters[0], (int) command.parameters[1]);
-                            break;
-                    }
-                }
-            }
+            module.update(carData);
         }
     }
 
@@ -137,10 +100,10 @@ public abstract class CarCore {
      * @author kevin
      * @see java.util.concurrent.ThreadFactory
      */
-    public static class NamedThreadFactory implements ThreadFactory {
+    protected static class NamedThreadFactory implements ThreadFactory {
         private final String name;
 
-        private NamedThreadFactory(String name) {
+        NamedThreadFactory(String name) {
             this.name = name;
         }
 

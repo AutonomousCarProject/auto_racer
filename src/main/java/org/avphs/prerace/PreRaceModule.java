@@ -15,12 +15,6 @@ public class PreRaceModule implements CarModule {
 
     }
 
-    @Override
-    public CarCommand[] commands() {
-        return null;
-    }
-
-    @Override
     public void update(CarData carData) {
         positionData.update(position,direction,speed);
         carData.addData("position",positionData);
