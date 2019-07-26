@@ -3,6 +3,7 @@
 */out
 out
 bin
+src/main/java/org/avphs/map/map.txt
 
 ### Gradle ###
 .gradle
