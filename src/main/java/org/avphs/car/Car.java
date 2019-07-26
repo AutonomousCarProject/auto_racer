@@ -62,7 +62,7 @@ public class Car implements ClientInterface {
     }
 
     public void update(CarData carData) {
-        ((ArduinoData) carData.getModuleData("arduino")).addOdomCount(ps.getCount());
+        ((ArduinoData) carData.getModuleData("arduino")).setOdomCount(ps.getCount());
     }
 
     @Override
