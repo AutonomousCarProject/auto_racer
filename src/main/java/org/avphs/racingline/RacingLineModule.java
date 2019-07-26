@@ -83,6 +83,11 @@ public class RacingLineModule implements CarModule {
     }
 
     //Ensures that the map always has a buffer of nontrack - neccesary for BFS functions
+
+    /**
+     * Makes the map
+     * @param _map
+     */
     private void MakeMap(boolean[][] _map) {
         this.map = _map;
         rows = map.length;
@@ -90,9 +95,18 @@ public class RacingLineModule implements CarModule {
         walls = new boolean[rows][columns];
     }
 
+    /**
+     * Returns an ArrayList of Point that makes up the Inner Wall
+     * @return
+     */
     public static ArrayList<Point> getInnerWall() {
         return innerWall;
     }
+
+    /**
+     * Returns an ArrayList of Point that makes up the Outer Wall
+     * @return
+     */
     public static ArrayList<Point> getOuterWall() {
         return outerWall;
     }
@@ -113,6 +127,11 @@ public class RacingLineModule implements CarModule {
     //endregion
 
     //region Passing
+
+    /**
+     * Call when passing
+     * @return
+     */
     public RacingLine CheckPassingLine() {
         if (obstacles.getObstacles().size() == 0) {
             return center;
@@ -122,6 +141,11 @@ public class RacingLineModule implements CarModule {
         connectTheDots();
         return center;
     }
+
+    /**
+     * Passing code; shifts points towards wall when near object
+     * @param obstacle
+     */
     private void pass(Obstacle obstacle) {
         removeUnoriginal();
         RacingLinePoint[] line = center.getRacingLinePoints();
@@ -163,6 +187,10 @@ public class RacingLineModule implements CarModule {
     //endregion
 
     //region Middle Line
+
+    /**
+     * Gets the middle line - line between outer wall and inner wall
+     */
     private void getMiddleLine() {
         closeTrack(10);
         getWalls();
@@ -172,6 +200,11 @@ public class RacingLineModule implements CarModule {
         makeOriginal();
         connectTheDots();
     }
+
+    /**
+     * Closes the track so the car doesn't get too close to the walls
+     * @param dist
+     */
     public void closeTrack(int dist) {
         boolean[][] newmap = new boolean[rows][columns];
         for(int dist1=0;dist1<dist;dist1++) {
@@ -198,6 +231,10 @@ public class RacingLineModule implements CarModule {
             }
         }
     }
+
+    /**
+     * Determines which walls are outer walls and which ones are inner walls.
+     */
     private void getWalls() {
         visited = new boolean[rows][columns];
         added = new boolean[rows][columns];
@@ -234,6 +271,11 @@ public class RacingLineModule implements CarModule {
         System.out.println("INNER WALL: "+innerWall.size());
     }
 
+    /**
+     * Search through all connected walls.
+     * @param startx
+     * @param starty
+     */
     private void BFS(int startx, int starty) {
         Queue<Point> states = new LinkedList<Point>();
         states.add(new Point(startx, starty));
@@ -282,6 +324,12 @@ public class RacingLineModule implements CarModule {
         return (int) Math.ceil((double) num / den);
     }
 
+    /**
+     * Finds the number of intersections of the line segment p1 p2 and walls.
+     * @param p1
+     * @param p2
+     * @return
+     */
     public int intersect(Point p1, Point p2) {
         int num = 0;
         int x1 = p1.x;
@@ -341,12 +389,20 @@ public class RacingLineModule implements CarModule {
         return intersect(new Point(p1.getIntX(), p1.getIntY()), new Point(p1.getIntX(), p2.getIntY()));
     }
     //endregion
+
+    /**
+     * Sets every point in the Racing Line to original
+     */
     private void makeOriginal() {
         RacingLinePoint[] array = center.getRacingLinePoints();
         for(RacingLinePoint c: array) {
             c.setOriginal(true);
         }
     }
+
+    /**
+     * Removes all points from the Racing Line that are not original
+     */
     private void removeUnoriginal() {
         RacingLinePoint[] array = center.getRacingLinePoints();
         ArrayList<RacingLinePoint> original = new ArrayList<RacingLinePoint>();
@@ -357,6 +413,11 @@ public class RacingLineModule implements CarModule {
         }
         center.setRacingLinePointsList(original);
     }
+
+    /**
+     * Smoothly connects points in the racing line.
+     * These new points should NOT be original.
+     */
     private void connectTheDots() {
         RacingLinePoint[] array = center.getRacingLinePoints();
         int size = array.length;
@@ -448,6 +509,11 @@ public class RacingLineModule implements CarModule {
         center.setRacingLinePointsList(connected);
     }
 
+    /**
+     * Converts an ArrayList of Point to an array of Point
+     * @param l
+     * @return
+     */
     public static Point[] PointListToArray(ArrayList<Point> l) {
         Point[] points = new Point[l.size()];
 
@@ -456,6 +522,12 @@ public class RacingLineModule implements CarModule {
         }
         return points;
     }
+
+    /**
+     * Converts an ArrayList of RacingLinePoint to an array of RacingLinePoint
+     * @param l
+     * @return
+     */
     public static RacingLinePoint[] RacingLinePointListToArray(ArrayList<RacingLinePoint> l) {
         RacingLinePoint[] points = new RacingLinePoint[l.size()];
 
@@ -465,27 +537,10 @@ public class RacingLineModule implements CarModule {
         return points;
     }
 
-    public void trimPoints(float trim) {
-        RacingLinePoint[] line = center.getRacingLinePoints();
-        ArrayList<RacingLinePoint> compressedLine = new ArrayList<>();
-        ArrayList<RacingLinePoint> deleted = new ArrayList<>();
-
-        RacingLinePoint currPoint;
-
-        for (RacingLinePoint p : line) {
-            if (ContainsPoint(deleted, p)) {
-                continue;
-            }
-            compressedLine.add(p);
-            for (RacingLinePoint p2 : line) {
-                if (distanceBetweenPoints(p, p2) < trim && !deleted.contains(p2) && p != p2) {
-                    deleted.add(p2);
-                }
-            }
-        }
-
-        center.setRacingLinePointsList(compressedLine);
-    }
+    /**
+     * Trims sorted points. Leaves points iff they are farther than distance or have to pass through walls.
+     * @param trim
+     */
     public void trimSortedPoints(float trim) {
         RacingLinePoint[] line = center.getRacingLinePoints();
         ArrayList<RacingLinePoint> compressedLine = new ArrayList<RacingLinePoint>();
@@ -520,6 +575,9 @@ public class RacingLineModule implements CarModule {
         return false;
     }
 
+    /**
+     * Calculates the middle line between outer wall and inner wall
+     */
     private void calcMiddleLine() {
 
         ArrayList<Point> longer = outerWall.size() > innerWall.size() ? outerWall : innerWall;
@@ -593,6 +651,12 @@ public class RacingLineModule implements CarModule {
         return pointList[closestPoint];
     }
 
+    /**
+     * Determines the midpoint of two points (on the wall)
+     * @param outer
+     * @param inner
+     * @return
+     */
     private RacingLinePoint midPoint(Point outer, Point inner) {
         float aveX = (float) ((float) (outer.x + inner.x) / 2.0);
         float aveY = (float) ((float) (outer.y + inner.y) / 2.0);

@@ -69,7 +69,7 @@ public class CurvePoint {
     }
 
     /**
-     * Converts this CurvePoint to a RacingLinePoint. 
+     * Converts this CurvePoint to a RacingLinePoint.
      */
     public RacingLinePoint toRacingLinePoint() {
         return new RacingLinePoint(x,y);
