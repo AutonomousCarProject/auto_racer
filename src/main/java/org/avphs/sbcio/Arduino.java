@@ -15,22 +15,22 @@
  */
 package org.avphs.sbcio; // (class Arduino)                 // 2019 April 18
 
+import jssc.SerialPort;
+import jssc.SerialPortEvent;
+import org.avphs.sbcio.fakefirm.SerialPortSwapper;
+import org.avphs.sbcio.fakefirm.SimHookBase;
+import org.avphs.sbcio.fakefirm.UpdateListener;
+
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import java.util.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 // import noJSSC.SerialPort; // use these 2 lines instead to use TrakSim
 // import noJSSC.SerialPortEvent; // ..on a computer with no serial port.
-
-import jssc.SerialPort; // use these 2 lines in LattePanda..
-import jssc.SerialPortEvent; // (comment them out when using noJSSC)
-import org.avphs.sbcio.fakefirm.*;
 // import jssc.SerialPortEventListener; // (didn't work for me, so unused)
-
-import javax.swing.Timer;
 
 public class Arduino { // Adapted to Java from arduino.cs ... (FakeFirmata)
 
