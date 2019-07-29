@@ -62,11 +62,13 @@ public class PositionModule implements CarModule, CloseHook {
         wheelAngle = drivingData; //angle of servo
         distanceTraveled = (float) (odometerCount * CalibrationModule.CM_PER_ROTATION); //number of wheel turns
 
+        //FIXME: Get table values from calibraiton for wheel angle to turn radius
         if (wheelAngle > 91) { //if turning right
             drivingArcRadius = (float) (disBetweenAxle / Math.cos(Math.toRadians(-wheelAngle)));
         } else if (wheelAngle < 89) { //if turning left
             drivingArcRadius = (float) (disBetweenAxle / Math.cos(Math.toRadians(wheelAngle)));
-        }//
+        }
+
         else {
             drivingArcRadius = 0;
         }
