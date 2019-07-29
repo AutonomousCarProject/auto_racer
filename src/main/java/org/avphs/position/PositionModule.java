@@ -33,7 +33,7 @@ public class PositionModule implements CarModule, CloseHook {
 
 
         //FOR TESTING THE CAR
-        carData.addData("pct", pct);
+        carData.addData("position", positionData);
     }
 
     @Override
