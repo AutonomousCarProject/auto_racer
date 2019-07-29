@@ -1,5 +1,6 @@
 package org.avphs.position;
 
+import org.avphs.car.Car;
 import org.avphs.coreinterface.CarCommand;
 import org.avphs.coreinterface.CarData;
 import org.avphs.coreinterface.CarModule;
@@ -18,6 +19,7 @@ public class PositionModule implements CarModule, CloseHook {
     private float wheelAngle;
     private float deltaPositionAngle;
     private int prevOdom = 0;
+    private ArduinoData odom;
 
 
     //FOR TESTING THE CAR
