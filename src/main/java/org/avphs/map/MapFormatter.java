@@ -40,7 +40,7 @@ public class MapFormatter {
 
         map.setValueAtIndex(pos[0], pos[1], true);
 
-        for (int i = 1; i < MapUtils.IMAGE_SIDE_THRESHOLD; i++)//First 100 pixels on the left side
+        for (int i = 1; i < MapUtils.IMAGE_SIDE_THRESHOLD; i++)//First 4 pixels on the left side
         {
             if (bottomPoints[i] > MapUtils.Y_HEIGHT_PIXEL_THRESHOLD)//Threshold for lowest pixel height which gives us good data.
             {
