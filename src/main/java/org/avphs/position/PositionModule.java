@@ -11,6 +11,7 @@ public class PositionModule implements CarModule {
     private PositionData positionData;
     private float disBetweenAxle;
     private float deltaPositionAngle;
+    private float cumulatedPositonAngle;
     private TrakSim ts;
     private int angle = 0;
     private float cumulatedDistance = 0;
@@ -20,6 +21,7 @@ public class PositionModule implements CarModule {
         //THIS WILL BE WHERE WE READ FROM A FILE TO FIND THE INITIAL POSITION
         positionData = new PositionData(new float[]{40.0f,56.0f}, 0, 0); //TEMPORARY
         ts = new TrakSim();
+        cumulatedPositonAngle = 0;
     }
 
     @Override
@@ -32,7 +34,7 @@ public class PositionModule implements CarModule {
 
     @Override
     public void update(CarData carData) {
-        /*if(cumulatedDistance > 33 && cumulatedDistance < 105){
+        if(cumulatedDistance > 33 && cumulatedDistance < 105){
             angle = 15;
         }
         else if (cumulatedDistance > 105 && cumulatedDistance < 136){
@@ -49,20 +51,20 @@ public class PositionModule implements CarModule {
         }
         else if(cumulatedDistance > 210){
             angle = 0;
-        }*/
-
-        angle = 45;
+        }
 
         cumulatedDistance += (float)ts.GetDistance(false);
         computePosition((float)ts.GetDistance(true), angle);
         carData.addData("position", positionData);
-        System.out.println(positionData.getDirection());
-        System.out.println(angle);
+        //System.out.println("direaction " + positionData.getDirection());
+        //System.out.println("angle " + angle);
+        System.out.println("cumulated position angle " + cumulatedPositonAngle);
     }
 
     private void computePosition(float distanceTraveled, float wheelAngle) {
         float drivingArcRadius;
-        disBetweenAxle = 10f;//FIXME: data from calibration
+        wheelAngle += 90;
+        disBetweenAxle = 32.5f;//FIXME: data from calibration
         // find out if this is run before or after driving. If after, good, else: bad.
 
         //FIXME find out the error in the servo value, and add that value to "> 90" and subtract from "< 90",defaulted at 2
@@ -81,6 +83,7 @@ public class PositionModule implements CarModule {
         } else {
             //if turning
             deltaPositionAngle = (float) (360 * distanceTraveled / (Math.PI * Math.pow(drivingArcRadius, 2)));//compute the length of the path around the circle the car has taken, and then get the angle of that
+            cumulatedPositonAngle += deltaPositionAngle;
             if (deltaPositionAngle < 90 || deltaPositionAngle > 270) {
                 convertPosition((float) (drivingArcRadius - drivingArcRadius * Math.cos(Math.toRadians(deltaPositionAngle))), (float) (drivingArcRadius * Math.sin(Math.toRadians(deltaPositionAngle))));//weird trig stuff because for the unit circle the trig is based on center of circle. Here, the car starts at either (1,0) [turning left] or (-1,0) [turning right]
 
