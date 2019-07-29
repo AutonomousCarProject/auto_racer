@@ -5,6 +5,7 @@ import org.avphs.coreinterface.CarData;
 import org.avphs.coreinterface.CarModule;
 import org.avphs.coreinterface.CloseHook;
 import org.avphs.sbcio.ArduinoData;
+import org.avphs.calibration.CalibrationModule;
 
 import java.io.IOException;
 
@@ -55,13 +56,12 @@ public class PositionModule implements CarModule, CloseHook {
 
     private void computePosition(int odometerCount, float drivingData) {
         float drivingArcRadius;
-        disBetweenAxle = 32.5f;//FIXME: data from calibration
+        disBetweenAxle = (float) CalibrationModule.WHEEL_BASE;
         // find out if this is run before or after driving. If after, good, else: bad.
 
         wheelAngle = drivingData; //angle of servo
-        distanceTraveled = odometerCount * 15f; //number of wheel turns FIXME: data from calibraiton
+        distanceTraveled = (float) (odometerCount * CalibrationModule.CM_PER_ROTATION); //number of wheel turns
 
-        //FIXME find out the error in the servo value, and add that value to "> 90" and subtract from "< 90",defaulted at 2
         if (wheelAngle > 91) { //if turning right
             drivingArcRadius = (float) (disBetweenAxle / Math.cos(Math.toRadians(-wheelAngle)));
         } else if (wheelAngle < 89) { //if turning left
@@ -110,8 +110,7 @@ public class PositionModule implements CarModule, CloseHook {
     }
 
     private void computeSpeed(int odometerCount) {
-        //FIXME: data from calibration
-        float speed = odometerCount * .15f * 30f;//*30 because convert odometerCount per 33.33 milliseconds to OdometerCount per second.
+        float speed = odometerCount * (float) CalibrationModule.CM_PER_ROTATION * 100f * 30f;//*30 because convert odometerCount per 33.33 milliseconds to OdometerCount per second. *100 to get it in m per second
         positionData.updateSpeed(speed);
     }
 
