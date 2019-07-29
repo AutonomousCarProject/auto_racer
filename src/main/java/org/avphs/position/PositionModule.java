@@ -13,6 +13,9 @@ public class PositionModule implements CarModule {
     private int angle = 0;
     private float cumulatedDistance = 0;
 
+    float distanceTraveledRadians;
+    float distanceTraveledDegrees;
+
 
     public void init(CarData carData) {
         //THIS WILL BE WHERE WE READ FROM A FILE TO FIND THE INITIAL POSITION
@@ -84,12 +87,23 @@ public class PositionModule implements CarModule {
             newDirection = positionData.getDirection();
         }
 
-        System.out.println("direction: " + newDirection);
+        if (turnRadius == 0) {
+            //just drive straight forward
+            convertPosition(0, distanceTraveled);
+        } else {
+            //if turning
+            if (distanceTraveledDegrees < 90 || distanceTraveledDegrees > 270) {
+                convertPosition((float) (turnRadius - turnRadius * Math.cos(Math.toRadians(distanceTraveledDegrees))), (float) (turnRadius * Math.sin(Math.toRadians(distanceTraveledDegrees))));//weird trig stuff because for the unit circle the trig is based on center of circle. Here, the car starts at either (1,0) [turning left] or (-1,0) [turning right]
+
+            } else {//if(deltaPositionAngle > 90), turning left
+                convertPosition((float) (turnRadius + turnRadius * Math.cos(Math.toRadians(distanceTraveledDegrees))), (float) (turnRadius * Math.sin(Math.toRadians(distanceTraveledDegrees))));//weird trig stuff because for the unit circle the trig is based on center of circle. Here, the car starts at either (1,0) [turning left] or (-1,0) [turning right]
+            }
+        }
+
+        //System.out.println("direction: " + newDirection);
         //System.out.println("turn radius" + turnRadius);
 
-        positionData.updatePosition(newPos);
-
-        //System.out.println("Position = ("+(positionData.getPosition()[0])+","+(positionData.getPosition()[1])+")");
+        System.out.println("Position = ("+(positionData.getPosition()[0])+","+(positionData.getPosition()[1])+")");
     }
 
     private float ComputeTurnRadius(float wheelBase, float turningAngle){ //FIXME THIS IS THE TURN RADIUS OF THE FRONT INSIDE WHEEL ONLY; FIND A WAY TO FIND THE TURN RADIUS OF THE FRONT OUTSIDE WHEEL AND THEN FIND THE AVERAGE OF THEM TO GET THE TURN RADIUS OF THE LOCATION OF THE CAMERA
@@ -98,8 +112,8 @@ public class PositionModule implements CarModule {
     }
 
     private void ComputeDirection(float currentDirection, float turnRadius, float distanceTraveledParkMeters, String turnType){
-        float distanceTraveledRadians = distanceTraveledParkMeters / turnRadius;
-        float distanceTraveledDegrees = (float) (distanceTraveledRadians * 180 / Math.PI);
+        distanceTraveledRadians = distanceTraveledParkMeters / turnRadius;
+        distanceTraveledDegrees = (float) (distanceTraveledRadians * 180 / Math.PI);
         float newDirection;
 
         if(turnType == "right"){
@@ -119,5 +133,22 @@ public class PositionModule implements CarModule {
         }
 
         positionData.updateDirection(newDirection);
+    }
+
+    private void convertPosition(float x, float y) {
+        //FIXME x and y are currently in cm, not in the virtual world coordinates.
+        if(!(x == 0 && y == 0)){
+            float[] temp = pol(x, y);
+            temp = cart(temp[0], temp[1] - positionData.getDirection());
+            positionData.updatePosition(temp);
+        }
+    }
+
+    private float[] pol(float x, float y){//to polar coordinates
+        return new float[] {(float) Math.sqrt(x*x + y*y), (float) Math.toDegrees(Math.atan2(y,x))};
+    }
+
+    private float[] cart(float l, float d){//to cartesian
+        return new float[] {(float) (l * Math.cos(Math.toRadians(d))), (float) (l * Math.sin(Math.toRadians(d)))};
     }
 }
