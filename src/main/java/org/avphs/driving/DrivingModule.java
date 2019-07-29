@@ -1,18 +1,14 @@
 package org.avphs.driving;
 
+import org.avphs.calibration.CalibrationModule;
 import org.avphs.car.Car;
-import org.avphs.coreinterface.CarCommand;
 import org.avphs.coreinterface.CarData;
 import org.avphs.coreinterface.CarModule;
+import org.avphs.position.PositionData;
 import org.avphs.racingline.RacingLine;
 import org.avphs.racingline.RacingLinePoint;
-import org.avphs.calibration.CalibrationModule;
-
-import org.avphs.position.PositionData;
 
 import java.util.ArrayList;
-
-import static org.avphs.coreinterface.CarCommand.*;
 
 public class DrivingModule implements CarModule {
 

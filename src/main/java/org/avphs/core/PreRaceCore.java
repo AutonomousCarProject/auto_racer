@@ -19,7 +19,7 @@ public class PreRaceCore extends CarCore {
         // Add Run-time Modules
         updatingCarModules.add(new ImageModule());
         updatingCarModules.add(new MapModule());
-        updatingCarModules.add(new PreRaceDrivingModule());
+        updatingCarModules.add(new PreRaceDrivingModule(car));
 
         init();
         startUpdatingModules();
