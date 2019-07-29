@@ -5,7 +5,7 @@ import org.avphs.image.ImageModule;
 
 public class CalibrationCore extends CarCore {
     public CalibrationCore(Car car, boolean needsCamera) {
-        super(car, false);
+        super(car);
 
         // Add Run-time Modules
         if(needsCamera){

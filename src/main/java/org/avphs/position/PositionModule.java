@@ -37,12 +37,7 @@ public class PositionModule implements CarModule, CloseHook {
     }
 
     @Override
-    public CarCommand[] commands() {
-        return null;
-    }
-
-    @Override
-    public void update(CarData carData) throws IOException {
+    public void update(CarData carData) {
         ArduinoData odom = (ArduinoData) carData.getModuleData("arduino");
         int steer = (int) carData.getModuleData("driving");
         computePosition(odom.getOdomCount() - prevOdom, steer);
@@ -51,7 +46,11 @@ public class PositionModule implements CarModule, CloseHook {
 
 
         //FOR CAR TESTING
-        pct.writeToFile(positionData.getPosition()[0], positionData.getPosition()[1], positionData.getDirection(), odom.getOdomCount(), steer);
+        try {
+            pct.writeToFile(positionData.getPosition()[0], positionData.getPosition()[1], positionData.getDirection(), odom.getOdomCount(), steer);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
     }
 
     private void computePosition(int odometerCount, float drivingData) {
