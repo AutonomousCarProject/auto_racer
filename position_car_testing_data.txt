@@ -1,6 +1,7 @@
 <<<<<<< refs/remotes/origin/master
 <<<<<<< refs/remotes/origin/master
 <<<<<<< refs/remotes/origin/master
+<<<<<<< refs/remotes/origin/master
 Position        Direction       Odometer        WheelAngle      
 (0, 0)          0               0               0
 (0, 0)          0               0               -1
@@ -35,3 +36,5 @@ Position        Direction       Odometer        WheelAngle
 >>>>>>> oopsies, almost destroyed master!
 =======
 >>>>>>> oopsies, almost destroyed master!
+=======
+>>>>>>> fixing master cuz master got murdered
