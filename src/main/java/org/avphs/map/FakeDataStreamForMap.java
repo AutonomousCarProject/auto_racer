@@ -47,8 +47,8 @@ public class FakeDataStreamForMap {
             {
                 done = true;
             }
-            System.out.println(xPosition + "," + yPosition);
-            System.out.println("Percent Done: " + (runningRadianTotal / (2*Math.PI)) + "%");
+            //System.out.println(xPosition + "," + yPosition);
+            //System.out.println("Percent Done: " + (runningRadianTotal / (2*Math.PI)) + "%");
     }
 
 
