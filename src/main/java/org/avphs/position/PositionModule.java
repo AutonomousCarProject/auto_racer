@@ -52,7 +52,6 @@ public class PositionModule implements CarModule, CloseHook {
 
         //FOR CAR TESTING
         pct.writeToFile(positionData.getPosition()[0], positionData.getPosition()[1], positionData.getDirection(), odom.getOdomCount(), steer);
-
     }
 
     private void computePosition(int odometerCount, float drivingData) {

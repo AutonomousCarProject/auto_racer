@@ -211,7 +211,7 @@ public class DrivingModule implements CarModule {
             }
         } else {
             angle = -1;
-            stop = true;
+            //stop = true;
         }
     }
 
