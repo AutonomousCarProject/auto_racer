@@ -7,6 +7,15 @@ import org.avphs.coreinterface.CarData;
 import org.avphs.coreinterface.CarModule;
 import org.avphs.window.WindowModule;
 
+/** Manages and executes image processing
+ *
+ * @author Joshua Bromley
+ * @author Kenneth Browder
+ * @author Kevin "Poo" Tran
+ * @see ImageProcessing
+ * @see ImageData
+ * @see WallIdentification
+ */
 public class ImageModule implements CarModule {
 
     WindowModule window;

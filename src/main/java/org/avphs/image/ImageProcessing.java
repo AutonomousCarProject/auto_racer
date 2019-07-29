@@ -1,6 +1,14 @@
 package org.avphs.image;
 
 @SuppressWarnings("Duplicates")
+
+/**Holds all of the functions for ImageModule
+ *
+ * @author Joshua Bromley
+ * @author Kenneth Browder
+ * @author Kevin "Poo" Tran
+ * @see ImageModule
+ */
 public class ImageProcessing{
 
 

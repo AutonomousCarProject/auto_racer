@@ -1,5 +1,13 @@
 package org.avphs.image;
 
+
+/**Holds all of the functions for identifying walls in ImageModule
+ *
+ * @author Joshua Bromley
+ * @author Kenneth Browder
+ * @author Kevin "Poo" Tran
+ * @see ImageModule
+ */
 public class WallIdentification {
 
     static final int wallNum = 2;
@@ -107,6 +115,7 @@ public class WallIdentification {
      * @param height Height of image.
      * @param dt The difference threshold with which to determine color.
      * @param tile The tile pattern of the bayering 0 -> RGGB, 1 -> GBRG
+     *
      * @return Array of wall tops and bottoms.
      */
     static int[][] magicloop(byte[] bayer, int width, int height, int dt, int tile) {
