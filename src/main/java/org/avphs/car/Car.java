@@ -15,7 +15,7 @@ public class Car implements ClientInterface {
     private static final int DRIVESHAFT_PIN = 8;
     private static PulseListener ps = new PulseListener();
 
-    private static class PulseListener implements UpdateListener{
+    private static class PulseListener implements UpdateListener {
 
         private int prior;
         private int count;
@@ -27,13 +27,14 @@ public class Car implements ClientInterface {
         @Override
         public void pinUpdated(int pin, int value) {
             if (pin == DRIVESHAFT_PIN) {
-                if (value + prior > 0){
+                if (value + prior > 0) {
                     prior = value;
                     count++;
                 }
             }
-    }
-        public int getCount(){
+        }
+
+        public int getCount() {
             return count;
         }
     }
