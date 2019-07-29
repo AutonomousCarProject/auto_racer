@@ -7421,7 +7421,7 @@ public class TrakSim {
                         if (MyMath.fMin(Vbase, Vstp) > Vposn) // car is north of wall
                             zero = -zx;
                         else if (MyMath.fMax(Vbase, Vstp) + epsilon < Vposn) // car is south
-                            zero = zx;   // ..Korn rtns larger dim -epsilon, so add back on
+                            zero = zx;   // ..corner returns larger dim -epsilon, so add back on;;; determines where to draw the wall.
                         else pie = 0;
                     } //~if
                     else if ((((xx >> 8) - xx) & 255) == 0) { // N or S cap, look at H..
