@@ -35,12 +35,6 @@ public class MapRacingModule implements CarModule {
         carData.addData("map", map);
     }
 
-    @Override
-    public CarCommand[] commands() {
-        return new CarCommand[0];
-    }
-
-    @Override
     public void update(CarData carData) {
 
     }
