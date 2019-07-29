@@ -3,70 +3,69 @@ package org.avphs.position;
 import org.avphs.coreinterface.CarCommand;
 import org.avphs.coreinterface.CarData;
 import org.avphs.coreinterface.CarModule;
-import org.avphs.coreinterface.CloseHook;
-import org.avphs.sbcio.ArduinoData;
+import org.avphs.traksim.TrakSim;
 
-import java.io.IOException;
-
-public class PositionModule implements CarModule, CloseHook {
+public class PositionModule implements CarModule {
 
     private PositionData prevPositionData = new PositionData(new float[]{0, 0}, 0, 0); //WILL BE USED LATER
     private PositionData positionData;
-    private float disBetweenAxle = 0;
-    private float distanceTraveled;
-    private float wheelAngle;
+    private float disBetweenAxle;
     private float deltaPositionAngle;
+    private TrakSim ts;
+    private int angle = 0;
+    private float cumulatedDistance = 0;
 
 
-    //FOR TESTING THE CAR
-    private PositionCarTesting pct = new PositionCarTesting();
-
-    public PositionModule() throws IOException {
-    }
-
-
-    @Override
     public void init(CarData carData) {
         //THIS WILL BE WHERE WE READ FROM A FILE TO FIND THE INITIAL POSITION
-        positionData = new PositionData(new float[]{0, 0}, 0, 0); //TEMPORARY
-
-
-        //FOR TESTING THE CAR
-        carData.addData("pct", pct);
+        positionData = new PositionData(new float[]{40.0f,56.0f}, 0, 0); //TEMPORARY
+        ts = new TrakSim();
     }
 
     @Override
     public CarCommand[] commands() {
-        return null;
+        return new CarCommand[] {
+                CarCommand.accelerate(true, 15),
+                CarCommand.steer(true, angle)
+        };
     }
 
     @Override
-    public void update(CarData carData) throws IOException {
-        ArduinoData odom = (ArduinoData) carData.getModuleData("arduino");
-        int steer = (int) carData.getModuleData("driving");
-        computePosition(odom.getOdomCount(), steer);
+    public void update(CarData carData) {
+        if(cumulatedDistance > 33 && cumulatedDistance < 105){
+            angle = 15;
+        }
+        else if (cumulatedDistance > 105 && cumulatedDistance < 136){
+            angle = 0;
+        }
+        else if(cumulatedDistance > 136 && cumulatedDistance < 150){
+            angle = -15;
+        }
+        else if(cumulatedDistance > 150 && cumulatedDistance < 153){
+            angle = 0;
+        }
+        else if(cumulatedDistance > 153 && cumulatedDistance < 210){
+            angle = -15;
+        }
+        else if(cumulatedDistance > 210){
+            angle = 0;
+        }
+
+        cumulatedDistance += (float)ts.GetDistance(false);
+        computePosition((float)ts.GetDistance(true), angle);
         carData.addData("position", positionData);
-
-
-        //FOR CAR TESTING
-        pct.writeToFile(positionData.getPosition()[0], positionData.getPosition()[1], positionData.getDirection(), odom.getOdomCount(), steer);
-
+        System.out.println(positionData.getDirection());
     }
 
-    private void computePosition(int odometerCount, float drivingData) {
+    private void computePosition(float distanceTraveled, float wheelAngle) {
         float drivingArcRadius;
-        disBetweenAxle = 32.5f;//FIXME: data from calibration
+        disBetweenAxle = 10f;//FIXME: data from calibration
         // find out if this is run before or after driving. If after, good, else: bad.
 
-        wheelAngle = drivingData; //angle of servo
-        distanceTraveled = odometerCount * 15f; //number of wheel turns FIXME: data from calibraiton
-
         //FIXME find out the error in the servo value, and add that value to "> 90" and subtract from "< 90",defaulted at 2
-        if (wheelAngle > 91) { //if turning right
-            drivingArcRadius = (float) (disBetweenAxle / Math.cos(Math.toRadians(-wheelAngle)));
-        } else if (wheelAngle < 89) { //if turning left
-            drivingArcRadius = (float) (disBetweenAxle / Math.cos(Math.toRadians(wheelAngle)));
-        }//
+        if (wheelAngle != 0) { //if turning right
+            drivingArcRadius = ComputeTurnRadius(disBetweenAxle, wheelAngle);
+        }
         else {
             drivingArcRadius = 0;
         }
@@ -90,13 +89,18 @@ public class PositionModule implements CarModule, CloseHook {
                 computeDirection(-deltaPositionAngle);//update direction with negative turn going left
             }
         }
-        computeSpeed(odometerCount);
 
         //THIS WILL BE USED LATER
         prevPositionData.updateAll(positionData.getPosition(), positionData.getDirection(), positionData.getSpeed());
-        System.out.println("Position = ("+Math.round(positionData.getPosition()[0])+","+positionData.getPosition()[1]+")");
+        //System.out.println("Position = ("+positionData.getPosition()[0]+","+positionData.getPosition()[1]+")");
 
     }
+
+    private float ComputeTurnRadius(float wheelBase, float turningAngle){ //FIXME THIS IS THE TURN RADIUS OF THE FRONT INSIDE WHEEL ONLY; FIND A WAY TO FIND THE TURN RADIUS OF THE FRONT OUTSIDE WHEEL AND THEN FIND THE AVERAGE OF THEM TO GET THE TURN RADIUS OF THE LOCATION OF THE CAMERA
+        float turnRadius = (float) Math.abs(wheelBase / Math.sin(turningAngle));
+        return turnRadius;
+    }
+
 
     private void computeDirection(float newDirection) {
         float direction = positionData.getDirection();
@@ -131,16 +135,5 @@ public class PositionModule implements CarModule, CloseHook {
     private float[] cart(float l, float d){//to cartesian
         return new float[] {(float) (l * Math.cos(Math.toRadians(d))), (float) (l * Math.sin(Math.toRadians(d)))};
     }
-
-
-    @Override
-    public void onClose() {
-        try {
-            pct.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
 
 }
