@@ -16,6 +16,7 @@ public class PositionModule implements CarModule, CloseHook {
     private float distanceTraveled;
     private float wheelAngle;
     private float deltaPositionAngle;
+    private int prevOdom = 0;
 
 
     //FOR TESTING THE CAR
@@ -44,7 +45,8 @@ public class PositionModule implements CarModule, CloseHook {
     public void update(CarData carData) throws IOException {
         ArduinoData odom = (ArduinoData) carData.getModuleData("arduino");
         int steer = (int) carData.getModuleData("driving");
-        computePosition(odom.getOdomCount(), steer);
+        computePosition(odom.getOdomCount() - prevOdom, steer);
+        prevOdom = odom.getOdomCount();
         carData.addData("position", positionData);
 
 
@@ -102,6 +104,9 @@ public class PositionModule implements CarModule, CloseHook {
         direction += newDirection;
         if (direction >= 360 || direction < 0) {
             direction %= 360;
+            if (direction < 360) {
+                direction += 360;
+            }
         }
         positionData.updateDirection(direction);
     }
