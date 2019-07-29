@@ -110,7 +110,7 @@ public class PositionModule implements CarModule, CloseHook {
     }
 
     private void computeSpeed(int odometerCount) {
-        float speed = odometerCount * (float) CalibrationModule.CM_PER_ROTATION * 100f * 30f;//*30 because convert odometerCount per 33.33 milliseconds to OdometerCount per second. *100 to get it in m per second
+        float speed = (odometerCount - prevOdom) * (float) CalibrationModule.CM_PER_ROTATION * 100f * 30f;//*30 because convert odometerCount per 33.33 milliseconds to OdometerCount per second. *100 to get it in m per second
         positionData.updateSpeed(speed);
     }
 
