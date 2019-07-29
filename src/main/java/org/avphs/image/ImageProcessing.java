@@ -476,4 +476,40 @@ public class ImageProcessing{
         return magicloop(bayerArray, width, height, 65, 0);
     }
 
+    /**Blurs the image by doing a weighted average of the 5x5 square of pixels around the target pixel
+     *
+     * @param inArray input Array
+     * @param width width of image
+     * @param height height of image
+     * @return blurred image
+     */
+    static int[] fastBoxBlur(int[] inArray, int width, int height){
+        int[] outArray = new int[height*width];
+        for(int i = 2; i < height-2; i++){
+            for(int j = 2; j < width-2; j++){
+                int rsum = 0, gsum = 0, bsum = 0;
+                for(int k = -2; k < 3; k++){
+                    for(int l = -2; l < 3; l++){
+                        if((k > -2 && k < 2) && (l > -2 && l  < 2) && (k != 0 && j != 0)){
+                            rsum += (inArray[(i+k)*width+j+l] >> 16 & 0xFF) << 1;
+                            gsum += (inArray[(i+k)*width+j+l] >> 8 & 0xFF) << 1;
+                            bsum += (inArray[(i+k)*width+j+l] & 0xFF) << 1;
+                        }else{
+                            rsum += (inArray[(i+k)*width+j+l] >> 16 & 0xFF);
+                            gsum += (inArray[(i+k)*width+j+l] >> 8 & 0xFF);
+                            bsum += (inArray[(i+k)*width+j+l] & 0xFF);
+                        }
+                    }
+                }
+                rsum >>= 5;
+                gsum >>= 5;
+                bsum >>= 5;
+                outArray[i*width+j] = rsum << 16 | gsum << 8 | bsum;
+
+
+            }
+        }
+        return outArray;
+    }
+
 }
