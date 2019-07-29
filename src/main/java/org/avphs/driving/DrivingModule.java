@@ -60,7 +60,9 @@ public class DrivingModule implements CarModule {
         getDirection();
         getThrottle();
         carData.addData("driving", angle);
-        car.accelerate(true, throttle);
+
+        //FIXME THROTTLE IS SET TO SOMETHING INCORRECT
+        car.accelerate(true, 12);
         car.steer(true, angle);
     }
 
@@ -68,7 +70,7 @@ public class DrivingModule implements CarModule {
         if (currentSegment instanceof Straight) {
             brakeDist = CalibrationModule.getSpeedChangeDist(FLOOR, CalibrationModule.getMaxSpeed(FLOOR,
                     currentSegment.radius), CalibrationModule.getMaxSpeed(FLOOR, nextSegment.radius));
-            throttleForSeg = (short) 180;
+            throttleForSeg = (short) 90;
         } else {
             throttleForSeg = CalibrationModule.getThrottle(FLOOR, currentSegment.radius,
                     CalibrationModule.getMaxSpeed(FLOOR, currentSegment.radius));
@@ -209,7 +211,7 @@ public class DrivingModule implements CarModule {
                     ((Straight)currentSegment).getSlope(), ((Straight)currentSegment).getB());     //currentPosOnLine
             if ((int)Math.sqrt(Math.pow(currentSegment.endX - currentPosOnLine[0], 2.0) //If we're not to the brake
                     + Math.pow(currentSegment.endY - currentPosOnLine[1], 2.0)) > brakeDist){ //point yet,
-                throttle = 180;     //full throttle
+                throttle = 90;     //full throttle
             } else {
                 throttle = MAX_HARD_BRAKE;
             }

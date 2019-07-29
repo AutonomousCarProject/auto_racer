@@ -1,5 +1,6 @@
 package org.avphs.car;
 
+import fly2cam.FlyCamera;
 import org.avphs.camera.Camera;
 import org.avphs.core.CarCore;
 import org.avphs.coreinterface.CarData;
@@ -77,13 +78,20 @@ public class Car implements ClientInterface {
 
     @Override
     public void accelerate(boolean absolute, int angle) {
-        arduino.servoWrite(camera.getSpeedServoPin(), angle + 90);
+        if (camera instanceof FlyCamera)
+            arduino.servoWrite(camera.getSpeedServoPin(), angle + 90);
+        else
+            arduino.setServoAngle(camera.getSpeedServoPin(), angle + 90);
     }
 
     @Override
     public void steer(boolean absolute, int angle) {
-        arduino.servoWrite(camera.getSteerServoPin(), angle + 90);
+        if (camera instanceof FlyCamera)
+            arduino.servoWrite(camera.getSteerServoPin(), angle + 90);
+        else
+            arduino.setServoAngle(camera.getSteerServoPin(), angle + 90);
     }
+
 
     @Override
     public void stop() {
