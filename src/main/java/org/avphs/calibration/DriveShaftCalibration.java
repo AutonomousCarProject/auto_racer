@@ -11,7 +11,7 @@ public class DriveShaftCalibration {
     public static void main(String[] args){
         int throttle = 20;
         int driveShaftCount = 100;
-        float DriveShaft_to_Distance = 15;
+        float DriveShaft_to_Distance = (float) CalibrationModule.CM_PER_ROTATION;
 
         FakeCamera cam = new FakeCamera();
         Car car = new Car(cam);
