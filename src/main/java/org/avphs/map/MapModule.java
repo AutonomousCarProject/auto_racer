@@ -17,7 +17,7 @@ import java.io.IOException;
 
 public class MapModule implements CarModule, CloseHook {
 
-    private final int MAP_MODE = 3;
+    private final int MAP_MODE = 2;
     //0: Mapping while driving close to the walls
     //1: Mapping by driving through the center of the track and expanding the track 5 carlengths out
     //Modes 2&3 are debugging modes

@@ -9,8 +9,8 @@ class MapUtils {
     private float[] pixelHeightToY = new float[481]; // lookup table for a pixel height, returns straight ahead distance on map
 
     public final static int
-            IMAGE_SIDE_THRESHOLD = 10, //the amount of pixels in from the sides of the image we look
-            Y_HEIGHT_PIXEL_THRESHOLD = 300, //amount to pixels up we look for wall recognition
+            IMAGE_SIDE_THRESHOLD = 5, //the amount of pixels in from the sides of the image we look
+            Y_HEIGHT_PIXEL_THRESHOLD = 270, //amount to pixels up we look for wall recognition
             IMAGE_WIDTH = 640,
             IMAGE_HEIGHT = 480;
 
@@ -24,7 +24,7 @@ class MapUtils {
 
     public void setupDistanceLookup() { // initializes the values in
         for (int i = 0; i < pixelHeightToX.length - 1; i++) {
-            if (i > 200) { //
+            if (i > 210) { //
                 pixelHeightToX[i] = -1;
                 pixelHeightToY[i] = -1;
             } else {
@@ -47,6 +47,7 @@ class MapUtils {
         }
 
         float[] coordsOnMap = new float[2]; //(x,y) These are the Coordinates of wall that are being exported
+        coordsOnMap[0] = posX; coordsOnMap[1] = posY;
 
         //Y
         float getImageWidthAtGivenPixelHeight = pixelHeightToX[pixelY];

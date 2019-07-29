@@ -40,7 +40,7 @@ public class MapFormatter {
 
         map.setValueAtIndex(pos[0], pos[1], true);
 
-        for (int i = 1; i < MapUtils.IMAGE_SIDE_THRESHOLD; i++)//First 100 pixels on the left side
+        for (int i = 1; i < MapUtils.IMAGE_SIDE_THRESHOLD; i++)//First 4 pixels on the left side
         {
             if (bottomPoints[i] > MapUtils.Y_HEIGHT_PIXEL_THRESHOLD)//Threshold for lowest pixel height which gives us good data.
             {
@@ -58,7 +58,7 @@ public class MapFormatter {
 
         }
         //System.out.println("InsidePoints Done");
-        for (int i = MapUtils.IMAGE_WIDTH-MapUtils.IMAGE_SIDE_THRESHOLD; i < MapUtils.IMAGE_WIDTH; i++)//Last 100 Pixels on the right side.
+        for (int i = MapUtils.IMAGE_WIDTH-MapUtils.IMAGE_SIDE_THRESHOLD; i < MapUtils.IMAGE_WIDTH; i++)//Last 4 Pixels on the right side.
         {
             if (bottomPoints[i] > MapUtils.Y_HEIGHT_PIXEL_THRESHOLD)
             {
