@@ -5,19 +5,15 @@ import org.avphs.coreinterface.CarData;
 import org.avphs.coreinterface.CarModule;
 import org.avphs.coreinterface.CloseHook;
 import org.avphs.image.ImageData;
-import org.avphs.image.ImageModule;
 import org.avphs.position.PositionData;
-import org.avphs.position.PositionModule;
 import org.avphs.traksim.TrakSim;
 
-import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
 public class MapModule implements CarModule, CloseHook {
 
-    private final int MAP_MODE = 2;
+    private final int MAP_MODE = 3;
     //0: Mapping while driving close to the walls
     //1: Mapping by driving through the center of the track and expanding the track 5 carlengths out
     //Modes 2&3 are debugging modes
@@ -128,17 +124,7 @@ public class MapModule implements CarModule, CloseHook {
 
                 mapformatter.AddData(pos, currentAngle, imageData.wallBottom);
 
-                cycleCounter++;
 
-                /**
-                 * THINGY
-                 * ============================
-                 */
-                /*
-                if (cycleCounter % 200 == 0)//Show map developing
-                {
-                    map.showMap();
-                }*/
 
                 break;
             case 3:
@@ -155,6 +141,19 @@ public class MapModule implements CarModule, CloseHook {
                 }
                 break;
         }
+
+        cycleCounter++;
+
+        /**
+         * THINGY
+         * ============================
+         */
+
+        if (cycleCounter % 200 == 0)//Show map developing
+        {
+            map.showMap();
+        }
+
         carData.addData("map", map);
 
     }
