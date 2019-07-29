@@ -5,18 +5,32 @@ import java.util.ArrayList;
 
 
 public class ObjectData {
-    ArrayList<Obstacle> obstacles;
+    @Deprecated ArrayList<Obstacle> obstacles;
+    Obstacle obstacle;
+
+    boolean found = false;
 
 
-    public ArrayList<Obstacle> getObstacles() {
+    @Deprecated ArrayList<Obstacle> getObstacles() {
         return obstacles;
     }
 
-
-
-    public ObjectData(){
-        obstacles = new ArrayList<>();
+    ObjectData(){
+        obstacle = new Obstacle();
     }
+
+    Obstacle getObstacle(){
+        return obstacle;
+    }
+
+    /**
+     * @return If and object was found, or is found this frame
+     */
+    boolean isFound(){
+        return found;
+    }
+
+
 
 
 }
