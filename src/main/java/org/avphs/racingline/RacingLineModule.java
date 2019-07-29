@@ -188,6 +188,7 @@ public class RacingLineModule implements CarModule {
      * Gets the middle line - line between outer wall and inner wall
      */
     private void getMiddleLine() {
+        //getMapFromWalls
         closeTrack(10);
         getWalls();
         calcMiddleLine();
@@ -197,7 +198,63 @@ public class RacingLineModule implements CarModule {
         getAngles();
         //connectTheDots();
     }
-
+    public boolean[][] getMapFromWalls(boolean[][] walls) {
+        int wr = walls.length;
+        int wc = walls[0].length;
+        boolean[][] outermap = new boolean[wr][wc];
+        boolean[][] track = new boolean[wr][wc];
+        boolean[][] map = new boolean[wr][wc];
+        Queue<Point> q = new LinkedList<Point>();
+        q.add(new Point(0,0));
+        outermap[0][0] = true;
+        while(!q.isEmpty()) {
+            Point c = q.remove();
+            for(int k=0;k<4;k++) {
+                int tx = c.x + dx[k];
+                int ty = c.y + dy[k];
+                if(tx>=0&&tx<wr&&ty>=0&&ty<wc) {
+                    if(!walls[tx][ty]&&!outermap[tx][ty]) {
+                        outermap[tx][ty] = true;
+                        q.add(new Point(tx,ty));
+                    }
+                }
+            }
+        }
+        q.clear();
+        int minx = wr+1;
+        int miny = wc+1;
+        o:
+        for(int i=0;i<wr;i++) {
+            for(int j=0;j<wc;j++) {
+                if(!outermap[i][j]&&!walls[i][j]) {
+                    minx = i;
+                    miny = j;
+                    break o;
+                }
+            }
+        }
+        q.add(new Point(minx,miny));
+        track[minx][miny] = true;
+        while(!q.isEmpty()) {
+            Point c = q.remove();
+            for(int k=0;k<4;k++) {
+                int tx = c.x + dx[k];
+                int ty = c.y + dy[k];
+                if(tx>=0&&tx<wr&&ty>=0&&ty<wc) {
+                    if(!walls[tx][ty]&&!track[tx][ty]) {
+                        track[tx][ty] = true;
+                        q.add(new Point(tx,ty));
+                    }
+                }
+            }
+        }
+        for(int i=0;i<wr;i++) {
+            for(int j=0;j<wc;j++) {
+                map[i][j] = track[i][j];
+            }
+        }
+        return map;
+    }
     /**
      * Closes the track so the car doesn't get too close to the walls
      * @param dist
