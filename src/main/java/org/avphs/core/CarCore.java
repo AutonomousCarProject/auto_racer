@@ -28,7 +28,7 @@ public abstract class CarCore {
     ArrayList<CarModule> updatingCarModules = new ArrayList<>(); // All of the modules that will be run each frame.
     ArrayList<CloseHook> closeHookModules = new ArrayList<>();
     ScheduledExecutorService carExecutorService;
-
+    private boolean closing;
     /**
      * Constructor that instantiates the car.
      *
@@ -50,6 +50,7 @@ public abstract class CarCore {
     public class ShutdownHook extends Thread {
         @Override
         public void run() {
+            closing = true;
             for (CloseHook carModule : closeHookModules) {
                 carModule.onClose();
             }
@@ -92,6 +93,8 @@ public abstract class CarCore {
      * process, and image is fetched from the car and stored in carData.
      */
     private void update() {
+        if (closing) return;
+
         car.update(carData);
         car.getCameraImage(carData);
         for (CarModule module : updatingCarModules) {

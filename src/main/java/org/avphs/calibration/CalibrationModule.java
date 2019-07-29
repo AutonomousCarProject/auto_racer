@@ -42,6 +42,8 @@ public class CalibrationModule {
 
     public static final double  CM_PER_ROTATION = 0.096; //approximation (from DriverCons)
 
+    public static final int STRAIGHT_ANGLE = 7;
+
     //Helper method to read speed change distance data
     private static byte[][][] readSpeedChangeDistData (){
         byte[][][] rowList = null;
