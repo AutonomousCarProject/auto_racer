@@ -85,8 +85,7 @@ public class PositionModule implements CarModule, CloseHook {
 
             if (wheelAngle > 91) {//if turning right
                 computeDirection(deltaPositionAngle);//update direction with delta direction  because clockwise = positive
-            }
-            if (wheelAngle < 91) {//if turning left
+            } else if (wheelAngle < 91) {//if turning left
                 computeDirection(-deltaPositionAngle);//update direction with negative turn going left
             }
         }
@@ -94,17 +93,15 @@ public class PositionModule implements CarModule, CloseHook {
 
         //THIS WILL BE USED LATER
         prevPositionData.updateAll(positionData.getPosition(), positionData.getDirection(), positionData.getSpeed());
-        System.out.println("Position = ("+Math.round(positionData.getPosition()[0])+","+positionData.getPosition()[1]+")");
+        System.out.println("Position = (" + Math.round(positionData.getPosition()[0]) + "," + positionData.getPosition()[1] + ")");
 
     }
 
     private void computeDirection(float newDirection) {
         float direction = positionData.getDirection();
         direction += newDirection;
-        if (direction >= 360) {
-            direction -= 360;
-        } else if (direction < 0) {
-            direction += 360;
+        if (direction >= 360 || direction < 0) {
+            direction %= 360;
         }
         positionData.updateDirection(direction);
     }
@@ -117,19 +114,19 @@ public class PositionModule implements CarModule, CloseHook {
 
     private void convertPosition(float x, float y) {
         //FIXME x and y are currently in cm, not in the virtual world coordinates.
-        if(!(x == 0 && y == 0)){
+        if (!(x == 0 && y == 0)) {
             float[] temp = pol(x, y);
             temp = cart(temp[0], temp[1] - positionData.getDirection());
             positionData.updatePosition(temp);
         }
     }
 
-    private float[] pol(float x, float y){//to polar coordinates
-        return new float[] {(float) Math.sqrt(x*x + y*y), (float) Math.toDegrees(Math.atan2(y,x))};
+    private float[] pol(float x, float y) {//to polar coordinates
+        return new float[]{(float) Math.sqrt(x * x + y * y), (float) Math.toDegrees(Math.atan2(y, x))};
     }
 
-    private float[] cart(float l, float d){//to cartesian
-        return new float[] {(float) (l * Math.cos(Math.toRadians(d))), (float) (l * Math.sin(Math.toRadians(d)))};
+    private float[] cart(float l, float d) {//to cartesian
+        return new float[]{(float) (l * Math.cos(Math.toRadians(d))), (float) (l * Math.sin(Math.toRadians(d)))};
     }
 
 
