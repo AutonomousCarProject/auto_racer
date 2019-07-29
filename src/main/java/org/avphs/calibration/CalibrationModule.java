@@ -123,6 +123,7 @@ public class CalibrationModule {
     }
 
     //Helper method to read angle data
+    //Note: negative angles mean a turn to the left
     private static short[] readAngleData (){
         short[] rowList = null;
         try (BufferedReader br = new BufferedReader(new FileReader("calibration\\src\\main\\java\\org.avphs\\calibration\\AngleData.txt"))) {
@@ -145,6 +146,7 @@ public class CalibrationModule {
     }
 
     //Helper method to read radii data
+    //Note: negative radii mean a turn to the left
     private static short[] readRadiiData (){
         //TODO: FIX
         short[] rowList = null;
