@@ -240,12 +240,14 @@ public class CalibrationModule {
     }
 
     public static final byte getMaxSpeed(byte floor, short rad) {
-        return MAX_SPEEDS[floor][rad];
+        return 1;
+        //return MAX_SPEEDS[floor][rad];
 
     }
 
     public static final byte getSpeedChangeDist(byte floor, byte initSpeed, byte finalSpeed) {
-        return SPEED_CHANGE_DISTS[floor][initSpeed][finalSpeed];
+        return 1;
+        //return SPEED_CHANGE_DISTS[floor][initSpeed][finalSpeed];
     }
 
     public static final short getAngles(short rad) {

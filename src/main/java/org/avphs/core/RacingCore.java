@@ -24,15 +24,17 @@ public class RacingCore extends CarCore {
         super(car, showWindow);
 
         // Add Run-time Modules
-        updatingCarModules.add(new DrivingModule());
+        // updatingCarModules.add(new MapModule());
+        updatingCarModules.add(new RacingLineModule());
+
         updatingCarModules.add(new ImageModule());
         try {
             updatingCarModules.add(new PositionModule());
         } catch (IOException e) {
             e.printStackTrace();
         }
-        updatingCarModules.add(new RacingLineModule());
-        updatingCarModules.add(new MapModule());
+        updatingCarModules.add(new DrivingModule());
+
         updatingCarModules.add(new ObjectDetectionModule());
         updatingCarModules.add(new PassingModule());
 

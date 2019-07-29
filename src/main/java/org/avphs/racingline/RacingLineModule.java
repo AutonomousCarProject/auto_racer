@@ -46,6 +46,7 @@ public class RacingLineModule implements CarModule {
             System.out.println("Rows: "+rows+"; Columns: "+columns);
             makeRacingLine(testMap);
             bufread.close();
+            carData.addData("racingLine",center.getRacingLinePoints());
         }catch(IOException e){
             e.printStackTrace();
         }

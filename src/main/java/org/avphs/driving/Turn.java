@@ -11,6 +11,7 @@ public class Turn extends RoadData{
 		this.endX = endX;
 		this.endY = endY;
 		radius = c.getRadius();
+		center = c.center;
 	}
 
 	public short getRadius(){
