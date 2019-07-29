@@ -91,7 +91,7 @@ public class DrivingModule implements CarModule {
     private void getSegment(){
         float x = currentPos.getX(); float y = currentPos.getY();
         for (RoadData i : roadData){
-            if (currentSegment instanceof Straight){
+            if (i instanceof Straight){
                 Straight seg = (Straight)i;
                 float m = seg.getSlope(); float b = (-m * x) + y;
                 float eq = m * x + b;
@@ -184,6 +184,7 @@ public class DrivingModule implements CarModule {
                         findRadiusAndCenter(racingLinePoints[(i+n-1)%n],racingLinePoints[i],racingLinePoints[(i+1)%n])));
             }
         }
+        System.out.println("NNNNNNN: "+n);
     }
 
     private boolean onRacingLine(){  //Returns whether we are close enough to the racing line
