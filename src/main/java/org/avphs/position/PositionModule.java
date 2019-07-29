@@ -32,7 +32,7 @@ public class PositionModule implements CarModule {
 
     @Override
     public void update(CarData carData) {
-        if(cumulatedDistance > 33 && cumulatedDistance < 105){
+        /*if(cumulatedDistance > 33 && cumulatedDistance < 105){
             angle = 15;
         }
         else if (cumulatedDistance > 105 && cumulatedDistance < 136){
@@ -49,12 +49,15 @@ public class PositionModule implements CarModule {
         }
         else if(cumulatedDistance > 210){
             angle = 0;
-        }
+        }*/
+
+        angle = 45;
 
         cumulatedDistance += (float)ts.GetDistance(false);
         computePosition((float)ts.GetDistance(true), angle);
         carData.addData("position", positionData);
         System.out.println(positionData.getDirection());
+        System.out.println(angle);
     }
 
     private void computePosition(float distanceTraveled, float wheelAngle) {
@@ -63,12 +66,15 @@ public class PositionModule implements CarModule {
         // find out if this is run before or after driving. If after, good, else: bad.
 
         //FIXME find out the error in the servo value, and add that value to "> 90" and subtract from "< 90",defaulted at 2
-        if (wheelAngle != 0) { //if turning right
-            drivingArcRadius = ComputeTurnRadius(disBetweenAxle, wheelAngle);
-        }
+        if (wheelAngle > 91) { //if turning right
+            drivingArcRadius = (float) (disBetweenAxle / Math.cos(Math.toRadians(-wheelAngle)));
+        } else if (wheelAngle < 89) { //if turning left
+            drivingArcRadius = (float) (disBetweenAxle / Math.cos(Math.toRadians(wheelAngle)));
+        }//
         else {
             drivingArcRadius = 0;
         }
+
         if (drivingArcRadius == 0) {
             //just drive straight forward
             convertPosition(0, distanceTraveled);
@@ -96,19 +102,14 @@ public class PositionModule implements CarModule {
 
     }
 
-    private float ComputeTurnRadius(float wheelBase, float turningAngle){ //FIXME THIS IS THE TURN RADIUS OF THE FRONT INSIDE WHEEL ONLY; FIND A WAY TO FIND THE TURN RADIUS OF THE FRONT OUTSIDE WHEEL AND THEN FIND THE AVERAGE OF THEM TO GET THE TURN RADIUS OF THE LOCATION OF THE CAMERA
-        float turnRadius = (float) Math.abs(wheelBase / Math.sin(turningAngle));
-        return turnRadius;
-    }
-
-
     private void computeDirection(float newDirection) {
         float direction = positionData.getDirection();
         direction += newDirection;
-        if (direction >= 360) {
-            direction -= 360;
-        } else if (direction < 0) {
-            direction += 360;
+        if (direction >= 360 || direction < 0) {
+            direction %= 360;
+            if (direction < 360) {
+                direction += 360;
+            }
         }
         positionData.updateDirection(direction);
     }
