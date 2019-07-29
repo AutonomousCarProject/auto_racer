@@ -191,8 +191,8 @@ public class MapFormatter {
         float diff1 = pos[0]; float diff2 = pos[1];
         pos[0] = 0; pos[1] = 0;
 
-        coords[0] = (float)(pos[0] + (20 * Math.cos(angle)));
-        coords[1] = (float)(pos[1] + (20 * Math.sin(angle)));
+        coords[0] = (float)(pos[0] + (70 * Math.cos(angle)));
+        coords[1] = (float)(pos[1] + (70 * Math.sin(angle)));
 
 
 
