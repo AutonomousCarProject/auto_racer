@@ -10,7 +10,7 @@ import org.avphs.window.WindowModule;
 public class ImageModule implements CarModule {
 
     WindowModule window;
-    public  int WINDOW_WIDTH = 912, WINDOW_HEIGHT = 480;
+    public int WINDOW_WIDTH = 912, WINDOW_HEIGHT = 480;
 
     byte[] bayerImage = new byte[4*WINDOW_HEIGHT*WINDOW_WIDTH];
     int[] rgbImage = new int[WINDOW_HEIGHT*WINDOW_HEIGHT];
