@@ -1,24 +1,22 @@
 package org.avphs.driving;
 
 public class VectorPoint {
-    private float x;
-    private float y;
+    private float[] coords = new float[2];
     private float currentOrientation;
     private float currentSpeed;
 
-    public VectorPoint(float x, float y, float currentOrientation, float currentSpeed){
-        this.x = x;
-        this.y = y;
+    public VectorPoint(float[] coords, float currentOrientation, float currentSpeed){
+        this.coords = coords;
         this.currentOrientation = currentOrientation;
         this.currentSpeed = currentSpeed;
     }
 
     public float getX(){
-        return x;
+        return coords[0];
     }
 
     public float getY(){
-        return y;
+        return coords[1];
     }
 
     public float getCurrentOrientation(){

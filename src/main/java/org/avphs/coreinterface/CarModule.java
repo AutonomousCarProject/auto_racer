@@ -1,7 +1,5 @@
 package org.avphs.coreinterface;
 
-import java.io.IOException;
-
 public interface CarModule {
 
     /**
@@ -12,17 +10,10 @@ public interface CarModule {
     void init(CarData carData);
 
     /**
-     * Returns this modules current commands to the core.
-     *
-     * @return The array of commands to execute.
-     */
-    CarCommand[] commands();
-
-    /**
      * Called once per frame. This is intended to run any code
      * a module has to run during the race.
      *
      * @param carData Holds all the data the car has.
      */
-    void update(CarData carData) throws IOException;
+    void update(CarData carData);
 }
