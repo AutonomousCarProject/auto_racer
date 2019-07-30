@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Random;
+import java.util.function.Function;
 
 public class interpolation3d {
 	//number of terms in the desired polynomial
@@ -27,6 +28,12 @@ public class interpolation3d {
 	Random ran = new Random();
 	//mutate amount
 	double m = 1;
+
+	Function<int[], Integer>[] functions;
+
+	enum functionTypes {polynomial, logarythmic};
+
+	//and 2d plz
 	public interpolation3d(double[] x, double[] y, double[] z) throws IOException {
 		//INPUT
 		n = x.length;
@@ -53,12 +60,24 @@ public class interpolation3d {
 			bots[i] = new bot(temp);
 		}
 	}
+
+	public void
+
+
 	//run
 	public void run(int numtrials) throws IOException {
+
+		while (err > threshold && count < maxIterations){
+			addLayer();
+
+		}
+
 		for(int trial=0;trial<trials;trial++) {
 			double[][] pass = new double[n][vars];
 			double[] target = new double[n];
 			//polynomial
+
+
 			for(int i=0;i<n;i++) {
 				double a = input[i][0];
 				double b = input[i][1];
