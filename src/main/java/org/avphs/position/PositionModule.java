@@ -12,6 +12,8 @@ public class PositionModule implements CarModule {
     private TrakSim ts;
     private int angle = 0;
     private float cumulatedDistance = 0;
+    private float deltaPositionAngle;
+    private float turnRadius = 0;
 
     float distanceTraveledRadians;
     float distanceTraveledDegrees;
@@ -61,38 +63,31 @@ public class PositionModule implements CarModule {
     private void ComputePosition(float distanceTraveled, float turnAngle, float currentDirection){
         float wheelBase = 10f; //not sure if actually 10
 
-        float newPosX = 0;
-        float newPosY = 0;
-        float newPos[] = {newPosX, newPosY};
-        float turnRadius;
-
-        if(turnAngle != 0) {
-            turnRadius = ComputeTurnRadius(wheelBase, turnAngle);
-        }
-        else{
-            turnRadius = 0;
+        if (turnAngle > 91) { //if turning right
+            turnRadius = (float) (wheelBase / Math.cos(Math.toRadians(-turnAngle)));
+        } else if (turnAngle < 89) { //if turning left
+            turnRadius = (float) (wheelBase / Math.cos(Math.toRadians(turnAngle)));
         }
 
-        if(turnAngle > 0) {
-            ComputeDirection(currentDirection, turnRadius, distanceTraveled, "right");
-        }
-        else if(turnAngle < 0){
-            ComputeDirection(currentDirection, turnRadius, distanceTraveled, "left");
-        }
-        else{//turnAngle == 0
-            ComputeDirection(currentDirection, turnRadius, distanceTraveled, "none");
-        }
-
-        if (turnRadius == 0) {
+        if (turnRadius == 0) {//FIXME: talk to ryan from calibration about straight forward, infinite turn radius
             //just drive straight forward
             convertPosition(0, distanceTraveled);
         } else {
             //if turning
-            if (distanceTraveledDegrees < 90 || distanceTraveledDegrees > 270) {
-                convertPosition((float) (turnRadius - turnRadius * Math.cos(Math.toRadians(distanceTraveledDegrees))), (float) (turnRadius * Math.sin(Math.toRadians(distanceTraveledDegrees))));//weird trig stuff because for the unit circle the trig is based on center of circle. Here, the car starts at either (1,0) [turning left] or (-1,0) [turning right]
+            //distance traveled / circumference give fraction traveled around circle. Multiply by 360 to get the number of degrees around circle we have traveled
+            deltaPositionAngle = (float) (360 * distanceTraveled / (Math.PI * Math.pow(turnRadius, 2)));
+            if (deltaPositionAngle < 90 || deltaPositionAngle > 270) {//take that angle travelend along the circle, and get an x,y coordinate from that
+                convertPosition((float) (turnRadius - turnRadius * Math.cos(Math.toRadians(deltaPositionAngle))), (float) (turnRadius * Math.sin(Math.toRadians(deltaPositionAngle))));//weird trig stuff because for the unit circle the trig is based on center of circle. Here, the car starts at either (1,0) [turning left] or (-1,0) [turning right]
 
             } else {//if(deltaPositionAngle > 90), turning left
-                convertPosition((float) (turnRadius + turnRadius * Math.cos(Math.toRadians(distanceTraveledDegrees))), (float) (turnRadius * Math.sin(Math.toRadians(distanceTraveledDegrees))));//weird trig stuff because for the unit circle the trig is based on center of circle. Here, the car starts at either (1,0) [turning left] or (-1,0) [turning right]
+                convertPosition((float) (turnRadius + turnRadius * Math.cos(Math.toRadians(deltaPositionAngle))), (float) (turnRadius * Math.sin(Math.toRadians(deltaPositionAngle))));//weird trig stuff because for the unit circle the trig is based on center of circle. Here, the car starts at either (1,0) [turning left] or (-1,0) [turning right]
+            }
+
+            //given angle traveled around the circle, update the direction we are facing
+            if (turnAngle > 91) {//if turning right
+                computeDirection(deltaPositionAngle);//update direction with delta direction  because clockwise = positive
+            } else if (turnAngle < 91) {//if turning left
+                computeDirection(-deltaPositionAngle);//update direction with negative turn going left
             }
         }
 
@@ -104,33 +99,16 @@ public class PositionModule implements CarModule {
         System.out.println("");
     }
 
-    private float ComputeTurnRadius(float wheelBase, float turningAngle){ //FIXME THIS IS THE TURN RADIUS OF THE FRONT INSIDE WHEEL ONLY; FIND A WAY TO FIND THE TURN RADIUS OF THE FRONT OUTSIDE WHEEL AND THEN FIND THE AVERAGE OF THEM TO GET THE TURN RADIUS OF THE LOCATION OF THE CAMERA
-        float turnRadius = (float) Math.abs(wheelBase / Math.sin(turningAngle));
-        return turnRadius;
-    }
-
-    private void ComputeDirection(float currentDirection, float turnRadius, float distanceTraveledParkMeters, String turnType){ //returns new direction
-        distanceTraveledRadians = distanceTraveledParkMeters / turnRadius;
-        distanceTraveledDegrees = (float) (distanceTraveledRadians * 180 / Math.PI);
-        float newDirection;
-
-        if(turnType == "right"){
-            newDirection = currentDirection + distanceTraveledDegrees;
-            if(newDirection >= 360){
-                newDirection -= 360;
+    private void computeDirection(float newDirection) {//adds a new direction to the old direction
+        float direction = positionData.getDirection();//get the original direction the car was facing
+        direction += newDirection;//add the changed direction
+        if (direction >= 360 || direction < 0) {//get the direction between 0 and 360
+            direction %= 360;
+            if (direction < 360) {//because % returns remainder instead of modulus, we need to add 360 when the angle is < 0
+                direction += 360;
             }
         }
-        else if(turnType == "left"){
-            newDirection = currentDirection - distanceTraveledDegrees;
-            if(newDirection < 0){
-                newDirection += 360;
-            }
-        }
-        else{
-            newDirection = currentDirection + 0;
-        }
-
-        positionData.updateDirection(newDirection);
+        positionData.updateDirection(direction);//add new dir to posdata
     }
 
     private void convertPosition(float x, float y) {
