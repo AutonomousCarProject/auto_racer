@@ -154,7 +154,7 @@ public class ThrottleDataGenerator implements CarModule {
 //            angleIndex++;
 //        }
     }
-    
+
     public CarCommand[] commands() {
         return new CarCommand[0];
     }
