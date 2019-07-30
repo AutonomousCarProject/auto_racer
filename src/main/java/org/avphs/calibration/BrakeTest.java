@@ -6,6 +6,7 @@ import org.avphs.camera.SimCamera;
 import org.avphs.car.Car;
 import org.avphs.core.CalibrationCore;
 import org.avphs.coreinterface.CarData;
+import org.avphs.position.PositionData;
 import org.avphs.sbcio.ArduinoData;
 
 import java.io.BufferedWriter;
@@ -24,9 +25,9 @@ public class BrakeTest extends TimerTask {
     CalibrationCore core = new CalibrationCore(car, false);
 
     public void run(){
-        curSpeed = 0;//((PositionData)carData.getModuleData("position")).getSpeed();
-        //System.out.println("curSpeed: "+curSpeed);
+        curSpeed = ((PositionData)carData.getModuleData("position")).getSpeed();
     }
+
 
     public static void main(String[] args) {
         BrakeTest boi = new BrakeTest();
@@ -49,9 +50,8 @@ public class BrakeTest extends TimerTask {
             startSpeed+=1;
         }
 
+        //startSpeed, endSpeed, brakeDistance
         try(BufferedWriter writer = new BufferedWriter(new FileWriter("src/main/java/org/avphs/calibration/SpeedToDistData.txt"))){
-            writer.write("startSpeed, endSpeed, brakeDistance");
-            writer.newLine();
             for(int i=0;i<numStartSpeeds;i++)//start speeds
             {
                 for (int j = 0; j < numEndSpeeds; j++)//end speeds
@@ -72,43 +72,34 @@ public class BrakeTest extends TimerTask {
     }
 
 
-    //Given a start and end speed, find braking distance
+    /*Given a start and end speed, find braking distance
+    *accelerates until hitting or passing start speed, then decelerates
+    * when hitting/passing endSpeed, stops car and adds data to brakeData arrayList
+     */
     public void testBrakeDist(byte startSpeed, byte endSpeed)
     {
         byte throttle = CalibrationModule.getThrottle((byte)0, (short)0, startSpeed);
-        //boolean decelerate = false;//used to set acceleration/trigger stuff
         int startDist = 0;
         int endDist;
         double brakeDist;
 
-        /*if(!decelerate)
-        {
-            car.accelerate(true, throttle);
-        }*/
         car.accelerate(true, throttle);
-
         if(curSpeed >= startSpeed)
         {
-            //System.out.println("curSpeed >= startSpeed");
-            //decelerate = true;
             startDist = ((ArduinoData) carData.getModuleData("arduino")).getOdomCount();
             throttle = CalibrationModule.getThrottle((byte)0, (short)0, endSpeed);
             car.accelerate(true, throttle);
         }
         if(curSpeed <= endSpeed)
         {
-            //System.out.println("curSpeed >= startSpeed");
-            endDist = 0;//((ArduinoData) carData.getModuleData("arduino")).getOdomCount();
+            endDist = ((ArduinoData) carData.getModuleData("arduino")).getOdomCount();
             brakeDist = endDist - startDist;
             car.stop();
-            //throw start/end speed, and braking distance into arraylist
             double[] data = new double[3];
             data[0] = startSpeed;
             data[1] = endSpeed;
             data[2] = brakeDist;
             brakeData.add(data);
-            //System.out.println(brakeDist);
-            //curTest +=1;
         }
     }
 }
