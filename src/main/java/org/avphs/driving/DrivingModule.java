@@ -200,6 +200,7 @@ public class DrivingModule implements CarModule {
                         findRadiusAndCenter(racingLinePoints[(i+n-1)%n],racingLinePoints[i],racingLinePoints[(i+1)%n])));
             }
         }
+        System.out.println("NNNNNNN: "+n);
     }
 
     /*
