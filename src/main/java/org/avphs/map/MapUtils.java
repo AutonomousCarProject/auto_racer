@@ -1,5 +1,8 @@
 package org.avphs.map;
 
+import java.io.FileWriter;
+import java.io.IOException;
+
 class MapUtils {
 
     // private double[] cos = new double[721];
@@ -21,6 +24,26 @@ class MapUtils {
             sin[i] = Math.sin(Math.toRadians(i));
         }
     }*/
+
+    public static void writeToFile(boolean[][] m){
+        try{
+            FileWriter f = new FileWriter("src/main/java/org/avphs/map/map.txt");
+            f.write(m.length + "  " + m[0].length + "\n");
+            for(int i = 0; i < m.length; i++){
+                for (int j = 0; j < m[0].length; j++){
+                    if(m[i][j])f.write('1');
+                    else f.write('0');
+                }
+                f.write('\n');
+            }
+
+            f.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public void setupDistanceLookup() { // initializes the values in
         for (int i = 0; i < pixelHeightToX.length - 1; i++) {
