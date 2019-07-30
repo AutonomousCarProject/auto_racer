@@ -7,15 +7,15 @@ import org.avphs.traksim.TrakSim;
 
 public class PositionModule implements CarModule {
 
-    private PositionData prevPositionData = new PositionData(new float[]{0, 0}, 0, 0);
     private PositionData positionData;
     private TrakSim ts;
-    private int angle = 0;
-    private float cumulatedDistance = 0;
+    private float turnRadius = 0;
+    private int angle = 0; //angle used to determine when to turn for hard code
+    private float cumulatedDistance = 0; //used to add up GetDistance before it resets to use for hard code
+    private float wheelBase = 10f; //could not be 10
 
-    float distanceTraveledRadians;
-    float distanceTraveledDegrees;
-
+    private float distanceTraveledRadians;
+    private float distanceTraveledDegrees;
 
     public void init(CarData carData) {
         //THIS WILL BE WHERE WE READ FROM A FILE TO FIND THE INITIAL POSITION
@@ -54,46 +54,31 @@ public class PositionModule implements CarModule {
 
         cumulatedDistance += (float)ts.GetDistance(false); //used only to find when to turn for the hard code
         ComputePosition((float)ts.GetDistance(true), angle, positionData.getDirection());
-        carData.addData("position", positionData);
-
     }
 
     private void ComputePosition(float distanceTraveled, float turnAngle, float currentDirection){
-        float wheelBase = 10f; //not sure if actually 10
 
-        float newPosX = 0;
-        float newPosY = 0;
-        float newPos[] = {newPosX, newPosY};
-        float turnRadius;
-
-        if(turnAngle != 0) {
+        if(turnAngle != 0) { //if car is turning at all
             turnRadius = ComputeTurnRadius(wheelBase, turnAngle);
-        }
-        else{
-            turnRadius = 0;
-        }
 
-        if(turnAngle > 0) {
-            ComputeDirection(currentDirection, turnRadius, distanceTraveled, "right");
-        }
-        else if(turnAngle < 0){
-            ComputeDirection(currentDirection, turnRadius, distanceTraveled, "left");
-        }
-        else{//turnAngle == 0
-            ComputeDirection(currentDirection, turnRadius, distanceTraveled, "none");
-        }
+            if(turnAngle > 0) {
+                ComputeDirection(currentDirection, turnRadius, distanceTraveled, "right");
+            }
+            else{ //if turnAngle < 0
+                ComputeDirection(currentDirection, turnRadius, distanceTraveled, "left");
+            }
 
-        if (turnRadius == 0) {
-            //just drive straight forward
-            convertPosition(0, distanceTraveled);
-        } else {
-            //if turning
-            if (distanceTraveledDegrees < 90 || distanceTraveledDegrees > 270) {
+            if (distanceTraveledDegrees < 90 || distanceTraveledDegrees > 270) { //distanceTravelled in degrees is calculated in ComputeDirection
                 convertPosition((float) (turnRadius - turnRadius * Math.cos(Math.toRadians(distanceTraveledDegrees))), (float) (turnRadius * Math.sin(Math.toRadians(distanceTraveledDegrees))));//weird trig stuff because for the unit circle the trig is based on center of circle. Here, the car starts at either (1,0) [turning left] or (-1,0) [turning right]
 
-            } else {//if(deltaPositionAngle > 90), turning left
+            } else {//if(distanceTravelledDegrees > 90), turning left
                 convertPosition((float) (turnRadius + turnRadius * Math.cos(Math.toRadians(distanceTraveledDegrees))), (float) (turnRadius * Math.sin(Math.toRadians(distanceTraveledDegrees))));//weird trig stuff because for the unit circle the trig is based on center of circle. Here, the car starts at either (1,0) [turning left] or (-1,0) [turning right]
             }
+        }
+        else{ //if the car is going straight
+            turnRadius = 0;
+            ComputeDirection(currentDirection, turnRadius, distanceTraveled, "none");
+            convertPosition(0, distanceTraveled);
         }
 
         //System.out.println("direction: " + positionData.getDirection());
@@ -109,7 +94,7 @@ public class PositionModule implements CarModule {
         return turnRadius;
     }
 
-    private void ComputeDirection(float currentDirection, float turnRadius, float distanceTraveledParkMeters, String turnType){ //returns new direction
+    private void ComputeDirection(float currentDirection, float turnRadius, float distanceTraveledParkMeters, String turnType){ //updates direction in PositionData
         distanceTraveledRadians = distanceTraveledParkMeters / turnRadius;
         distanceTraveledDegrees = (float) (distanceTraveledRadians * 180 / Math.PI);
         float newDirection;
@@ -133,7 +118,7 @@ public class PositionModule implements CarModule {
         positionData.updateDirection(newDirection);
     }
 
-    private void convertPosition(float x, float y) {
+    private void convertPosition(float x, float y) { //sends PositionData the change in position
         //FIXME x and y are currently in cm, not in the virtual world coordinates.
         if(!(x == 0 && y == 0)){
             float[] temp = pol(x, y);
