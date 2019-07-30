@@ -1,12 +1,14 @@
 package org.avphs.core;
 
 import org.avphs.car.Car;
+import org.avphs.coreinterface.CarModule;
 import org.avphs.image.ImageModule;
+import org.avphs.calibration.*;
 
 import java.util.Scanner;
 
-
 public class CalibrationCore extends CarCore {
+
     public CalibrationCore(Car car, boolean needsCamera) {
         super(car, false);
 
@@ -19,8 +21,7 @@ public class CalibrationCore extends CarCore {
         startUpdatingModules();
     }
 
-    @Override
-    public void startUpdatingModules(){
+    public void runTime(){
         Scanner sc = new Scanner(System.in);
         LOOP:
         while (true){
@@ -33,22 +34,19 @@ public class CalibrationCore extends CarCore {
                     System.out.println("'CameraDataGenerator'");
                     System.out.println("'3DInterpolation'");
                     System.out.println("'MoveForward'");
-                    System.out.println("'ThrottleDataGenerator'");
-                    System.out.println("'TurnThrottleGenerator'");
-                    System.out.println("");
                     System.out.println("'help' prints this little blurb");
                     break;
                 case "CameraDataGenerator":
+                    //updatingCarModules.add(new CameraDataGenerator());
                     break;
                 case "3DInterpolation":
                     break;
                 case "MoveForward":
                     break;
-                case "ThrottleDataGenerator":
-                    break;
-                case "TurnThrottleGenerator":
-                    break;
                 case "BrakeTest":
+                    break;
+                case "ThrottleDataGenerator":
+                    //updatingCarModules.add(new ThrottleDataGenerator(car));
                     break;
                 case "stop":
                     System.out.println("Stopping all calibration functions!");
@@ -56,9 +54,5 @@ public class CalibrationCore extends CarCore {
             }
         }
         car.stop();
-    }
-
-    private void update(){
-
     }
 }
