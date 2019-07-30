@@ -14,23 +14,27 @@ import java.io.IOException;
 
 public class MapModule implements CarModule, CloseHook {
 
-    private final int MAP_MODE = 2;
+    private final int MAP_MODE = 5;
     //0: Mapping while driving close to the walls
     //1: Mapping by driving through the center of the track and expanding the track 5 carlengths out
     //Modes 2&3 are debugging modes
     //2: Debugging in TrakSim
     //3: Debugging using FakeDataStream
     //4: Debugging in TrakSim using only position tracking
+    //5: Gens Hard Coded Track for Friday
+    //6: Does nothing
     private final int MAP_X_DIMENSION = 1500;
     private final int MAP_Y_DIMENSION = 1500;
     private final float STARTING_ANGLE = 270.0f;
 
+    boolean   executed = false;
 
     //One unit in the array = 1cm. This means that 1500x1500 is equal to a 15m by 15m room.
 
     private final float MODIFIED_CAR_X_STARTING_POSITION = 0.0f;
     private final float MODIFIED_CAR_Y_STARTING_POSITION = 0.0f;
     //These numbers are added to the (0,0) origin to indicate the starting position of the car in the room.
+
 
 
     private ImageData imageData;
@@ -134,7 +138,12 @@ public class MapModule implements CarModule, CloseHook {
                 mapformatter.AddData(fakedata.returnPos(), (float) fakedata.runningRadianTotal, fakedata.bottomOuterWallHeights);
                 if (fakedata.done) {
                     if (!fakedata.mapshown) {
-                        map.showMap();
+                        MapEditor edit = new MapEditor(map);
+                        if (!edit.editorOpen)
+                        {
+                            edit.LaunchMapEditor();
+                        }
+
                         fakedata.mapshown = true;
                     }
 
@@ -175,9 +184,23 @@ public class MapModule implements CarModule, CloseHook {
                 //System.out.println("Current Angle: " + currentAngle);
 
                 mapformatter.expandTrackFiveCarLengthsToTheLeftAndRightOfCurrentPos(pos1, currentAngle1);
-        }
+            case 5:
+                //Hardcoded Track
 
-        cycleCounter++;
+                if (!executed)
+                {
+                    genHardCodedTrack generator = new genHardCodedTrack(map);
+                    Map fridaysMap = new Map(1468, 1121);
+                    fridaysMap = generator.genMap();
+                    //MapEditor edit = new MapEditor(fridaysMap);
+                    //edit.LaunchMapEditor();
+                    executed = true;
+                }
+
+                break;
+            default:
+                break;
+        }
 
         /**
          * THINGY
@@ -187,7 +210,8 @@ public class MapModule implements CarModule, CloseHook {
         if (cycleCounter % 200 == 0)//Show map developing
         {
             map.showMap();
-        }//*/
+        }*/
+
         carData.addData("map", map);
 
     }
