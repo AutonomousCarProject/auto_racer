@@ -31,7 +31,8 @@ public class CalibrationModule {
         return rowList;
     }
     */
-
+    public static final int SERVO_ANGLE_MIN = -33;
+    public static final int SERVO_ANGLE_MAX = 44;
     //Camera view angle width in degrees
     //TODO:Find real value
     public static final float CAMERA_VIEW_ANGLE = 100;
@@ -175,7 +176,8 @@ public class CalibrationModule {
         return rowList;
     }
 
-    private static byte[][][] readThrottleData(){
+    //angle, desired velocity
+    private static byte[][] readThrottleData(){
         byte[][][] rowList = null;
         try (BufferedReader br = new BufferedReader(new FileReader("calibration\\src\\main\\java\\org.avphs\\calibration\\ThrottleCalculations.txt"))) {
 

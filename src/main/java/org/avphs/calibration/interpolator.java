@@ -7,7 +7,7 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Random;
 
-public class interpolator {
+public class Interpolator {
 	//number of terms in the desired polynomial
 	int vars = 3;
 	//degree of polynomial
@@ -30,11 +30,11 @@ public class interpolator {
 	//mutate amount
 	double m = 1;
 
-	public interpolator(double[] x, double[] y, int maxError) {
-		double[] arr = new double[6];
+	public Interpolator(double[] x, double[] y, int maxError) {
+		double[] arr = new double[x.length];
 		interp(x, arr, y, maxError);
 	}
-	public interpolator(double[] x, double[] y, double[] z, int maxError) {
+	public Interpolator(double[] x, double[] y, double[] z, int maxError) {
 		interp(x, y, z, maxError);
 
 		/*while(true) {
@@ -227,7 +227,7 @@ public class interpolator {
 			y[i] = Math.random()*10-5;
 			z[i] = function(x[i],y[i]);
 		}
-		new interpolator(x,y,z, 5);
+		new Interpolator(x,y,z, 5);
 	}
 	public static double function(double a, double b) {
 		return 1+a*a*a+b*b*b+a*b;
