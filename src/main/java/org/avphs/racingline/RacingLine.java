@@ -48,7 +48,9 @@ public class RacingLine {
     public void setRacingLinePointsList(ArrayList<RacingLinePoint> newLine) {
         RacingLinePointsList = newLine;
         RacingLinePoints = null;
+        RacingLinePoints = getRacingLinePoints();
     }
+
     public void addPoint(RacingLinePoint newPoint) {
         RacingLinePointsList.add(newPoint);
     }
@@ -60,12 +62,19 @@ public class RacingLine {
     public void sortPoints() {
         ArrayList<RacingLinePoint> orderedRacingLine = new ArrayList<RacingLinePoint>();
         HashSet<RacingLinePoint> remainingPoints = new HashSet<RacingLinePoint>(RacingLinePointsList);
+
+        //Start the sort at the first point in the lists
         orderedRacingLine.add(RacingLinePointsList.get(0));
         remainingPoints.remove(RacingLinePointsList.get(0));
+
+        //Iterate through the points until none are left over
         while (remainingPoints.size() > 0) {
             RacingLinePoint currentPoint = orderedRacingLine.get(orderedRacingLine.size() - 1);
             RacingLinePoint closestPoint = new RacingLinePoint();
+
             float minDist = Float.MAX_VALUE;
+
+            //Check the current point against all of the remaining points
             for (RacingLinePoint point : remainingPoints) {
                 float tempDist = currentPoint.distanceToPoint(point);
                 if (tempDist < minDist) {
@@ -73,9 +82,11 @@ public class RacingLine {
                     closestPoint = point;
                 }
             }
+            //Move the closest point to the orderedRacingLine
             orderedRacingLine.add(closestPoint);
             remainingPoints.remove(closestPoint);
         }
+
         RacingLinePointsList = orderedRacingLine;
     }
 }

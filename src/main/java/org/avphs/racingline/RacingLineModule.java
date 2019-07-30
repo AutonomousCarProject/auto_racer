@@ -10,23 +10,25 @@ import java.util.*;
 import java.io.*;
 
 public class RacingLineModule implements CarModule {
-    private static ArrayList<Point> outerWall = new ArrayList<Point>();
-    private static ArrayList<Point> innerWall = new ArrayList<Point>();
-    private HashSet<Point> allWalls = new HashSet<Point>();
-    private RacingLine center = new RacingLine();
-
     private boolean[][] map;
     private boolean[][] walls;
-    private boolean[][] visited;
-    private boolean[][] added;
+    private HashSet<Point> allWalls = new HashSet<Point>();
+    private static ArrayList<Point> outerWall = new ArrayList<Point>();
+    private static ArrayList<Point> innerWall = new ArrayList<Point>();
     private boolean addToOuter;
+
     private int rows, columns;
     private int[] dx = {-1, 0, 1, 0,1,-1,-1,1};
     private int[] dy = {0, 1, 0, -1,1,1,-1,-1};
 
-    private ObjectData obstacles = new ObjectData();
-    private RacingLine modifiedCenter;
+    private boolean[][] visited;
+    private boolean[][] added;
 
+    private RacingLine center = new RacingLine();
+
+    private ObjectData obstacles = new ObjectData();
+
+    //region Overrides
     @Override
     public void init(CarData carData){
         try {
@@ -60,25 +62,11 @@ public class RacingLineModule implements CarModule {
         //obstacle.update();
         //CheckPassingLine();
 
-        carData.addData("RacingLine", modifiedCenter != null ? modifiedCenter : center);
-
+        carData.addData("RacingLine", center);
     }
     //endregion
 
-    //region RacingLine
-    /**
-     * This method creates the racing line. This should be run before getRacingLine is called.
-     *
-     * @param _map The map of the track represented by a 2d boolean array.
-     * @see RacingLine getRacingLine()
-     */
-    public void makeRacingLine(boolean[][] _map) {
-        MakeMap(_map);
-        getMiddleLine();
-    }
-
-    //Ensures that the map always has a buffer of nontrack - neccesary for BFS functions
-
+    //region Map
     /**
      * Makes the map
      * @param _map
@@ -106,98 +94,6 @@ public class RacingLineModule implements CarModule {
         return outerWall;
     }
 
-    /**
-     * Returns a RacingLine object that represents the racing line. Returns null if the racing line has not yet been created through makeRacingLine.
-     *
-     * @return A RacingLine object that contains an array of RacingLinePoint objects that represent the racing line.
-     * //@see void makeRacingLine(boolean[][])
-     * @see RacingLine
-     */
-    public RacingLine getRacingLine() {
-        if (center == null) {
-            System.out.println("Warning: Racing line has not yet been created. To create a racing line, run getMiddleLine");
-        }
-        return center;
-    }
-    //endregion
-
-    //region Passing
-
-    /**
-     * Call when passing
-     * @return
-     */
-    public RacingLine CheckPassingLine() {
-        if (obstacles.getObstacles().size() == 0) {
-            return center;
-        }
-        //removeUnoriginal();
-        pass(obstacles.getObstacles().get(0));
-        getAngles();
-        //connectTheDots();
-        return center;
-    }
-
-    /**
-     * Passing code; shifts points towards wall when near object
-     * @param obstacle
-     */
-    private void pass(Obstacle obstacle) {
-        removeUnoriginal();
-        RacingLinePoint[] line = center.getRacingLinePoints();
-        int o1x = (int)obstacle.getCorners()[0].x;
-        int o1y = (int)obstacle.getCorners()[0].y;
-        int o2x = (int)obstacle.getCorners()[obstacle.getCorners().length-1].x;
-        int o2y = (int)obstacle.getCorners()[obstacle.getCorners().length-1].y;
-        float threshold = 90;
-        int bob = 0;
-        float mindist = 1000000;
-        for(RacingLinePoint c: line) {
-            float dist1 = (float)Math.sqrt((c.getX()-o1x)*(c.getX()-o1x)+(c.getY()-o1y)*(c.getY()-o1y));
-            float dist2 = (float)Math.sqrt((c.getX()-o2x)*(c.getX()-o2x)+(c.getY()-o2y)*(c.getY()-o2y));
-            float boxcx = (o1x+o2x)/2;
-            float boxcy = (o1y+o2y)/2;
-            float dist3 = (float)Math.sqrt((c.getInner().x-boxcx)*(c.getInner().x-boxcx)+(c.getInner().y-boxcy)*(c.getInner().y-boxcy));
-            float dist4 = (float)Math.sqrt((c.getOuter().x-boxcx)*(c.getOuter().x-boxcx)+(c.getOuter().y-boxcy)*(c.getOuter().y-boxcy));
-            if(dist1<mindist||dist2<mindist) {
-                mindist = Math.min(dist1, dist2);
-                if(dist3 < dist4) bob = 1;
-                else bob = -1;
-            }
-        }
-        for(RacingLinePoint c: line) {
-            float dist1 = (float)Math.sqrt((c.getX()-o1x)*(c.getX()-o1x)+(c.getY()-o1y)*(c.getY()-o1y));
-            float dist2 = (float)Math.sqrt((c.getX()-o2x)*(c.getX()-o2x)+(c.getY()-o2y)*(c.getY()-o2y));
-            if(dist1 < threshold || dist2 < threshold) {
-                c.setPass(true);
-                float t = 0.5f;
-                //change this
-                t+=bob*(0.4-0.2*(dist1/threshold)-0.2*(dist2/threshold));
-                c.setPassX(t*c.getOuter().x+(1-t)*c.getInner().x);
-                c.setPassY(t*c.getOuter().y+(1-t)*c.getInner().y);
-            } else {
-                c.setPass(false);
-            }
-        }
-    }
-    //endregion
-
-    //region Middle Line
-
-    /**
-     * Gets the middle line - line between outer wall and inner wall
-     */
-    private void getMiddleLine() {
-        //getMapFromWalls
-        closeTrack(10);
-        getWalls();
-        calcMiddleLine();
-        center.sortPoints();
-        trimSortedPoints(20);
-        makeOriginal();
-        getAngles();
-        //connectTheDots();
-    }
     public boolean[][] getMapFromWalls(boolean[][] walls) {
         int wr = walls.length;
         int wc = walls[0].length;
@@ -254,36 +150,6 @@ public class RacingLineModule implements CarModule {
             }
         }
         return map;
-    }
-    /**
-     * Closes the track so the car doesn't get too close to the walls
-     * @param dist
-     */
-    public void closeTrack(int dist) {
-        boolean[][] newmap = new boolean[rows][columns];
-        for(int dist1=0;dist1<dist;dist1++) {
-            for(int i=0;i<rows;i++) {
-                for(int j=0;j<columns;j++) {
-                    newmap[i][j] = map[i][j];
-                    if(!map[i][j]) continue;
-                    for(int k=0;k<4;k++) {
-                        int tx = i+dx[k];
-                        int ty = j+dy[k];
-                        if(tx>=0&&tx<rows&&ty>=0&&ty<columns) {
-                            if(!map[tx][ty]) {
-                                newmap[i][j] = false;
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-            for(int i=0;i<rows;i++) {
-                for(int j=0;j<columns;j++) {
-                    map[i][j] = newmap[i][j];
-                }
-            }
-        }
     }
 
     /**
@@ -368,81 +234,64 @@ public class RacingLineModule implements CarModule {
         if(addToOuter) innerWall.addAll(allWalls);
 
     }
+
+    /**
+     * Closes the track so the car doesn't get too close to the walls
+     * @param dist
+     */
+    public void closeTrack(int dist) {
+        boolean[][] newmap = new boolean[rows][columns];
+        for(int dist1=0;dist1<dist;dist1++) {
+            for(int i=0;i<rows;i++) {
+                for(int j=0;j<columns;j++) {
+                    newmap[i][j] = map[i][j];
+                    if(!map[i][j]) continue;
+                    for(int k=0;k<4;k++) {
+                        int tx = i+dx[k];
+                        int ty = j+dy[k];
+                        if(tx>=0&&tx<rows&&ty>=0&&ty<columns) {
+                            if(!map[tx][ty]) {
+                                newmap[i][j] = false;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            for(int i=0;i<rows;i++) {
+                for(int j=0;j<columns;j++) {
+                    map[i][j] = newmap[i][j];
+                }
+            }
+        }
+    }
     //endregion
 
-    //region Basic Calculations
-    public static int floor(int num, int den) {
-        return (int) -Math.ceil((double) -num / den);
-    }
-    public static int ceiling(int num, int den) {
-        return (int) Math.ceil((double) num / den);
+    //region RacingLine
+    /**
+     * Returns a RacingLine object that represents the racing line. Returns null if the racing line has not yet been created through makeRacingLine.
+     *
+     * @return A RacingLine object that contains an array of RacingLinePoint objects that represent the racing line.
+     * //@see void makeRacingLine(boolean[][])
+     * @see RacingLine
+     */
+    public RacingLine getRacingLine() {
+        if (center == null) {
+            System.out.println("Warning: Racing line has not yet been created. To create a racing line, run getMiddleLine");
+        }
+        return center;
     }
 
     /**
-     * Finds the number of intersections of the line segment p1 p2 and walls.
-     * @param p1
-     * @param p2
-     * @return
+     * This method creates the racing line. This should be run before getRacingLine is called.
+     *
+     * @param _map The map of the track represented by a 2d boolean array.
+     * @see RacingLine getRacingLine()
      */
-    public int intersect(Point p1, Point p2) {
-        int num = 0;
-        int x1 = p1.x;
-        int y1 = p1.y;
-        int x2 = p2.x;
-        int y2 = p2.y;
-        boolean horizontal;
-        horizontal = (Math.abs(y2 - y1) <= Math.abs(x2 - x1));
-        if ((horizontal && x1 > x2) || (!horizontal && y1 > y2)) {
-            int swap = x2;
-            x2 = x1;
-            x1 = swap;
-            swap = y2;
-            y2 = y1;
-            y1 = swap;
-        }
-        if (horizontal) {
-            for (int j = x1; j <= x2; j++) {
-                int xstep = j - x1;
-                int ystep = (y2 - y1) * xstep;
-                int ya = floor(ystep, x2 - x1) + y1;
-                int yb = ceiling(ystep, x2 - x1) + y1;
-                if (j >= 0 && ya >= 0 && j < rows && ya < columns) {
-                    if (!map[j][ya]) {
-                        num++;
-                    }
-                }
-                if (j >= 0 && yb >= 0 && j < rows && yb < columns) {
-                    if (!map[j][yb]) {
-                        num++;
-                    }
-                }
-                if (num > 5)
-                    return 6;
-            }
-        } else {
-            for (int j = y1; j <= y2; j++) {
-                int ystep = j - y1;
-                int xstep = (x2 - x1) * ystep;
-                int xa = floor(xstep, y2 - y1) + x1;
-                int xb = ceiling(xstep, y2 - y2) + x1;
-                if (j >= 0 && xa >= 0 && j < rows && xa < columns) {
-                    if (!map[xa][j])
-                        num++;
-                }
-                if (j >= 0 && xb >= 0 && j < rows && xb < columns) {
-                    if (!map[xa][j])
-                        num++;
-                }
-                if (num > 5)
-                    return 6;
-            }
-        }
-        return num;
+    public void makeRacingLine(boolean[][] _map) {
+        MakeMap(_map);
+        getMiddleLine();
     }
-    public int intersect(RacingLinePoint p1, RacingLinePoint p2) {
-        return intersect(new Point(p1.getIntX(), p1.getIntY()), new Point(p1.getIntX(), p2.getIntY()));
-    }
-    //endregion
 
     /**
      * Sets every point in the Racing Line to original
@@ -454,38 +303,100 @@ public class RacingLineModule implements CarModule {
         }
     }
 
-    private void getAngles() {
-        RacingLinePoint[] array = center.getRacingLinePoints();
-        for(int i=0;i<array.length;i++) {
-            int j = (i+1)%array.length;
-            int h = (i+array.length-1)%array.length;
-            RacingLinePoint c = array[i];
-            RacingLinePoint d = array[j];
-            RacingLinePoint b = array[h];
-            float ax = d.getX() - c.getX();
-            float ay = d.getY() - c.getY();
-            float bx = b.getX() - c.getX();
-            float by = b.getY() - c.getY();
-            float dot = ax*bx+ay*by;
-            float cosangle = dot/((float)Math.sqrt(ax*ax+ay*ay))/((float)Math.sqrt(bx*bx+by*by));
-            float angle = (float)Math.acos(cosangle);
-            angle *= (180f/3.14159265358979323846264338327950277419716939937105f);
-            c.setDegree(angle);
-        }
+    /**
+     * Gets the middle line - line between outer wall and inner wall
+     */
+    private void getMiddleLine() {
+        //getMapFromWalls
+        closeTrack(10);
+        getWalls();
+        calcMiddleLine();
+        center.sortPoints();
+        trimSortedPoints(20);
+        makeOriginal();
+        getAngles();
+        //connectTheDots();
     }
 
     /**
-     * Removes all points from the Racing Line that are not original
+     * Calculates the middle line between outer wall and inner wall
      */
-    private void removeUnoriginal() {
-        RacingLinePoint[] array = center.getRacingLinePoints();
-        ArrayList<RacingLinePoint> original = new ArrayList<RacingLinePoint>();
-        for(RacingLinePoint c: array) {
-            if(c.getOriginal()) {
-                original.add(c);
+    private void calcMiddleLine() {
+
+        ArrayList<Point> longer = outerWall.size() > innerWall.size() ? outerWall : innerWall;
+        ArrayList<Point> shorter = outerWall.size() <= innerWall.size() ? outerWall : innerWall;
+        int start = 0;
+        int lsize = longer.size();
+        int ssize = shorter.size();
+        int range = ssize;
+        int times = 0;
+        for(int i=0;i<lsize;i++) {
+            int closePoint = -1;
+            float dist = rows + columns;
+            for(int k=start;k<start+range;k++) {
+                int j = k % ssize;
+                float testDist = distanceBetweenPoints(longer.get(i),shorter.get(j));
+                if(testDist < dist && intersect(longer.get(i),shorter.get(j)) <= 5) {
+                    closePoint = j;
+                    dist = testDist;
+                }
+            }
+            if(closePoint >= 0) {
+                RacingLinePoint newpoint = midPoint(longer.get(i),shorter.get(closePoint));
+                newpoint.setOuter(outerWall.get(i));
+                newpoint.setInner(innerWall.get(closePoint));
+                newpoint.setOriginal(true);
+                center.addPoint(newpoint);
+                start = (closePoint+ssize-ssize/10)%ssize;
+                range = ssize/5;
+                times++;
+            } else {
+                start = 0;
+                range = ssize;
             }
         }
-        center.setRacingLinePointsList(original);
+        System.out.println("CALC MIDDLE LINE TIMES: "+times);
+    }
+
+    /**
+     * Determines the midpoint of two points (on the wall)
+     * @param outer
+     * @param inner
+     * @return
+     */
+    private RacingLinePoint midPoint(Point outer, Point inner) {
+        float aveX = (float) ((float) (outer.x + inner.x) / 2.0);
+        float aveY = (float) ((float) (outer.y + inner.y) / 2.0);
+        return new RacingLinePoint(aveX, aveY);
+    }
+
+    /**
+     * Trims sorted points. Leaves points iff they are farther than distance or have to pass through walls.
+     * @param trim
+     */
+    public void trimSortedPoints(float trim) {
+        RacingLinePoint[] line = center.getRacingLinePoints();
+        ArrayList<RacingLinePoint> compressedLine = new ArrayList<RacingLinePoint>();
+        RacingLinePoint p = line[0];
+        compressedLine.add(p);
+        int previous = 0;
+        for(int i=1;i<line.length;i++) {
+            RacingLinePoint p2 = line[i];
+            Point q1 = new Point(Math.round(p.getX()), Math.round(p.getY()));
+            Point q2 = new Point(Math.round(p2.getX()), Math.round(p2.getY()));
+            int result = intersect(q1, q2);
+            if (result > 0) {
+                p = line[i - 1];
+                compressedLine.add(line[i - 1]);
+                if(i-1!=previous) i--;
+                previous = i;
+            }
+            if(distanceBetweenPoints(p,p2) >= trim) {
+                p = line[i];
+                compressedLine.add(p);
+            }
+        }
+        center.setRacingLinePointsList(compressedLine);
     }
 
     /**
@@ -583,6 +494,182 @@ public class RacingLineModule implements CarModule {
         center.setRacingLinePointsList(connected);
     }
 
+    private RacingLine combineRacingLines (RacingLine[] curves) {
+        int i;
+        int j;
+        RacingLine combinedCurves = new RacingLine();
+        for(i = 0; i < curves.length; i++) {
+            for(j = 0; j < curves[i].getRacingLinePoints().length; j++) {
+                combinedCurves.addPoint(curves[i].getRacingLinePoints()[j]);
+            }
+        }
+        return combinedCurves;
+    }
+    //endregion
+
+    //region Passing
+    /**
+     * Call when passing
+     * @return
+     */
+    public RacingLine CheckPassingLine() {
+        if (obstacles.getObstacles().size() == 0) {
+            return center;
+        }
+        //removeUnoriginal();
+        pass(obstacles.getObstacles().get(0));
+        getAngles();
+        //connectTheDots();
+        return center;
+    }
+
+    /**
+     * Passing code; shifts points towards wall when near object
+     * @param obstacle
+     */
+    private void pass(Obstacle obstacle) {
+        removeUnoriginal();
+        RacingLinePoint[] line = center.getRacingLinePoints();
+        int o1x = (int)obstacle.getCorners()[0].x;
+        int o1y = (int)obstacle.getCorners()[0].y;
+        int o2x = (int)obstacle.getCorners()[obstacle.getCorners().length-1].x;
+        int o2y = (int)obstacle.getCorners()[obstacle.getCorners().length-1].y;
+        float threshold = 90;
+        int bob = 0;
+        float mindist = 1000000;
+        for(RacingLinePoint c: line) {
+            float dist1 = (float)Math.sqrt((c.getX()-o1x)*(c.getX()-o1x)+(c.getY()-o1y)*(c.getY()-o1y));
+            float dist2 = (float)Math.sqrt((c.getX()-o2x)*(c.getX()-o2x)+(c.getY()-o2y)*(c.getY()-o2y));
+            float boxcx = (o1x+o2x)/2;
+            float boxcy = (o1y+o2y)/2;
+            float dist3 = (float)Math.sqrt((c.getInner().x-boxcx)*(c.getInner().x-boxcx)+(c.getInner().y-boxcy)*(c.getInner().y-boxcy));
+            float dist4 = (float)Math.sqrt((c.getOuter().x-boxcx)*(c.getOuter().x-boxcx)+(c.getOuter().y-boxcy)*(c.getOuter().y-boxcy));
+            if(dist1<mindist||dist2<mindist) {
+                mindist = Math.min(dist1, dist2);
+                if(dist3 < dist4) bob = 1;
+                else bob = -1;
+            }
+        }
+        for(RacingLinePoint c: line) {
+            float dist1 = (float)Math.sqrt((c.getX()-o1x)*(c.getX()-o1x)+(c.getY()-o1y)*(c.getY()-o1y));
+            float dist2 = (float)Math.sqrt((c.getX()-o2x)*(c.getX()-o2x)+(c.getY()-o2y)*(c.getY()-o2y));
+            if(dist1 < threshold || dist2 < threshold) {
+                c.setPass(true);
+                float t = 0.5f;
+                //change this
+                t+=bob*(0.4-0.2*(dist1/threshold)-0.2*(dist2/threshold));
+                c.setPassX(t*c.getOuter().x+(1-t)*c.getInner().x);
+                c.setPassY(t*c.getOuter().y+(1-t)*c.getInner().y);
+            } else {
+                c.setPass(false);
+            }
+        }
+    }
+
+    /**
+     * Removes all points from the Racing Line that are not original
+     */
+    private void removeUnoriginal() {
+        RacingLinePoint[] array = center.getRacingLinePoints();
+        ArrayList<RacingLinePoint> original = new ArrayList<RacingLinePoint>();
+        for(RacingLinePoint c: array) {
+            if(c.getOriginal()) {
+                original.add(c);
+            }
+        }
+        center.setRacingLinePointsList(original);
+    }
+    //endregion
+
+    //region Basic Calculations
+    public static int floor(int num, int den) {
+        return (int) -Math.ceil((double) -num / den);
+    }
+    public static int ceiling(int num, int den) {
+        return (int) Math.ceil((double) num / den);
+    }
+
+    /**
+     * Finds the number of intersections of the line segment p1 p2 and walls.
+     * @param p1
+     * @param p2
+     * @return
+     */
+    public int intersect(Point p1, Point p2) {
+        int num = 0;
+        int x1 = p1.x;
+        int y1 = p1.y;
+        int x2 = p2.x;
+        int y2 = p2.y;
+        boolean horizontal;
+        horizontal = (Math.abs(y2 - y1) <= Math.abs(x2 - x1));
+        if ((horizontal && x1 > x2) || (!horizontal && y1 > y2)) {
+            int swap = x2;
+            x2 = x1;
+            x1 = swap;
+            swap = y2;
+            y2 = y1;
+            y1 = swap;
+        }
+        if (horizontal) {
+            for (int j = x1; j <= x2; j++) {
+                int xstep = j - x1;
+                int ystep = (y2 - y1) * xstep;
+                int ya = floor(ystep, x2 - x1) + y1;
+                int yb = ceiling(ystep, x2 - x1) + y1;
+                if (j >= 0 && ya >= 0 && j < rows && ya < columns) {
+                    if (!map[j][ya]) {
+                        num++;
+                    }
+                }
+                if (j >= 0 && yb >= 0 && j < rows && yb < columns) {
+                    if (!map[j][yb]) {
+                        num++;
+                    }
+                }
+                if (num > 5)
+                    return 6;
+            }
+        } else {
+            for (int j = y1; j <= y2; j++) {
+                int ystep = j - y1;
+                int xstep = (x2 - x1) * ystep;
+                int xa = floor(xstep, y2 - y1) + x1;
+                int xb = ceiling(xstep, y2 - y2) + x1;
+                if (j >= 0 && xa >= 0 && j < rows && xa < columns) {
+                    if (!map[xa][j])
+                        num++;
+                }
+                if (j >= 0 && xb >= 0 && j < rows && xb < columns) {
+                    if (!map[xa][j])
+                        num++;
+                }
+                if (num > 5)
+                    return 6;
+            }
+        }
+        return num;
+    }
+    public int intersect(RacingLinePoint p1, RacingLinePoint p2) {
+        return intersect(new Point(p1.getIntX(), p1.getIntY()), new Point(p1.getIntX(), p2.getIntY()));
+    }
+
+    public static float distanceBetweenPoints(Point start, Point end) {
+        int x = Math.abs(end.x - start.x);
+        int y = Math.abs(end.y - start.y);
+        float h = (float) Math.sqrt(x * x + y * y);
+        return h;
+    }
+    public static float distanceBetweenPoints(RacingLinePoint start, RacingLinePoint end) {
+        return distanceBetweenPoints(new Point(start.getIntX(), start.getIntY()), new Point(end.getIntX(), end.getIntY()));
+    }
+
+    public static float distance(float a, float b, float c, float d) {
+        return (float) Math.sqrt((c - a) * (c - a) + (d - b) * (d - b));
+    }
+    //endregion
+
+    //region List/Array things
     /**
      * Converts an ArrayList of Point to an array of Point
      * @param l
@@ -611,35 +698,6 @@ public class RacingLineModule implements CarModule {
         return points;
     }
 
-    /**
-     * Trims sorted points. Leaves points iff they are farther than distance or have to pass through walls.
-     * @param trim
-     */
-    public void trimSortedPoints(float trim) {
-        RacingLinePoint[] line = center.getRacingLinePoints();
-        ArrayList<RacingLinePoint> compressedLine = new ArrayList<RacingLinePoint>();
-        RacingLinePoint p = line[0];
-        compressedLine.add(p);
-        int previous = 0;
-        for(int i=1;i<line.length;i++) {
-            RacingLinePoint p2 = line[i];
-            Point q1 = new Point(Math.round(p.getX()), Math.round(p.getY()));
-            Point q2 = new Point(Math.round(p2.getX()), Math.round(p2.getY()));
-            int result = intersect(q1, q2);
-            if (result > 0) {
-                p = line[i - 1];
-                compressedLine.add(line[i - 1]);
-                if(i-1!=previous) i--;
-                previous = i;
-            }
-            if(distanceBetweenPoints(p,p2) >= trim) {
-                p = line[i];
-                compressedLine.add(p);
-            }
-        }
-        center.setRacingLinePointsList(compressedLine);
-    }
-
     public static boolean ContainsPoint(ArrayList<RacingLinePoint> list, RacingLinePoint point) {
         for (RacingLinePoint p: list) {
             if (p == point) {
@@ -647,56 +705,6 @@ public class RacingLineModule implements CarModule {
             }
         }
         return false;
-    }
-
-    /**
-     * Calculates the middle line between outer wall and inner wall
-     */
-    private void calcMiddleLine() {
-
-        ArrayList<Point> longer = outerWall.size() > innerWall.size() ? outerWall : innerWall;
-        ArrayList<Point> shorter = outerWall.size() <= innerWall.size() ? outerWall : innerWall;
-        int start = 0;
-        int lsize = longer.size();
-        int ssize = shorter.size();
-        int range = ssize;
-        int times = 0;
-        for(int i=0;i<lsize;i++) {
-            int closePoint = -1;
-            float dist = rows + columns;
-            for(int k=start;k<start+range;k++) {
-                int j = k % ssize;
-                float testDist = distanceBetweenPoints(longer.get(i),shorter.get(j));
-                if(testDist < dist && intersect(longer.get(i),shorter.get(j)) <= 5) {
-                    closePoint = j;
-                    dist = testDist;
-                }
-            }
-            if(closePoint >= 0) {
-                RacingLinePoint newpoint = midPoint(longer.get(i),shorter.get(closePoint));
-                newpoint.setOuter(outerWall.get(i));
-                newpoint.setInner(innerWall.get(closePoint));
-                newpoint.setOriginal(true);
-                center.addPoint(newpoint);
-                start = (closePoint+ssize-ssize/10)%ssize;
-                range = ssize/5;
-                times++;
-            } else {
-                start = 0;
-                range = ssize;
-            }
-        }
-        System.out.println("CALC MIDDLE LINE TIMES: "+times);
-    }
-
-    public static float distanceBetweenPoints(Point start, Point end) {
-        int x = Math.abs(end.x - start.x);
-        int y = Math.abs(end.y - start.y);
-        float h = (float) Math.sqrt(x * x + y * y);
-        return h;
-    }
-    public static float distanceBetweenPoints(RacingLinePoint start, RacingLinePoint end) {
-        return distanceBetweenPoints(new Point(start.getIntX(), start.getIntY()), new Point(end.getIntX(), end.getIntY()));
     }
 
     public static Point ClosestPoint(Point[] pointList, Point point) {
@@ -724,32 +732,25 @@ public class RacingLineModule implements CarModule {
         }
         return pointList[closestPoint];
     }
+    //endregion
 
-    /**
-     * Determines the midpoint of two points (on the wall)
-     * @param outer
-     * @param inner
-     * @return
-     */
-    private RacingLinePoint midPoint(Point outer, Point inner) {
-        float aveX = (float) ((float) (outer.x + inner.x) / 2.0);
-        float aveY = (float) ((float) (outer.y + inner.y) / 2.0);
-        return new RacingLinePoint(aveX, aveY);
-    }
-
-    private RacingLine combineRacingLines (RacingLine[] curves) {
-        int i;
-        int j;
-        RacingLine combinedCurves = new RacingLine();
-        for(i = 0; i < curves.length; i++) {
-            for(j = 0; j < curves[i].getRacingLinePoints().length; j++) {
-                combinedCurves.addPoint(curves[i].getRacingLinePoints()[j]);
-            }
+    private void getAngles() {
+        RacingLinePoint[] array = center.getRacingLinePoints();
+        for(int i=0;i<array.length;i++) {
+            int j = (i+1)%array.length;
+            int h = (i+array.length-1)%array.length;
+            RacingLinePoint c = array[i];
+            RacingLinePoint d = array[j];
+            RacingLinePoint b = array[h];
+            float ax = d.getX() - c.getX();
+            float ay = d.getY() - c.getY();
+            float bx = b.getX() - c.getX();
+            float by = b.getY() - c.getY();
+            float dot = ax*bx+ay*by;
+            float cosangle = dot/((float)Math.sqrt(ax*ax+ay*ay))/((float)Math.sqrt(bx*bx+by*by));
+            float angle = (float)Math.acos(cosangle);
+            angle *= (180f/Math.PI);
+            c.setDegree(angle);
         }
-        return combinedCurves;
-    }
-
-    public static float distance(float a, float b, float c, float d) {
-        return (float) Math.sqrt((c - a) * (c - a) + (d - b) * (d - b));
     }
 }
