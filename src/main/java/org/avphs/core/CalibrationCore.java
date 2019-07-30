@@ -21,7 +21,7 @@ public class CalibrationCore extends CarCore {
         startUpdatingModules();
     }
 
-    public void runTime(){
+    public void runTime() throws Exception{
         Scanner sc = new Scanner(System.in);
         LOOP:
         while (true){
@@ -37,16 +37,21 @@ public class CalibrationCore extends CarCore {
                     System.out.println("'help' prints this little blurb");
                     break;
                 case "CameraDataGenerator":
+                    updatingCarModules.clear();
                     //updatingCarModules.add(new CameraDataGenerator());
                     break;
                 case "3DInterpolation":
+                    updatingCarModules.clear();
                     break;
                 case "MoveForward":
+                    updatingCarModules.clear();
                     break;
                 case "BrakeTest":
+                    updatingCarModules.clear();
                     break;
                 case "ThrottleDataGenerator":
-                    //updatingCarModules.add(new ThrottleDataGenerator(car));
+                    updatingCarModules.clear();
+                    updatingCarModules.add(new ThrottleDataGenerator(car));
                     break;
                 case "stop":
                     System.out.println("Stopping all calibration functions!");
