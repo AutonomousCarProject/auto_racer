@@ -44,6 +44,7 @@ public class PreRaceCore extends CarCore {
 
         init();
         moduleRunner.scheduleAtFixedRate(this::update, 0, targetMillsPerFrame, TimeUnit.MILLISECONDS);
+
     }
 
     private void update() {
