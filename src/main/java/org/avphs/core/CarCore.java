@@ -60,6 +60,11 @@ public abstract class CarCore {
      * Begins the threads that update each module in updatingCarModules.
      * This Method is called only once during initialization.
      */
+
+    public CarData getCarData(){
+        return carData;
+    }
+
     void startUpdatingModules() {
         //Start Updating Modules
         carExecutorService =

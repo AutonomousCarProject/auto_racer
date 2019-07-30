@@ -3,6 +3,7 @@ package org.avphs.calibration;
 import fly2cam.FlyCamera;
 import org.apache.commons.math3.analysis.polynomials.PolynomialFunctionLagrangeForm;
 import org.avphs.camera.Camera;
+import org.avphs.camera.SimCamera;
 import org.avphs.car.Car;
 import org.avphs.core.CalibrationCore;
 import org.avphs.coreinterface.CarData;
@@ -19,28 +20,25 @@ public class MoveForward {
 
     }
 
-    /*protected void go(){
-        testCar.accelerate(true, 20);
-        testCar.steer(true, 0);
-    }*/
-
     public static void main(String[] args) {
-        Camera cam = new FlyCamera();
+        System.out.println("Start");
+        //Camera cam = new FlyCamera();
+        Camera cam = new SimCamera();
         Car car = new Car(cam);
-        CarData carData = new CarData();
         CalibrationCore core = new CalibrationCore(car, true);
-        ImageData imageData = (ImageData) carData.getModuleData("image");
+        ImageData imageData = (ImageData) core.getCarData().getModuleData("image");
 
         ArrayList<Double> wallHeights = new ArrayList<>();
         ArrayList<Double> distances = new ArrayList<>();
         ArduinoData data;
         double dist = 100;
 
-        car.accelerate(true, 10);
+        car.accelerate(true, 12);
         car.steer(true, 0);
         try (PrintWriter writer = new PrintWriter(/*"src\\main\\java\\org\\avphs\\calibration\\*/"PixelData.txt")) {
+            System.out.println("good");
             while (true) {
-                data = (ArduinoData) carData.getModuleData("arduino");
+                data = (ArduinoData) core.getCarData().getModuleData("arduino");
                 dist -= data.getOdomCount() * CalibrationModule.CM_PER_ROTATION;
                 wallHeights.add((double) imageData.wallBottom[320] - imageData.wallTop[320]);
                 distances.add(dist);
@@ -48,6 +46,7 @@ public class MoveForward {
                     break;
                 }
             }
+            System.out.println("done driving");
             car.stop();
 
             writer.println(wallHeights.size());
@@ -67,7 +66,7 @@ public class MoveForward {
             }
         } catch (IOException e) {
             while (true) {
-                data = (ArduinoData) carData.getModuleData("arduino");
+                data = (ArduinoData) core.getCarData().getModuleData("arduino");
                 dist -= data.getOdomCount() * CalibrationModule.CM_PER_ROTATION;
                 wallHeights.add((double) imageData.wallBottom[320] - imageData.wallTop[320]);
                 distances.add(dist);
