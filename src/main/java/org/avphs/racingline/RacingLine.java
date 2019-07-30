@@ -15,7 +15,6 @@ import static java.lang.Math.PI;
 public class RacingLine {
     private ArrayList<RacingLinePoint> RacingLinePointsList = new ArrayList<RacingLinePoint>();
     private RacingLinePoint[] RacingLinePoints;
-    //private RacingLineCurve[] RacingLineCurves;
 
     //region Constructors
     public RacingLine() {
@@ -54,6 +53,7 @@ public class RacingLine {
         RacingLinePointsList.add(newPoint);
     }
     //endregion
+
     /**
      * Sorts the racing line.
      */
