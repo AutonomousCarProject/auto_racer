@@ -6,6 +6,7 @@ import org.avphs.camera.SimCamera;
 import org.avphs.car.Car;
 import org.avphs.core.CalibrationCore;
 import org.avphs.coreinterface.CarData;
+import org.avphs.coreinterface.CarModule;
 import org.avphs.position.PositionData;
 import org.avphs.sbcio.ArduinoData;
 
@@ -17,20 +18,15 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class BrakeTest extends TimerTask {
+public class BrakeTest implements CarModule {
     float curSpeed = 0;//meters or centimeters per second
-    FakeCamera cam = new FakeCamera();
-    Car car = new Car(cam);
-    CarData carData = new CarData();
     List<double[]> brakeData = new ArrayList<>();
-    CalibrationCore core = new CalibrationCore(car, false);
+    Car car;
+    CarData carData;
 
-    public void run()
-    {
-        ((ArduinoData) carData.getModuleData("arduino")).getOdomCount();
-        //curSpeed = ((PositionData)carData.getModuleData("position")).getSpeed();
+    public BrakeTest(Car car){
+        this.car = car;
     }
-
     //physically test in increments of 50cm/s until 90mph
     //interpolate using data, get points on curve every 5cm/s
     //need to stop and reset placement(move backwards or turn around) every so often
@@ -38,12 +34,8 @@ public class BrakeTest extends TimerTask {
     //all speeds from 0-max 90mph
     //0 to 4035 in increments of 5cm/s
     //4 friction types, 808
-    public static void main(String[] args) {
-        BrakeTest brakeBoi = new BrakeTest();
-        Timer timer = new Timer();
-        timer.schedule(brakeBoi, 0, 1000);
-
-        Boolean resetFile = false;
+    public void main() {
+        boolean resetFile = false;
         int maxSpeed = 4050;//rounded up in cm/s from 90mph(~4023.36cm/s)
         int increment = 50;//speed change increment in cm/s
         int startSpeed = 0;
@@ -72,14 +64,14 @@ public class BrakeTest extends TimerTask {
             {
                 if(endSpeed<=startSpeed)
                 {
-                    brakeBoi.testBrakeDist((byte)startSpeed,(byte)endSpeed);//test speeds and adds stuff to brakeData
+                    testBrakeDist((byte)startSpeed,(byte)endSpeed);//test speeds and adds stuff to brakeData
 
                     //Write the data to file SpeedToDistData.txt
                     try(BufferedWriter writer = new BufferedWriter(new FileWriter("src/main/java/org/avphs/calibration/SpeedToDistData.txt")))
                     {
                         for (int var = 0; var < 3; var++) //go through startSpeed, endSpeed, brakeDist
                         {
-                            stringData = Double.toString(brakeBoi.brakeData.get(0)[var]);
+                            stringData = Double.toString(brakeData.get(0)[var]);
                             writer.append(stringData + " ");
                         }
                         writer.newLine();
@@ -133,13 +125,13 @@ public class BrakeTest extends TimerTask {
         car.accelerate(true, throttle);
         if(curSpeed >= startSpeed)
         {
-            startDist = 10;//((ArduinoData) carData.getModuleData("arduino")).getOdomCount();
+            startDist = ((ArduinoData) carData.getModuleData("arduino")).getOdomCount();
             throttle = 5;//CalibrationModule.getThrottle((byte)0, (short)0, endSpeed);
             car.accelerate(true, throttle);
         }
         if(curSpeed <= endSpeed)
         {
-            endDist = 20;//((ArduinoData) carData.getModuleData("arduino")).getOdomCount();
+            endDist = ((ArduinoData) carData.getModuleData("arduino")).getOdomCount();
             brakeDist = endDist - startDist;
             car.stop();
             double[] data = new double[3];
@@ -148,5 +140,15 @@ public class BrakeTest extends TimerTask {
             data[2] = brakeDist;
             brakeData.add(data);
         }
+    }
+
+    @Override
+    public void init(CarData carData) {
+        this.carData = carData;
+        main();
+    }
+
+    @Override
+    public void update(CarData carData) {
     }
 }
