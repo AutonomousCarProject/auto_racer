@@ -12,7 +12,7 @@ import static java.lang.Short.parseShort;
 
 public class CalibrationModule {
 
-    public static void main(string[] args){
+    public static void main(String[] args){
 
     }
 
