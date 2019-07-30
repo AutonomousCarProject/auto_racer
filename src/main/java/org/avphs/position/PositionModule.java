@@ -15,9 +15,6 @@ public class PositionModule implements CarModule {
     private float deltaPositionAngle;
     private float turnRadius = 0;
 
-    float distanceTraveledRadians;
-    float distanceTraveledDegrees;
-
 
     public void init(CarData carData) {
         //THIS WILL BE WHERE WE READ FROM A FILE TO FIND THE INITIAL POSITION
