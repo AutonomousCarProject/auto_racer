@@ -19,7 +19,7 @@ public class PositionModule implements CarModule {
 
     public void init(CarData carData) {
         //THIS WILL BE WHERE WE READ FROM A FILE TO FIND THE INITIAL POSITION
-        positionData = new PositionData(new float[]{40.0f,56.0f}, 0, 0); //initial position for this map is (40,56)
+        positionData = new PositionData(new float[]{40.0f,56.0f}, 90, 0); //initial position for this map is (40,56)
         ts = new TrakSim();
     }
 

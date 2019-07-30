@@ -34,7 +34,7 @@ public class PositionData{
 
     public void updatePosition(float[] newPosition){ //(x, y)
         this.position[0] += newPosition[0];
-        this.position[1] += newPosition[1];
+        this.position[1] -= newPosition[1]; //-= in order to reverse the change in y-dir
     }
 
 
