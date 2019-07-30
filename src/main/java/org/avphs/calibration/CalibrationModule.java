@@ -68,6 +68,7 @@ public class CalibrationModule {
     //turn the car to this angle to make it go in a straight line
     public static final int STRAIGHT_ANGLE = 7;
 
+    private static final int MIN_DELTA_SPEED = 5;
 
     //turn the car to this angle to make it go in a straight line
     public static final int STRAIGHT_ANGLE = 7;
