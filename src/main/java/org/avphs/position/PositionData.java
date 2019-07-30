@@ -33,7 +33,8 @@ public class PositionData{
     }
 
     public void updatePosition(float[] newPosition){ //(x, y)
-        this.position = newPosition;
+        this.position[0] += newPosition[0];
+        this.position[1] += newPosition[1];
     }
 
     public void updateAll(float[] newPosition, float newDirection, float newSpeed){
