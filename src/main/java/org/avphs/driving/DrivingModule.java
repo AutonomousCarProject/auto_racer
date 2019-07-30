@@ -70,7 +70,7 @@ public class DrivingModule implements CarModule {
         //Refreshes the data in carData
         carData.addData("driving", angle);
         //Tells the car to move :)
-        car.accelerate(true, throttle);
+        car.accelerate(true, 12);
         car.steer(true, angle);
     }
 
