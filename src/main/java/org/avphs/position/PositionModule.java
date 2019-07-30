@@ -99,7 +99,9 @@ public class PositionModule implements CarModule {
         //System.out.println("direction: " + positionData.getDirection());
         //System.out.println("turn radius" + turnRadius);
 
-        System.out.println("Position = ("+(positionData.getPosition()[0])+","+(positionData.getPosition()[1])+")");
+        System.out.println("our position = ("+(positionData.getPosition()[0])+","+(positionData.getPosition()[1])+")");
+        System.out.println("traksim position = (" + ts.GetPosn(true) + "," + ts.GetPosn(false) + ")");
+        System.out.println("");
     }
 
     private float ComputeTurnRadius(float wheelBase, float turningAngle){ //FIXME THIS IS THE TURN RADIUS OF THE FRONT INSIDE WHEEL ONLY; FIND A WAY TO FIND THE TURN RADIUS OF THE FRONT OUTSIDE WHEEL AND THEN FIND THE AVERAGE OF THEM TO GET THE TURN RADIUS OF THE LOCATION OF THE CAMERA
