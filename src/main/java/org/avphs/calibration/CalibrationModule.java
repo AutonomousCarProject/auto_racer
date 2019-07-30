@@ -40,7 +40,7 @@ public class CalibrationModule {
 
     public static final double  SUSPENSION_HEIGHT = 1;
 
-    public static final double  CM_PER_ROTATION = 0.096; //approximation (from DriverCons)
+    public static final double  CM_PER_ROTATION = 15; //approximation (from DriverCons)
 
     //Helper method to read speed change distance data
     private static byte[][][] readSpeedChangeDistData (){

@@ -6,7 +6,7 @@ import org.avphs.camera.Camera;
 import org.avphs.camera.SimCamera;
 import org.avphs.car.Car;
 import org.avphs.core.CalibrationCore;
-import org.avphs.coreinterface.CarData;
+//import org.avphs.coreinterface.CarData;
 import org.avphs.image.ImageData;
 import org.avphs.sbcio.ArduinoData;
 
@@ -31,18 +31,19 @@ public class MoveForward {
         ArrayList<Double> wallHeights = new ArrayList<>();
         ArrayList<Double> distances = new ArrayList<>();
         ArduinoData data;
-        double dist = 100;
+        double dist = 200;
 
         car.accelerate(true, 12);
         car.steer(true, 0);
         try (PrintWriter writer = new PrintWriter(/*"src\\main\\java\\org\\avphs\\calibration\\*/"PixelData.txt")) {
             System.out.println("good");
             while (true) {
+                System.out.println(dist);
                 data = (ArduinoData) core.getCarData().getModuleData("arduino");
                 dist -= data.getOdomCount() * CalibrationModule.CM_PER_ROTATION;
                 wallHeights.add((double) imageData.wallBottom[320] - imageData.wallTop[320]);
                 distances.add(dist);
-                if (dist < 1) {
+                if (dist < 50) {
                     break;
                 }
             }
