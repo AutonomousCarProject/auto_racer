@@ -204,7 +204,7 @@ public class CalibrationModule {
     //angle, desired velocity
     private static byte[][] readThrottleData(){
         byte[][] rowList = null;
-        try (BufferedReader br = new BufferedReader(new FileReader("src\\main\\java\\org\\avphs\\calibration\\ThrottleCalculations.txt"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("calibration\\src\\main\\java\\org.avphs\\calibration\\ThrottleCalculations.txt"))) {
 
             short radCount = parseShort(br.readLine());
             short desiredSpeedsCount = parseShort(br.readLine());
