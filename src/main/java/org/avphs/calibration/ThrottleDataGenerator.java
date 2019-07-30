@@ -108,11 +108,12 @@ public class ThrottleDataGenerator implements CarModule {
 
     @Override
     public void init(CarData carData) {
+        int middle = CalibrationModule.STRAIGHT_ANGLE;
+        int start = middle - (((middle + 33) / 5) * 5);
+        HashMap<Integer, float[]> angleThrottleSpeedValues = new HashMap<Integer, float[]>();
         try {
             this.carData = carData;
-            HashMap<Integer, float[]> angleThrottleSpeedValues = new HashMap<Integer, float[]>();
-            int middle = CalibrationModule.STRAIGHT_ANGLE;
-            int start = middle - (((middle + 33) / 5) * 5);
+
             for (int i = start; i < 44; i += 5) {
                 System.out.println("Angle being tested: " + i);
                 car.steer(true, i);
@@ -153,15 +154,28 @@ public class ThrottleDataGenerator implements CarModule {
 //            }
 //            angleIndex++;
 //        }
+//        for(int i =0 ;i<preInterpolation.length;i++) {
+//            try {
+//                interpolation3d interpolate = new interpolation3d(intToDoubleArr([i][0]), new double[15], preInterpolation[i][1], 5);
+//                interpolate.query(0,0);
+//            }catch(IOException e){
+//                e.printStackTrace();
+//            }
+//        }
     }
-
-    @Override
+    private double[]intToDoubleArr(int[]arr){
+        double[]newArr = new double[arr.length];
+        for(int i = 0;i<newArr.length;i++){
+            newArr[i] = arr[i];
+        }
+        return newArr;
+    }
     public CarCommand[] commands() {
         return new CarCommand[0];
     }
 
     @Override
-    public void update(CarData carData) throws IOException {
+    public void update(CarData carData) {
 
     }
 }
