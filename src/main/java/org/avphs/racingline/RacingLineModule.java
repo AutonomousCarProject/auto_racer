@@ -28,6 +28,9 @@ public class RacingLineModule implements CarModule {
 
     private ObjectData obstacles = new ObjectData();
 
+    private int carx=0,cary=0;
+
+
     //region Overrides
     @Override
     public void init(CarData carData){
@@ -610,6 +613,10 @@ public class RacingLineModule implements CarModule {
         return center;
     }
 
+
+    public float dist(float a, float b, float c, float d) {
+        return (float) Math.sqrt((a-c)*(a-c)+(b-d)*(b-d));
+    }
     /**
      * Passing code; shifts points towards wall when near object
      * @param obstacle
@@ -617,36 +624,60 @@ public class RacingLineModule implements CarModule {
     private void pass(Obstacle obstacle) {
         removeUnoriginal();
         RacingLinePoint[] line = center.getRacingLinePoints();
-        int o1x = (int)obstacle.getCorners()[0].x;
-        int o1y = (int)obstacle.getCorners()[0].y;
-        int o2x = (int)obstacle.getCorners()[obstacle.getCorners().length-1].x;
-        int o2y = (int)obstacle.getCorners()[obstacle.getCorners().length-1].y;
-        float threshold = 90;
-        int bob = 0;
+        int o1x = (int) obstacle.getCorners()[0].x;
+        int o1y = (int) obstacle.getCorners()[0].y;
+        int o2x = (int) obstacle.getCorners()[obstacle.getCorners().length - 1].x;
+        int o2y = (int) obstacle.getCorners()[obstacle.getCorners().length - 1].y;
+        float threshold = 100;
         float mindist = 1000000;
-        for(RacingLinePoint c: line) {
-            float dist1 = (float)Math.sqrt((c.getX()-o1x)*(c.getX()-o1x)+(c.getY()-o1y)*(c.getY()-o1y));
-            float dist2 = (float)Math.sqrt((c.getX()-o2x)*(c.getX()-o2x)+(c.getY()-o2y)*(c.getY()-o2y));
-            float boxcx = (o1x+o2x)/2;
-            float boxcy = (o1y+o2y)/2;
-            float dist3 = (float)Math.sqrt((c.getInner().x-boxcx)*(c.getInner().x-boxcx)+(c.getInner().y-boxcy)*(c.getInner().y-boxcy));
-            float dist4 = (float)Math.sqrt((c.getOuter().x-boxcx)*(c.getOuter().x-boxcx)+(c.getOuter().y-boxcy)*(c.getOuter().y-boxcy));
-            if(dist1<mindist||dist2<mindist) {
-                mindist = Math.min(dist1, dist2);
-                if(dist3 < dist4) bob = 1;
-                else bob = -1;
+        float mindist3 = 1000000;
+        float mindist4 = 1000000;
+        float mindist5 = 1000000;
+        float mindist6 = 1000000;
+        float mindist7 = 1000000;
+        float bob = 0;
+        for (RacingLinePoint c : line) {
+            float dist1 = dist(c.getX(), c.getY(), o1x, o1y);
+            float dist2 = dist(c.getX(), c.getY(), o2x, o2y);
+            float boxcx = (o1x + o2x) / 2;
+            float boxcy = (o1y + o2y) / 2;
+            float dist3 = dist(c.getInner().x, c.getInner().y, boxcx, boxcy);
+            float dist4 = dist(c.getOuter().x, c.getOuter().y, boxcx, boxcy);
+            float dist5 = dist(carx, cary, c.getInner().x, c.getInner().y);
+            float dist6 = dist(carx, cary, c.getOuter().x, c.getOuter().y);
+            float dist7 = dist(carx, cary, boxcx, boxcy);
+            if (dist1 < mindist || dist2 < mindist) {
+                if (Math.min(dist1, dist2) < mindist) {
+                    mindist = Math.min(dist1, dist2);
+                    if (dist3 < dist4) bob = 1;
+                    else bob = -1;
+                }
             }
+            if (dist3 < mindist3) mindist3 = dist3;
+            if (dist4 < mindist4) mindist4 = dist4;
+            if (dist5 < mindist5) mindist5 = dist5;
+            if (dist6 < mindist6) mindist6 = dist6;
+            if (dist7 < mindist7) mindist7 = dist7;
         }
-        for(RacingLinePoint c: line) {
-            float dist1 = (float)Math.sqrt((c.getX()-o1x)*(c.getX()-o1x)+(c.getY()-o1y)*(c.getY()-o1y));
-            float dist2 = (float)Math.sqrt((c.getX()-o2x)*(c.getX()-o2x)+(c.getY()-o2y)*(c.getY()-o2y));
-            if(dist1 < threshold || dist2 < threshold) {
+        if (mindist7 < 1.75f * threshold) {
+            if (mindist5 * 2 < mindist6 && mindist3 * 2 > mindist4) bob = -1.1f;
+            if (mindist6 * 2 < mindist5 && mindist4 * 2 > mindist3) bob = 1.1f;
+        }
+
+        if (mindist > threshold) {
+            bob = 0;
+            return;
+        }
+        for (RacingLinePoint c : line) {
+            float dist1 = dist(c.getX(), c.getY(), o1x, o1y);
+            float dist2 = dist(c.getX(), c.getY(), o2x, o2y);
+            if (dist1 < threshold || dist2 < threshold) {
                 c.setPass(true);
                 float t = 0.5f;
                 //change this
-                t+=bob*(0.4-0.2*(dist1/threshold)-0.2*(dist2/threshold));
-                c.setPassX(t*c.getOuter().x+(1-t)*c.getInner().x);
-                c.setPassY(t*c.getOuter().y+(1-t)*c.getInner().y);
+                t += bob * (0.25 - 0.125 * (dist1 / threshold) - 0.125 * (dist2 / threshold));
+                c.setPassX(t * c.getOuter().x + (1 - t) * c.getInner().x);
+                c.setPassY(t * c.getOuter().y + (1 - t) * c.getInner().y);
             } else {
                 c.setPass(false);
             }

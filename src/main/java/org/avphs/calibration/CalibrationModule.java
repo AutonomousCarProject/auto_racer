@@ -251,7 +251,8 @@ public class CalibrationModule {
     }
 
     public static final short getAngles(short rad) {
-        return ANGLES[rad];
+        return 1;
+        //return ANGLES[rad];
     }
 
     public static final short getRadii(short angle) {
