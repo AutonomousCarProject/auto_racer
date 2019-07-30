@@ -6,6 +6,7 @@ import java.awt.*;
 public class Map {
     private boolean[][] mapGridData;
 
+
     //in MM per index
     public float scale = 10;
 
@@ -14,12 +15,20 @@ public class Map {
     /**
      * Creates a new map that is pre-made to be a square
      */
+    public Map(int x, int y)
+    {
+        mapGridData = new boolean[x][y];
+    }
+
+
     public Map(){
         //FAKE DATA: Returns square test track. True = Track, False = Not Track
         //Link to Desmos Graph of Sample Track (7/9/2019 - not created yet): https://www.desmos.com/calculator/obecg5hw5z
         // [x][y]
-        mapGridData = new boolean[1000][1000];
+        mapGridData = new boolean[1500][1500];
 
+
+        //Square Map
         /*for(int i = 0; i < 1000; i++)
         {
             for(int j = 0; j < 1000; j++)
@@ -62,18 +71,21 @@ public class Map {
 
     public void showMap() {
         JFrame frame = new JFrame("Display");
-        frame.setSize(mapGridData.length, mapGridData[0].length);
+        frame.setSize((int)(mapGridData.length*Display.scale), (int)(mapGridData[0].length*Display.scale));
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setResizable(false);
         frame.setLayout(new BorderLayout());
         frame.add(new Display(mapGridData), BorderLayout.CENTER);
+
     }
 
     public void setValueAtIndex(float xlocation, float ylocation, boolean value)
     {
-        if(!(xlocation == -1 || ylocation == -1)){
+        if( !((xlocation < 0)|| (ylocation < 0)) ){
             int x = Math.round(xlocation); int y = Math.round(ylocation);
+
+            // will fill in a 3x3 box rather than a 1x1
             mapGridData[x][ y] = value;
             mapGridData[x][ y + 1] = value;
             mapGridData[x][ y - 1] = value;
@@ -86,7 +98,7 @@ public class Map {
             mapGridData[x - 1][ y + 1] = value;
             mapGridData[x - 1][ y - 1] = value;
 
-            System.out.println("Value set true at: " + x + "," + y + ".");
+            //System.out.println("Value set true at: " + x + "," + y + ".");
         }
     }
 

@@ -10,14 +10,12 @@ import java.util.Scanner;
 public class CalibrationCore extends CarCore {
 
     public CalibrationCore(Car car, boolean needsCamera) {
-        super(car, false);
+        super(car);
 
         // Add Run-time Modules
         if(needsCamera){
             updatingCarModules.add(new ImageModule());
         }
-
-        init();
         startUpdatingModules();
     }
 
@@ -39,19 +37,24 @@ public class CalibrationCore extends CarCore {
                 case "CameraDataGenerator":
                     updatingCarModules.clear();
                     //updatingCarModules.add(new CameraDataGenerator());
+                    updatingCarModules.get(0).init(carData);
                     break;
                 case "3DInterpolation":
                     updatingCarModules.clear();
+                    updatingCarModules.get(0).init(carData);
                     break;
                 case "MoveForward":
                     updatingCarModules.clear();
+                    updatingCarModules.get(0).init(carData);
                     break;
                 case "BrakeTest":
                     updatingCarModules.clear();
+                    updatingCarModules.get(0).init(carData);
                     break;
                 case "ThrottleDataGenerator":
                     updatingCarModules.clear();
                     updatingCarModules.add(new ThrottleDataGenerator(car));
+                    updatingCarModules.get(0).init(carData);
                     break;
                 case "stop":
                     System.out.println("Stopping all calibration functions!");

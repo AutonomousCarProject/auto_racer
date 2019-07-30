@@ -18,12 +18,6 @@ public class ObjectDetectionModule implements CarModule {
         carData.addData("objectDetection", data);
     }
 
-    @Override
-    public CarCommand[] commands() {
-        return new CarCommand[0];
-    }
-
-    @Override
     public void update(CarData carData) {
         System.out.println("Detection");
         imageData = (ImageData)carData.getModuleData("image");

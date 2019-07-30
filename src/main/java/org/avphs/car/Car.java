@@ -1,5 +1,6 @@
 package org.avphs.car;
 
+import fly2cam.FlyCamera;
 import org.avphs.camera.Camera;
 import org.avphs.core.CarCore;
 import org.avphs.coreinterface.CarData;
@@ -12,12 +13,13 @@ public class Car implements ClientInterface {
     private Camera camera;
     private Arduino arduino;
     private int fps;
-    PulseListener ps = new PulseListener();
-    private final int DRIVESHAFT_PIN = 8;
+    private static final int DRIVESHAFT_PIN = 8;
+    private static PulseListener ps = new PulseListener();
 
-    private class PulseListener implements UpdateListener {
+    private static class PulseListener implements UpdateListener {
 
         private int prior;
+        private int count;
 
         public PulseListener() {
             prior = 0;
@@ -26,14 +28,15 @@ public class Car implements ClientInterface {
         @Override
         public void pinUpdated(int pin, int value) {
             if (pin == DRIVESHAFT_PIN) {
-                if (value + prior > 0){
+                if (value + prior > 0) {
                     prior = value;
+                    count++;
                 }
             }
         }
 
         public int getCount() {
-            return prior;
+            return count;
         }
     }
 
@@ -53,33 +56,42 @@ public class Car implements ClientInterface {
         // Set the digital output pin 10 as ESC servo under DeadMan control
         arduino.servoWrite(10, 105); // start servo +15 degrees
         arduino.addInputListener(Arduino.REPORT_PULSECOUNT, ps);
-        arduino.pinMode(8, Arduino.PULSECOUNT);
         arduino.DoPulseCnt(8, 1000 / fps / 2);
     }
 
     public void init(CarData carData) {
+        getCameraImage(carData);
         carData.addData("arduino", new ArduinoData(ps.getCount(), aVoid -> arduino.Close()));
+        carData.addData("camera", camera);
     }
 
     public void update(CarData carData) {
-        ((ArduinoData) carData.getModuleData("arduino")).addOdomCount(ps.getCount());
+        camera.NextFrame();
+        ((ArduinoData) carData.getModuleData("arduino")).setOdomCount(ps.getCount());
+        carData.addData("arduino", new ArduinoData(ps.getCount(),  aVoid -> arduino.Close()));
     }
 
     @Override
     public void getCameraImage(CarData carData) {
         camera.NextFrame();
-        carData.addData("camera", camera);
     }
 
     @Override
     public void accelerate(boolean absolute, int angle) {
-        arduino.setServoAngle(camera.getSpeedServoPin(), angle + 90);
+        if (camera instanceof FlyCamera)
+            arduino.servoWrite(camera.getSpeedServoPin(), angle + 90);
+        else
+            arduino.setServoAngle(camera.getSpeedServoPin(), angle + 90);
     }
 
     @Override
     public void steer(boolean absolute, int angle) {
-        arduino.setServoAngle(camera.getSteerServoPin(), angle + 90);
+        if (camera instanceof FlyCamera)
+            arduino.servoWrite(camera.getSteerServoPin(), angle + 90);
+        else
+            arduino.setServoAngle(camera.getSteerServoPin(), angle + 90);
     }
+
 
     @Override
     public void stop() {

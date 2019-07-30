@@ -3,6 +3,8 @@
 */out
 out
 bin
+src/main/java/org/avphs/map/map.txt
+position_car_testing_data.txt
 
 ### Gradle ###
 .gradle

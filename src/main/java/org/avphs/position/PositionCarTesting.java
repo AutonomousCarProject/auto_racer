@@ -6,10 +6,15 @@ import java.io.IOException;
 
 public class PositionCarTesting {
 
-    private BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("position_car_testing_data.txt"));
+    private BufferedWriter bufferedWriter;
     private int strLength = 16;
 
-    PositionCarTesting() throws IOException {
+    PositionCarTesting() {
+        try {
+            bufferedWriter = new BufferedWriter(new FileWriter("position_car_testing_data.txt"));
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
         String[] vars = new String[]{"Position", "Direction", "Odometer", "WheelAngle"};
         for (int i = 0; i < vars.length; i++) {
             while (vars[i].length() < strLength) {
@@ -17,7 +22,11 @@ public class PositionCarTesting {
             }
         }
         for (String var : vars) {
-            bufferedWriter.write(var);
+            try {
+                bufferedWriter.write(var);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
         }
     }
 

@@ -155,13 +155,12 @@ public class ThrottleDataGenerator implements CarModule {
 //        }
     }
 
-    @Override
     public CarCommand[] commands() {
         return new CarCommand[0];
     }
 
     @Override
-    public void update(CarData carData) throws IOException {
+    public void update(CarData carData) {
 
     }
 }

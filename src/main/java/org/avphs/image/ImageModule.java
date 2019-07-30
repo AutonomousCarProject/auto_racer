@@ -7,6 +7,15 @@ import org.avphs.coreinterface.CarData;
 import org.avphs.coreinterface.CarModule;
 import org.avphs.window.WindowModule;
 
+/** Manages and executes image processing
+ *
+ * @author Joshua Bromley
+ * @author Kenneth Browder
+ * @author Kevin "Poo" Tran
+ * @see ImageProcessing
+ * @see ImageData
+ * @see WallIdentification
+ */
 public class ImageModule implements CarModule {
 
     WindowModule window;
@@ -20,11 +29,7 @@ public class ImageModule implements CarModule {
         ImageData data = new ImageData();
         carData.addData("image", data);
     }
-
-    @Override
-    public CarCommand[] commands() {
-        return null;
-    }
+    
 
     @Override
     public void update(CarData carData) {
@@ -45,28 +50,27 @@ public class ImageModule implements CarModule {
         carData.addData("image",inProgressData);
 
         bayerImage = camera.getBayerImage();
-        codeImage = ImageProcessing.process(bayerImage, WINDOW_WIDTH,WINDOW_HEIGHT);
-        wallData = WallIdentification.scanImage(codeImage,WINDOW_WIDTH,WINDOW_HEIGHT);
-        ImageProcessing.CodeToRGB(codeImage, rgbImage);
+        wallData = WallIdentification.magicloop(bayerImage,WINDOW_WIDTH,WINDOW_HEIGHT,65, 0);
+        rgbImage = ImageProcessing.process(bayerImage,WINDOW_WIDTH,WINDOW_HEIGHT);
+        ImageProcessing.CodeToRGB(rgbImage,rgbImage);
 
         data.wallTop = wallData[1];
         data.wallBottom = wallData[0];
+        data.wallTypes = wallData[2];
+
 
         for(int k = 0; k < wallData[0].length; k++) {
-            if(wallData[0][k] > 0 && wallData[1][k] > 0) {
+            if(wallData[0][k] > 0 && wallData[1][k] >= 0) {
                 for(int m = wallData[1][k]; m < wallData[0][k]; m ++) {
-                    rgbImage[k + wallData[0].length * m] = WallIdentification.ColorArr[4];
+                    if(k < 640) rgbImage[k + wallData[0].length * m] = WallIdentification.ColorArr[4];
                 }
             }
         }
 
         carData.addData("image", data);
         window.setWindowImage(rgbImage);
-        System.out.println("Image END");
     }
 
 
 
 }
-
-

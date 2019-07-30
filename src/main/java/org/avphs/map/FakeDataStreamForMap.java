@@ -24,11 +24,6 @@ public class FakeDataStreamForMap {
     {
         xPosition = 800;
         yPosition = 500;
-        for (int i = 0; i < bottomOuterWallHeights.length; i++)
-        {
-            bottomOuterWallHeights[i] = bottomOuterWallHeights[i] + 50;
-        }
-
     }
     /*
     LIST OF POSSIBLE STARTING POSITIONS
@@ -36,25 +31,26 @@ public class FakeDataStreamForMap {
      */
     public void updatePos ()
     {
-        if (runningRadianTotal < (2 * Math.PI))
-        {
-            timeSinceLastUpdate = System.currentTimeMillis();
-            if (System.currentTimeMillis() < (timeSinceLastUpdate + frameRate))
+            if (runningRadianTotal < (2 * Math.PI))
             {
-                System.out.println(runningRadianTotal);
-                runningRadianTotal += stepRadian;
-                updateXPos(); updateYPos();
-                //Export data from image.
                 timeSinceLastUpdate = System.currentTimeMillis();
+                if (System.currentTimeMillis() < (timeSinceLastUpdate + frameRate))
+                {
+                    System.out.println(runningRadianTotal);
+                    runningRadianTotal += stepRadian;
+                    updateXPos(); updateYPos();
+                    //Export data from image.
+                    timeSinceLastUpdate = System.currentTimeMillis();
+                }
             }
-        }
-        else
-        {
-            done = true;
-        }
-        System.out.println(xPosition + "," + yPosition);
-        System.out.println(runningRadianTotal);
+            else
+            {
+                done = true;
+            }
+            System.out.println(xPosition + "," + yPosition);
+            System.out.println("Percent Done: " + (runningRadianTotal / (2*Math.PI)) + "%");
     }
+
 
     public FakeDataStreamForMap(double xpos, double ypos)//If we want to change starting position.
     {
@@ -118,8 +114,10 @@ public class FakeDataStreamForMap {
     }
     public double updateYPos()
     {
+
         yPosition = (float)(500 + (300 * (Math.cos(runningRadianTotal))));
         return yPosition;
+
     }
     public float[] returnPos()
     {
