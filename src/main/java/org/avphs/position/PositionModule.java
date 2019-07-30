@@ -7,7 +7,7 @@ import org.avphs.traksim.TrakSim;
 
 public class PositionModule implements CarModule {
 
-    private PositionData prevPositionData = new PositionData(new float[]{0, 0}, 0, 0); //WILL BE USED LATER
+    private PositionData prevPositionData = new PositionData(new float[]{0, 0}, 0, 0);
     private PositionData positionData;
     private TrakSim ts;
     private int angle = 0;
@@ -19,13 +19,13 @@ public class PositionModule implements CarModule {
 
     public void init(CarData carData) {
         //THIS WILL BE WHERE WE READ FROM A FILE TO FIND THE INITIAL POSITION
-        positionData = new PositionData(new float[]{40.0f,56.0f}, 0, 0); //TEMPORARY
+        positionData = new PositionData(new float[]{40.0f,56.0f}, 0, 0); //initial position for this map is (40,56)
         ts = new TrakSim();
     }
 
     @Override
     public CarCommand[] commands() {
-        return new CarCommand[] {
+        return new CarCommand[] { //still using CarCommand because this is an older version of master
                 CarCommand.accelerate(true, 15),
                 CarCommand.steer(true, angle)
         };
@@ -33,7 +33,7 @@ public class PositionModule implements CarModule {
 
     @Override
     public void update(CarData carData) {
-        if(cumulatedDistance > 33 && cumulatedDistance < 105){
+        if(cumulatedDistance > 33 && cumulatedDistance < 105){ //hard code to make the car run one lap around the track
             angle = 15;
         }
         else if (cumulatedDistance > 105 && cumulatedDistance < 136){
@@ -52,20 +52,19 @@ public class PositionModule implements CarModule {
             angle = 0;
         }
 
-        cumulatedDistance += (float)ts.GetDistance(false);
+        cumulatedDistance += (float)ts.GetDistance(false); //used only to find when to turn for the hard code
         ComputePosition((float)ts.GetDistance(true), angle, positionData.getDirection());
         carData.addData("position", positionData);
 
     }
 
     private void ComputePosition(float distanceTraveled, float turnAngle, float currentDirection){
-        float wheelBase = 10f;
+        float wheelBase = 10f; //not sure if actually 10
 
         float newPosX = 0;
         float newPosY = 0;
         float newPos[] = {newPosX, newPosY};
         float turnRadius;
-        float newDirection;
 
         if(turnAngle != 0) {
             turnRadius = ComputeTurnRadius(wheelBase, turnAngle);
@@ -76,15 +75,12 @@ public class PositionModule implements CarModule {
 
         if(turnAngle > 0) {
             ComputeDirection(currentDirection, turnRadius, distanceTraveled, "right");
-            newDirection = positionData.getDirection();
         }
         else if(turnAngle < 0){
             ComputeDirection(currentDirection, turnRadius, distanceTraveled, "left");
-            newDirection = positionData.getDirection();
         }
         else{//turnAngle == 0
             ComputeDirection(currentDirection, turnRadius, distanceTraveled, "none");
-            newDirection = positionData.getDirection();
         }
 
         if (turnRadius == 0) {
@@ -100,7 +96,7 @@ public class PositionModule implements CarModule {
             }
         }
 
-        //System.out.println("direction: " + newDirection);
+        //System.out.println("direction: " + positionData.getDirection());
         //System.out.println("turn radius" + turnRadius);
 
         System.out.println("Position = ("+(positionData.getPosition()[0])+","+(positionData.getPosition()[1])+")");
@@ -111,7 +107,7 @@ public class PositionModule implements CarModule {
         return turnRadius;
     }
 
-    private void ComputeDirection(float currentDirection, float turnRadius, float distanceTraveledParkMeters, String turnType){
+    private void ComputeDirection(float currentDirection, float turnRadius, float distanceTraveledParkMeters, String turnType){ //returns new direction
         distanceTraveledRadians = distanceTraveledParkMeters / turnRadius;
         distanceTraveledDegrees = (float) (distanceTraveledRadians * 180 / Math.PI);
         float newDirection;
