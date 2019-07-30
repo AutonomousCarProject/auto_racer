@@ -93,9 +93,10 @@ public class CalibrationCore extends CarCore {
             switch(line){
                 case "help":
                     System.out.println("'stop' will stop all functions and close the program");
-                    System.out.println("'CameraDataGenerator'");
-                    System.out.println("'3DInterpolation'");
-                    System.out.println("'MoveForward'");
+                    //System.out.println("'CameraDataGenerator'");
+                    //System.out.println("'3DInterpolation'");
+                    //System.out.println("'MoveForward'");
+                    System.out.println("'ThrottleDataGenerator'");
                     System.out.println("'help' prints this little blurb");
                     break;
                 case "CameraDataGenerator":
