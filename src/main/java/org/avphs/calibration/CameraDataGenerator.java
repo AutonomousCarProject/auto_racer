@@ -113,6 +113,9 @@ public class CameraDataGenerator {
 
             int[][] heightDiffs = new int[minSlices][];
 
+            for (int i = 0; i < firstClean.length; i++) {
+                //int diff = firstClean
+            }
 
             for (int i = 0; i < firstClean.length; i++) {
                 //int base = (firstClean[i][] + secondClean[i][])/2;

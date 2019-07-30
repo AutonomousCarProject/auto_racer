@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Random;
-import java.util.function.Function;
 
 public class interpolation3d {
 	//number of terms in the desired polynomial
@@ -133,24 +132,13 @@ public class interpolation3d {
 		}
 		return res;
 	}
-
-	public void
-
-
 	//run
 	public void run(int numtrials) throws IOException {
-
-		while (err > threshold && count < maxIterations){
-			addLayer();
-
-		}
-
+		System.out.println("running "+numtrials+" trials...");
 		for(int trial=0;trial<trials;trial++) {
 			double[][] pass = new double[n][vars];
 			double[] target = new double[n];
 			//polynomial
-
-
 			for(int i=0;i<n;i++) {
 				double a = input[i][0];
 				double b = input[i][1];
