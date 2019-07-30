@@ -28,6 +28,10 @@ public class CalibrationModule {
         }
     }
 
+    public static void main(string[] args){
+
+    }
+
     /*private static <TOUT> TOUT readTable(String filepath){
         TOUT rowList = null;
 
