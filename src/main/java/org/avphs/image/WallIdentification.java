@@ -66,12 +66,12 @@ public class WallIdentification {
             {10,11,10,9,8,9,10,9,10,9,8,6}
     };
 
-    /**
+    /**Takes image in and searches for tube walls
      *
      * @param codeArray Image where colors are represented by the numbers outlined in ColorArr
      * @param width Width of Image
      * @param height Height of Image
-     * Takes image in and searches for tube walls
+     *
      * @return 2D array with 2 rows, top coordinates of watt and bottom coordinates of wall
      */
     static int[][] scanImage(int[] codeArray, int width, int height) {
@@ -180,13 +180,13 @@ public class WallIdentification {
         return out;
     }
 
-    /**
+    /**Removes outliers from our detected wall data
      *
      * @param inArrayTop Input of top coordinates
      * @param inArrayBottom Input of bottom coordinates
      * @param outArrayTop Output of top coordinates without outliers
      * @param outArrayBottom Output of bottom coordinates without outliers
-     * Removes outliers from our detected wall data
+     *
      *
      */
     static void removeOutliers(int[] inArrayTop, int[] inArrayBottom, int[] outArrayTop, int[] outArrayBottom, int[]wallTypes){
