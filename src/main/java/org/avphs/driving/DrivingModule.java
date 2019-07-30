@@ -7,6 +7,7 @@ import org.avphs.coreinterface.CarModule;
 import org.avphs.position.PositionData;
 import org.avphs.racingline.RacingLine;
 import org.avphs.racingline.RacingLinePoint;
+import org.avphs.sbcio.ArduinoData;
 
 import java.util.ArrayList;
 
@@ -18,8 +19,8 @@ public class DrivingModule implements CarModule {
     private RoadData currentSegment;
     private RoadData nextSegment;
 
-    private int angle = 0;
-    private int throttle = 12;
+    private int angle = 7;
+    private int throttle = 20;
     private boolean stop = false;
     private final Car car;
 
@@ -71,7 +72,12 @@ public class DrivingModule implements CarModule {
         carData.addData("driving", angle);
         //Tells the car to move :)
         car.accelerate(true, 12);
+        if(((ArduinoData) carData.getModuleData("arduino")).getOdomCount() >= 100) {
+            throttle = 0;
+        }
+        car.accelerate(true, throttle);
         car.steer(true, angle);
+
     }
 
     /*
