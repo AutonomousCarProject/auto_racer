@@ -133,37 +133,43 @@ public class ThrottleDataGenerator implements CarModule {
         System.out.println("Throttle Calibration Done");
         //{ {{angle array},{throttle array}} , {{},{}} ...}
         //speed is the index
-        int[][][] preInterpolation = new int[4024][2][15];
-        for (int i = start; i < 44; i++) {
-            int angleIndex = 0;
-            float[] speedValues = angleThrottleSpeedValues.get(i);
-            int index = 0;
-            for (int j = 0; j < preInterpolation.length; i++) {
-                float currentDifference = Math.abs(speedValues[index] - i);
-                while(index < 60){
-                    float newDifference = Math.abs(speedValues[index + 1] -i);
-                    if(newDifference <= currentDifference){
-                        currentDifference = newDifference;
-                        index++;
-                    }else{
-                        break;
-                    }
-                }
-                preInterpolation[i][0][angleIndex] = i;
-                preInterpolation[i][1][index] = index;
-            }
-            angleIndex++;
-        }
-        for(int i =0 ;i<preInterpolation.length;i++) {
-            try {
-                interpolation3d interpolate = new interpolation3d(preInterpolation[i][0], new double[15], preInterpolation[i][1], 5);
-                interpolate.query(0,0);
-            }catch(IOException e){
-                e.printStackTrace();
-            }
-        }
+//        int[][][] preInterpolation = new int[4024][2][15];
+//        for (int i = start; i < 44; i++) {
+//            int angleIndex = 0;
+//            float[] speedValues = angleThrottleSpeedValues.get(i);
+//            int index = 0;
+//            for (int j = 0; j < preInterpolation.length; i++) {
+//                float currentDifference = Math.abs(speedValues[index] - i);
+//                while(index < 60){
+//                    float newDifference = Math.abs(speedValues[index + 1] -i);
+//                    if(newDifference <= currentDifference){
+//                        currentDifference = newDifference;
+//                        index++;
+//                    }else{
+//                        break;
+//                    }
+//                }
+//                preInterpolation[i][0][angleIndex] = i;
+//                preInterpolation[i][1][index] = index;
+//            }
+//            angleIndex++;
+//        }
+//        for(int i =0 ;i<preInterpolation.length;i++) {
+//            try {
+//                interpolation3d interpolate = new interpolation3d(intToDoubleArr([i][0]), new double[15], preInterpolation[i][1], 5);
+//                interpolate.query(0,0);
+//            }catch(IOException e){
+//                e.printStackTrace();
+//            }
+//        }
     }
-    
+    private double[]intToDoubleArr(int[]arr){
+        double[]newArr = new double[arr.length];
+        for(int i = 0;i<newArr.length;i++){
+            newArr[i] = arr[i];
+        }
+        return newArr;
+    }
     public CarCommand[] commands() {
         return new CarCommand[0];
     }
