@@ -17,6 +17,12 @@ public class CalibrationCore extends CarCore {
             updatingCarModules.add(new ImageModule());
         }
         startUpdatingModules();
+
+        try {
+            runTime();
+        } catch (Exception e){
+
+        }
     }
 
     public void runTime() throws Exception{
