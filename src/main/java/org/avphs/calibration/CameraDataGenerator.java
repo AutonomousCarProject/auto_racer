@@ -3,15 +3,11 @@ package org.avphs.calibration;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
-
-import javafx.util.Pair;
 
 
 public class CameraDataGenerator {
@@ -26,8 +22,8 @@ public class CameraDataGenerator {
             int[][] darknesses = new int[width][height];
             for (int x = 0; x < width; x++) {
                 for (int y = 0; y < height; y++) {
-                    var color = new Color(img.getRGB(x, y));
-                    var darkness = (color.getRed() + color.getGreen() + color.getBlue()) / 3;
+                    Color color = new Color(img.getRGB(x, y));
+                    int darkness = (color.getRed() + color.getGreen() + color.getBlue()) / 3;
                     runningTotal += darkness;
                     darknesses[x][y] = darkness;
                 }
@@ -116,7 +112,11 @@ public class CameraDataGenerator {
             int[][] firstClean = cleanLines(firstHalf, minSlices);
             int[][] secondClean = cleanLines(firstHalf, minSlices);
 
+            int[][] heightDiffs = new int[minSlices][];
 
+            for (int i = 0; i < firstClean.length; i++) {
+                //int diff = firstClean
+            }
 
 
 
