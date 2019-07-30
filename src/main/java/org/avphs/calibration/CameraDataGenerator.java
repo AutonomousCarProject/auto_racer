@@ -3,15 +3,11 @@ package org.avphs.calibration;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
-
-import javafx.util.Pair;
 
 
 public class CameraDataGenerator {
@@ -19,22 +15,22 @@ public class CameraDataGenerator {
     private static int width;
     public static void main(String[] args) {
         try {
-            var img = javax.imageio.ImageIO.read(new File("grid.png"));
+            BufferedImage img = javax.imageio.ImageIO.read(new File("grid.png"));
             width = img.getWidth();
             height = img.getHeight();
-            var runningTotal = 0;
-            var darknesses = new int[width][height];
+            int runningTotal = 0;
+            int[][] darknesses = new int[width][height];
             for (int x = 0; x < width; x++) {
                 for (int y = 0; y < height; y++) {
-                    var color = new Color(img.getRGB(x, y));
-                    var darkness = (color.getRed() + color.getGreen() + color.getBlue()) / 3;
+                    Color color = new Color(img.getRGB(x, y));
+                    int darkness = (color.getRed() + color.getGreen() + color.getBlue()) / 3;
                     runningTotal += darkness;
                     darknesses[x][y] = darkness;
                 }
             }
 
-            var threshhold = .75 * runningTotal / (width * height);
-            var isDark = new boolean[width][height];
+            double threshhold = .75 * runningTotal / (width * height);
+            boolean[][] isDark = new boolean[width][height];
 
             for (int x = 0; x < width; x++) {
                 for (int y = 0; y < height; y++) {
@@ -54,8 +50,8 @@ public class CameraDataGenerator {
 
                 int lineStart = 0;
 
-                var writingLine = false;
-                var window = new ArrayList<Boolean>();
+                boolean writingLine = false;
+                ArrayList<Boolean> window = new ArrayList<Boolean>();
                 int length = 9;
 
                 for (int i = 0; i < length; i++) {
@@ -71,7 +67,7 @@ public class CameraDataGenerator {
                     if (writingLine && majority(window, i -> !i)) {
                         //if most pixels aren't stripes
                         writingLine = false;
-                        var lineEnd = center;
+                        int lineEnd = center;
                         int[] slice = new int[]{lineStart, lineEnd};
                         hLineSlices.get(x).add(slice);
 
@@ -85,7 +81,7 @@ public class CameraDataGenerator {
                 }
             }
 
-            var hLines = new ArrayList<int[]>();
+            ArrayList<int[]> hLines = new ArrayList<>();
 
 
             int minSlices = -1;
@@ -116,7 +112,11 @@ public class CameraDataGenerator {
             int[][] firstClean = cleanLines(firstHalf, minSlices);
             int[][] secondClean = cleanLines(firstHalf, minSlices);
 
+            int[][] heightDiffs = new int[minSlices][];
 
+            for (int i = 0; i < firstClean.length; i++) {
+                //int diff = firstClean
+            }
 
 
 
