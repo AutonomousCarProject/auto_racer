@@ -9,6 +9,7 @@ import org.avphs.coreinterface.CarData;
 import org.avphs.position.PositionData;
 import org.avphs.sbcio.ArduinoData;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.ArrayList;
@@ -25,50 +26,93 @@ public class BrakeTest extends TimerTask {
     CalibrationCore core = new CalibrationCore(car, false);
 
     public void run(){
-        curSpeed = ((PositionData)carData.getModuleData("position")).getSpeed();
+        curSpeed = 0;//((PositionData)carData.getModuleData("position")).getSpeed();
     }
 
+    //physically test in increments of 50cm/s until 90mph
+    //interpolate using data, get points on curve every 5cm/s
+    //need to stop and reset placement(move backwards or turn around) every so often
 
+    //all speeds from 0-max 90mph
+    //0 to 4035 in increments of 5cm/s
+    //4 friction types, 808
     public static void main(String[] args) {
-        BrakeTest boi = new BrakeTest();
+        BrakeTest brakeBoi = new BrakeTest();
         Timer timer = new Timer();
-        timer.schedule(boi, 0, 5000);
+        timer.schedule(brakeBoi, 0, 1000);
 
-        int numStartSpeeds = 3;
-        int numEndSpeeds = 3;
-        int startSpeed = 5;
+        Boolean resetFile = true;
+        int maxSpeed = 4050;//rounded up in cm/s from 90mph(~4023.36cm/s)
+        int increment = 50;//speed change increment in cm/s
+        int startSpeed = 0;
         int endSpeed = 0;
+        int numStartSpeeds = maxSpeed/increment;
+        int numEndSpeeds = maxSpeed/increment;
         String stringData = "NA";
 
-        for(int i=0;i<numStartSpeeds;i++)//start speeds
+        if(resetFile)//reset file to be blank if boolean is true
         {
-            for(int j=0;j<numEndSpeeds;j++)//end speeds
+            try(BufferedWriter writer = new BufferedWriter(new FileWriter("src/main/java/org/avphs/calibration/SpeedToDistData.txt")))
             {
-                boi.testBrakeDist((byte)startSpeed,(byte)endSpeed);
-                endSpeed+=0;
+                writer.write("");
             }
-            startSpeed+=1;
+            catch(Exception e)
+            {
+                // Handle any I/O problems
+                System.out.println("IO problem caught trying to reset file");
+            }
         }
 
-        //startSpeed, endSpeed, brakeDistance
-        try(BufferedWriter writer = new BufferedWriter(new FileWriter("src/main/java/org/avphs/calibration/SpeedToDistData.txt"))){
-            for(int i=0;i<numStartSpeeds;i++)//start speeds
+        for(int i=0;i<numStartSpeeds;i++)//go through start speeds
+        {
+            for(int j=0;j<numEndSpeeds;j++)//go through end speeds
             {
-                for (int j = 0; j < numEndSpeeds; j++)//end speeds
+                if(endSpeed<=startSpeed)
                 {
-                    for (int var = 0; var < 3; var++) {
-                        stringData = Double.toString(boi.brakeData.get(0)[var]);
+                    brakeBoi.testBrakeDist((byte)startSpeed,(byte)endSpeed);//test speeds and update data
+
+                    //Write the data to file SpeedToDistData.txt
+                    try(BufferedWriter writer = new BufferedWriter(new FileWriter("src/main/java/org/avphs/calibration/SpeedToDistData.txt")))
+                    {
+                        for (int var = 0; var < numEndSpeeds; var++) //go through startSpeed, endSpeed, brakeDist
+                        {
+                            stringData = Double.toString(brakeBoi.brakeData.get(0)[var]);
+                            writer.append(stringData + " ");
+                        }
+                        writer.newLine();
+                    }
+                    catch(Exception e)
+                    {
+                        // Handle any I/O problems
+                        System.out.println("IO problem caught from startSpeed: "+startSpeed+" and endSpeed: "+endSpeed);
+                    }
+                }
+                endSpeed+=increment;
+            }
+            startSpeed+=increment;
+        }
+
+        //write the data to file SpeedToDistData.txt
+        /*try(BufferedWriter writer = new BufferedWriter(new FileWriter("src/main/java/org/avphs/calibration/SpeedToDistData.txt"))){
+            for(int i = 0;i < numStartSpeeds; i++)//go through start speeds
+            {
+                for (int j = 0; j < 0; j++)//go through end speeds
+                {
+                    for (int var = 0; var < numEndSpeeds; var++) //go through startSpeed, endSpeed, brakeDist
+                    {
+                        stringData = Double.toString(brakeBoi.brakeData.get(0)[var]);
                         writer.append(stringData + " ");
                     }
                     writer.newLine();
                 }
+
             }
             writer.close();
         }
         catch(Exception e) {
             // Handle any I/O problems
 
-        }
+        }*/
     }
 
 
@@ -78,7 +122,7 @@ public class BrakeTest extends TimerTask {
      */
     public void testBrakeDist(byte startSpeed, byte endSpeed)
     {
-        byte throttle = CalibrationModule.getThrottle((byte)0, (short)0, startSpeed);
+        byte throttle = 0;//CalibrationModule.getThrottle((byte)0, (short)0, startSpeed);
         int startDist = 0;
         int endDist;
         double brakeDist;
@@ -86,13 +130,13 @@ public class BrakeTest extends TimerTask {
         car.accelerate(true, throttle);
         if(curSpeed >= startSpeed)
         {
-            startDist = ((ArduinoData) carData.getModuleData("arduino")).getOdomCount();
-            throttle = CalibrationModule.getThrottle((byte)0, (short)0, endSpeed);
+            startDist = 10;//((ArduinoData) carData.getModuleData("arduino")).getOdomCount();
+            throttle = 5;//CalibrationModule.getThrottle((byte)0, (short)0, endSpeed);
             car.accelerate(true, throttle);
         }
         if(curSpeed <= endSpeed)
         {
-            endDist = ((ArduinoData) carData.getModuleData("arduino")).getOdomCount();
+            endDist = 20;//((ArduinoData) carData.getModuleData("arduino")).getOdomCount();
             brakeDist = endDist - startDist;
             car.stop();
             double[] data = new double[3];
