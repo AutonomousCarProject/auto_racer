@@ -14,7 +14,7 @@ public class PositionModule implements CarModule, CloseHook {
 
     private PositionData prevPositionData = new PositionData(new float[]{0, 0}, 0, 0); //WILL BE USED LATER
     private PositionData positionData;
-    private float disBetweenAxle = 0;
+    private float disBetweenAxle = (float) CalibrationModule.WHEEL_BASE;//deprecated
     private float distanceTraveled;
     private float wheelAngle;
     private float deltaPositionAngle;
@@ -57,23 +57,14 @@ public class PositionModule implements CarModule, CloseHook {
     }
 
     private void computePosition(int odometerCount, float drivingData) {
-        float drivingArcRadius;
-        disBetweenAxle = (float) CalibrationModule.WHEEL_BASE;
         // find out if this is run before or after driving. If after, good, else: bad.
 
         wheelAngle = drivingData; //angle of servo
         distanceTraveled = (float) (odometerCount * CalibrationModule.CM_PER_ROTATION); //number of wheel turns
 
         //FIXME: Get table values from calibraiton for wheel angle to turn radius
-        if (wheelAngle > 91) { //if turning right
-            drivingArcRadius = (float) (disBetweenAxle / Math.cos(Math.toRadians(-wheelAngle)));
-        } else if (wheelAngle < 89) { //if turning left
-            drivingArcRadius = (float) (disBetweenAxle / Math.cos(Math.toRadians(wheelAngle)));
-        }
+        float drivingArcRadius = CalibrationModule.getAngles((short) wheelAngle);
 
-        else {
-            drivingArcRadius = 0;
-        }
         if (drivingArcRadius == 0) {
             //just drive straight forward
             convertPosition(0, distanceTraveled);
@@ -114,7 +105,7 @@ public class PositionModule implements CarModule, CloseHook {
     }
 
     private void computeSpeed(int odometerCount) {
-        float speed = (odometerCount - prevOdom) * (float) CalibrationModule.CM_PER_ROTATION * 30f;//*30 because convert odometerCount per 33.33 milliseconds to OdometerCount per second.
+        float speed = (odometerCount - prevOdom) * (float) CalibrationModule.CM_PER_ROTATION * 15f;//*30 because convert odometerCount per 33.33 milliseconds to OdometerCount per second.
         positionData.updateSpeed(speed);
     }
 
