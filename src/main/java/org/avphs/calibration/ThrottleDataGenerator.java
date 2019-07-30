@@ -1,7 +1,7 @@
 package org.avphs.calibration;
 
+import fly2cam.FlyCamera;
 import org.avphs.camera.Camera;
-import org.avphs.camera.FlyCamera;
 import org.avphs.camera.SimCamera;
 import org.avphs.car.Car;
 import org.avphs.core.CalibrationCore;
@@ -31,9 +31,9 @@ public class ThrottleDataGenerator {
             cam = new SimCamera();
             car = new Car(cam);
         }
+        CalibrationCore core = new CalibrationCore(car, false);
         carData = new CarData();
         car.init(carData);
-        CalibrationCore core = new CalibrationCore(car, false);
         HashMap<Integer, float[]> angleThrottleSpeedValues = new HashMap<Integer, float[]>();
         int middle = CalibrationModule.STRAIGHT_ANGLE;
         int start = middle - (((middle + 33) / 5) * 5);
@@ -55,14 +55,26 @@ public class ThrottleDataGenerator {
         //speed is the index
 //        int[][][] preInterpolation = new int[4024][2][15];
 //        for (int i = start; i < 44; i++) {
+//            int angleIndex = 0;
 //            float[] speedValues = angleThrottleSpeedValues.get(i);
 //            int index = 0;
 //            for (int j = 0; j < preInterpolation.length; i++) {
-//                if(index < 60){
-//
+//                float currentDifference = Math.abs(speedValues[index] - i);
+//                while(index < 60){
+//                    float newDifference = Math.abs(speedValues[index + 1] -i);
+//                    if(newDifference <= currentDifference){
+//                        currentDifference = newDifference;
+//                        index++;
+//                    }else{
+//                        break;
+//                    }
 //                }
+//                preInterpolation[i][0][angleIndex] = i;
+//                preInterpolation[i][1][index] = index;
 //            }
+//            angleIndex++;
 //        }
+
     }
     static long[] calibrateAcceleration(float [] speedValues) throws InterruptedException {
 /**
@@ -75,7 +87,7 @@ public class ThrottleDataGenerator {
          for(int i=0 ; i < speedValues.length ; i++ ) {
              long startTime = System.currentTimeMillis();
              car.accelerate(true, i);
-             while (((ArduinoData) carData.getModuleData("arduino")).count <= speedValues[i]) {
+             while (((ArduinoData) carData.getModuleData("arduino")).getOdomCount() <= speedValues[i]) {
 //                 Accelerating
              }
              allAccelerationTimes [i] = System.currentTimeMillis() - startTime;
@@ -96,9 +108,13 @@ public class ThrottleDataGenerator {
             car.accelerate(true, i);
             int sameMaxSpeed = 0;
             while (speedChanged) {
-                int lastOdom = ((ArduinoData) carData.getModuleData("arduino")).count;
+                int lastOdom = ((ArduinoData) carData.getModuleData("arduino")).getOdomCount();
+                System.out.println("Last odom: "+ lastOdom);
                 sleep(1000);
-                int thisSpeed = ((ArduinoData) carData.getModuleData("arduino")).count - lastOdom;
+                int newOdom = ((ArduinoData) carData.getModuleData("arduino")).getOdomCount();
+                System.out.println("New odom: " + newOdom);
+                int thisSpeed = newOdom - lastOdom;
+                System.out.println("Speed: " + thisSpeed);
                 speedChanged = false;
                 if(thisSpeed == lastSpeed){
                     sameMaxSpeed++;
@@ -126,9 +142,9 @@ public class ThrottleDataGenerator {
 
     static void waitUntilStop() throws InterruptedException {
         while (true) {
-            int lastOdom = ((ArduinoData) carData.getModuleData("arduino")).count;
+            int lastOdom = ((ArduinoData) carData.getModuleData("arduino")).getOdomCount();
             sleep(1000);
-            int thisSpeed = ((ArduinoData) carData.getModuleData("arduino")).count - lastOdom;
+            int thisSpeed = ((ArduinoData) carData.getModuleData("arduino")).getOdomCount() - lastOdom;
             if (thisSpeed == 0) {
                 return;
             }

@@ -40,7 +40,7 @@ public class CalibrationModule {
 
     public static final double  SUSPENSION_HEIGHT = 1;
 
-    public static final double  CM_PER_ROTATION = 0.096; //approximation (from DriverCons)
+    public static final double  CM_PER_ROTATION = 10.4166667; //approximation (from DriverCons)
 
     public static final int STRAIGHT_ANGLE = 7;
 
