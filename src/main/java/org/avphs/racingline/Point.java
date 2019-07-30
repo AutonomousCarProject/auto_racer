@@ -7,6 +7,7 @@ package org.avphs.racingline;
 class Point {
     int x, y;
 
+    //region Constructors
     public Point() {
         x = 0;
         y = 0;
@@ -16,7 +17,9 @@ class Point {
         x = _x;
         y = _y;
     }
+    //endregion
 
+    //region Overrides
     /**
      * Used for hashmap insertion.
      * @return result
@@ -51,4 +54,5 @@ class Point {
             return false;
         return true;
     }
+    //endregion
 }
