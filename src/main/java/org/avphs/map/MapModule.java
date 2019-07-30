@@ -30,7 +30,6 @@ public class MapModule implements CarModule, CloseHook {
     //These numbers are added to the (0,0) origin to indicate the starting position of the car in the room.
 
 
-
     private ImageData imageData;
     private PositionData positionModule;
     private TrakSim trakSimData = new TrakSim();
@@ -77,12 +76,12 @@ public class MapModule implements CarModule, CloseHook {
         switch (MAP_MODE)//Updating statements used for each map mode.
         {
             case 0:
-                positionModule = (PositionData)carData.getModuleData("position");
+                positionModule = (PositionData) carData.getModuleData("position");
                 imageData = (ImageData) carData.getModuleData("image");
                 mapformatter.AddData(positionModule.getPosition(), positionModule.getDirection(), imageData.wallBottom);
                 break;
             case 1:
-                positionModule = (PositionData)carData.getModuleData("position");
+                positionModule = (PositionData) carData.getModuleData("position");
                 mapformatter.expandTrackFiveCarLengthsToTheLeftAndRightOfCurrentPos(positionModule.getPosition(), positionModule.getDirection());
                 break;
             case 2:
@@ -93,29 +92,24 @@ public class MapModule implements CarModule, CloseHook {
                 //System.out.println(trakSimData.GetPosn(true));
                 float[] pos = new float[2];
 
-                pos[0] = (float)(( trakSimData.GetPosn(true) * 12.5) + 200);//Convert TrakSim x position to map position
+                pos[0] = (float) ((trakSimData.GetPosn(true) * 12.5) + 200);//Convert TrakSim x position to map position
 
-                pos[1] = (float)(( trakSimData.GetPosn(false) * 12.5));//Convert Traksim y position to map position
-
+                pos[1] = (float) ((trakSimData.GetPosn(false) * 12.5));//Convert Traksim y position to map position
 
 
                 //System.out.println("Current Pos: " + pos[0] + ", "+ pos[1]);
 
 
                 //This converts a traksim angle to one more like what position tracking would give us
-                float currentAngle; float trakSimAngle = (float)trakSimData.GetFacing();
+                float currentAngle;
+                float trakSimAngle = (float) trakSimData.GetFacing();
 
                 //Converts TrakSimAngle to Angle Resembling what we would get from Pos Tracking
-                if (trakSimAngle < STARTING_ANGLE)
-                {
+                if (trakSimAngle < STARTING_ANGLE) {
                     currentAngle = (360.0f - (STARTING_ANGLE - trakSimAngle));
-                }
-                else if (trakSimAngle > STARTING_ANGLE)
-                {
+                } else if (trakSimAngle > STARTING_ANGLE) {
                     currentAngle = (trakSimAngle - STARTING_ANGLE);
-                }
-                else
-                {
+                } else {
                     currentAngle = 0.0f;
                 }
 
@@ -125,13 +119,12 @@ public class MapModule implements CarModule, CloseHook {
                 mapformatter.AddData(pos, currentAngle, imageData.wallBottom);
 
 
-
                 break;
             case 3:
                 //For Testing Using FakeDataStream
 
                 fakedata.updatePos();//Updates position on FakeData (Fake Track)
-                mapformatter.AddData(fakedata.returnPos(), (float)fakedata.runningRadianTotal, fakedata.bottomOuterWallHeights);
+                mapformatter.AddData(fakedata.returnPos(), (float) fakedata.runningRadianTotal, fakedata.bottomOuterWallHeights);
                 if (fakedata.done) {
                     if (!fakedata.mapshown) {
                         map.showMap();
@@ -158,19 +151,25 @@ public class MapModule implements CarModule, CloseHook {
 
     }
 
-    public Map getMap(){return map;}
+    public Map getMap() {
+        return map;
+    }
 
 
     @Override
     public void onClose() {
-        try{
+        try {
             boolean[][] m = map.getMap();
             FileWriter f = new FileWriter("src/main/java/org/avphs/map/map.txt");
             f.write(m.length + "  " + m[0].length + "\n");
-            for(int i = 0; i < map.getMap().length; i++){
-                for (int j = 0; j < m[0].length; j++){
-                    if(m[i][j])f.write('1');
-                    else f.write('0');
+            for (int i = 0; i < map.getMap().length; i++) {
+                for (int j = 0; j < m[0].length; j++) {
+                    if (i == map.startY && j == map.startX) {
+                        f.write('s');
+                    } else {
+                        if (m[i][j]) f.write('1');
+                        else f.write('0');
+                    }
                 }
                 f.write('\n');
             }
