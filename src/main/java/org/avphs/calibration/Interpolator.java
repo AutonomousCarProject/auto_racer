@@ -98,12 +98,14 @@ public class Interpolator {
 			output[i] = z[i];
 		}
 		//Scanner in = new Scanner(System.in);
-		help();
+
 		initializebots();
 		double err = maxError + 100;
 		int iteration = 0;
 		while (err > maxError && iteration < 100){
+
 			addlayer();
+			run(10);
 			err = bestbot.score;
 			iteration++;
 		}
@@ -114,7 +116,7 @@ public class Interpolator {
 	}
 
 
-	public void help() {
+	/*public void help() {
 		System.out.println("help - display commands help");
 		System.out.println("init - initialize bots randomly");
 		System.out.println("run n - run n trials");
@@ -123,7 +125,7 @@ public class Interpolator {
 		System.out.println("display - display info");
 		System.out.println("save - save 640 x 640 array to file");
 		System.out.println("exit - quit program");
-	}
+	}*/
 	//initialize the bots randomly
 	public void initializebots() {
 		for(int i=0;i<size;i++) {
@@ -149,7 +151,7 @@ public class Interpolator {
 		return res;
 	}
 	//run
-	public void run(int numtrials) throws IOException {
+	public void run(int numtrials) {
 		System.out.println("running "+numtrials+" trials...");
 		for(int trial=0;trial<trials;trial++) {
 			double[][] pass = new double[n][vars];
