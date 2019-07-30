@@ -1,6 +1,14 @@
 package org.avphs.image;
 
 @SuppressWarnings("Duplicates")
+
+/**Holds all of the functions for ImageModule
+ *
+ * @author Joshua Bromley
+ * @author Kenneth Browder
+ * @author Kevin "Poo" Tran
+ * @see ImageModule
+ */
 public class ImageProcessing{
 
 
@@ -41,42 +49,42 @@ public class ImageProcessing{
     };
 
 
-    /**
+    /**Takes rgb value and extracts red value
      *
      * @param rgb Rgb value (no alpha)
-     * Takes rgb value and extracts red value
+     *
      * @return Red value (0-255)
      */
     static int getRed(int rgb) {
         return (rgb >> 16) & 0xFF;
     }
 
-    /**
+    /**Take rgb value and extracts green value
      *
      * @param rgb RGB value (no alpha)
-     *            Take rgb value and extracts green value
+     *
      * @return Green value (0-255)
      */
     static int getGreen(int rgb) {
         return (rgb >> 8) & 0xFF;
     }
 
-    /**
+    /**Takes rgb value and extracts blue value
      *
      * @param rgb RGB Value (no alpha)
-     * Takes rgb value and extracts blue value
+     *
      * @return Blue value (0-255)
      */
     static int getBlue(int rgb) {
         return rgb & 0xFF;
     }
 
-    /**
+    /**Synthesizes red, green and blue values into one RGB value
      *
      * @param red Red value (0-255)
      * @param green Green value (0-255)
      * @param blue Blue value (0-255)
-     * Synthesizes red, green and blue values into one RGB value
+     *
      * @return RGB value
      */
     static int combineRGB(int red, int green, int blue) {
@@ -103,13 +111,13 @@ public class ImageProcessing{
         }
     }
 
-    /**
+    /**Debayers an image
      *
      * @param bayer 1D array of the bayer image
      * @param width width of image
      * @param height height of image
      * @param tile tiling pattern 0 -> RGGB, 1 -> GBRG
-     * Debayers an image
+     *
      * @return Debayered image in RGB format
      */
     static int[] debayer(byte[] bayer, int width, int height, int tile) {
@@ -118,9 +126,9 @@ public class ImageProcessing{
             case 0:
                 for (int i = 0; i < height; i++) {
                     for (int j = 0; j < width; j++) {
-                         int r = (int) bayer[2 * (2 * i * width + j)] & 0xFF;
-                         int g = (int) bayer[2 * (2 * i * width + j) + 1] & 0xFF;
-                         int b = (int) bayer[2 * ((2 * i + 1) * width + j) + 1] & 0xFF;
+                        int r = (int) bayer[2 * (2 * i * width + j)] & 0xFF;
+                        int g = (int) bayer[2 * (2 * i * width + j) + 1] & 0xFF;
+                        int b = (int) bayer[2 * ((2 * i + 1) * width + j) + 1] & 0xFF;
                         int pix = (r << 16) + (g << 8) + b;
                         rgb[i * width + j] = pix;
                     }
@@ -141,11 +149,11 @@ public class ImageProcessing{
         return rgb;
     }
 
-    /**
+    /**Posterizes a pixel. Restricts to one of the colors in PosterColor enum.
      *
      * @param rgb The RGB value of the pixel to posterize.
      * @param dt The difference threshold for which to determine color.
-     * Posterizes a pixel. Restricts to one of the colors in PosterColor enum.
+     *
      * @return The enum member corresponding to the posterized color.
      */
     static PosterColor posterizePixel(int rgb, int dt) {
@@ -186,11 +194,11 @@ public class ImageProcessing{
         }
     }
 
-    /**
+    /**Posterizes a pixel. Restricts to one of the colors in described in ColorArr.
      *
      * @param rgb The RGB value of the pixel to posterize.
      * @param dt The difference threshold for which to determine color.
-     * Posterizes a pixel. Restricts to one of the colors in described in ColorArr.
+     *
      * @return The color code corresponding to the posterized color.
      */
     static int posterizePixelInt(int rgb, int dt) {
@@ -231,11 +239,11 @@ public class ImageProcessing{
         }
     }
 
-    /**
+    /**Posterizes a pixel based off of the HSL model. Restricts to one of the colors in PosterColor enum.
      *
      * @param rgb The RGB value of the pixel to posterize.
      * @param dt The difference threshold for which to determine color.
-     * Posterizes a pixel based off of the HSL model. Restricts to one of the colors in PosterColor enum.
+     *
      * @return The enum member corresponding to the posterized color.
      */
     static PosterColor posterizePixelHSL(int rgb, int dt) {
@@ -289,13 +297,13 @@ public class ImageProcessing{
         return PosterColor.BLACK;
     }
 
-    /**
+    /**Posterizes a pixel. Restricts to one of the colors in PosterColor enum.
      *
      * @param red The value of the red channel of the pixel (0-255).
      * @param blue The value of the blue channel of the pixel (0-255).
      * @param green The value of the green channel of the pixel (0-255).
      * @param dt The difference threshold for which to determine color.
-     * Posterizes a pixel. Restricts to one of the colors in PosterColor enum.
+     *
      * @return The enum member corresponding to the posterized color.
      */
     static PosterColor posterizeChannels(int red, int green, int blue, int dt) {
@@ -332,13 +340,13 @@ public class ImageProcessing{
         }
     }
 
-    /**
+    /**Posterizes a pixel based on the HSL color scheme. Restricts to one of the colors in PosterColor enum.
      *
      * @param red The value of the red channel of the pixel (0-255).
      * @param blue The value of the blue channel of the pixel (0-255).
      * @param green The value of the green channel of the pixel (0-255).
      * @param dt The difference threshold for which to determine color.
-     * Posterizes a pixel based on the HSL color scheme. Restricts to one of the colors in PosterColor enum.
+     *
      * @return The enum member corresponding to the posterized color.
      */
     static PosterColor posterizeChannelsHSL(int red, int green, int blue, int dt) {
@@ -389,12 +397,12 @@ public class ImageProcessing{
         return PosterColor.BLACK;
     }
 
-    /**
+    /** Posterizes the entirety of an image, pixel by pixel.
      *
      * @param rgbArray Array of the RGB values of the pixels in the image.
      * @param outArray Array to place the posterized PosterColors.
      * @param diffThreshold The difference threshold with which to determine color.
-     * Posterizes the entirety of an image, pixel by pixel.
+     *
      */
     static void posterizeImage(int[] rgbArray, PosterColor[] outArray, int diffThreshold) {
         for(int i = rgbArray.length - 1; i >= 0; i --) {
@@ -403,11 +411,11 @@ public class ImageProcessing{
 
     }
 
-    /**
+    /**Converts an array of color codes to an array of RGB values.
      *
      * @param inArray Array of codes for colors that correspond to those in ColorArr.
      * @param outArray Array in which final RGB values should be placed.
-     * Converts an array of color codes to an array of RGB values.
+     *
      */
     static void CodeToRGB(int[] inArray, int[] outArray) {
         for(int i = inArray.length - 1; i >= 0; i --) {
@@ -415,12 +423,12 @@ public class ImageProcessing{
         }
     }
 
-    /**
+    /**Posterizes the entirety of an image, pixel by pixel.
      *
      * @param rgbArray Array of the RGB values of the pixels in the image.
      * @param outArray Array to place the posterized color codes.
      * @param diffThreshold The difference threshold with which to determine color.
-     * Posterizes the entirety of an image, pixel by pixel.
+     *
      */
     static void posterizeImageInt(int[] rgbArray, int[] outArray, int diffThreshold) {
         for(int i = rgbArray.length - 1; i >= 0; i --) {
@@ -433,20 +441,32 @@ public class ImageProcessing{
     //Camera GBRG
 
     /**
+     * This function does magic (don't question it)
      *
      * @param bayer Bayer array to process (from camera).
      * @param width Width of image.
      * @param height Height of image.
      * @param dt The difference threshold with which to determine color.
+     * @param tile Tile pattern of the bayering 0 -> RGGB, 1 -> GBRG
      * @return Array of posterized RGB values.
      */
-    static int[] magicloop(byte[] bayer, int width, int height, int dt) {
+    static int[] magicloop(byte[] bayer, int width, int height, int dt, int tile) {
         int[] rgb = new int[width * height ];
         for(int i = 0; i < height; i++){
             for(int j = 0; j < width; j++){
-                int r = (int)bayer[2*(2*i*width+j)] & 0xFF;
-                int g = (int)bayer[2*(2*i*width+j)+1] & 0xFF;
-                int b = (int)bayer[2*((2*i+1)*width+j)+1] & 0xFF;
+                int r = 0, g = 0, b = 0;
+                switch(tile){
+                    case 0:
+                        r = (int)bayer[2*(2*i*width+j)] & 0xFF;
+                        g = (int)bayer[2*(2*i*width+j)+1] & 0xFF;
+                        b = (int)bayer[2*((2*i+1)*width+j)+1] & 0xFF;
+                        break;
+                    case 1:
+                        r = (int)bayer[2*(2*(i+1)*width+j)] & 0xFF;
+                        g = (int)bayer[2*(2*i*width+j)] & 0xFF;
+                        b = (int)bayer[2*((2*i)*width+j)+1] & 0xFF;
+                        break;
+                }
                 PosterColor posterPix = posterizeChannels(r, g, b, dt);
                 rgb[i*width+j] = posterPix.code;
             }
@@ -454,15 +474,52 @@ public class ImageProcessing{
         return rgb;
     }
 
-    /**
+    /**Method that processes a bayer image into a posterized image
      *
      * @param bayerArray Bayer array to process (from camera).
      * @param width Width of image.
      * @param height Height of image.
+     *
      * @return Array of posterized RGB values.
      */
     static int[] process(byte[] bayerArray, int width, int height) {
-        return magicloop(bayerArray, width, height, 65);
+        return magicloop(bayerArray, width, height, 65, 0);
+    }
+
+    /**Blurs the image by doing a weighted average of the 5x5 square of pixels around the target pixel
+     *
+     * @param inArray input Array with RGB values
+     * @param width width of image
+     * @param height height of image
+     * @return blurred image
+     */
+    static int[] fastBoxBlur(int[] inArray, int width, int height){
+        int[] outArray = new int[height*width];
+        for(int i = 2; i < height-2; i++){
+            for(int j = 2; j < width-2; j++){
+                int rsum = 0, gsum = 0, bsum = 0;
+                for(int k = -2; k < 3; k++){
+                    for(int l = -2; l < 3; l++){
+                        if((k > -2 && k < 2) && (l > -2 && l  < 2) && (k != 0 && j != 0)){
+                            rsum += (inArray[(i+k)*width+j+l] >> 16 & 0xFF) << 1;
+                            gsum += (inArray[(i+k)*width+j+l] >> 8 & 0xFF) << 1;
+                            bsum += (inArray[(i+k)*width+j+l] & 0xFF) << 1;
+                        }else{
+                            rsum += (inArray[(i+k)*width+j+l] >> 16 & 0xFF);
+                            gsum += (inArray[(i+k)*width+j+l] >> 8 & 0xFF);
+                            bsum += (inArray[(i+k)*width+j+l] & 0xFF);
+                        }
+                    }
+                }
+                rsum >>= 5;
+                gsum >>= 5;
+                bsum >>= 5;
+                outArray[i*width+j] = rsum << 16 | gsum << 8 | bsum;
+
+
+            }
+        }
+        return outArray;
     }
 
 }
