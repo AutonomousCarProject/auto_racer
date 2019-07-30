@@ -35,6 +35,8 @@ public class DrivingModule implements CarModule {
     /*From steering*/
     private final float MAX_DIST_FROM_RL;
 
+    //This constructor sets some values
+
     public DrivingModule(Car car) {
         this.car = car;
         FLOOR = 0;
@@ -44,28 +46,37 @@ public class DrivingModule implements CarModule {
 
     @Override
     public void init(CarData carData) {
+        //Adds the angle to carData
         carData.addData("driving", angle);
+        //Grabs the racing line from RacingLine and analyzes it
         racingLinePoints = (RacingLinePoint[])carData.getModuleData("racingLine");
         analyzeRacingLine();
+        //Grabs the starting position from PositionTracking
         PositionData posData = (PositionData)carData.getModuleData("position");
         currentPos = new VectorPoint(posData.getPosition(), posData.getDirection(), posData.getSpeed());
+        //Checks to see where the car is then sets the current and next segments
         getSegment();
     }
 
     @Override
     public void update(CarData carData) {
+        //Updates the current position and updates the current/next segments
         PositionData posData = (PositionData)carData.getModuleData("position");
         currentPos = new VectorPoint(posData.getPosition(), posData.getDirection(), posData.getSpeed());
         getSegment();
+        //Updates the direction and throttle to reflect position change
         getDirection();
         getThrottle();
+        //Refreshes the data in carData
         carData.addData("driving", angle);
-
-        //FIXME THROTTLE IS SET TO SOMETHING INCORRECT
-        car.accelerate(true, 12);
+        //Tells the car to move :)
+        car.accelerate(true, throttle);
         car.steer(true, angle);
     }
 
+    /*
+        initialize() finds the distance needed to break on a given Straight and the max throttle for the segment
+     */
     private void initialize() {
         if (currentSegment instanceof Straight) {
             brakeDist = CalibrationModule.getSpeedChangeDist(FLOOR, CalibrationModule.getMaxSpeed(FLOOR,
@@ -76,6 +87,12 @@ public class DrivingModule implements CarModule {
                     CalibrationModule.getMaxSpeed(FLOOR, currentSegment.radius));
         }
     }
+
+    /*
+        getSegment() finds, based on the car's current position, which segment of the racing line it is on,
+        and if the car is on a different segment than previously though, it will set the currentSegment and nextSegment
+        variables then call initialize()
+     */
 
     private void getSegment(){
         float x = currentPos.getX(); float y = currentPos.getY();
@@ -111,6 +128,11 @@ public class DrivingModule implements CarModule {
         }
         initialize();
     }
+
+    /*
+        This method does some math to determine, based on three points, the radius and center of the points, then returns a
+        Curve object.
+     */
 
     private Curve findRadiusAndCenter(RacingLinePoint rcl1, RacingLinePoint rcl2, RacingLinePoint rcl3) {
         //computers radius of three points (rcl = racing line point)
@@ -159,6 +181,11 @@ public class DrivingModule implements CarModule {
         return new Curve(h,k,r);
     }
 
+    /*
+        analyzeRacingLine() looks at any two points and determines whether they constitute a Straight or Curve, then inputs those
+        coordinates and all other necessary data into the respective objects
+     */
+
     private void analyzeRacingLine(){
         roadData.clear();
         //RacingLine should eventually have points only on the maxima and minima
@@ -173,8 +200,11 @@ public class DrivingModule implements CarModule {
                         findRadiusAndCenter(racingLinePoints[(i+n-1)%n],racingLinePoints[i],racingLinePoints[(i+1)%n])));
             }
         }
-        System.out.println("NNNNNNN: "+n);
     }
+
+    /*
+        onRacingLine() checks to see if the car is still on the racingLine
+     */
 
     private boolean onRacingLine(){  //Returns whether we are close enough to the racing line
         float distance;
@@ -190,7 +220,9 @@ public class DrivingModule implements CarModule {
         return (distance < MAX_DIST_FROM_RL) || (distance == MAX_DIST_FROM_RL);
     }
 
-    /*  Steer Function  */
+    /*
+        Steer Function that determines the angle the wheels need to be
+     */
     private void getDirection(){ //returns the direction of the car from 0 to 180
         if (onRacingLine()) {
             if (currentSegment instanceof Straight) {
@@ -204,7 +236,9 @@ public class DrivingModule implements CarModule {
         }
     }
 
-    /*  Speed Function  */
+    /*
+        Speed Function that determines the throttle the car needs to be
+     */
     private void getThrottle() { //returns the throttle of the car from 0 to 180
         if (currentSegment instanceof Straight){
             currentPosOnLine = Calculator.findClosestPoint(currentPos.getX(), currentPos.getY(), //Update
