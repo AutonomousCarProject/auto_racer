@@ -178,24 +178,22 @@ public class CalibrationModule {
 
     //angle, desired velocity
     private static byte[][] readThrottleData(){
-        byte[][][] rowList = null;
+        byte[][] rowList = null;
         try (BufferedReader br = new BufferedReader(new FileReader("calibration\\src\\main\\java\\org.avphs\\calibration\\ThrottleCalculations.txt"))) {
 
-            short numFloors = parseShort(br.readLine());
             short radCount = parseShort(br.readLine());
             short desiredSpeedsCount = parseShort(br.readLine());
-            rowList = new byte[numFloors][radCount][desiredSpeedsCount];
+            rowList = new byte[radCount][desiredSpeedsCount];
 
-            for(short i = 0; i<numFloors; i++){
                 for(int j = 0; j < radCount; j++) {
 
                     String line = br.readLine();
                     String[] lineItems = line.split(" ");
                     for (int k = 0; k < desiredSpeedsCount; k++) {
-                        rowList[i][j][k] = Byte.parseByte(lineItems[k]);
+                        rowList[j][k] = Byte.parseByte(lineItems[k]);
                     }
                 }
-            }
+
 
         } catch (Exception e) {
             // Handle any I/O problems
@@ -241,7 +239,7 @@ public class CalibrationModule {
     private static final short[] RADII = readRadiiData();
 
     //
-    private static final byte[][][] THROTTLES = readThrottleData();
+    private static final byte[][] THROTTLES = readThrottleData();
 
     private static final float[] PIXEL_DISTS = readPixelData();
 
@@ -272,8 +270,8 @@ public class CalibrationModule {
 
     //returns the amount of throttle needed to maintain a given speed on a given floor surface and with a given turn radius
     //0 = go full throttle
-    public static final byte getThrottle (byte floor, short radius, byte speed){
-        return THROTTLES[floor][radius][speed];
+    public static final byte getThrottle (short radius, byte speed){
+        return THROTTLES[radius][speed];
     }
 
     public static final float getDist(short pixelHeight){
