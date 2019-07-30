@@ -92,8 +92,7 @@ public class ThrottleDataGenerator {
         while (bufferedReader.readLine() != null) { //makes sure it doesn't write over existing things
             bufferedWriter.newLine();
         }
-
-
+        
 //change the increment to adjust the increment, as the name implies
         float increment = .5f;
         outerloop:
