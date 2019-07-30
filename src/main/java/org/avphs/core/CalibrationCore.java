@@ -114,6 +114,7 @@ public class CalibrationCore extends CarCore {
                 case "ThrottleDataGenerator":
                     updatingCarModules.clear();
                     updatingCarModules.add(new ThrottleDataGenerator(car));
+                    updatingCarModules.get(0).init(carData);
                     break;
                 case "stop":
                     System.out.println("Stopping all calibration functions!");
