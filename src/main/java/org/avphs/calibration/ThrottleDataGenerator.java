@@ -1,123 +1,177 @@
 package org.avphs.calibration;
 
+import fly2cam.FlyCamera;
 import org.avphs.camera.Camera;
 import org.avphs.camera.SimCamera;
 import org.avphs.car.Car;
 import org.avphs.core.CalibrationCore;
+import org.avphs.coreinterface.CarCommand;
 import org.avphs.coreinterface.CarData;
+import org.avphs.coreinterface.CarModule;
 import org.avphs.sbcio.ArduinoData;
 
 import java.io.*;
+import java.util.*;
 
 import static java.lang.Thread.sleep;
 
-public class ThrottleDataGenerator {
-    public static void main(String[] args) throws InterruptedException {
+public class ThrottleDataGenerator implements CarModule {
+    static Car car;
+    static CarData carData;
+    static PrintWriter out;
 
-        Camera cam = null;
-        Car car = new Car(new SimCamera());
-        CarData carData = new CarData();
+    public static void main(String[] args) throws InterruptedException, IOException {
+        out = new PrintWriter(new BufferedWriter(new FileWriter("src/main/java/org/avphs/calibration/ThrottleData.txt")));
+        Camera cam;
+        try {
+            cam = new FlyCamera();
+            car = new Car(cam);
+            out.println("Car camera found.");
+        } catch (Throwable T) {
+            System.out.println("Car camera not found. Using sim camera");
+            out.println("Car camera not found.");
+            cam = new SimCamera();
+            car = new Car(cam);
+        }
         CalibrationCore core = new CalibrationCore(car, false);
+        carData = new CarData();
+        car.init(carData);
+        HashMap<Integer, float[]> angleThrottleSpeedValues = new HashMap<Integer, float[]>();
+        int middle = CalibrationModule.STRAIGHT_ANGLE;
+        int start = middle - (((middle + 33) / 5) * 5);
+        for (int i = start; i < 44; i += 5) {
+            System.out.println("Angle being tested: " + i);
+            car.steer(true, i);
+            sleep(1000);
+            float[] speedValues = calibrateThrottle();
+            angleThrottleSpeedValues.put(i, speedValues);
+            out.println("Steering angle: " + i);
+            writeSpeedThrottlesToFile(speedValues);
+            waitUntilStop();
 
-        //NEVER SET THROTTLE WITH ANGLE MORE THAN 60 (im keeping it capped to 59 to be safe)
-        float[] speedValues = new float[59];
+        }
+
+        out.close();
+        System.out.println("Throttle Calibration Done");
+        //{ {{angle array},{throttle array}} , {{},{}} ...}
+        //speed is the index
+//        int[][][] preInterpolation = new int[4024][2][15];
+//        for (int i = start; i < 44; i++) {
+//            int angleIndex = 0;
+//            float[] speedValues = angleThrottleSpeedValues.get(i);
+//            int index = 0;
+//            for (int j = 0; j < preInterpolation.length; i++) {
+//                float currentDifference = Math.abs(speedValues[index] - i);
+//                while(index < 60){
+//                    float newDifference = Math.abs(speedValues[index + 1] -i);
+//                    if(newDifference <= currentDifference){
+//                        currentDifference = newDifference;
+//                        index++;
+//                    }else{
+//                        break;
+//                    }
+//                }
+//                preInterpolation[i][0][angleIndex] = i;
+//                preInterpolation[i][1][index] = index;
+//            }
+//            angleIndex++;
+//        }
+
+    }
+    static long[] calibrateAcceleration(float [] speedValues) throws InterruptedException {
+/**
+ * Takes in a float array of the speed values used in @calibrateThrottle and then finds the the time to reach max speed,
+ * and additionally  the time to reach each speed from 0. Each index is ordered the time to get from 0 to that
+ * corresponding speed in speedValues.length
+ * All in Milliseconds
+ */
+        long [] allAccelerationTimes =  new long [speedValues.length];
+         for(int i=0 ; i < speedValues.length ; i++ ) {
+             long startTime = System.currentTimeMillis();
+             car.accelerate(true, i);
+             while (((ArduinoData) carData.getModuleData("arduino")).getOdomCount() <= speedValues[i]) {
+//                 Accelerating
+             }
+             allAccelerationTimes [i] = System.currentTimeMillis() - startTime;
+             car.accelerate(true, 0);
+             sleep(4000); //Not positive if this sleep will work
+         }
+        return allAccelerationTimes;
+    }
+
+    static float[] calibrateThrottle() throws InterruptedException {
+        //Throttle angle 60 is the max
+        float[] speedValues = new float[61];
         boolean speedChanged;
-        int lastSpeed = 0;
-        int lastOdom;
-        for (int i = 0; i < 59; i++) {
+        //assume throttle 0 is 0
+        for (int i = 1; i < speedValues.length; i++) {
             speedChanged = true;
+            int lastSpeed = (int) speedValues[i - 1];
+            car.accelerate(true, i);
+            int sameMaxSpeed = 0;
             while (speedChanged) {
-                System.out.println(carData.getModuleData("arduino"));
-                lastOdom = ((ArduinoData) carData.getModuleData("arduino")).getOdomCount();
-                car.accelerate(true, i);
+                int lastOdom = ((ArduinoData) carData.getModuleData("arduino")).getOdomCount();
+                System.out.println("Last odom: "+ lastOdom);
                 sleep(1000);
-                int thisSpeed = ((ArduinoData) carData.getModuleData("arduino")).getOdomCount() - lastOdom;
+                int newOdom = ((ArduinoData) carData.getModuleData("arduino")).getOdomCount();
+                System.out.println("New odom: " + newOdom);
+                int thisSpeed = newOdom - lastOdom;
+                System.out.println("Speed: " + thisSpeed);
                 speedChanged = false;
+                if(thisSpeed == lastSpeed){
+                    sameMaxSpeed++;
+                    if(sameMaxSpeed < 3){
+                        speedChanged = true;
+                    }else{
+                        System.out.println("Same max speed of "+ thisSpeed +" found 3 times in a row");
+                    }
+                }
                 if (thisSpeed > lastSpeed) {
                     speedChanged = true;
-                } else if (speedValues[i - 1] >= thisSpeed) {
-                    speedValues[i] = lastSpeed;
+                    sameMaxSpeed = 0;
                 }
                 lastSpeed = thisSpeed;
             }
-            //TODO: needs to be converted from driveshaft spins to distance
-            /**
-             * Wheel Radius is 5 cm therefore wheel circumfrence is 2PiR
-             * 2* Math.PI * 5;
-             */
             speedValues[i] = lastSpeed;
+            System.out.println("Throttle: " + i + " = " + lastSpeed + " driveshaft turns");
         }
+        car.accelerate(true, 0);
+        for (int i = 0; i < speedValues.length; i++) {
+            speedValues[i] *= CalibrationModule.CM_PER_ROTATION;
+        }
+        return speedValues;
+    }
 
+    static void waitUntilStop() throws InterruptedException {
+        while (true) {
+            int lastOdom = ((ArduinoData) carData.getModuleData("arduino")).getOdomCount();
+            sleep(1000);
+            int thisSpeed = ((ArduinoData) carData.getModuleData("arduino")).getOdomCount() - lastOdom;
+            if (thisSpeed == 0) {
+                return;
+            }
+        }
+    }
+
+    static void writeSpeedThrottlesToFile(float[] speedValues) throws IOException {
+        System.out.println("Writing to file");
+        for (int i = 0; i < speedValues.length; i++) {
+            out.println(i + ": " + speedValues[i] + " cm/s");
+        }
+    }
+
+    @Override
+    public void init(CarData carData) {
 
     }
 
-    //new line
-    //increase number by 1
-    //first number is throttle to go at 0 cm/s
-    //second is throttle to go at .5cm/s
-    //third is throttle to go at 1cm/s etc. etc.
-    //maxSpeed CHANGES DEPENDS ON UNITS OF SPEEDVALUES (cm/s?) AS DOES desiredSpeed
-    private void writeSpeedThrottlesToFile(String filename, float[] speedValues) throws IOException {
-        float maxSpeed = 0;
-        for (int i = 0; i < speedValues.length; i++) {
-            if (speedValues[i] > maxSpeed) {
-                maxSpeed = speedValues[i];
-            }
-        }
+    @Override
+    public CarCommand[] commands() {
+        return new CarCommand[0];
+    }
 
-        String writeThis = ""; //what ultimately gets added to a new line
-        BufferedReader bufferedReader = new BufferedReader(new FileReader(filename));
-        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(filename));
-
-        String firstLine = bufferedReader.readLine();
-        if (firstLine != null) {
-            bufferedWriter.write((Integer.parseInt(firstLine) + 1)); //increases first line num by 1
-        } else {
-            bufferedWriter.write("1");
-        }
-
-        bufferedWriter.newLine();
-        if (bufferedReader.readLine() == null) {
-            bufferedWriter.write("0");
-        }
-
-        bufferedWriter.newLine(); //at third line by this point just like bufferedReader
-        while (bufferedReader.readLine() != null) { //makes sure it doesn't write over existing things
-            bufferedWriter.newLine();
-        }
-
-
-//change the increment to adjust the increment, as the name implies
-        float increment = .5f;
-        outerloop:
-        for (float desiredSpeed = 0; desiredSpeed < maxSpeed + increment; desiredSpeed += increment) {
-            for (int i = 0; i < speedValues.length; i++) {
-                if (i != 0 && speedValues[i] == 0) {
-                    break outerloop;
-                } else {
-                    if (speedValues[i] >= desiredSpeed) {
-                        //curve fitting may be slightly more accurate here
-                        if (Math.abs(speedValues[i] - desiredSpeed) <= Math.abs(speedValues[i - 1] - desiredSpeed)) {
-                            if (!writeThis.equals("")) {
-                                writeThis += " ";
-                            }
-                            writeThis += i;
-
-                        } else {
-                            if (!writeThis.equals("")) {
-                                writeThis += " ";
-                            }
-                            writeThis += i - 1;
-                        }
-                    }
-                }
-            }
-        }
-
-        bufferedReader.close();
-        bufferedWriter.close();
-
-        //TODO: MAKE IT UPDATE THE SECOND LINE WITH THE NEW MAX SPEED (If there is a new max speed found)
+    @Override
+    public void update(CarData carData) throws IOException {
 
     }
 }
