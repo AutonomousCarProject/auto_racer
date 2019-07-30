@@ -34,13 +34,13 @@ public class PositionData{
 
     public void updatePosition(float[] newPosition){ //(x, y)
         this.position[0] += newPosition[0];
-        this.position[1] += newPosition[1];
+        this.position[1] -= newPosition[1];//- because 0,0 is top left
     }
 
     public void updateAll(float[] newPosition, float newDirection, float newSpeed){
-        this.position= newPosition;
-        this.direction= newDirection;
-        this.speed= newSpeed;
+        this.position = newPosition;
+        this.direction = newDirection;
+        this.speed = newSpeed;
     }
 
 
