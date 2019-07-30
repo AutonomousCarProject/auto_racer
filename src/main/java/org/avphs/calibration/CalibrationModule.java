@@ -40,8 +40,9 @@ public class CalibrationModule {
 
     public static final double  SUSPENSION_HEIGHT = 1;
 
-    public static final double  CM_PER_ROTATION = 0.096; //approximation (from DriverCons)
+    public static final double  CM_PER_ROTATION = 15; //approximation (from DriverCons)
 
+    private static final int MIN_DELTA_SPEED = 5;
 
     //turn the car to this angle to make it go in a straight line
     public static final int STRAIGHT_ANGLE = 7;
@@ -249,8 +250,9 @@ public class CalibrationModule {
     }
 
     public static final byte getSpeedChangeDist(byte floor, byte initSpeed, byte finalSpeed) {
-        return 1;
-        //return SPEED_CHANGE_DISTS[floor][initSpeed][finalSpeed];
+        byte i = (byte) (initSpeed/MIN_DELTA_SPEED);
+        byte f = (byte) (finalSpeed/MIN_DELTA_SPEED);
+        return SPEED_CHANGE_DISTS[floor][i][f];
     }
 
     public static final short getAngles(short rad) {

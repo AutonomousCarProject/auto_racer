@@ -6,11 +6,12 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Random;
-import java.util.function.Function;
 
 public class interpolation3d {
 	//number of terms in the desired polynomial
-	int vars = 10;
+	int vars = 3;
+	//degree of polynomial
+	int degree = 1;
 	//number of bots
 	int size = 200;
 	//number of trials
@@ -29,12 +30,7 @@ public class interpolation3d {
 	//mutate amount
 	double m = 1;
 
-	Function<int[], Integer>[] functions;
-
-	enum functionTypes {polynomial, logarythmic};
-
-	//and 2d plz
-	public interpolation3d(double[] x, double[] y, double[] z) throws IOException {
+	public interpolation3d(double[] x, double[] y, double[] z, int maxError) throws IOException {
 		//INPUT
 		n = x.length;
 		input = new double[n][2];
@@ -47,8 +43,75 @@ public class interpolation3d {
 			//Z INPUT / OUTPUT
 			output[i] = z[i];
 		}
+		//Scanner in = new Scanner(System.in);
+		help();
 		initializebots();
-		run(trials);
+		double err = maxError + 100;
+		int iteration = 0;
+		while (err > maxError && iteration < 100){
+			addlayer();
+			err = bestbot.score;
+			iteration++;
+		}
+
+		if(err > maxError){
+			System.out.println("Could not create a good curve fit!");
+		}
+
+		/*while(true) {
+			System.out.print(":");
+			String[] inp = in.nextLine().split(" ");
+			String command = inp[0];
+			if(command.equals("help")) {
+				help();
+			} else if(command.equals("init")) {
+				initializebots();
+			} else if(command.equals("run")) {
+				run(Integer.parseInt(inp[1]));
+			} else if(command.equals("query")) {
+				double qx = Double.parseDouble(inp[1]);
+				double qy = Double.parseDouble(inp[2]);
+				double res = query(qx,qy);
+				System.out.println("evaluating at "+qx+","+qy+"...");
+				System.out.println(res);
+			} else if(command.equals("addlayer")) {
+				addlayer();
+			} else if(command.equals("display")) {
+				System.out.println("interpolation 3d");
+				System.out.println("current degree: "+degree);
+				System.out.println("current number of terms: "+vars);
+				System.out.println("coefficient order: ");
+				String co = "1 ";
+				for(int i=1;i<=degree;i++) {
+					for(int j=0;j<=i;j++) {
+						co = co + "x^"+j+"*y^"+(i-j)+" ";
+					}
+				}
+				System.out.println(co);
+				System.out.println("number on the end is error");
+				System.out.println("best bot: ");
+				System.out.println(bestbot);
+			} else if(command.equals("save")) {
+				System.out.println("saving...");
+				save();
+			} else if(command.equals("exit")) {
+				System.out.println("terminating program...");
+				break;
+			} else {
+				System.out.println("invalid command");
+			}
+		}
+		in.close();*/
+	}
+	public void help() {
+		System.out.println("help - display commands help");
+		System.out.println("init - initialize bots randomly");
+		System.out.println("run n - run n trials");
+		System.out.println("query x y - evaluate bot at x,y");
+		System.out.println("addlayer - add layer to polynomial");
+		System.out.println("display - display info");
+		System.out.println("save - save 640 x 640 array to file");
+		System.out.println("exit - quit program");
 	}
 	//initialize the bots randomly
 	public void initializebots() {
@@ -59,38 +122,30 @@ public class interpolation3d {
 			}
 			bots[i] = new bot(temp);
 		}
+		System.out.println("bots initialized");
 	}
-
-	public void
-
-
+	public double query(double a, double b) {
+		double[] pass = pass(a,b);
+		double res = 0;
+		for(int i=0;i<vars;i++) {
+			res+=bestbot.w[i]*pass[i];
+		}
+		return res;
+	}
 	//run
 	public void run(int numtrials) throws IOException {
-
-		while (err > threshold && count < maxIterations){
-			addLayer();
-
-		}
-
+		System.out.println("running "+numtrials+" trials...");
 		for(int trial=0;trial<trials;trial++) {
 			double[][] pass = new double[n][vars];
 			double[] target = new double[n];
 			//polynomial
-
-
 			for(int i=0;i<n;i++) {
 				double a = input[i][0];
 				double b = input[i][1];
-				pass[i][0] = 1;
-				pass[i][1] = a;
-				pass[i][2] = b;
-				pass[i][3] = a*a;
-				pass[i][4] = b*b;
-				pass[i][5] = a*b;
-				pass[i][6] = a*a*a;
-				pass[i][7] = a*a*b;
-				pass[i][8] = a*b*b;
-				pass[i][9] = b*b*b;
+				double[] temppass = pass(a,b);
+				for(int j=0;j<vars;j++) {
+					pass[i][j] = temppass[j];
+				}
 				target[i] = output[i];
 			}
 			//evaluate bots
@@ -110,35 +165,74 @@ public class interpolation3d {
 				bots[i].w[index] = bestbot.w[index]+(Math.random()*2*m-m);
 			}
 			//decrease mutate amount
-			if(trial%500==0) m*=0.999;
+			//disabled
+			//if(trial%500==0) m*=0.999;
 		}
+		System.out.println(numtrials+" trials completed");
+		System.out.println("best bot: ");
 		System.out.println(bestbot);
-		print();
+	}
+	public double[] pass(double a, double b) {
+		double[] ret = new double[vars];
+		ret[0] = 1;
+		int index = 1;
+		for(int deg=1;deg<=degree;deg++) {
+			for(int j=0;j<=deg;j++) {
+				ret[index] = Math.pow(a, j)*Math.pow(b, deg-j);
+				index++;
+			}
+		}
+		if(index!=vars) System.out.println("UHOH");
+		return ret;
+	}
+	public void addlayer() {
+		System.out.println("adding layer...");
+		//System.out.println("WARNING: NOT IMPLEMENTED YET");
+		degree++;
+		vars+=(degree+1);
+		for(bot c:bots) {
+			c.increasevars();
+		}
+		System.out.println("new degree: "+degree);
+		System.out.println("terms: "+vars);
+		System.out.println("added layer");
 	}
 	public static void main(String[] args) throws IOException {
 		//dummy input;
 		//subject to change
-		double[] x = {0,0,0,1,1,1,2,2,2};
-		double[] y = {0,1,2,0,1,2,0,1,2};
-		double[] z = {0,1,2,1,2,3,2,3,4};
-		new interpolation3d(x,y,z);
+//		double[] x = {0,0,0,1,1,1,2,2,2};
+//		double[] y = {0,1,2,0,1,2,0,1,2};
+//		double[] z = {0,1,2,1,2,3,2,3,4};
+		double[] x = new double[200];
+		double[] y = new double[200];
+		double[] z = new double[200];
+		for(int i=0;i<200;i++) {
+			x[i] = Math.random()*10-5;
+			y[i] = Math.random()*10-5;
+			z[i] = function(x[i],y[i]);
+		}
+		new interpolation3d(x,y,z, 5);
 	}
-	public void print() throws IOException {
+	public static double function(double a, double b) {
+		return 1+a*a*a+b*b*b+a*b;
+	}
+	public void save() throws IOException {
 		//print to file "interpolationoutput.txt"
 		PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("interpolationoutput.txt")));
 		for(int i=0;i<640;i++) {
 			for(int j=0;j<640;j++) {
-				double[] pass = new double[vars];
-				pass[0] = 1;
-				pass[1] = i;
-				pass[2] = j;
-				pass[3] = i*i;
-				pass[4] = j*j;
-				pass[5] = i*j;
-				pass[6] = i*i*i;
-				pass[7] = i*i*j;
-				pass[8] = i*j*j;
-				pass[9] = j*j*j;
+//				double[] pass = new double[vars];
+//				pass[0] = 1;
+//				pass[1] = i;
+//				pass[2] = j;
+//				pass[3] = i*i;
+//				pass[4] = j*j;
+//				pass[5] = i*j;
+//				pass[6] = i*i*i;
+//				pass[7] = i*i*j;
+//				pass[8] = i*j*j;
+//				pass[9] = j*j*j;
+				double[] pass = pass(i,j);
 				double ret = 0;
 				for(int k=0;k<vars;k++) {
 					ret += pass[k] * bestbot.w[k];
@@ -148,6 +242,7 @@ public class interpolation3d {
 			out.println();
 		}
 		out.close();
+		System.out.println("saved to file");
 	}
 	//error formula
 	public double error(double o, double e) {
@@ -161,6 +256,14 @@ public class interpolation3d {
 			for(int i=0;i<vars;i++) {
 				w[i] = a[i];
 			}
+		}
+		public void increasevars() {
+			double[] nw = new double[vars];
+			Arrays.fill(nw, 0);
+			for(int i=0;i<w.length;i++) {
+				nw[i] = w[i];
+			}
+			w = nw;
 		}
 		public double value(double[] a, double b) {
 			double ret = 0;
