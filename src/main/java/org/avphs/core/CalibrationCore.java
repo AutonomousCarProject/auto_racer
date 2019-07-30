@@ -39,6 +39,7 @@ public class CalibrationCore extends CarCore {
                     //System.out.println("'3DInterpolation'");
                     //System.out.println("'MoveForward'");
                     System.out.println("'ThrottleDataGenerator'");
+                    System.out.println("'BrakeTest'");
                     System.out.println("'help' prints this little blurb");
                     break;
                 case "CameraDataGenerator":
@@ -56,6 +57,7 @@ public class CalibrationCore extends CarCore {
                     break;
                 case "BrakeTest":
                     updatingCarModules.clear();
+                    updatingCarModules.add(new BrakeTest(car));
                     updatingCarModules.get(0).init(carData);
                     break;
                 case "ThrottleDataGenerator":
