@@ -32,7 +32,8 @@ public class PositionModule implements CarModule, CloseHook {
     @Override
     public void init(CarData carData) {
         //THIS WILL BE WHERE WE READ FROM A FILE TO FIND THE INITIAL POSITION
-        positionData = new PositionData(new float[]{0, 0}, 0, 0); //TEMPORARY
+        //send zeros because starting pos is 0. Change these to customize starting orientation of the car
+        positionData = new PositionData(new float[]{0, 0}, 0, 0);
 
 
         //FOR TESTING THE CAR
@@ -41,16 +42,16 @@ public class PositionModule implements CarModule, CloseHook {
 
     @Override
     public void update(CarData carData) {
-        ArduinoData odom = (ArduinoData) carData.getModuleData("arduino");
-        int steer = (int) carData.getModuleData("driving");
-        computePosition(odom.getOdomCount() - prevOdom, steer);
-        prevOdom = odom.getOdomCount();
-        carData.addData("position", positionData);
+        odom = (ArduinoData) carData.getModuleData("arduino");//get arduino for odometer count
+        int steer = (int) carData.getModuleData("driving");//get driving for steering angle
+        computePosition(odom.getOdomCount() - prevOdom, steer);//calculate new position
+        prevOdom = odom.getOdomCount();//set previous odometer count
+        carData.addData("position", positionData);//update position in cardata
 
 
         //FOR CAR TESTING
         try {
-            pct.writeToFile(positionData.getPosition()[0], positionData.getPosition()[1], positionData.getDirection(), odom.getOdomCount(), steer);
+            pct.writeToFile(positionData.getPosition()[0], positionData.getPosition()[1], positionData.getDirection(), odom.getOdomCount(), steer);//write car information to a text file for debugging purposes
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -60,60 +61,60 @@ public class PositionModule implements CarModule, CloseHook {
         // find out if this is run before or after driving. If after, good, else: bad.
 
         wheelAngle = drivingData; //angle of servo
-        distanceTraveled = (float) (odometerCount * CalibrationModule.CM_PER_ROTATION); //number of wheel turns
+        distanceTraveled = (float) (odometerCount * CalibrationModule.CM_PER_ROTATION); //number of wheel turns * distance per wheelturn (in cm)
 
-        //FIXME: Get table values from calibraiton for wheel angle to turn radius
-        float drivingArcRadius = CalibrationModule.getAngles((short) wheelAngle);
+        float drivingArcRadius = CalibrationModule.getAngles((short) wheelAngle);//get the turn radius of the car given angle.
 
-        if (drivingArcRadius == 0) {
+        if (drivingArcRadius >= 750f) {//FIXME: talk to ryan from calibration about straight forward, infinite turn radius
             //just drive straight forward
             convertPosition(0, distanceTraveled);
         } else {
             //if turning
-            deltaPositionAngle = (float) (360 * distanceTraveled / (Math.PI * Math.pow(drivingArcRadius, 2)));//compute the length of the path around the circle the car has taken, and then get the angle of that
-            if (deltaPositionAngle < 90 || deltaPositionAngle > 270) {
+            //distance traveled / circumference give fraction traveled around circle. Multiply by 360 to get the number of degrees around circle we have traveled
+            deltaPositionAngle = (float) (360 * distanceTraveled / (Math.PI * Math.pow(drivingArcRadius, 2)));
+            if (deltaPositionAngle < 90 || deltaPositionAngle > 270) {//take that angle travelend along the circle, and get an x,y coordinate from that
                 convertPosition((float) (drivingArcRadius - drivingArcRadius * Math.cos(Math.toRadians(deltaPositionAngle))), (float) (drivingArcRadius * Math.sin(Math.toRadians(deltaPositionAngle))));//weird trig stuff because for the unit circle the trig is based on center of circle. Here, the car starts at either (1,0) [turning left] or (-1,0) [turning right]
 
             } else {//if(deltaPositionAngle > 90), turning left
                 convertPosition((float) (drivingArcRadius + drivingArcRadius * Math.cos(Math.toRadians(deltaPositionAngle))), (float) (drivingArcRadius * Math.sin(Math.toRadians(deltaPositionAngle))));//weird trig stuff because for the unit circle the trig is based on center of circle. Here, the car starts at either (1,0) [turning left] or (-1,0) [turning right]
             }
 
+            //given angle traveled around the circle, update the direction we are facing
             if (wheelAngle > 91) {//if turning right
                 computeDirection(deltaPositionAngle);//update direction with delta direction  because clockwise = positive
             } else if (wheelAngle < 91) {//if turning left
                 computeDirection(-deltaPositionAngle);//update direction with negative turn going left
             }
         }
-        computeSpeed(odometerCount);
+        computeSpeed(odometerCount);//get the speed we are traveling
 
         //THIS WILL BE USED LATER
-        prevPositionData.updateAll(positionData.getPosition(), positionData.getDirection(), positionData.getSpeed());
-        System.out.println("Position = (" + Math.round(positionData.getPosition()[0]) + "," + positionData.getPosition()[1] + ")");
+        prevPositionData.updateAll(positionData.getPosition(), positionData.getDirection(), positionData.getSpeed());//update the positiondata
 
     }
 
-    private void computeDirection(float newDirection) {
-        float direction = positionData.getDirection();
-        direction += newDirection;
-        if (direction >= 360 || direction < 0) {
+    private void computeDirection(float newDirection) {//adds a new direction to the old direction
+        float direction = positionData.getDirection();//get the original direction the car was facing
+        direction += newDirection;//add the changed direction
+        if (direction >= 360 || direction < 0) {//get the direction between 0 and 360
             direction %= 360;
-            if (direction < 360) {
+            if (direction < 360) {//because % returns remainder instead of modulus, we need to add 360 when the angle is < 0
                 direction += 360;
             }
         }
-        positionData.updateDirection(direction);
+        positionData.updateDirection(direction);//add new dir to posdata
     }
 
     private void computeSpeed(int odometerCount) {
-        float speed = (odometerCount - prevOdom) * (float) CalibrationModule.CM_PER_ROTATION * 15f;//*30 because convert odometerCount per 33.33 milliseconds to OdometerCount per second.
+        float speed = (odometerCount - prevOdom) * (float) CalibrationModule.CM_PER_ROTATION * 15f;//*15 because convert odometerCount per 66.67 milliseconds to OdometerCount per second.
         positionData.updateSpeed(speed);
     }
 
-    private void convertPosition(float x, float y) {
-        //FIXME x and y are currently in cm, not in the virtual world coordinates.
-        if (!(x == 0 && y == 0)) {
-            float[] temp = pol(x, y);
-            temp = cart(temp[0], temp[1] - positionData.getDirection());
+    private void convertPosition(float x, float y) {//convert changes to the x,y position of the car (which are relative to the direction the car is facing) to changes to the x,y position of the car relative to the map.
+        //FIXME x and y are currently in cm, not in the map coordinates.
+        if (!(x == 0 && y == 0)) {//if it has moved
+            float[] temp = pol(x, y);//convert to polar
+            temp = cart(temp[0], temp[1] - positionData.getDirection());//rotate by angle of car to get x y coordinates relative to the map
             positionData.updatePosition(temp);
         }
     }
@@ -128,7 +129,7 @@ public class PositionModule implements CarModule, CloseHook {
 
 
     @Override
-    public void onClose() {
+    public void onClose() {//duncans stuff for printing to a file
         try {
             pct.close();
         } catch (IOException e) {
