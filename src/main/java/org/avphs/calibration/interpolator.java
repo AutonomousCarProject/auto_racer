@@ -7,7 +7,7 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Random;
 
-public class interpolation3d {
+public class interpolator {
 	//number of terms in the desired polynomial
 	int vars = 3;
 	//degree of polynomial
@@ -30,33 +30,12 @@ public class interpolation3d {
 	//mutate amount
 	double m = 1;
 
-	public interpolation3d(double[] x, double[] y, double[] z, int maxError) throws IOException {
-		//INPUT
-		n = x.length;
-		input = new double[n][2];
-		output = new double[n];
-		for(int i=0;i<n;i++) {
-			//X INPUT
-			input[i][0] = x[i];
-			//Y INPUT
-			input[i][1] = y[i];
-			//Z INPUT / OUTPUT
-			output[i] = z[i];
-		}
-		//Scanner in = new Scanner(System.in);
-		help();
-		initializebots();
-		double err = maxError + 100;
-		int iteration = 0;
-		while (err > maxError && iteration < 100){
-			addlayer();
-			err = bestbot.score;
-			iteration++;
-		}
-
-		if(err > maxError){
-			System.out.println("Could not create a good curve fit!");
-		}
+	public interpolator(double[] x, double[] y, int maxError) {
+		double[] arr = new double[6];
+		interp(x, arr, y, maxError);
+	}
+	public interpolator(double[] x, double[] y, double[] z, int maxError) {
+		interp(x, y, z, maxError);
 
 		/*while(true) {
 			System.out.print(":");
@@ -103,6 +82,38 @@ public class interpolation3d {
 		}
 		in.close();*/
 	}
+
+
+	public void interp(double[] x, double[] y, double[] z, int maxError){
+		//INPUT
+		n = x.length;
+		input = new double[n][2];
+		output = new double[n];
+		for(int i=0;i<n;i++) {
+			//X INPUT
+			input[i][0] = x[i];
+			//Y INPUT
+			input[i][1] = y[i];
+			//Z INPUT / OUTPUT
+			output[i] = z[i];
+		}
+		//Scanner in = new Scanner(System.in);
+		help();
+		initializebots();
+		double err = maxError + 100;
+		int iteration = 0;
+		while (err > maxError && iteration < 100){
+			addlayer();
+			err = bestbot.score;
+			iteration++;
+		}
+
+		if(err > maxError){
+			System.out.println("Could not create a good curve fit!");
+		}
+	}
+
+
 	public void help() {
 		System.out.println("help - display commands help");
 		System.out.println("init - initialize bots randomly");
@@ -124,6 +135,11 @@ public class interpolation3d {
 		}
 		System.out.println("bots initialized");
 	}
+
+	public double query(double x) {
+		return query(x, 0);
+	}
+
 	public double query(double a, double b) {
 		double[] pass = pass(a,b);
 		double res = 0;
@@ -211,7 +227,7 @@ public class interpolation3d {
 			y[i] = Math.random()*10-5;
 			z[i] = function(x[i],y[i]);
 		}
-		new interpolation3d(x,y,z, 5);
+		new interpolator(x,y,z, 5);
 	}
 	public static double function(double a, double b) {
 		return 1+a*a*a+b*b*b+a*b;
