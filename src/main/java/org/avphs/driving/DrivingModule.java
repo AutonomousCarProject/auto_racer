@@ -83,7 +83,7 @@ public class DrivingModule implements CarModule {
                     currentSegment.radius), CalibrationModule.getMaxSpeed(FLOOR, nextSegment.radius));
             throttleForSeg = (short) 90;
         } else {
-            throttleForSeg = CalibrationModule.getThrottle(FLOOR, currentSegment.radius,
+            throttleForSeg = CalibrationModule.getThrottle(currentSegment.radius,
                     CalibrationModule.getMaxSpeed(FLOOR, currentSegment.radius));
         }
     }
