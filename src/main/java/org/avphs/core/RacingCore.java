@@ -92,7 +92,10 @@ public class RacingCore extends CarCore {
                 }, objectDetectExecutor);
 
         CompletableFuture.allOf(futurePosition, objDetection)
-                .thenAccept(v -> drivingModule.update(carData))
+                .thenAccept(v -> {
+                    drivingModule.update(carData);
+                    car.update(carData);
+                })
                 .exceptionally(ex -> {
                     ex.printStackTrace();
                     return null;
