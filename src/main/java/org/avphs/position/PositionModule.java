@@ -18,6 +18,7 @@ public class PositionModule implements CarModule, CloseHook {
     private float distanceTraveled;
     private float wheelAngle;
     private float deltaPositionAngle;
+    private float drivingArcRadius = 0;
     private int prevOdom = 0;
     private ArduinoData odom;
 
@@ -63,7 +64,14 @@ public class PositionModule implements CarModule, CloseHook {
         wheelAngle = drivingData; //angle of servo
         distanceTraveled = (float) (odometerCount * CalibrationModule.CM_PER_ROTATION); //number of wheel turns * distance per wheelturn (in cm)
 
-        float drivingArcRadius = CalibrationModule.getRadii((short) wheelAngle);//get the turn radius of the car given angle.
+        //drivingArcRadius = CalibrationModule.getRadii((short) wheelAngle);//get the turn radius of the car given angle.
+        //uncomment above and comment below to switch between calculated and real
+        if (wheelAngle > 91) { //if turning right
+            drivingArcRadius = (float) (disBetweenAxle / Math.cos(Math.toRadians(-wheelAngle)));
+        } else if (wheelAngle < 89) { //if turning left
+            drivingArcRadius = (float) (disBetweenAxle / Math.cos(Math.toRadians(wheelAngle)));
+        }
+
 
         if (drivingArcRadius == 0) {//FIXME: talk to ryan from calibration about straight forward, infinite turn radius
             //just drive straight forward
