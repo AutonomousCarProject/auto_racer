@@ -2,6 +2,8 @@ package org.avphs.image.fsmgeneration;
 
 import org.avphs.image.ImageProcessing;
 
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class Table {
@@ -463,6 +465,29 @@ public class Table {
         digraph.addNodeStatement(initialAttributes);
         
         return digraph;
+    }
+    
+    public void saveToFile(String path) {
+        try {
+            BufferedWriter writer = new BufferedWriter(
+                    new OutputStreamWriter(
+                            new FileOutputStream(
+                                    path
+                            ),
+                            StandardCharsets.UTF_8
+                    )
+            );
+            
+            int[] tableData = this.generateTable();
+            for (int tableDatum : tableData) {
+                writer.append(Integer.toString(tableDatum));
+                writer.newLine();
+            }
+//            writer.flush();
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static String niceFormat(int[] intTable) {
