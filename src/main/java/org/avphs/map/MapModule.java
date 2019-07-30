@@ -224,8 +224,8 @@ public class MapModule implements CarModule, CloseHook {
                 if (!executed)
                 {
                     genHardCodedTrack generator = new genHardCodedTrack(map);
-                    Map fridaysMap = new Map(1468, 1121);
-                    fridaysMap = generator.genMap();
+                    map = new Map(1468, 1121);
+                    map = generator.genMap();
                     //MapEditor edit = new MapEditor(fridaysMap);
                     //edit.LaunchMapEditor();
                     executed = true;
