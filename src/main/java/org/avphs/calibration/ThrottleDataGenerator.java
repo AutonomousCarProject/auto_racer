@@ -2,6 +2,7 @@ package org.avphs.calibration;
 
 
 //import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
+
 import org.avphs.car.Car;
 import org.avphs.coreinterface.CarCommand;
 import org.avphs.coreinterface.CarData;
@@ -114,7 +115,7 @@ public class ThrottleDataGenerator implements CarModule {
         try {
             this.carData = carData;
 
-            for (int i = start; i < 44; i += 5) {
+            for (int i = start; i <= 44; i += 5) {
                 System.out.println("Angle being tested: " + i);
                 car.steer(true, i);
                 sleep(1000);
@@ -134,18 +135,18 @@ public class ThrottleDataGenerator implements CarModule {
         //{ {{angle array},{throttle array}} , {{},{}} ...}
         //speed is the index
 //        int[][][] preInterpolation = new int[4024][2][15];
-//        for (int i = start; i < 44; i++) {
+//        for (int i = start; i <= 44; i++) {
 //            int angleIndex = 0;
 //            float[] speedValues = angleThrottleSpeedValues.get(i);
 //            int index = 0;
 //            for (int j = 0; j < preInterpolation.length; i++) {
 //                float currentDifference = Math.abs(speedValues[index] - i);
-//                while(index < 60){
-//                    float newDifference = Math.abs(speedValues[index + 1] -i);
-//                    if(newDifference <= currentDifference){
+//                while (index < 60) {
+//                    float newDifference = Math.abs(speedValues[index + 1] - i);
+//                    if (newDifference <= currentDifference) {
 //                        currentDifference = newDifference;
 //                        index++;
-//                    }else{
+//                    } else {
 //                        break;
 //                    }
 //                }
@@ -154,22 +155,21 @@ public class ThrottleDataGenerator implements CarModule {
 //            }
 //            angleIndex++;
 //        }
-//        for(int i =0 ;i<preInterpolation.length;i++) {
-//            try {
-//                interpolation3d interpolate = new interpolation3d(intToDoubleArr([i][0]), new double[15], preInterpolation[i][1], 5);
-//                interpolate.query(0,0);
-//            }catch(IOException e){
-//                e.printStackTrace();
-//            }
+//
+//        for (int i = 0; i < preInterpolation.length; i++) {
+//            interpolator interpolate = new interpolator(intToDoubleArr(preInterpolation[i][0]), intToDoubleArr(preInterpolation[i][1]), 5);
+//
 //        }
     }
-    private double[]intToDoubleArr(int[]arr){
-        double[]newArr = new double[arr.length];
-        for(int i = 0;i<newArr.length;i++){
+
+    private double[] intToDoubleArr(int[] arr) {
+        double[] newArr = new double[arr.length];
+        for (int i = 0; i < newArr.length; i++) {
             newArr[i] = arr[i];
         }
         return newArr;
     }
+
     public CarCommand[] commands() {
         return new CarCommand[0];
     }
