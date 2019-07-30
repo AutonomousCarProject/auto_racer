@@ -24,6 +24,10 @@ public class MapRacingModule implements CarModule {
             for (int i = 0; i < rows; i++) {
                 String currentRow = bufread.readLine();
                 for (int j = 0; j < columns; j++) {
+                    if(currentRow.charAt(j) == 's'){
+                        map.startX = j;
+                        map.startY = i;
+                    }
                     testMap[i][j] = currentRow.charAt(j) == '1';
                 }
             }
@@ -31,7 +35,7 @@ public class MapRacingModule implements CarModule {
         } catch (Exception e){
             System.out.println("Map may not have been initialized or there is no file to read ");
         }
-        map.showMap();
+        //map.showMap();
         carData.addData("map", map);
     }
 

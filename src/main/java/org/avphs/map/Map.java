@@ -10,7 +10,7 @@ public class Map {
     //in MM per index
     public float scale = 10;
 
-    public int startX = 150, StartY = 150;
+    public int startX = 120, startY = 150;
 
     /**
      * Creates a new map that is pre-made to be a square

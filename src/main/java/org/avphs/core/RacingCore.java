@@ -5,6 +5,8 @@ import org.avphs.coreinterface.CarModule;
 import org.avphs.detection.ObjectDetectionModule;
 import org.avphs.driving.DrivingModule;
 import org.avphs.image.ImageModule;
+import org.avphs.map.MapModule;
+import org.avphs.map.MapRacingModule;
 import org.avphs.position.PositionModule;
 import org.avphs.racingline.RacingLineModule;
 import org.avphs.window.WindowModule;
@@ -26,6 +28,7 @@ public class RacingCore extends CarCore {
     private CarModule racingLineModule;
     private CarModule drivingModule;
     private CarModule windowModule;
+    private CarModule mapModule;
 
     private Executor imageExecutor = Executors.newSingleThreadScheduledExecutor(
             new NamedThreadFactory("image"));
@@ -45,6 +48,8 @@ public class RacingCore extends CarCore {
         objectDetectionModule = new ObjectDetectionModule();
         racingLineModule = new RacingLineModule();
         drivingModule = new DrivingModule(car);
+        mapModule = new MapRacingModule();
+
 
         // Image - No one.
         // Position- Image
@@ -57,6 +62,7 @@ public class RacingCore extends CarCore {
         updatingCarModules.add(objectDetectionModule);
         updatingCarModules.add(racingLineModule);
         updatingCarModules.add(drivingModule);
+        updatingCarModules.add(mapModule);
 
         if (showWindow) {
             windowModule = new WindowModule();
