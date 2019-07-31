@@ -16,7 +16,7 @@ public class MapRacingModule implements CarModule {
     @Override
     public void init(CarData carData) {
         try {
-            BufferedReader bufread = new BufferedReader(new FileReader("src/main/java/org/avphs/map/map.txt"));
+            BufferedReader bufread = new BufferedReader(new FileReader("testmap.txt"));
             StringTokenizer st = new StringTokenizer(bufread.readLine());
             rows = Integer.parseInt(st.nextToken());
             columns = Integer.parseInt(st.nextToken());
