@@ -64,6 +64,8 @@ public class WindowModule extends JFrame implements CarModule {
 
     @Override
     public void paint(Graphics g) {
+        windowWidth = getWidth();
+        windowHeight = getHeight();
         if (pixels != null) {
             int[] displayPixels = ((DataBufferInt) bufferImage.getRaster().getDataBuffer()).getData();
             System.arraycopy(pixels, 0, displayPixels, 0, pixels.length);
