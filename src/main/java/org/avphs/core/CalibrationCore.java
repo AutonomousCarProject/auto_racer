@@ -45,24 +45,34 @@ public class CalibrationCore extends CarCore {
                 case "CameraDataGenerator":
                     updatingCarModules.clear();
                     //updatingCarModules.add(new CameraDataGenerator());
+                    updatingCarModules.add(car);
+                    updatingCarModules.get(1).init(carData);
                     updatingCarModules.get(0).init(carData);
                     break;
                 case "3DInterpolation":
                     updatingCarModules.clear();
+                    updatingCarModules.add(car);
+                    updatingCarModules.get(1).init(carData);
                     updatingCarModules.get(0).init(carData);
                     break;
                 case "MoveForward":
                     updatingCarModules.clear();
+                    updatingCarModules.add(car);
+                    updatingCarModules.get(1).init(carData);
                     updatingCarModules.get(0).init(carData);
                     break;
                 case "BrakeTest":
                     updatingCarModules.clear();
                     updatingCarModules.add(new BrakeTest(car));
+                    updatingCarModules.add(car);
+                    updatingCarModules.get(1).init(carData);
                     updatingCarModules.get(0).init(carData);
                     break;
                 case "ThrottleDataGenerator":
                     updatingCarModules.clear();
                     updatingCarModules.add(new ThrottleDataGenerator(car));
+                    updatingCarModules.add(car);
+                    updatingCarModules.get(1).init(carData);
                     updatingCarModules.get(0).init(carData);
                     break;
                 case "stop":
