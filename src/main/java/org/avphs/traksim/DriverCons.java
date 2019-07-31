@@ -28,7 +28,7 @@ package org.avphs.traksim; // (class DriverCons)                // 2019 July 24
 public class DriverCons { // TrakSim constant parameters
 
   public static final boolean // options & diagnostic switches..
-          D_LiveCam = false,         // F: omit connecting to FlyCamera
+          D_LiveCam = true,         // F: omit connecting to FlyCamera
           D_Fault = true,        // T: default start; F: easy run mode
           D_StartLive = !D_Fault,   // T: start in live camera if possible
           D_FixedSpeed = D_Fault,   // ignore speed control, assume fMinSpeed

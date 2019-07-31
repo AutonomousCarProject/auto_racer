@@ -18,7 +18,6 @@ package org.avphs.sbcio; // (class Arduino)                 // 2019 April 18
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import java.sql.Driver;
 import java.util.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -29,7 +28,6 @@ import java.text.SimpleDateFormat;
 import jssc.SerialPort; // use these 2 lines in LattePanda..
 import jssc.SerialPortEvent; // (comment them out when using noJSSC)
 import org.avphs.sbcio.fakefirm.*;
-import org.avphs.traksim.DriverCons;
 // import jssc.SerialPortEventListener; // (didn't work for me, so unused)
 
 import javax.swing.Timer;
@@ -39,8 +37,8 @@ public class Arduino { // Adapted to Java from arduino.cs ... (FakeFirmata)
     protected static boolean GoodOpen = false; // -- [Consistency Check!]
 
     public static final String CommPortNo = "COM5"; // or maybe "COM3"
-    public static final boolean SpeakEasy = false, // enables logging
-            LogAllPcnts = false; // always log pulse counts & DeadMan
+    public static final boolean SpeakEasy = true, // enables logging
+            LogAllPcnts = true; // always log pulse counts & DeadMan
 
     public static final int MAX_DATA_BYTES = 64, // =64 in LattePanda's Arduino.cs
             MDB_msk = MAX_DATA_BYTES - 1, SpeakHard = 15; // cf SpokeHard
@@ -409,32 +407,31 @@ public class Arduino { // Adapted to Java from arduino.cs ... (FakeFirmata)
         if ((pin & -16) != 0){
             return; // not a valid pin
         }
-        if (DriverCons.D_LiveCam) {
-            /*  Old version:  */
-            if (ArduPiModes[pin & 15] != whom){
-                while (true) {
-                    if (whom == Arduino.INPUT){
-                        whom = Arduino.REPORT_DIGITAL; // = 0xD0 (208)
-                    } else if (whom == Arduino.ANALOG) {
-                        whom = Arduino.REPORT_ANALOG; // = 0xC0 (192)
-                    } else if (whom != Arduino.REPORT_VERSION && whom != Arduino.PULSECOUNT){
-                        break; // = 7
-                    }
-                    OpenPinInput(pin, whom);
-                    break;
-                } //~while
-            }
-            /*  New Version:  */
-        } else {
-            if (ArduPiModes[pin & 15] != whom && whom == Arduino.REPORT_VERSION && whom == Arduino.PULSECOUNT) {
-                if (whom == Arduino.INPUT) {
-                    whom = Arduino.REPORT_DIGITAL;
+        /*  Old version:  */
+        if (ArduPiModes[pin & 15] != whom){
+            while (true) {
+                if (whom == Arduino.INPUT){
+                    whom = Arduino.REPORT_DIGITAL; // = 0xD0 (208)
                 } else if (whom == Arduino.ANALOG) {
-                    whom = Arduino.REPORT_ANALOG;
+                    whom = Arduino.REPORT_ANALOG; // = 0xC0 (192)
+                } else if (whom != Arduino.REPORT_VERSION && whom != Arduino.PULSECOUNT){
+                    break; // = 7
                 }
                 OpenPinInput(pin, whom);
-            }
+                break;
+            } //~while
         }
+        /*  New Version:  */
+      /*
+        if (ArduPiModes[pin & 15] != whom && whom == Arduino.REPORT_VERSION && whom == Arduino.PULSECOUNT){
+            if (whom == Arduino.INPUT){
+                whom = Arduino.REPORT_DIGITAL;
+            } else if (whom == Arduino.ANALOG){
+                whom = Arduino.REPORT_ANALOG;
+            }
+            OpenPinInput(pin, whom);
+        }
+        */
         Send3bytes(SET_PIN_MODE, pin, mode);
     } //~pinMode // SET_PIN_MODE = 0xF4 (244)
 
