@@ -7,6 +7,7 @@ import org.avphs.coreinterface.CloseHook;
 import org.avphs.image.ImageData;
 import org.avphs.position.PositionData;
 import org.avphs.traksim.TrakSim;
+import org.avphs.position.PositionModule;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -33,6 +34,7 @@ public class MapModule implements CarModule, CloseHook {
     private final float MODIFIED_CAR_X_STARTING_POSITION = 0.0f;
     private final float MODIFIED_CAR_Y_STARTING_POSITION = 0.0f;
     //These numbers are added to the (0,0) origin to indicate the starting position of the car in the room.
+
 
 
     private ImageData imageData;
@@ -192,7 +194,10 @@ public class MapModule implements CarModule, CloseHook {
 
                 mapformatter.expandTrackFiveCarLengthsToTheLeftAndRightOfCurrentPos(pos1, currentAngle1);
 
-                cycleCounter++;
+                break;
+            default:
+                break;
+        }
 
                 /**
                  * THINGY

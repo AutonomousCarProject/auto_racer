@@ -19,7 +19,7 @@ public class DrivingModule implements CarModule {
     private RoadData nextSegment;
 
     private int angle = 0;
-    private int throttle = 12;
+    private int throttle = 0;
     private boolean stop = false;
     private final Car car;
 
@@ -81,7 +81,7 @@ public class DrivingModule implements CarModule {
         if (currentSegment instanceof Straight) {
             brakeDist = CalibrationModule.getSpeedChangeDist(FLOOR, CalibrationModule.getMaxSpeed(FLOOR,
                     currentSegment.radius), CalibrationModule.getMaxSpeed(FLOOR, nextSegment.radius));
-            throttleForSeg = (short) 90;
+            throttleForSeg = (short) 60;
         } else {
             throttleForSeg = CalibrationModule.getThrottle(FLOOR, currentSegment.radius,
                     CalibrationModule.getMaxSpeed(FLOOR, currentSegment.radius));
@@ -200,7 +200,6 @@ public class DrivingModule implements CarModule {
                         findRadiusAndCenter(racingLinePoints[(i+n-1)%n],racingLinePoints[i],racingLinePoints[(i+1)%n])));
             }
         }
-        System.out.println("NNNNNNN: "+n);
     }
 
     /*
@@ -227,11 +226,11 @@ public class DrivingModule implements CarModule {
     private void getDirection(){ //returns the direction of the car from 0 to 180
         if (onRacingLine()) {
             if (currentSegment instanceof Straight) {
-                angle = 90;
+                angle = 0;
             } else {
                 angle = CalibrationModule.getAngles(currentSegment.radius);
             }
-        } else {
+        } else {   
             angle = -1;
             //stop = true;
         }
@@ -246,7 +245,7 @@ public class DrivingModule implements CarModule {
                     ((Straight)currentSegment).getSlope(), ((Straight)currentSegment).getB());     //currentPosOnLine
             if ((int)Math.sqrt(Math.pow(currentSegment.endX - currentPosOnLine[0], 2.0) //If we're not to the brake
                     + Math.pow(currentSegment.endY - currentPosOnLine[1], 2.0)) > brakeDist){ //point yet,
-                throttle = 90;     //full throttle
+                throttle = 60;     //full throttle
             } else {
                 throttle = MAX_HARD_BRAKE;
             }
