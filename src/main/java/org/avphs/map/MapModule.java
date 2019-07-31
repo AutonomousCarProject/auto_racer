@@ -100,8 +100,6 @@ public class MapModule implements CarModule, CloseHook {
                 break;
             case 2:
                 //For Testing in traksim
-
-
                 imageData = (ImageData) carData.getModuleData("image");
                 //System.out.println(trakSimData.GetPosn(true));
                 float[] pos = new float[2];
@@ -137,17 +135,17 @@ public class MapModule implements CarModule, CloseHook {
 
                 mapformatter.AddData(pos, currentAngle, imageData.wallBottom);
 
-                cycleCounter++;
+                System.out.println(cycleCounter++);
 
                 /**
                  * THINGY
                  * ============================
                  */
-                /*
+
                 if (cycleCounter % 200 == 0)//Show map developing
                 {
                     map.showMap();
-                }//*/
+                }
 
                 break;
             case 3:
