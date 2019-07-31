@@ -194,11 +194,6 @@ public class MapModule implements CarModule, CloseHook {
 
                 mapformatter.expandTrackFiveCarLengthsToTheLeftAndRightOfCurrentPos(pos1, currentAngle1);
 
-                break;
-            default:
-                break;
-        }
-
                 /**
                  * THINGY
                  * ============================
@@ -225,8 +220,8 @@ public class MapModule implements CarModule, CloseHook {
                 }
 
                 break;
-                default:
-                    break;
+            default:
+                break;
         }
         carData.addData("map", map);
 
