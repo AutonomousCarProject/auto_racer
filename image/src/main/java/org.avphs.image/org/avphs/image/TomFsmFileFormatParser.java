@@ -18,7 +18,7 @@ public class TomFsmFileFormatParser {
 //            "^(?<source>\\d+)\\.(?<color>\\d+)\\s*=\\s*(?<destination>\\d+)(?:\\s*\\+\\s*(?<action>(?:(?<wall>\\d+)(?:=(?<extra>\\w+)))|\\w+))?(?:\\s*--\\s*(?<comment>.*))?"
 //    );
     public static final Pattern linePattern = Pattern.compile(
-            "^(?<source>\\d+)\\.(?<color>\\d+)\\h*=\\h*(?:(?<terminal>[a-zA-Z]+)|(?<destination>\\d+)(?:\\h*\\+\\h*(?<action>(?:(?<wall>\\d+)(?:=(?<extra>\\w+)))|\\w+))?)(?:\\h*--\\h*(?<comment>.*))?"
+            "^(?<source>\\d+)\\.(?<color>\\d+)\\h*=\\h*(?:(?<terminal>[a-zA-Z]+)|(?<destination>\\d+)(?:\\h*\\+\\h*(?<action>(?:(?<wall>\\d+)(?:=(?<extra>\\w+))?)|\\w+))?)(?:\\h*--\\h*(?<comment>.*))?"
     );
 
     /**
@@ -68,6 +68,15 @@ public class TomFsmFileFormatParser {
                 matchingLines.add(matcher);
             }
         }
+        // why is this necessary???
+        fileSourceStates.remove(null);
+        fileDestinationStates.remove(null);
+        fileColors.remove(null);
+        fileThingIds.remove(null);
+        
+        // Tom's format is weird
+        // add a state "0" to the table that just always fails (the default)
+        fileSourceStates.add("0");
 
         if (!fileSourceStates.contains(initialStateName)) {
             // function caller messed up
@@ -79,7 +88,11 @@ public class TomFsmFileFormatParser {
         for (String fileColor : fileColors) {
             int parsedInt = Integer.parseInt(fileColor);
             if (parsedInt < colors.length) {
-                colorMap.put(fileColor, colors[parsedInt]);
+                if (colors[parsedInt] != null) {
+                    colorMap.put(fileColor, colors[parsedInt]);
+                } else {
+                    throw new Exception("a color used in the file is mapped to null in the colors array");
+                }
             } else {
                 throw new Exception("a color appears in the file but is not defined in the colors array");
             }
