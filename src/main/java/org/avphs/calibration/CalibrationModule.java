@@ -55,8 +55,7 @@ public class CalibrationModule {
     //Helper method to read speed change distance data
     private static byte[][][] readSpeedChangeDistData (){
         byte[][][] rowList = null;
-        try (BufferedReader br = new BufferedReader(new FileReader("calibration\\src\\main\\java\\org.avphs\\calibration\\DistanceCalculations.txt"))) {
-
+        try (BufferedReader br = new BufferedReader(new FileReader("src\\main\\java\\org\\avphs\\calibration\\DistanceCalculations.txt"))) {
             short numFloors = parseShort(br.readLine());
             short initSpeeds = parseShort(br.readLine());
             short finalSpeeds = parseShort(br.readLine());
@@ -64,7 +63,6 @@ public class CalibrationModule {
 
             for (short i = 0; i < numFloors; i++) {
                 for (int j = 0; j < initSpeeds; j++) {
-
                     String line = br.readLine();
                     String[] lineItems = line.split(" ");
                     for (int k = 0; k < finalSpeeds; k++) {
@@ -75,6 +73,7 @@ public class CalibrationModule {
 
         } catch (Exception e) {
             // Handle any I/O problems
+            e.printStackTrace();
         }
         return rowList;
     }
