@@ -409,7 +409,7 @@ public class Arduino { // Adapted to Java from arduino.cs ... (FakeFirmata)
         if ((pin & -16) != 0){
             return; // not a valid pin
         }
-        if (DriverCons.D_LiveCam) {
+        if (IOSettings.useServos) {
             /*  Old version:  */
             if (ArduPiModes[pin & 15] != whom){
                 while (true) {
