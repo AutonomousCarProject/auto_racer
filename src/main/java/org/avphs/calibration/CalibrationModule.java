@@ -28,8 +28,8 @@ public class CalibrationModule {
         }
     }
 
-    public static void main(String[] args){
-    }
+    //public static void main(String[] args){
+    //}
 
     /*private static <TOUT> TOUT readTable(String filepath){
         TOUT rowList = null;
@@ -104,11 +104,11 @@ public class CalibrationModule {
     //Helper method to read max speed data
     private static short[][] readMaxSpeedData (){
         short[][] rowList = null;
-        try (BufferedReader br = new BufferedReader(new FileReader("calibration\\src\\main\\java\\org.avphs\\calibration\\MaxSpeeds.txt"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("src\\main\\java\\org\\avphs\\calibration\\MaxSpeeds.txt"))) {
 
             short initSpeeds = Short.parseShort(br.readLine());
             short finalSpeeds = Short.parseShort(br.readLine());
-
+            rowList = new short[initSpeeds][finalSpeeds];
             for (int i = 0; i < initSpeeds; i++) {
 
                 String line = br.readLine();
@@ -121,11 +121,13 @@ public class CalibrationModule {
 
         } catch (Exception e) {
             // Handle any I/O problems
+            e.printStackTrace();
         }
         return rowList;
     }
 
     //Helper method to read defishing data
+    //TODO:INACTIVE
     private static FishData[][] readFishData() {
 
         FishData[][] rowList = null;
@@ -148,10 +150,10 @@ public class CalibrationModule {
             }
 
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
         return rowList;
-    }
+   */ }
 
     //Helper method to read angle data
     private static HashMap<Integer, Integer> readAngleData (){
@@ -170,7 +172,7 @@ public class CalibrationModule {
         }
         catch(Exception e){
             // Handle any I/O problems
-
+            e.printStackTrace();
         }
         return hashMap;
     }
@@ -186,14 +188,13 @@ public class CalibrationModule {
             String line = br.readLine();
             String[] lineItems = line.split(" ");
             for (int i = 0; i < angleCount; i++) {
-
                 rowList[i] = Short.parseShort(lineItems[i]);
             }
 
         }
         catch(Exception e){
             // Handle any I/O problems
-
+            e.printStackTrace();
         }
         return rowList;
     }
@@ -201,7 +202,7 @@ public class CalibrationModule {
     //angle, desired velocity
     private static short[][] readThrottleData(){
         short[][] rowList = null;
-        try (BufferedReader br = new BufferedReader(new FileReader("calibration\\src\\main\\java\\org.avphs\\calibration\\ThrottleCalculations.txt"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("src\\main\\java\\org\\avphs\\calibration\\ThrottleData.txt"))) {
 
             short radCount = Short.parseShort(br.readLine());
             short desiredSpeedsCount = Short.parseShort(br.readLine());
@@ -219,6 +220,7 @@ public class CalibrationModule {
 
         } catch (Exception e) {
             // Handle any I/O problems
+            e.printStackTrace();
         }
         return rowList;
     }
@@ -240,7 +242,7 @@ public class CalibrationModule {
         }
         catch(Exception e){
             // Handle any I/O problems
-
+            e.printStackTrace();
         }
         return rowList;
     }
