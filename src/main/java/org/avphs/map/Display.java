@@ -7,7 +7,7 @@ import java.awt.*;
 @SuppressWarnings("serial")
 class Display extends JPanel {
 
-    static float scale = .25f;
+    static float scale = 1f;
 
     private boolean[][] map;
 

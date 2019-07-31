@@ -10,7 +10,8 @@ public class Map {
     //in MM per index
     public float scale = 10;
 
-    public int startX = 120, startY = 150;
+    public int startX = 150, startY = 150;
+    private int xDim; private int yDim;
 
     /**
      * Creates a new map that is pre-made to be a square
@@ -18,6 +19,16 @@ public class Map {
     public Map(int x, int y)
     {
         mapGridData = new boolean[x][y];
+        xDim = x; yDim = y;
+    }
+
+    public int getXDim()
+    {
+        return xDim;
+    }
+    public int getyDim()
+    {
+        return  yDim;
     }
 
 
@@ -25,7 +36,7 @@ public class Map {
         //FAKE DATA: Returns square test track. True = Track, False = Not Track
         //Link to Desmos Graph of Sample Track (7/9/2019 - not created yet): https://www.desmos.com/calculator/obecg5hw5z
         // [x][y]
-        mapGridData = new boolean[1500][1500];
+        mapGridData = new boolean[2000][2000];
 
 
         //Square Map
@@ -101,6 +112,29 @@ public class Map {
             //System.out.println("Value set true at: " + x + "," + y + ".");
         }
     }
+
+    public void setValueAtIndex_XL(float xlocation, float ylocation, boolean value, int size)
+    {
+        if( !((xlocation < 0)|| (ylocation < 0)) ){
+            int x = Math.round(xlocation); int y = Math.round(ylocation);
+
+            // will fill in a 3x3 box rather than a 1x1
+            mapGridData[x][y] = value;
+            for (int i = ((-size)/ 2); i < (size/2) + 1; i++)
+            {
+                for (int j = ((-size) / 2); j < (size / 2) + 1; j++)
+                {
+                    mapGridData[x + i][y + j] = value;
+                }
+            }
+
+
+
+
+            //System.out.println("Value set true at: " + x + "," + y + ".");
+        }
+    }
+
 
 }
 
