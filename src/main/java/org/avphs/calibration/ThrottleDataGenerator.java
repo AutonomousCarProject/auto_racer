@@ -37,7 +37,7 @@ public class ThrottleDataGenerator implements CarModule {
         for (int i = 0; i < speedValues.length; i++) {
             long startTime = System.currentTimeMillis();
             car.accelerate(true, i);
-            while (((ArduinoData) carData.getModuleData("arduino")).getOdomCount() <= speedValues[i]) {
+            while (((ArduinoData)carData.getModuleData("arduino")).getOdomCount() <= speedValues[i]) {
 //                 Accelerating
             }
             allAccelerationTimes[i] = System.currentTimeMillis() - startTime;
