@@ -1,36 +1,38 @@
-/* FakeFirmata -- a simple way to control servos from LattePanda in Java.
- *
- * This is essentially a translation of (small parts of) LattePanda's Arduino.cs
- * into Java for using the attached Arduino to control servos.
- *
- * Under US Copyright law this miniscule copy counts as "Fair Use" and in the
- * public domain, but if you are worried about it, or if you extend it to
- * include more of their code, then you will be bound by the onerous rules of
- * the GNU General Public License or whatever they are currently using.
- *
- * FakeFirmata is designed to work with JSSC (Java Simple Serial Connector),
- * but probably will work with any compatible Java serial port API.
- * When using TrakSim on a computer with no serial port, you will need to
- * import noJSSC (included with TrakSim) instead of JSSC.
- */
-package org.avphs.sbcio; // (class Arduino)                 // 2019 April 18
+        /* FakeFirmata -- a simple way to control servos from LattePanda in Java.
+         *
+         * This is essentially a translation of (small parts of) LattePanda's Arduino.cs
+         * into Java for using the attached Arduino to control servos.
+         *
+         * Under US Copyright law this miniscule copy counts as "Fair Use" and in the
+         * public domain, but if you are worried about it, or if you extend it to
+         * include more of their code, then you will be bound by the onerous rules of
+         * the GNU General Public License or whatever they are currently using.
+         *
+         * FakeFirmata is designed to work with JSSC (Java Simple Serial Connector),
+         * but probably will work with any compatible Java serial port API.
+         * When using TrakSim on a computer with no serial port, you will need to
+         * import noJSSC (included with TrakSim) instead of JSSC.
+         */
+        package org.avphs.sbcio; // (class Arduino)                 // 2019 April 18
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+        import java.awt.event.ActionEvent;
+        import java.awt.event.ActionListener;
 
-import java.util.Date;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+        import java.sql.Driver;
+        import java.util.Date;
+        import java.text.DateFormat;
+        import java.text.SimpleDateFormat;
 
 // import noJSSC.SerialPort; // use these 2 lines instead to use TrakSim
 // import noJSSC.SerialPortEvent; // ..on a computer with no serial port.
 
-import jssc.SerialPort; // use these 2 lines in LattePanda..
-import jssc.SerialPortEvent; // (comment them out when using noJSSC)
-import org.avphs.sbcio.fakefirm.*;
+        import jssc.SerialPort; // use these 2 lines in LattePanda..
+        import jssc.SerialPortEvent; // (comment them out when using noJSSC)
+        import org.avphs.sbcio.fakefirm.*;
+        import org.avphs.traksim.DriverCons;
 // import jssc.SerialPortEventListener; // (didn't work for me, so unused)
 
-import javax.swing.Timer;
+        import javax.swing.Timer;
 
 public class Arduino { // Adapted to Java from arduino.cs ... (FakeFirmata)
 
@@ -428,25 +430,11 @@ public class Arduino { // Adapted to Java from arduino.cs ... (FakeFirmata)
                 if (whom == Arduino.INPUT) {
                     whom = Arduino.REPORT_DIGITAL;
                 } else if (whom == Arduino.ANALOG) {
-                    whom = Arduino.REPORT_ANALOG; // = 0xC0 (192)
-                } else if (whom != Arduino.REPORT_VERSION && whom != Arduino.PULSECOUNT){
-                    break; // = 7
+                    whom = Arduino.REPORT_ANALOG;
                 }
                 OpenPinInput(pin, whom);
-                break;
-            } //~while
-        }
-        /*  New Version:  */
-      /*
-        if (ArduPiModes[pin & 15] != whom && whom == Arduino.REPORT_VERSION && whom == Arduino.PULSECOUNT){
-            if (whom == Arduino.INPUT){
-                whom = Arduino.REPORT_DIGITAL;
-            } else if (whom == Arduino.ANALOG){
-                whom = Arduino.REPORT_ANALOG;
             }
-            OpenPinInput(pin, whom);
         }
-        */
         Send3bytes(SET_PIN_MODE, pin, mode);
     } //~pinMode // SET_PIN_MODE = 0xF4 (244)
 

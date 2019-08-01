@@ -168,6 +168,8 @@ public class ThrottleDataGenerator implements CarModule {
         for (int i = 0; i < newArr.length; i++) {
             newArr[i] = arr[i];
         }
+
+        return newArr;
     }
     public CarCommand[] commands() {
         return new CarCommand[0];
