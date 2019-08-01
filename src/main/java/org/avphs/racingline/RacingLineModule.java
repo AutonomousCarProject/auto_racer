@@ -8,8 +8,10 @@ import org.avphs.detection.Obstacle;
 
 import java.util.*;
 import java.io.*;
+import javax.swing.*;
+import java.awt.*;
 
-public class RacingLineModule implements CarModule {
+public class RacingLineModule extends JPanel implements CarModule {
     private boolean[][] map;
     private boolean[][] walls;
     private HashSet<Point> allWalls = new HashSet<Point>();
@@ -30,13 +32,16 @@ public class RacingLineModule implements CarModule {
 
     private int carx=0,cary=0;
 
+    JFrame jf;
+    int qx = 0;
+    int qy = 0;
 
     //region Overrides
     @Override
     public void init(CarData carData){
         try {
             //Convert a text file of 1's and 0's to a 2D boolean array used for RacingLine calculations
-            BufferedReader bufread = new BufferedReader(new FileReader("testmap.txt"));
+            BufferedReader bufread = new BufferedReader(new FileReader("map.txt"));
             StringTokenizer st = new StringTokenizer(bufread.readLine());
 
             rows = Integer.parseInt(st.nextToken());
@@ -54,15 +59,47 @@ public class RacingLineModule implements CarModule {
 
             System.out.println("Racing line init");
             System.out.println("Rows: " + rows + ", columns: " + columns);
-
-            //Add a dummy RacingLine to cardata with the test map
             makeRacingLine(testMap);
+            jf = new JFrame("racing line test....");
+            jf.setSize(1280,720);
+            jf.add(this);
+            jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            jf.setVisible(true);
+            long prevtime = System.currentTimeMillis();
+            while(true) {
+                long time = System.currentTimeMillis();
+                if(time - prevtime > 33) {
+                    int x = MouseInfo.getPointerInfo().getLocation().x;
+                    int y = MouseInfo.getPointerInfo().getLocation().y - 44;
+                    if (x < 100) qx--;
+                    if (x > 1180) qx++;
+                    if (y < 100) qy--;
+                    if (y > 620) qy++;
+                    if (x > 1180 && y > 620) break;
+                    prevtime = time;
+                }
+                jf.repaint();
+            }
+            //Add a dummy RacingLine to cardata with the test map
+
             carData.addData("racingLine", center.getRacingLinePoints());
         } catch(IOException e) {
             e.printStackTrace();
         }
 
         carData.addData("RacingLine", center);
+    }
+
+    public void paint(Graphics g) {
+        for(int i=0;i<rows;i++) {
+            for(int j=0;j<columns;j++) {
+                if(!map[i][j]) g.fillRect(i-qx,j-qy,1,1);
+            }
+        }
+        g.setColor(Color.BLUE);
+        for(RacingLinePoint c: center.getRacingLinePoints()) {
+            g.fillRect(c.getIntX()-2-qx,c.getIntY()-2-qy,4,4);
+        }
     }
 
     public void update(CarData carData) {
@@ -348,7 +385,7 @@ public class RacingLineModule implements CarModule {
      * Gets the middle line - line between outer wall and inner wall
      */
     private void getMiddleLine() {
-        //getMapFromWalls
+        map = getMapFromWalls(map);
         closeTrack(10);
         getWalls();
 
@@ -357,14 +394,14 @@ public class RacingLineModule implements CarModule {
 
         //Reduce the number of data points
         center.sortPoints();
-        trimSortedPoints(20);
+        trimSortedPoints(110);
 
         //Calculate the angles between every point on the line
         makeOriginal();
         getAngles();
 
         //Smooth the line
-        //connectTheDots();
+        connectTheDots();
     }
 
     /**
