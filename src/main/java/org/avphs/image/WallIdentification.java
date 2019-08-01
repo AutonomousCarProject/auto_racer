@@ -275,8 +275,6 @@ public class WallIdentification {
                             arr[1][k] = ((y1 - y2) / (x1 - x2)) * (k - x1) + y1;
                         }
                         i = x2;
-                        //drawPixel(a, x1, y1, width, 3);
-                        //System.out.println("x1, y1 =" + x1 + " " + y1 + " x2, y2 =" + x2 + " " + y2);
                     }
                 }
             }
@@ -312,8 +310,6 @@ public class WallIdentification {
                         arr[1][k] = ((y1-y2)/(x1-x2)) * (k - x1) + y1;
                     }
                     i = x2;
-                    //drawPixel(a, x1, y1, width, 3);
-                    System.out.println("x1, y1 =" + x1 + " " + y1 + " x2, y2 =" + x2 + " " + y2);
 
                 }
             }
@@ -366,9 +362,9 @@ public class WallIdentification {
                 y1 = arr[0][j]; y2 = arr[0][j - threshold];
                 for(int k = j; k < arr[0].length - 1; k++){
 
-                    //System.out.println((((y1-y2)/(x1-x2)) * (k - x1) + y1) + " " + k);
+
                     arr[0][k] = (int)((((double)y1-y2)/(x1-x2)) * (k - x1) + y1);
-                    //System.out.println(arr[0][k]);
+
                     if(arr[0][k] > height - 1){
                         arr[0][k] = height - 1;
                     }
