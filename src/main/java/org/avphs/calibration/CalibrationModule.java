@@ -2,6 +2,8 @@ package org.avphs.calibration;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.util.HashMap;
+
 import org.avphs.coreinterface.CarCommand;
 import org.avphs.coreinterface.CarData;
 import org.avphs.coreinterface.CarModule;
@@ -13,8 +15,8 @@ import static java.lang.Short.parseShort;
 public class CalibrationModule {
 
     public static void main(String[] args){
-
     }
+
 
     /*private static <TOUT> TOUT readTable(String filepath){
         TOUT rowList = null;
@@ -132,17 +134,17 @@ public class CalibrationModule {
     }
 
     //Helper method to read angle data
-    private static short[] readAngleData (){
-        short[] rowList = null;
+    private static HashMap<Integer, Integer> readAngleData (){
+        HashMap<Integer, Integer> hashMap = null;
         try (BufferedReader br = new BufferedReader(new FileReader("calibration\\src\\main\\java\\org.avphs\\calibration\\AngleData.txt"))) {
 
             short radCount = parseShort(br.readLine());
-            rowList = new short[radCount];
-            String line = br.readLine();
-            String[] lineItems = line.split(" ");
+            hashMap = new HashMap<>();
             for (int i = 0; i < radCount; i++) {
-
-                rowList[i] = Short.parseShort(lineItems[i]);
+                String[] row = br.readLine().split(" ");
+                int key = Integer.parseInt(row[0]);
+                int val = Integer.parseInt(row[1]);
+                hashMap.put(key, val);
             }
 
         }
@@ -150,7 +152,7 @@ public class CalibrationModule {
             // Handle any I/O problems
 
         }
-        return rowList;
+        return hashMap;
     }
 
     //Helper method to read radii data
@@ -233,7 +235,7 @@ public class CalibrationModule {
     private static final FishData[][] DEFISHER = readFishData();
 
     //input radius
-    private static final short[] ANGLES = readAngleData();
+    private static final HashMap<Integer, Integer> ANGLES = readAngleData();
 
     //input angle
     private static final short[] RADII = readRadiiData();
@@ -259,9 +261,8 @@ public class CalibrationModule {
         return SPEED_CHANGE_DISTS[floor][i][f];
     }
 
-    public static final short getAngles(short rad) {
-        return 1;
-        //return ANGLES[rad];
+    public static final int getAngles(int rad) {
+        return ANGLES.get(rad);
     }
 
     public static final short getRadii(short angle) {
