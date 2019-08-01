@@ -271,7 +271,9 @@ public class CalibrationModule {
     }
 
     public static final int getAngles(int rad) {
-        return ANGLES.get(rad);
+        if(rad == 0) return 0;
+        return 1350/rad;
+        //return ANGLES.get(rad);
     }
 
     public static final short getRadii(short angle) {

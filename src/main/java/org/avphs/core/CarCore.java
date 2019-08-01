@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
  * @see RacingCore
  */
 public abstract class CarCore {
-    public static final int FPS = 15; // Frames per second car Tries to run
+    public static final int FPS = 2; // Frames per second car Tries to run
     protected CarData carData; // The data from all of the modules.
     protected Car car; // the object that can actually control the car.
     long targetMillsPerFrame = Math.round(1000.0 / FPS);

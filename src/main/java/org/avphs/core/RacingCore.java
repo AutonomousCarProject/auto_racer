@@ -23,7 +23,7 @@ import java.util.concurrent.*;
 public class RacingCore extends CarCore {
 
     private CarModule imageModule;
-    private CarModule positionModule;
+    //private CarModule positionModule;
     private CarModule objectDetectionModule;
     private CarModule racingLineModule;
     private CarModule drivingModule;
@@ -41,10 +41,10 @@ public class RacingCore extends CarCore {
 
     public RacingCore(Car car, boolean showWindow) {
         super(car);
-
-
+        car.accelerate(true, 0);
+        car.steer(true, 0);
         imageModule = new ImageModule();
-        positionModule = new PositionModule();
+        //positionModule = new PositionModule();
         objectDetectionModule = new ObjectDetectionModule();
         racingLineModule = new RacingLineModule();
         drivingModule = new DrivingModule(car);
@@ -58,7 +58,7 @@ public class RacingCore extends CarCore {
         // DrivingModule - Pos, RL, Static Calibration.
 
         updatingCarModules.add(imageModule);
-        updatingCarModules.add(positionModule);
+        //updatingCarModules.add(positionModule);
         updatingCarModules.add(objectDetectionModule);
         updatingCarModules.add(racingLineModule);
         updatingCarModules.add(drivingModule);
@@ -86,8 +86,8 @@ public class RacingCore extends CarCore {
                     .runAsync(() -> windowModule.update(carData));
         }
 
-        CompletableFuture<Void> futurePosition = futureImage
-                .thenAcceptAsync(v -> positionModule.update(carData), positionExecutor);
+        //CompletableFuture<Void> futurePosition = futureImage
+                //.thenAcceptAsync(v -> positionModule.update(carData), positionExecutor);
 
         CompletableFuture<Void> objDetection = futureImage
                 .thenAcceptAsync(v -> {
@@ -97,7 +97,7 @@ public class RacingCore extends CarCore {
                     }
                 }, objectDetectExecutor);
 
-        CompletableFuture.allOf(futurePosition, objDetection)
+        CompletableFuture.allOf(objDetection)
                 .thenAccept(v -> {
                     drivingModule.update(carData);
                     car.update(carData);

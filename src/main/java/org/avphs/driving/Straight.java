@@ -34,4 +34,8 @@ public class Straight extends RoadData {
 	public float getNegRecip(){
 		return negRecip;
 	}
+
+	public String toString(){
+		return "Straight "+startX+" "+startY+" "+endX+" "+endY;
+	}
 }

@@ -23,8 +23,8 @@ public class MapModule implements CarModule, CloseHook {
     //4: Debugging in TrakSim using only position tracking
     //5: Gens Hard Coded Track for Friday
     //6: Does nothing
-    private final int MAP_X_DIMENSION = 1500;
-    private final int MAP_Y_DIMENSION = 1500;
+    private final int MAP_X_DIMENSION = 1468;
+    private final int MAP_Y_DIMENSION = 1121;
     private final float STARTING_ANGLE = 270.0f;
 
     boolean   executed = false;

@@ -23,6 +23,10 @@ public class DrivingModule implements CarModule {
     private boolean stop = false;
     private final Car car;
 
+    int index = 0;
+
+    final int addOn = 0;
+
     private VectorPoint currentPos;
 
     /*From speed:*/
@@ -47,31 +51,39 @@ public class DrivingModule implements CarModule {
     @Override
     public void init(CarData carData) {
         //Adds the angle to carData
-        carData.addData("driving", angle);
+        //carData.addData("driving", angle);
         //Grabs the racing line from RacingLine and analyzes it
         racingLinePoints = (RacingLinePoint[])carData.getModuleData("racingLine");
         analyzeRacingLine();
         //Grabs the starting position from PositionTracking
-        PositionData posData = (PositionData)carData.getModuleData("position");
-        currentPos = new VectorPoint(posData.getPosition(), posData.getDirection(), posData.getSpeed());
+        //PositionData posData = (PositionData)carData.getModuleData("position");
+        //currentPos = new VectorPoint(posData.getPosition(), posData.getDirection(), posData.getSpeed());
         //Checks to see where the car is then sets the current and next segments
+        currentPos = new VectorPoint(new float[]{racingLinePoints[index].getX(), racingLinePoints[index].getY()}, 0, 0);
         getSegment();
     }
 
     @Override
     public void update(CarData carData) {
         //Updates the current position and updates the current/next segments
-        PositionData posData = (PositionData)carData.getModuleData("position");
-        currentPos = new VectorPoint(posData.getPosition(), posData.getDirection(), posData.getSpeed());
-        getSegment();
+        //PositionData posData = (PositionData)carData.getModuleData("position");
+
+        currentPos = new VectorPoint(new float[]{racingLinePoints[index].getX(), racingLinePoints[index].getY()}, 0, 0);
+        //getSegment();
+        currentSegment = roadData.get(index);
+        System.out.println(currentSegment);
         //Updates the direction and throttle to reflect position change
         getDirection();
         getThrottle();
         //Refreshes the data in carData
-        carData.addData("driving", angle);
+        //carData.addData("driving", angle);
         //Tells the car to move :)
-        car.accelerate(true, 12);
-        car.steer(true, angle);
+        car.accelerate(true, throttle);
+        car.steer(true, angle + addOn);
+        index++;
+        if (index >= racingLinePoints.length){
+            index = 0;
+        }
     }
 
     /*
@@ -126,7 +138,7 @@ public class DrivingModule implements CarModule {
                 }
             }
         }
-        initialize();
+        //initialize();
     }
 
     /*
@@ -196,8 +208,18 @@ public class DrivingModule implements CarModule {
                 roadData.add(new Straight(racingLinePoints[(i+n-1)%n].getX(),racingLinePoints[(i+n-1)%n].getY(),racingLinePoints[i].getX(),racingLinePoints[i].getY()));
             }
             else  {
-                roadData.add(new Turn(racingLinePoints[(i+n-1)%n].getX(),racingLinePoints[(i+n-1)%n].getY(),racingLinePoints[(i+1)%n].getX(),racingLinePoints[(i+1)%n].getY(),
-                        findRadiusAndCenter(racingLinePoints[(i+n-1)%n],racingLinePoints[i],racingLinePoints[(i+1)%n])));
+                Turn toAdd = new Turn(racingLinePoints[(i+n-1)%n].getX(),racingLinePoints[(i+n-1)%n].getY(),racingLinePoints[(i+1)%n].getX(),racingLinePoints[(i+1)%n].getY(),
+                        findRadiusAndCenter(racingLinePoints[(i+n-1)%n],racingLinePoints[i],racingLinePoints[(i+1)%n]));
+                roadData.add(toAdd);
+                RacingLinePoint prev = racingLinePoints[(i+n-1)%n];
+                RacingLinePoint curr = racingLinePoints[i%n];
+                RacingLinePoint next = racingLinePoints[(i+1)%n];
+                int ax = curr.getIntX()-prev.getIntX();
+                int ay = curr.getIntY()-prev.getIntY();
+                int bx = next.getIntX()-curr.getIntX();
+                int by = next.getIntY()-curr.getIntY();
+                boolean dir = (ax*by-ay*bx)>0;
+                toAdd.setLeft(dir);
             }
         }
     }
@@ -224,21 +246,32 @@ public class DrivingModule implements CarModule {
         Steer Function that determines the angle the wheels need to be
      */
     private void getDirection(){ //returns the direction of the car from 0 to 180
-        if (onRacingLine()) {
+        //if (onRacingLine()) {
             if (currentSegment instanceof Straight) {
                 angle = 0;
             } else {
-                angle = CalibrationModule.getAngles(currentSegment.radius);
+                Turn c = (Turn)currentSegment;
+                int mult = (c.getLeft())?-6:6;
+                angle = mult*CalibrationModule.getAngles(currentSegment.radius);
             }
-        } else {   
-            angle = -1;
+        //} else {
+            //angle = 1;
             //stop = true;
+        //}
+    }
+
+    private void getThrottle(){
+        if (currentSegment instanceof Straight){
+            throttle = 18;
+        } else {
+            throttle = 18;
         }
     }
 
     /*
         Speed Function that determines the throttle the car needs to be
      */
+    /*
     private void getThrottle() { //returns the throttle of the car from 0 to 180
         if (currentSegment instanceof Straight){
             currentPosOnLine = Calculator.findClosestPoint(currentPos.getX(), currentPos.getY(), //Update
@@ -253,4 +286,5 @@ public class DrivingModule implements CarModule {
             throttle = throttleForSeg;
         }
     }
+     */
 }

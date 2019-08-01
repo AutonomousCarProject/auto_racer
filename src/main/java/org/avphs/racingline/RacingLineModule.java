@@ -37,6 +37,7 @@ public class RacingLineModule implements CarModule {
         try {
             //Convert a text file of 1's and 0's to a 2D boolean array used for RacingLine calculations
             BufferedReader bufread = new BufferedReader(new FileReader("map.txt"));
+
             StringTokenizer st = new StringTokenizer(bufread.readLine());
 
             rows = Integer.parseInt(st.nextToken());
@@ -62,7 +63,7 @@ public class RacingLineModule implements CarModule {
             e.printStackTrace();
         }
 
-        carData.addData("RacingLine", center);
+        //carData.addData("RacingLine", center);
     }
 
     public void update(CarData carData) {
@@ -350,6 +351,7 @@ public class RacingLineModule implements CarModule {
     private void getMiddleLine() {
         map = getMapFromWalls(map);
         closeTrack(1);
+
         getWalls();
 
         //Generate a RacingLine
@@ -361,10 +363,12 @@ public class RacingLineModule implements CarModule {
 
         //Calculate the angles between every point on the line
         makeOriginal();
+        connectTheDots();
+        trimSortedPoints(40);
         getAngles();
 
         //Smooth the line
-        connectTheDots();
+        //connectTheDots();
     }
 
     /**
@@ -884,6 +888,7 @@ public class RacingLineModule implements CarModule {
 
     private void getAngles() {
         RacingLinePoint[] array = center.getRacingLinePoints();
+        //System.out.println(array.length);
         for(int i=0;i<array.length;i++) {
             int j = (i+1)%array.length;
             int h = (i+array.length-1)%array.length;
@@ -898,6 +903,7 @@ public class RacingLineModule implements CarModule {
             float cosangle = dot/((float)Math.sqrt(ax*ax+ay*ay))/((float)Math.sqrt(bx*bx+by*by));
             float angle = (float)Math.acos(cosangle);
             angle *= (180f/Math.PI);
+            //System.out.println(angle);
             c.setDegree(angle);
         }
     }

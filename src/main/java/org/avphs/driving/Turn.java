@@ -4,6 +4,7 @@ public class Turn extends RoadData{
 
 	private Curve c;
 	private float[] center;
+	private boolean left = true;
 	public Turn(float startX, float startY, float endX, float endY, Curve c) {
 		this.c = c;
 		this.startX = startX;
@@ -24,5 +25,16 @@ public class Turn extends RoadData{
 
 	public float getCenterY(){
 		return center[1];
+	}
+
+	public String toString(){
+		return "Turn";
+	}
+
+	public boolean getLeft() {
+		return left;
+	}
+	public void setLeft(boolean a) {
+		left = a;
 	}
 }
