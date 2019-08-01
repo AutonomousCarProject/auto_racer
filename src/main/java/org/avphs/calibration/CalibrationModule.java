@@ -265,13 +265,8 @@ public class CalibrationModule {
     }
 
     public static final short getMaxSpeed(short floor, short rad) {
-        try {
-            //return MAX_SPEEDS[floor][rad];
-        }
-        catch(Exception e){
-            e.printStackTrace();
-        }
-        return 1;
+        return MAX_SPEEDS[floor][rad];
+
     }
 
     public static final short getSpeedChangeDist(byte floor, short initSpeed, short finalSpeed) {
