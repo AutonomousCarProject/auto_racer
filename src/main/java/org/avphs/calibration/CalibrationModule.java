@@ -276,6 +276,14 @@ public class CalibrationModule {
     }
 
     public static final int getAngles(int rad) {
+        System.out.println(rad);
+        int stahp = 0;
+        while(!ANGLES.containsKey(rad) && stahp <100){
+            rad++;
+        }
+        if(stahp>=100){
+            return STRAIGHT_ANGLE;
+        }
         return ANGLES.get(rad);
     }
 
