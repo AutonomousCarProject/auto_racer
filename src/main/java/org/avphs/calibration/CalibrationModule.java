@@ -17,14 +17,14 @@ public class CalibrationModule {
 
     public static void main(String[] args){
         if (testMode){
-            //System.out.println("test start");
-            //System.out.println("getFishData: " + getFishData((short)0,(short)0));
-            //System.out.println("getMaxSpeed: " + getMaxSpeed((byte)0,(short)0));
+            System.out.println("test start");
+            System.out.println("getFishData: " + getFishData((short)0,(short)0));
+            System.out.println("getMaxSpeed: " + getMaxSpeed((byte)0,(short)0));
             System.out.println("getSpeedChangeDist: " + getSpeedChangeDist((byte)0,(byte)0,(byte)0));
-            //System.out.println("getAngles: " + getAngles((short)0));
-            //System.out.println("getRadii: " + getRadii((short)0));
-            //System.out.println("getThrottle: " + getThrottle((short)0,(byte)0));
-            //System.out.println("getDist: " + getDist((short)0));
+            System.out.println("getAngles: " + getAngles((short)0));
+            System.out.println("getRadii: " + getRadii((short)0));
+            System.out.println("getThrottle: " + getThrottle((short)0,(byte)0));
+            System.out.println("getDist: " + getDist((short)0));
         }
     }
 
@@ -96,17 +96,18 @@ public class CalibrationModule {
         short[][] rowList = null;
         try (BufferedReader br = new BufferedReader(new FileReader("src\\main\\java\\org\\avphs\\calibration\\MaxSpeeds.txt"))) {
 
-            short initSpeeds = Short.parseShort(br.readLine());
-            short finalSpeeds = Short.parseShort(br.readLine());
-
-            for (int i = 0; i < initSpeeds; i++) {
+            short numFloors = Short.parseShort(br.readLine());
+            short numRads = Short.parseShort(br.readLine());
+            rowList = new short[numFloors][];
+            for (int i = 0; i < numFloors; i++) {
 
                 String line = br.readLine();
                 String[] lineItems = line.split(" ");
-                for (int j = 0; j < finalSpeeds; j++) {
-                    System.out.println(j);
+
+                rowList[i] = new short[numRads];
+
+                for (int j = 0; j < numRads; j++) {
                     rowList[i][j] = Short.parseShort(lineItems[j]);
-                    System.out.println(rowList[i][j]);
                 }
             }
 
@@ -123,7 +124,6 @@ public class CalibrationModule {
         FishData[][] rowList = null;
         try (BufferedReader br = new BufferedReader(new FileReader("src\\main\\java\\org\\avphs\\calibration\\CameraData.txt"))) {
 
-            System.out.println(new FileReader("src\\main\\java\\org\\avphs\\calibration\\CameraData.txt").read());
             short xCount = parseShort(br.readLine());
             short yCount = parseShort(br.readLine());
             rowList = new FishData[xCount][yCount];
