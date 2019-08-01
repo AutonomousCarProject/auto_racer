@@ -61,7 +61,6 @@ public class CalibrationModule {
     //turn the car to this angle to make it go in a straight line
     public static final int STRAIGHT_ANGLE = 7;
 
-
     //Helper method to read speed change distance data
     private static short[][][] readSpeedChangeDistData (){
         short[][][] rowList = null;
@@ -103,6 +102,9 @@ public class CalibrationModule {
 
                 String line = br.readLine();
                 String[] lineItems = line.split(" ");
+
+                rowList[i] = new short[numRads];
+
                 for (int j = 0; j < numRads; j++) {
                     rowList[i][j] = Short.parseShort(lineItems[j]);
                 }
@@ -263,13 +265,8 @@ public class CalibrationModule {
     }
 
     public static final short getMaxSpeed(short floor, short rad) {
-        try {
-            //return MAX_SPEEDS[floor][rad];
-        }
-        catch(Exception e){
-            e.printStackTrace();
-        }
-        return 1;
+        return MAX_SPEEDS[floor][rad];
+
     }
 
     public static final short getSpeedChangeDist(byte floor, short initSpeed, short finalSpeed) {
@@ -278,7 +275,7 @@ public class CalibrationModule {
         return SPEED_CHANGE_DISTS[floor][i][f];//here
     }
 
-    public static final int getAngles(short rad) {
+    public static final int getAngles(int rad) {
         return ANGLES.get(rad);
     }
 

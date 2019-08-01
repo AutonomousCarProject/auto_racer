@@ -35,26 +35,37 @@ public class CalibrationCore extends CarCore {
             switch(line){
                 case "help":
                     System.out.println("'stop' will stop all functions and close the program");
-                    System.out.println("'CameraDataGenerator'");
-                    System.out.println("'3DInterpolation'");
-                    System.out.println("'MoveForward'");
+                    //System.out.println("'CameraDataGenerator'");
+                    //System.out.println("'3DInterpolation'");
+                    //System.out.println("'MoveForward'");
+                    System.out.println("'ThrottleDataGenerator'");
+                    System.out.println("'BrakeTest'");
                     System.out.println("'help' prints this little blurb");
                     break;
                 case "CameraDataGenerator":
                     updatingCarModules.clear();
                     //updatingCarModules.add(new CameraDataGenerator());
+                    updatingCarModules.add(car);
+                    updatingCarModules.get(1).init(carData);
                     updatingCarModules.get(0).init(carData);
                     break;
                 case "3DInterpolation":
                     updatingCarModules.clear();
+                    updatingCarModules.add(car);
+                    updatingCarModules.get(1).init(carData);
                     updatingCarModules.get(0).init(carData);
                     break;
                 case "MoveForward":
                     updatingCarModules.clear();
+                    updatingCarModules.add(car);
+                    updatingCarModules.get(1).init(carData);
                     updatingCarModules.get(0).init(carData);
                     break;
                 case "BrakeTest":
                     updatingCarModules.clear();
+                    updatingCarModules.add(new BrakeTest(car));
+                    updatingCarModules.add(car);
+                    updatingCarModules.get(1).init(carData);
                     updatingCarModules.get(0).init(carData);
                     break;
                 case "ThrottleDataGenerator":
