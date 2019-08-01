@@ -10,6 +10,8 @@ package org.avphs.image;
  */
 public class WallIdentification {
 
+    static final int edgeThreshold = 30;
+
     static final int wallNum = 2;
 
     static final int[] ColorArr = {
@@ -105,6 +107,7 @@ public class WallIdentification {
         //removeOutliers(wallTops, wallBottoms, newWallTops, newWallBottoms);
         int[][] out = {newWallBottoms, newWallTops};
         fillEmptySpacesRtL(out);
+        checkEdges(out, height, edgeThreshold);
         return out;
     }
 
@@ -257,23 +260,24 @@ public class WallIdentification {
                     while(arr[0][j] == 0 && j < arr[0].length - 1){
                         j++;
                     }
-                    x2 = j;
-                    y2 = arr[0][j];
+                    if(j < arr[0].length - 1) {
+                        x2 = j;
+                        y2 = arr[0][j];
 
-                    for(int k = x1; k < x2; k++){
-                        arr[0][k] = ((y1-y2)/(x1-x2)) * (k - x1) + y1;
+                        for (int k = x1; k < x2; k++) {
+                            arr[0][k] = ((y1 - y2) / (x1 - x2)) * (k - x1) + y1;
+                        }
+
+                        y1 = arr[1][i - 1];
+                        y2 = arr[1][j];
+
+                        for (int k = x1; k < x2; k++) {
+                            arr[1][k] = ((y1 - y2) / (x1 - x2)) * (k - x1) + y1;
+                        }
+                        i = x2;
+                        //drawPixel(a, x1, y1, width, 3);
+                        //System.out.println("x1, y1 =" + x1 + " " + y1 + " x2, y2 =" + x2 + " " + y2);
                     }
-
-                    y1 = arr[1][i-1];
-                    y2 = arr[1][j];
-
-                    for(int k = x1; k < x2; k++){
-                        arr[1][k] = ((y1-y2)/(x1-x2)) * (k - x1) + y1;
-                    }
-                    i = x2;
-                    //drawPixel(a, x1, y1, width, 3);
-                    System.out.println("x1, y1 =" + x1 + " " + y1 + " x2, y2 =" + x2 + " " + y2);
-
                 }
             }
         }
@@ -316,6 +320,69 @@ public class WallIdentification {
         }
     }
 
+    /** Fills in any empty pixels on the left or right of the image that fillEmptySpaces misses
+     *
+     * @param arr Top and bottom wall coords
+     * @param height Height of image
+     * @param th Threshold to use to estimate coordinates
+     */
+    static void checkEdges(int[][] arr, int height, int th){
+        int threshold = th;
+        int x1 = 0; int x2 = 0; int y1 = 0; int y2 = 0;
+        //check left edge
+        if(arr[0][0] <= 0){
+            int j = 1;
 
+            while(arr[0][j] <= 0 && j < arr[0].length - (1 + threshold)){
+                j++;
+            }
+            if(j < arr[0].length - (1 + threshold)){
+                x1 = j; x2 = j + threshold;
+                y1 = arr[0][j]; y2 = arr[0][j + threshold];
+                for(int k = 0; k < x1; k++){
+                    arr[0][k] = (int)((((double)y1-y2)/(x1-x2)) * (k - x1) + y1);
+                    if(arr[0][k] > height - 1){
+                        arr[0][k] = height - 1;
+                    }
+                }
+
+                y1 = arr[1][j]; y2 = arr[1][j + threshold];
+                for(int k = 0; k < x1; k++){
+                    arr[1][k] = (int)((((double)y1-y2)/(x1-x2)) * (k - x1) + y1);
+                    if(arr[1][k] < 0){
+                        arr[1][k] = 0;
+                    }
+                }
+            }
+        }
+        if(arr[0][arr[0].length - 1] <= 0) { //check right edge
+            int j = arr[0].length - 1;
+
+            while(arr[0][j] <= 0 && j > 0 + threshold){
+                j--;
+            }
+            if(j > 0 + threshold){
+                x1 = j; x2 = j - threshold;
+                y1 = arr[0][j]; y2 = arr[0][j - threshold];
+                for(int k = j; k < arr[0].length - 1; k++){
+
+                    //System.out.println((((y1-y2)/(x1-x2)) * (k - x1) + y1) + " " + k);
+                    arr[0][k] = (int)((((double)y1-y2)/(x1-x2)) * (k - x1) + y1);
+                    //System.out.println(arr[0][k]);
+                    if(arr[0][k] > height - 1){
+                        arr[0][k] = height - 1;
+                    }
+                }
+
+                y1 = arr[1][j]; y2 = arr[1][j - threshold];
+                for(int k = j; k < arr[0].length - 1; k++){
+                    arr[1][k] = (int)((((double)y1-y2)/(x1-x2)) * (k - x1) + y1);
+                    if(arr[1][k] < 0){
+                        arr[1][k] = 0;
+                    }
+                }
+            }
+        }
+    }
 
 }
