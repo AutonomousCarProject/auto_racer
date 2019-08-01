@@ -265,7 +265,7 @@ public class CalibrationModule {
     }
 
     public static final short getRadii(short angle) {
-        return RADII[angle];
+        return RADII[angle - SERVO_ANGLE_MIN];
     }
 
     //returns the amount of throttle needed to maintain a given speed on a given floor surface and with a given turn radius
