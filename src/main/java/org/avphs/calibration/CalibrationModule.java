@@ -112,10 +112,10 @@ public class CalibrationModule {
         short[][] rowList = null;//same as the other read files
         try (BufferedReader br = new BufferedReader(new FileReader("src\\main\\java\\org\\avphs\\calibration\\MaxSpeeds.txt"))) {
 
-            short initSpeeds = Short.parseShort(br.readLine());
-            short finalSpeeds = Short.parseShort(br.readLine());
-
-            for (int i = 0; i < initSpeeds; i++) {
+            short numFloors = Short.parseShort(br.readLine());
+            short numRads = Short.parseShort(br.readLine());
+            rowList = new short[numFloors][];
+            for (int i = 0; i < numFloors; i++) {
 
                 String line = br.readLine();
                 String[] lineItems = line.split(" ");
@@ -143,7 +143,6 @@ public class CalibrationModule {
         FishData[][] rowList = null;
         try (BufferedReader br = new BufferedReader(new FileReader("src\\main\\java\\org\\avphs\\calibration\\CameraData.txt"))) {
 
-            System.out.println(new FileReader("src\\main\\java\\org\\avphs\\calibration\\CameraData.txt").read());
             short xCount = parseShort(br.readLine());
             short yCount = parseShort(br.readLine());
             rowList = new FishData[xCount][yCount];
