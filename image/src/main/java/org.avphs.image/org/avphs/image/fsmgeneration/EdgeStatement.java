@@ -4,6 +4,9 @@ import org.avphs.image.ImageProcessing;
 
 import java.util.*;
 
+/**
+ * defines an arrow between two nodes in a GraphVis graph
+ */
 public class EdgeStatement {
     private String source;
     private String destination;
@@ -57,6 +60,9 @@ public class EdgeStatement {
         return (source.equals(other.getSource()) && destination.equals(other.getDestination()));
     }
 
+    /**
+     * @return string representation of the edge statement ready to be pasted into the digraph body
+     */
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();

@@ -3,6 +3,9 @@ package org.avphs.image.fsmgeneration;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * GraphVis node statement. it lets give a specific node special color or shape
+ */
 public class NodeStatement {
     private String nodeName;
     private HashMap<String, String> attributes;
