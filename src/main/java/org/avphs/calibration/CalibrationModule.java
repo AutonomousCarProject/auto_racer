@@ -39,7 +39,6 @@ public class CalibrationModule {
     //TODO:Find real value
     public static final float CAMERA_VIEW_ANGLE = 100;
 
-    //TODO: find real value
     //Axel dist in cm
     public static final double WHEEL_BASE = 32.5;
 
