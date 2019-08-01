@@ -115,8 +115,8 @@ public class CameraDataGenerator {
 
 
             for (int i = 0; i < firstClean.length; i++) {
-                int base = (firstClean[i][] + secondClean[i][])/2;
-                int diff = firstClean[]
+                //int base = (firstClean[i][] + secondClean[i][])/2;
+                //int diff = firstClean[]
             }
 
 
