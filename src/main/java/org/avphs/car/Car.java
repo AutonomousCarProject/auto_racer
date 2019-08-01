@@ -4,12 +4,13 @@ import fly2cam.FlyCamera;
 import org.avphs.camera.Camera;
 import org.avphs.core.CarCore;
 import org.avphs.coreinterface.CarData;
+import org.avphs.coreinterface.CarModule;
 import org.avphs.coreinterface.ClientInterface;
 import org.avphs.sbcio.Arduino;
 import org.avphs.sbcio.ArduinoData;
 import org.avphs.sbcio.fakefirm.UpdateListener;
 
-public class Car implements ClientInterface {
+public class Car implements ClientInterface, CarModule {
     private Camera camera;
     private Arduino arduino;
     private int fps;
@@ -66,8 +67,6 @@ public class Car implements ClientInterface {
     }
 
     public void update(CarData carData) {
-        camera.NextFrame();
-        ((ArduinoData) carData.getModuleData("arduino")).setOdomCount(ps.getCount());
         carData.addData("arduino", new ArduinoData(ps.getCount(),  aVoid -> arduino.Close()));
     }
 
@@ -78,18 +77,18 @@ public class Car implements ClientInterface {
 
     @Override
     public void accelerate(boolean absolute, int angle) {
-        if (camera instanceof FlyCamera)
+        //if (camera instanceof FlyCamera)
             arduino.servoWrite(camera.getSpeedServoPin(), angle + 90);
-        else
-            arduino.setServoAngle(camera.getSpeedServoPin(), angle + 90);
+        //else
+            //arduino.setServoAngle(camera.getSpeedServoPin(), angle + 90);
     }
 
     @Override
     public void steer(boolean absolute, int angle) {
-        if (camera instanceof FlyCamera)
+        //if (camera instanceof FlyCamera)
             arduino.servoWrite(camera.getSteerServoPin(), angle + 90);
-        else
-            arduino.setServoAngle(camera.getSteerServoPin(), angle + 90);
+       // else
+            //arduino.setServoAngle(camera.getSteerServoPin(), angle + 90);
     }
 
 

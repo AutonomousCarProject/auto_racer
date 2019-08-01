@@ -7,25 +7,31 @@ import org.avphs.coreinterface.CloseHook;
 import org.avphs.image.ImageData;
 import org.avphs.position.PositionData;
 import org.avphs.traksim.TrakSim;
+import org.avphs.position.PositionModule;
 
 import java.io.FileWriter;
 import java.io.IOException;
 
 public class MapModule implements CarModule, CloseHook {
 
-    private final int MAP_MODE = 3;
+    private final int MAP_MODE = 5;
     //0: Mapping while driving close to the walls
     //1: Mapping by driving through the center of the track and expanding the track 5 carlengths out
     //Modes 2&3 are debugging modes
     //2: Debugging in TrakSim
     //3: Debugging using FakeDataStream
+    //4: Debugging in TrakSim using only position tracking
+    //5: Gens Hard Coded Track for Friday
+    //6: Does nothing
     private final int MAP_X_DIMENSION = 1500;
+    private final int MAP_Y_DIMENSION = 1500;
     private final float STARTING_ANGLE = 270.0f;
 
-    private final int MAP_Y_DIMENSION = 1500;
+    boolean   executed = false;
+
     //One unit in the array = 1cm. This means that 1500x1500 is equal to a 15m by 15m room.
 
-    private final float MODIFIED_CAR_X_STARTING_POSITION = 500.0f;
+    private final float MODIFIED_CAR_X_STARTING_POSITION = 0.0f;
     private final float MODIFIED_CAR_Y_STARTING_POSITION = 0.0f;
     //These numbers are added to the (0,0) origin to indicate the starting position of the car in the room.
 
@@ -59,6 +65,7 @@ public class MapModule implements CarModule, CloseHook {
             case 3:
                 fakedata = new FakeDataStreamForMap();
             case 2:
+            case 4:
             case 0:
                 mapformatter.utils.setupDistanceLookup();
                 break;
@@ -66,6 +73,7 @@ public class MapModule implements CarModule, CloseHook {
         }
     }
 
+    @Override
     public void update(CarData carData) {
         //positionModule = (PositionData)carData.getModuleData("position");
         // imageData = (ImageData) carData.getModuleData("image");
@@ -74,15 +82,17 @@ public class MapModule implements CarModule, CloseHook {
         //For Testing in traksim
         //System.out.println(trakSimData.GetPosn(true))
 
+        //System.out.println(trakSimData.GetFacing());
+
         switch (MAP_MODE)//Updating statements used for each map mode.
         {
             case 0:
-                positionModule = (PositionData)carData.getModuleData("position");
+                positionModule = (PositionData) carData.getModuleData("position");
                 imageData = (ImageData) carData.getModuleData("image");
                 mapformatter.AddData(positionModule.getPosition(), positionModule.getDirection(), imageData.wallBottom);
                 break;
             case 1:
-                positionModule = (PositionData)carData.getModuleData("position");
+                positionModule = (PositionData) carData.getModuleData("position");
                 mapformatter.expandTrackFiveCarLengthsToTheLeftAndRightOfCurrentPos(positionModule.getPosition(), positionModule.getDirection());
                 break;
             case 2:
@@ -93,29 +103,24 @@ public class MapModule implements CarModule, CloseHook {
                 //System.out.println(trakSimData.GetPosn(true));
                 float[] pos = new float[2];
 
-                pos[0] = (float)(( trakSimData.GetPosn(true) * 12.5) + 200);//Convert TrakSim x position to map position
+                pos[0] = (float) ((trakSimData.GetPosn(true) * 12.5) + 200);//Convert TrakSim x position to map position
 
-                pos[1] = (float)(( trakSimData.GetPosn(false) * 12.5));//Convert Traksim y position to map position
-
+                pos[1] = (float) ((trakSimData.GetPosn(false) * 12.5));//Convert Traksim y position to map position
 
 
                 //System.out.println("Current Pos: " + pos[0] + ", "+ pos[1]);
 
 
                 //This converts a traksim angle to one more like what position tracking would give us
-                float currentAngle; float trakSimAngle = (float)trakSimData.GetFacing();
+                float currentAngle;
+                float trakSimAngle = (float) trakSimData.GetFacing();
 
                 //Converts TrakSimAngle to Angle Resembling what we would get from Pos Tracking
-                if (trakSimAngle < STARTING_ANGLE)
-                {
+                if (trakSimAngle < STARTING_ANGLE) {
                     currentAngle = (360.0f - (STARTING_ANGLE - trakSimAngle));
-                }
-                else if (trakSimAngle > STARTING_ANGLE)
-                {
+                } else if (trakSimAngle > STARTING_ANGLE) {
                     currentAngle = (trakSimAngle - STARTING_ANGLE);
-                }
-                else
-                {
+                } else {
                     currentAngle = 0.0f;
                 }
 
@@ -125,52 +130,111 @@ public class MapModule implements CarModule, CloseHook {
                 mapformatter.AddData(pos, currentAngle, imageData.wallBottom);
 
 
-
                 break;
             case 3:
                 //For Testing Using FakeDataStream
 
                 fakedata.updatePos();//Updates position on FakeData (Fake Track)
-                mapformatter.AddData(fakedata.returnPos(), (float)fakedata.runningRadianTotal, fakedata.bottomOuterWallHeights);
+                mapformatter.AddData(fakedata.returnPos(), (float) fakedata.runningRadianTotal, fakedata.bottomOuterWallHeights);
                 if (fakedata.done) {
                     if (!fakedata.mapshown) {
-                        map.showMap();
+                        MapEditor edit = new MapEditor(map);
+                        if (!edit.editorOpen)
+                        {
+                            edit.LaunchMapEditor();
+                        }
+
                         fakedata.mapshown = true;
                     }
 
                 }
                 break;
-        }
+            case 4:
 
-        cycleCounter++;
+                //System.out.println(trakSimData.GetPosn(true));
+                float[] pos1 = new float[2];
+
+                pos1[0] = (float)(( trakSimData.GetPosn(true) * 12.5) + MODIFIED_CAR_X_STARTING_POSITION);//Convert TrakSim x position to map position
+
+                pos1[1] = (float)(( trakSimData.GetPosn(false) * 12.5) + MODIFIED_CAR_Y_STARTING_POSITION);//Convert Traksim y position to map position
+
+
+
+                //System.out.println("Current Pos: " + pos[0] + ", "+ pos[1]);
+
+
+                //This converts a traksim angle to one more like what position tracking would give us
+                float currentAngle1; float trakSimAngle1 = (float)trakSimData.GetFacing();
+
+                //Converts TrakSimAngle to Angle Resembling what we would get from Pos Tracking
+                if (trakSimAngle1 < STARTING_ANGLE)
+                {
+                    currentAngle1 = (360.0f - (STARTING_ANGLE - trakSimAngle1));
+                }
+                else if (trakSimAngle1 > STARTING_ANGLE)
+                {
+                    currentAngle1 = (trakSimAngle1 - STARTING_ANGLE);
+                }
+                else
+                {
+                    currentAngle1 = 0.0f;
+                }
+
+
+                //System.out.println("Current Angle: " + currentAngle);
+
+                mapformatter.expandTrackFiveCarLengthsToTheLeftAndRightOfCurrentPos(pos1, currentAngle1);
+            case 5:
+                //Hardcoded Track
+
+                if (!executed)
+                {
+                    genHardCodedTrack generator = new genHardCodedTrack(map);
+                    map = new Map(1468, 1121);
+                    map = generator.genMap();
+                    //MapEditor edit = new MapEditor(fridaysMap);
+                    //edit.LaunchMapEditor();
+                    executed = true;
+                }
+
+                break;
+            default:
+                break;
+        }
 
         /**
          * THINGY
          * ============================
          */
-
+        /*
         if (cycleCounter % 200 == 0)//Show map developing
         {
             map.showMap();
-        }
+        }*/
 
         carData.addData("map", map);
 
     }
 
-    public Map getMap(){return map;}
+    public Map getMap() {
+        return map;
+    }
 
 
     @Override
     public void onClose() {
-        try{
+        try {
             boolean[][] m = map.getMap();
             FileWriter f = new FileWriter("src/main/java/org/avphs/map/map.txt");
             f.write(m.length + "  " + m[0].length + "\n");
-            for(int i = 0; i < map.getMap().length; i++){
-                for (int j = 0; j < m[0].length; j++){
-                    if(m[i][j])f.write('1');
-                    else f.write('0');
+            for (int i = 0; i < map.getMap().length; i++) {
+                for (int j = 0; j < m[0].length; j++) {
+                    if (i == map.startY && j == map.startX) {
+                        f.write('s');
+                    } else {
+                        if (m[i][j]) f.write('1');
+                        else f.write('0');
+                    }
                 }
                 f.write('\n');
             }

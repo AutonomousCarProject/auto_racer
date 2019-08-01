@@ -1,5 +1,8 @@
 package org.avphs.map;
 
+import java.io.FileWriter;
+import java.io.IOException;
+
 class MapUtils {
 
     // private double[] cos = new double[721];
@@ -9,8 +12,8 @@ class MapUtils {
     private float[] pixelHeightToY = new float[481]; // lookup table for a pixel height, returns straight ahead distance on map
 
     public final static int
-            IMAGE_SIDE_THRESHOLD = 10, //the amount of pixels in from the sides of the image we look
-            Y_HEIGHT_PIXEL_THRESHOLD = 300, //amount to pixels up we look for wall recognition
+            IMAGE_SIDE_THRESHOLD = 5, //the amount of pixels in from the sides of the image we look
+            Y_HEIGHT_PIXEL_THRESHOLD = 270, //amount to pixels up we look for wall recognition
             IMAGE_WIDTH = 640,
             IMAGE_HEIGHT = 480;
 
@@ -22,9 +25,29 @@ class MapUtils {
         }
     }*/
 
+    public static void writeToFile(boolean[][] m){
+        try{
+            FileWriter f = new FileWriter("src/main/java/org/avphs/map/map.txt");
+            f.write(m.length + "  " + m[0].length + "\n");
+            for(int i = 0; i < m.length; i++){
+                for (int j = 0; j < m[0].length; j++){
+                    if(m[i][j])f.write('1');
+                    else f.write('0');
+                }
+                f.write('\n');
+            }
+
+            f.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     public void setupDistanceLookup() { // initializes the values in
         for (int i = 0; i < pixelHeightToX.length - 1; i++) {
-            if (i > 200) { //
+            if (i > 210) { //
                 pixelHeightToX[i] = -1;
                 pixelHeightToY[i] = -1;
             } else {
@@ -46,41 +69,21 @@ class MapUtils {
             angle += 360;
         }
 
-        float[] coordsOnMap = new float[2]; //(x,y) (ahead)
-        //Maybe just make into 1 line.
+        float[] coordsOnMap = new float[2]; //(x,y) These are the Coordinates of wall that are being exported
+        coordsOnMap[0] = posX; coordsOnMap[1] = posY;
+
+        //Y
         float getImageWidthAtGivenPixelHeight = pixelHeightToX[pixelY];
-        float distanceToTheLeftOrRight = ((float)(getImageWidthAtGivenPixelHeight / 2));//Because we are only looking at the first and last few pixels
-        //System.out.println(pixelHeightToX[10]);
 
-        // System.out.println(pixelX + "," + pixelY + "," + posX + "," +posY + "," +angle + "," + getImageWidthAtGivenPixelHeight + "," + distanceToTheLeftOrRight);
-        if (pixelX < 320) //if you're going to left
-        {
-            distanceToTheLeftOrRight = (0 - distanceToTheLeftOrRight);
-        }
-        else if (pixelX > 320) //if you're going to right
-        {
-            //No change, stays positive
-        }
-        else // in center
-        {
-            coordsOnMap[0] = posX + 0; coordsOnMap[1] =  pixelHeightToY[pixelY];
-            return coordsOnMap;
-        }
+       //X
+        float distanceToTheLeftOrRight = ((getImageWidthAtGivenPixelHeight / 2));//Because we are only looking at the first and last few pixels
 
-        float diagonalLength = (float)(Math.sqrt(Math.pow(distanceToTheLeftOrRight, 2) + Math.pow(pixelHeightToY[pixelY], 2)));
+        //Pos[0] is a, pos[1] is b (a,b)
+        //angle is the angle from starting position, starting position is 0.0 degrees
+        //Need to calculate coordinates of the wall. coordsOnMap[0] is x coord of wall. coordsOnMap[1] is y coord of wall.
 
-        if (angle > 180)
-        {
-            coordsOnMap[0] = (posX - (float)(diagonalLength * Math.sin(Math.atan(distanceToTheLeftOrRight / pixelHeightToY[pixelY]) + angle)));
-        }
-        else
-        {
-            coordsOnMap[0] = (posX + (float)(diagonalLength * Math.sin(Math.atan(distanceToTheLeftOrRight / pixelHeightToY[pixelY]) + angle)));
-        }
 
-        //System.out.println("X Pos of Wall on Map: " + coordsOnMap[0]);
-        coordsOnMap[1] = (posY + (float)(diagonalLength * Math.cos(Math.atan(distanceToTheLeftOrRight / pixelHeightToY[pixelY]) + angle)));
-        // System.out.println("Y Pos of Wall on Map: " + coordsOnMap[1]);
+
         return coordsOnMap;
     }
 

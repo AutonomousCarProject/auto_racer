@@ -12,6 +12,7 @@ import org.avphs.sbcio.ArduinoData;
 import java.io.*;
 import java.util.*;
 
+import static java.lang.Thread.activeCount;
 import static java.lang.Thread.sleep;
 
 public class ThrottleDataGenerator implements CarModule {
@@ -36,7 +37,7 @@ public class ThrottleDataGenerator implements CarModule {
         for (int i = 0; i < speedValues.length; i++) {
             long startTime = System.currentTimeMillis();
             car.accelerate(true, i);
-            while (((ArduinoData) carData.getModuleData("arduino")).getOdomCount() <= speedValues[i]) {
+            while (((ArduinoData)carData.getModuleData("arduino")).getOdomCount() <= speedValues[i]) {
 //                 Accelerating
             }
             allAccelerationTimes[i] = System.currentTimeMillis() - startTime;
@@ -157,8 +158,7 @@ public class ThrottleDataGenerator implements CarModule {
 //        }
 //
 //        for (int i = 0; i < preInterpolation.length; i++) {
-//            interpolator interpolate = new interpolator(intToDoubleArr(preInterpolation[i][0]), intToDoubleArr(preInterpolation[i][1]), 5);
-//
+//            Interpolator interpolate = new Interpolator(intToDoubleArr(preInterpolation[i][0]), intToDoubleArr(preInterpolation[i][1]), 5);
 //        }
     }
 
