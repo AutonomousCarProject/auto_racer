@@ -1,4 +1,3 @@
-/*
 package org.avphs.calibration;
 
 
@@ -27,14 +26,14 @@ public class ThrottleDataGenerator implements CarModule {
         out = new PrintWriter(new BufferedWriter(new FileWriter("src/main/java/org/avphs/calibration/ThrottleData.txt")));
     }
 
-    long[] calibrateAcceleration(float[] speedValues) throws InterruptedException {
+    //long[] calibrateAcceleration(float[] speedValues) throws InterruptedException {
 /**
  * Takes in a float array of the speed values used in @calibrateThrottle and then finds the the time to reach max speed,
  * and additionally  the time to reach each speed from 0. Each index is ordered the time to get from 0 to that
  * corresponding speed in speedValues.length
  * All in Milliseconds
  */
-        long[] allAccelerationTimes = new long[speedValues.length];
+        /*long[] allAccelerationTimes = new long[speedValues.length];
         for (int i = 0; i < speedValues.length; i++) {
             long startTime = System.currentTimeMillis();
             car.accelerate(true, i);
@@ -108,10 +107,10 @@ public class ThrottleDataGenerator implements CarModule {
             out.println(i + ": " + speedValues[i] + " cm/s");
         }
     }
-
+*/
     @Override
     public void init(CarData carData) {
-        int middle = CalibrationModule.STRAIGHT_ANGLE;
+        /*int middle = CalibrationModule.STRAIGHT_ANGLE;
         int start = middle - (((middle + 33) / 5) * 5);
         HashMap<Integer, float[]> angleThrottleSpeedValues = new HashMap<Integer, float[]>();
         try {
@@ -161,6 +160,7 @@ public class ThrottleDataGenerator implements CarModule {
 //        for (int i = 0; i < preInterpolation.length; i++) {
 //            Interpolator interpolate = new Interpolator(intToDoubleArr(preInterpolation[i][0]), intToDoubleArr(preInterpolation[i][1]), 5);
 //        }
+*/
     }
 
     private double[] intToDoubleArr(int[] arr) {
@@ -180,4 +180,3 @@ public class ThrottleDataGenerator implements CarModule {
 
     }
 }
-*/
