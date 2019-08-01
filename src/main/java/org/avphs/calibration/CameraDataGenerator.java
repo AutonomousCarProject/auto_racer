@@ -9,7 +9,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 
-
 public class CameraDataGenerator {
     private static int height;
     private static int width;
