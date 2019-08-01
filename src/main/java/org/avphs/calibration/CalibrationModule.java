@@ -17,14 +17,14 @@ public class CalibrationModule {
 
     public static void main(String[] args){
         if (testMode){
-            System.out.println("test start");
+            //System.out.println("test start");
             //System.out.println("getFishData: " + getFishData((short)0,(short)0));
-            System.out.println("getMaxSpeed: " + getMaxSpeed((byte)0,(short)0));
+            //System.out.println("getMaxSpeed: " + getMaxSpeed((byte)0,(short)0));
             System.out.println("getSpeedChangeDist: " + getSpeedChangeDist((byte)0,(byte)0,(byte)0));
-            System.out.println("getAngles: " + getAngles((short)0));
-            System.out.println("getRadii: " + getRadii((short)0));
+            //System.out.println("getAngles: " + getAngles((short)0));
+            //System.out.println("getRadii: " + getRadii((short)0));
             //System.out.println("getThrottle: " + getThrottle((short)0,(byte)0));
-            System.out.println("getDist: " + getDist((short)0));
+            //System.out.println("getDist: " + getDist((short)0));
         }
     }
 
@@ -106,8 +106,8 @@ public class CalibrationModule {
     }
 
     //Helper method to read max speed data
-    private static byte[][] readMaxSpeedData (){
-        byte[][] rowList = null;
+    private static short[][] readMaxSpeedData (){
+        short[][] rowList = null;
         try (BufferedReader br = new BufferedReader(new FileReader("src\\main\\java\\org\\avphs\\calibration\\MaxSpeeds.txt"))) {
 
             short initSpeeds = Short.parseShort(br.readLine());
@@ -118,7 +118,9 @@ public class CalibrationModule {
                 String line = br.readLine();
                 String[] lineItems = line.split(" ");
                 for (int j = 0; j < finalSpeeds; j++) {
-                    rowList[i][j] = Byte.parseByte(lineItems[j]);
+                    System.out.println(j);
+                    rowList[i][j] = Short.parseShort(lineItems[j]);
+                    System.out.println(rowList[i][j]);
                 }
             }
 
@@ -253,7 +255,7 @@ public class CalibrationModule {
     private static final short[][][] SPEED_CHANGE_DISTS = readSpeedChangeDistData();
 
     //input floor type, radius of turn, get max velocity
-    private static final byte[][] MAX_SPEEDS = readMaxSpeedData();
+    private static final short[][] MAX_SPEEDS = readMaxSpeedData();
 
     //input x and y
     private static final FishData[][] DEFISHER = readFishData();
