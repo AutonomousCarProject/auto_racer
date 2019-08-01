@@ -12,8 +12,9 @@ import static java.lang.Short.parseShort;
 
 public class CalibrationModule {
 
-    //public static void main(String[] args){
-    //}
+    public static void main(String[] args){
+        short r = getAngles((short)77);
+    }
 
     /*private static <TOUT> TOUT readTable(String filepath){
         TOUT rowList = null;
@@ -48,6 +49,9 @@ public class CalibrationModule {
 
     private static final int MIN_DELTA_SPEED = 5;
 
+    private static final int MIN_STEER_ANGLE = 33;
+
+    private static final int MIN_RADIUS = 776;
     //turn the car to this angle to make it go in a straight line
     public static final int STRAIGHT_ANGLE = 7;
 
@@ -261,7 +265,7 @@ public class CalibrationModule {
     }
 
     public static final short getRadii(short angle) {
-        return RADII[angle];
+        return RADII[angle+MIN_STEER_ANGLE];
     }
 
     //returns the amount of throttle needed to maintain a given speed on a given floor surface and with a given turn radius
