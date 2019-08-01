@@ -36,7 +36,7 @@ public class RacingLineModule implements CarModule {
     public void init(CarData carData){
         try {
             //Convert a text file of 1's and 0's to a 2D boolean array used for RacingLine calculations
-            BufferedReader bufread = new BufferedReader(new FileReader("testmap.txt"));
+            BufferedReader bufread = new BufferedReader(new FileReader("map.txt"));
             StringTokenizer st = new StringTokenizer(bufread.readLine());
 
             rows = Integer.parseInt(st.nextToken());
@@ -348,8 +348,8 @@ public class RacingLineModule implements CarModule {
      * Gets the middle line - line between outer wall and inner wall
      */
     private void getMiddleLine() {
-        //getMapFromWalls
-        closeTrack(10);
+        map = getMapFromWalls(map);
+        closeTrack(1);
         getWalls();
 
         //Generate a RacingLine
@@ -357,14 +357,14 @@ public class RacingLineModule implements CarModule {
 
         //Reduce the number of data points
         center.sortPoints();
-        trimSortedPoints(20);
+        trimSortedPoints(100);
 
         //Calculate the angles between every point on the line
         makeOriginal();
         getAngles();
 
         //Smooth the line
-        //connectTheDots();
+        connectTheDots();
     }
 
     /**

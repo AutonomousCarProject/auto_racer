@@ -86,7 +86,11 @@ public class RacingLine {
             orderedRacingLine.add(closestPoint);
             remainingPoints.remove(closestPoint);
         }
-
-        RacingLinePointsList = orderedRacingLine;
+        RacingLinePointsList.clear();
+        RacingLinePointsList.addAll(orderedRacingLine);
+        RacingLinePoints = new RacingLinePoint[orderedRacingLine.size()];
+        for(int i=0;i<orderedRacingLine.size();i++) {
+            RacingLinePoints[i] = orderedRacingLine.get(i);
+        }
     }
 }
