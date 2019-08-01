@@ -32,6 +32,7 @@ public class CalibrationModule {
         short r = getAngles((short)77);
     }
 
+
     /*private static <TOUT> TOUT readTable(String filepath){
         TOUT rowList = null;
 
@@ -162,7 +163,7 @@ public class CalibrationModule {
     //Helper method to read angle data
     private static HashMap<Integer, Integer> readAngleData (){
         HashMap<Integer, Integer> hashMap = null;
-        try (BufferedReader br = new BufferedReader(new FileReader("src\\main\\java\\org\\avphs\\calibration\\AngleData.txt"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("calibration\\src\\main\\java\\org.avphs\\calibration\\AngleData.txt"))) {
 
             short radCount = parseShort(br.readLine());
             hashMap = new HashMap<>();
