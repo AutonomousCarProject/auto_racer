@@ -51,72 +51,69 @@ public class CalibrationModule {
 
     private static final int MIN_DELTA_SPEED = 5;
 
-    private static final int MIN_STEER_ANGLE = 33;
-
-    private static final int MIN_RADIUS = 776;
     //turn the car to this angle to make it go in a straight line
     public static final int STRAIGHT_ANGLE = 7;
 
     //Helper method to read speed change distance data
-    private static short[][][] readSpeedChangeDistData (){
-        short[][][] rowList = null;
-        try (BufferedReader br = new BufferedReader(new FileReader("src\\main\\java\\org\\avphs\\calibration\\DistanceCalculations.txt"))) {
-            short numFloors = Short.parseShort(br.readLine());
-            short initSpeeds = Short.parseShort(br.readLine());
-            short finalSpeeds = Short.parseShort(br.readLine());
-            rowList = new short[numFloors][initSpeeds][finalSpeeds];
+    private static byte[][][] readSpeedChangeDistData (){
+        byte[][][] rowList = null;
+        try (BufferedReader br = new BufferedReader(new FileReader("calibration\\src\\main\\java\\org.avphs\\calibration\\DistanceCalculations.txt"))) {
+
+            short numFloors = parseShort(br.readLine());
+            short initSpeeds = parseShort(br.readLine());
+            short finalSpeeds = parseShort(br.readLine());
+            rowList = new byte[numFloors][initSpeeds][finalSpeeds];
+
             for (short i = 0; i < numFloors; i++) {
                 for (int j = 0; j < initSpeeds; j++) {
+
                     String line = br.readLine();
                     String[] lineItems = line.split(" ");
                     for (int k = 0; k < finalSpeeds; k++) {
-                        rowList[i][j][k] = Short.parseShort(lineItems[k]);
+                        rowList[i][j][k] = Byte.parseByte(lineItems[k]);
                     }
                 }
             }
 
         } catch (Exception e) {
             // Handle any I/O problems
-            e.printStackTrace();
         }
         return rowList;
     }
 
     //Helper method to read max speed data
-    private static short[][] readMaxSpeedData (){
-        short[][] rowList = null;
-        try (BufferedReader br = new BufferedReader(new FileReader("src\\main\\java\\org\\avphs\\calibration\\MaxSpeeds.txt"))) {
+    private static byte[][] readMaxSpeedData (){
+        byte[][] rowList = null;
+        try (BufferedReader br = new BufferedReader(new FileReader("calibration\\src\\main\\java\\org.avphs\\calibration\\MaxSpeeds.txt"))) {
 
             short initSpeeds = Short.parseShort(br.readLine());
             short finalSpeeds = Short.parseShort(br.readLine());
-            rowList = new short[initSpeeds][finalSpeeds];
+
             for (int i = 0; i < initSpeeds; i++) {
 
                 String line = br.readLine();
                 String[] lineItems = line.split(" ");
                 for (int j = 0; j < finalSpeeds; j++) {
-                    rowList[i][j] = Short.parseShort(lineItems[j]);
+                    rowList[i][j] = Byte.parseByte(lineItems[j]);
                 }
             }
 
 
         } catch (Exception e) {
             // Handle any I/O problems
-            e.printStackTrace();
         }
         return rowList;
     }
 
     //Helper method to read defishing data
-    //TODO:INACTIVE
     private static FishData[][] readFishData() {
-        return null;
-       /* FishData[][] rowList = null;
-        try (BufferedReader br = new BufferedReader(new FileReader("src\\main\\java\\org\\avphs\\calibration\\CameraData.txt"))) {
+
+        FishData[][] rowList = null;
+        try (BufferedReader br = new BufferedReader(new FileReader("calibration\\src\\main\\java\\org.avphs\\calibration\\CameraData.txt"))) {
 
 
-            short xCount = Short.parseShort(br.readLine());
-            short yCount = Short.parseShort(br.readLine());
+            short xCount = parseShort(br.readLine());
+            short yCount = parseShort(br.readLine());
             rowList = new FishData[xCount][yCount];
 
             for (int i = 0; i < xCount; i++) {
@@ -131,28 +128,29 @@ public class CalibrationModule {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+
         }
         return rowList;
-   */ }
+    }
 
     //Helper method to read angle data
-    private static short[] readAngleData (){
-        short[] rowList = null;
-        try (BufferedReader br = new BufferedReader(new FileReader("src\\main\\java\\org\\avphs\\calibration\\AngleData.txt"))) {
+    private static HashMap<Integer, Integer> readAngleData (){
+        HashMap<Integer, Integer> hashMap = null;
+        try (BufferedReader br = new BufferedReader(new FileReader("calibration\\src\\main\\java\\org.avphs\\calibration\\AngleData.txt"))) {
 
-            short radCount = Short.parseShort(br.readLine());
-            rowList = new short[radCount];
-            String line = br.readLine();
-            String[] lineItems = line.split(" ");
+            short radCount = parseShort(br.readLine());
+            hashMap = new HashMap<>();
             for (int i = 0; i < radCount; i++) {
-                rowList[i] = Short.parseShort(lineItems[i]);
+                String[] row = br.readLine().split(" ");
+                int key = Integer.parseInt(row[0]);
+                int val = Integer.parseInt(row[1]);
+                hashMap.put(key, val);
             }
 
         }
         catch(Exception e){
             // Handle any I/O problems
-            e.printStackTrace();
+
         }
         return hashMap;
     }
@@ -161,46 +159,46 @@ public class CalibrationModule {
     private static short[] readRadiiData (){
         //TODO: FIX
         short[] rowList = null;
-        try (BufferedReader br = new BufferedReader(new FileReader("src\\main\\java\\org\\avphs\\calibration\\RadiiData.txt"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("calibration\\src\\main\\java\\org.avphs\\calibration\\RadiiData.txt"))) {
 
-            short angleCount = Short.parseShort(br.readLine());
+            short angleCount = parseShort(br.readLine());
             rowList = new short[angleCount];
             String line = br.readLine();
             String[] lineItems = line.split(" ");
             for (int i = 0; i < angleCount; i++) {
+
                 rowList[i] = Short.parseShort(lineItems[i]);
             }
 
         }
         catch(Exception e){
             // Handle any I/O problems
-            e.printStackTrace();
+
         }
         return rowList;
     }
 
     //angle, desired velocity
-    private static short[][] readThrottleData(){
-        short[][] rowList = null;
-        try (BufferedReader br = new BufferedReader(new FileReader("src\\main\\java\\org\\avphs\\calibration\\ThrottleData.txt"))) {
+    private static byte[][] readThrottleData(){
+        byte[][] rowList = null;
+        try (BufferedReader br = new BufferedReader(new FileReader("calibration\\src\\main\\java\\org.avphs\\calibration\\ThrottleCalculations.txt"))) {
 
-            short radCount = Short.parseShort(br.readLine());
-            short desiredSpeedsCount = Short.parseShort(br.readLine());
-            rowList = new short[radCount][desiredSpeedsCount];
+            short radCount = parseShort(br.readLine());
+            short desiredSpeedsCount = parseShort(br.readLine());
+            rowList = new byte[radCount][desiredSpeedsCount];
 
                 for(int j = 0; j < radCount; j++) {
 
                     String line = br.readLine();
                     String[] lineItems = line.split(" ");
                     for (int k = 0; k < desiredSpeedsCount; k++) {
-                        rowList[j][k] = Short.parseShort(lineItems[k]);
+                        rowList[j][k] = Byte.parseByte(lineItems[k]);
                     }
                 }
 
 
         } catch (Exception e) {
             // Handle any I/O problems
-            e.printStackTrace();
         }
         return rowList;
     }
@@ -208,9 +206,9 @@ public class CalibrationModule {
     //Helper method to read radii data
     private static float[] readPixelData (){
         float[] rowList = null;
-        try (BufferedReader br = new BufferedReader(new FileReader("src\\main\\java\\org\\avphs\\calibration\\PixelData.txt"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("calibration\\src\\main\\java\\org.avphs\\calibration\\PixelData.txt"))) {
 
-            short angleCount = Short.parseShort(br.readLine());
+            short angleCount = parseShort(br.readLine());
             rowList = new float[angleCount];
             String line = br.readLine();
             String[] lineItems = line.split(" ");
@@ -222,16 +220,16 @@ public class CalibrationModule {
         }
         catch(Exception e){
             // Handle any I/O problems
-            e.printStackTrace();
+
         }
         return rowList;
     }
 
     //input current speed and desired speed. get distance
-    private static final short[][][] SPEED_CHANGE_DISTS = readSpeedChangeDistData();
+    private static final byte[][][] SPEED_CHANGE_DISTS = readSpeedChangeDistData();
 
     //input floor type, radius of turn, get max velocity
-    private static final short[][] MAX_SPEEDS = readMaxSpeedData();
+    private static final byte[][] MAX_SPEEDS = readMaxSpeedData();
 
     //input x and y
     private static final FishData[][] DEFISHER = readFishData();
@@ -243,7 +241,7 @@ public class CalibrationModule {
     private static final short[] RADII = readRadiiData();
 
     //
-    private static final short[][] THROTTLES = readThrottleData();
+    private static final byte[][] THROTTLES = readThrottleData();
 
     private static final float[] PIXEL_DISTS = readPixelData();
 
@@ -251,14 +249,15 @@ public class CalibrationModule {
         return DEFISHER[x][y];
     }
 
-    public static final short getMaxSpeed(byte floor, short rad) {
-        return MAX_SPEEDS[floor][rad];
+    public static final byte getMaxSpeed(byte floor, short rad) {
+        return 1;
+        //return MAX_SPEEDS[floor][rad];
 
     }
 
-    public static final short getSpeedChangeDist(byte floor, short initSpeed, short finalSpeed) {
-        short i = (short) (initSpeed/MIN_DELTA_SPEED);
-        short f = (short) (finalSpeed/MIN_DELTA_SPEED);
+    public static final byte getSpeedChangeDist(byte floor, byte initSpeed, byte finalSpeed) {
+        byte i = (byte) (initSpeed/MIN_DELTA_SPEED);
+        byte f = (byte) (finalSpeed/MIN_DELTA_SPEED);
         return SPEED_CHANGE_DISTS[floor][i][f];
     }
 
@@ -267,12 +266,12 @@ public class CalibrationModule {
     }
 
     public static final short getRadii(short angle) {
-        return RADII[angle+MIN_STEER_ANGLE];
+        return RADII[angle];
     }
 
     //returns the amount of throttle needed to maintain a given speed on a given floor surface and with a given turn radius
     //0 = go full throttle
-    public static final short getThrottle (short radius, short speed){
+    public static final byte getThrottle (short radius, byte speed){
         return THROTTLES[radius][speed];
     }
 
@@ -360,5 +359,4 @@ public class CalibrationModule {
         long ping = System.nanoTime() - beginning;
         return ping;
     }//~getNetwork_Latency*/
-
 }
