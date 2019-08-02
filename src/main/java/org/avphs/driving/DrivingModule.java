@@ -25,7 +25,7 @@ public class DrivingModule implements CarModule {
 
     int index = 0;
 
-    final int addOn = 0;
+    final int addOn = 7;
 
     private VectorPoint currentPos;
 
@@ -262,7 +262,7 @@ public class DrivingModule implements CarModule {
 
     private void getThrottle(){
         if (currentSegment instanceof Straight){
-            throttle = 18;
+            throttle = 20;
         } else {
             throttle = 18;
         }

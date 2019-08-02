@@ -38,7 +38,7 @@ public class Arduino { // Adapted to Java from arduino.cs ... (FakeFirmata)
 
     protected static boolean GoodOpen = false; // -- [Consistency Check!]
 
-    public static final String CommPortNo = "COM5"; // or maybe "COM3"
+    public static final String CommPortNo = "COM3"; // or maybe "COM3"
     public static final boolean SpeakEasy = false, // enables logging
             LogAllPcnts = false; // always log pulse counts & DeadMan
 
