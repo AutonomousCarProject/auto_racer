@@ -23,6 +23,7 @@ public class BrakeTest implements CarModule {
     List<double[]> brakeData = new ArrayList<>();
     Car car;
     CarData carData;
+    boolean keepRunning = true;
 
     public BrakeTest(Car car){
         this.car = car;
@@ -113,6 +114,7 @@ public class BrakeTest implements CarModule {
             System.out.println("IO problem caught from startSpeed: "+startSpeed+" and endSpeed: "+endSpeed);
             e.printStackTrace();
         }
+        keepRunning = false;
     }
 
 
@@ -131,37 +133,67 @@ public class BrakeTest implements CarModule {
         double brakeDist;
 
         car.accelerate(true, throttle);
-        if(curSpeed >= startSpeed)
+        while(curSpeed < startSpeed)
         {
-            //System.out.println("curSpeed>=startSpeed");
-            startDist = ((ArduinoData) carData.getModuleData("arduino")).getOdomCount();
-            //throttle = CalibrationModule.getThrottle((byte)0, (short)0, endSpeed);
-            throttle = CalibrationModule.getThrottle((short)0, (byte)0);
-            car.accelerate(true, throttle);
+            //get odom
+            //wait
+            //get odom
+            //dif = 2nd - 1st odom
+            // cur speed: (dif * cm_rotation)/wait time
+
         }
-        if(curSpeed <= endSpeed)
+        throttle = 0;
+        startDist = ((ArduinoData) carData.getModuleData("arduino")).getOdomCount();
+
+        car.accelerate(true, throttle);
+
+        while(curSpeed > endSpeed)
         {
-            //System.out.println("curSpeed<=endSpeed");
-            endDist = ((ArduinoData) carData.getModuleData("arduino")).getOdomCount();
-            brakeDist = endDist - startDist;
-            car.stop();
-            double[] data = new double[3];
-            data[0] = startSpeed;
-            data[1] = endSpeed;
-            data[2] = brakeDist;
-            brakeData.add(data);
-            //System.out.println("inside testBrakeDist() startSpeed: "+startSpeed+" endSpeed: "+endSpeed+"brakeDist: "+brakeDist);
-            //System.out.println("inside testBrakeDist() data[0]: "+data[0]+" data[1]: "+data[1]+" data[2]: "+data[2]);
+            //get odom
+            //wait
+            //get odom
+            //dif = 2nd - 1st odom
+            // cur speed: (dif * cm_rotation)/wait time
+
+        }
+        endDist = ((ArduinoData) carData.getModuleData("arduino")).getOdomCount();
+        brakeDist = (endDist - startDist)*CalibrationModule.CM_PER_ROTATION;
+        double[] data = new double[3];
+        data[0] = startSpeed;
+        data[1] = endSpeed;
+        data[2] = brakeDist;
+        brakeData.add(data);
+        try(waitUntilStop())
+        {
+
+        }
+        catch(Exception e)
+        {
+
+        }
+    }
+    void waitUntilStop() throws InterruptedException {
+        while (true) {
+            int lastOdom = ((ArduinoData) carData.getModuleData("arduino")).getOdomCount();
+            Thread.sleep(1000);
+            int thisSpeed = ((ArduinoData) carData.getModuleData("arduino")).getOdomCount() - lastOdom;
+            if (thisSpeed == 0) {
+                return;
+            }
         }
     }
 
     @Override
     public void init(CarData carData) {
-        this.carData = carData;
-        main();
+
     }
 
     @Override
     public void update(CarData carData) {
+        if(keepRunning)
+        {
+            this.carData = carData;
+            main();
+        }
     }
 }
