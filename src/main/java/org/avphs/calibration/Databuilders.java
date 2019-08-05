@@ -22,6 +22,11 @@ public class Databuilders {
         return y;
     }
 
+        //
+        //Delete the /* on 29 and */ on 148 and run this file to write data to AngleData, DistanceCalculations, MaxSpeeds, and RadiiData
+        //
+
+
    /* public static void main(String[] args) {
         Writer writer = null;
         int datagrab_int = 0;//temp value holder
