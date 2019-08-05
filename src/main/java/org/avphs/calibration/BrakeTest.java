@@ -163,8 +163,9 @@ public class BrakeTest implements CarModule {
         data[1] = endSpeed;
         data[2] = brakeDist;
         brakeData.add(data);
-        try(waitUntilStop())
-        {
+        try{
+            waitUntilStop();
+
 
         }
         catch(Exception e)
