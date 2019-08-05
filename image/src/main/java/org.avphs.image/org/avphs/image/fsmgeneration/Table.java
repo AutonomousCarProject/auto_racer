@@ -626,7 +626,7 @@ public class Table {
      * make a nice string to display the bits of a java int
      * 
      * @param i the int to print (haha that rhymes)
-     * @return
+     * @return the string, duh
      */
     public static String niceIntBinaryFormat(int i) {
         StringBuilder builder = new StringBuilder();

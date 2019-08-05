@@ -8,9 +8,18 @@ import java.util.Map;
 import java.util.Set;
 
 public class TableState extends State {
+    /**
+     * it has to be linked to a table because, uhh, that's how I designed it and it works, so...
+     */
     private Table table;
+    /**
+     * used for debugging and stuffs
+     */
     private String name;
-    
+
+    /**
+     * the ways that this state reacts to seeing the colors
+     */
     EnumMap<ImageProcessing.PosterColor, State> transitions;
     
     public TableState(Table table, String name) {
