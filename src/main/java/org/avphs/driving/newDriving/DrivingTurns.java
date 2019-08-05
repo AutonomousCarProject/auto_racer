@@ -29,19 +29,19 @@ public class DrivingTurns implements Drivable {
         int newSteeringAngle;
         switch (getWallDanger(imgWallBottoms)) {
             case 0:
-                newSteeringAngle = getSteeringAngle() - (MAX_STEERING_ANGLE_INCREASE >> 2);
+                //newSteeringAngle = currentSteeringAngle() - (MAX_STEERING_ANGLE_INCREASE >> 2);
                 //Lower steering angle
                 break;
             case 1:
-                newSteeringAngle = getSteeringAngle() + (MAX_STEERING_ANGLE_INCREASE >> 2);
+               // newSteeringAngle = currentSteeringAngle() + (MAX_STEERING_ANGLE_INCREASE >> 2);
                 //Slightly raise steering angle
                 break;
             case 2:
-                newSteeringAngle = getSteeringAngle() + (MAX_STEERING_ANGLE_INCREASE >> 1);
+               // newSteeringAngle = currentSteeringAngle() + (MAX_STEERING_ANGLE_INCREASE >> 1);
                 //Raise steering angle and slow down a bit.
                 break;
             case 3:
-                newSteeringAngle = getSteeringAngle() + (MAX_STEERING_ANGLE_INCREASE);
+              //  newSteeringAngle = currentSteeringAngle() + (MAX_STEERING_ANGLE_INCREASE);
                 //Raise steering angle as much as possible and slow down a lot.
                 break;
         }
