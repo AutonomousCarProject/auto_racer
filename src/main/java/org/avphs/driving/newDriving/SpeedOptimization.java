@@ -1,6 +1,6 @@
 package org.avphs.driving.newDriving;
 
-public class SpeedOptimization implements Driveable {
+public class SpeedOptimization implements Drivable {
     @Override
     public int getSteeringAngle() {
         return 0;
