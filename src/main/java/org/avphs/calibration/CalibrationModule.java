@@ -154,8 +154,8 @@ public class CalibrationModule {
             hashMap = new HashMap<>();
             for (int i = 0; i < radCount; i++) {
                 String[] row = br.readLine().split(" ");
-                int key = Integer.parseInt(row[0]);
-                int val = Integer.parseInt(row[1]);
+                int key = Integer.parseInt(row[1]);
+                int val = Integer.parseInt(row[0]);
                 hashMap.put(key, val);
             }
 
@@ -283,6 +283,14 @@ public class CalibrationModule {
     }
 
     public static final int getAngles(int rad) {
+        System.out.println(rad);
+        int staaaahp = 0;
+        while(!ANGLES.containsKey(rad) && staaaahp <100){
+            rad++;
+        }
+        if(staaaahp>=100){
+            return STRAIGHT_ANGLE;
+        }
         return ANGLES.get(rad);
     }
 
