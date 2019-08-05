@@ -549,16 +549,27 @@ public class Table {
     public void generateImage(String path, String name) {
         this.asDotGraph().outputImage(name, path);
     }
-    
+
+    /**
+     * @return a Digraph object representing this fsm
+     */
     public Digraph asDotGraph() {
         Digraph digraph = new Digraph();
         for (TableState tableState : tableStates) {
             for (ImageProcessing.PosterColor color : ImageProcessing.PosterColor.values()) {
                 State destination = tableState.getTransition(color);
                 if (destination instanceof ThingStartState) {
+                    // ThingStartStates are displayed as labels on edges instead of as nodes
                     ThingStartState thingStartState = (ThingStartState) destination;
-                    EdgeStatement entry = new EdgeStatement(tableState.getName(), thingStartState.getPassThrough().getName());
+                    
+                    // add an edge pointing to the passThrough
+                    EdgeStatement entry = new EdgeStatement(
+                            tableState.getName(), 
+                            thingStartState.getPassThrough().getName()
+                    );
                     entry.addColor(color);
+                    
+                    // and label it as starting a thing
                     entry.addLabel(
                             "+ start("
                             + thingStartState.getThing().getName()
@@ -566,20 +577,16 @@ public class Table {
                     );
                     
                     digraph.addEntry(entry);
-                } else if (!(destination instanceof FailState)) {
+                } else if (!(destination instanceof FailState)) {  // don't draw edges for FailStates
                     EdgeStatement entry = new EdgeStatement(tableState.getName(), destination.getName());
                     entry.addColor(color);
                     
                     digraph.addEntry(entry);
                 }
             }
-//            NodeStatement nodeStatement = new NodeStatement(tableState.getName());
-//            String tooltip = tableState.debug("").toString();
-//            tooltip = tooltip.replace("\n", "\\n");
-//            nodeStatement.addAttribute("tooltip", "\"" + tooltip + "\"");
-//            digraph.addNodeStatement(nodeStatement);
         }
         
+        // the initial state of the FSM is displayed as a diamond shaped node
         NodeStatement initialAttributes = new NodeStatement(initialState.getName(false));
         initialAttributes.addAttribute("shape", "diamond");
         
@@ -587,7 +594,12 @@ public class Table {
         
         return digraph;
     }
-    
+
+    /**
+     * save this table to a file as an integer array. (all thing name and state name data is lost)
+     * 
+     * @param path the path to save the file to
+     */
     public void saveToFile(String path) {
         try {
             BufferedWriter writer = new BufferedWriter(
@@ -604,13 +616,38 @@ public class Table {
                 writer.append(Integer.toString(tableDatum));
                 writer.newLine();
             }
-//            writer.flush();
             writer.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * make a nice string to display the bits of a java int
+     * 
+     * @param i the int to print (haha that rhymes)
+     * @return
+     */
+    public static String niceIntBinaryFormat(int i) {
+        StringBuilder builder = new StringBuilder();
+
+        String unjust = Integer.toBinaryString(i);
+        String justified = "0".repeat(32 - unjust.length()) + unjust;
+        for (int j = 0; j < 7; j++) {
+            builder.append(justified, j * 4, (j * 4) + 4);
+            builder.append("_");
+        }
+        builder.append(justified.substring(28));
+
+        return builder.toString();
+    }
+
+    /**
+     * makes a nicely formatted string for viewing the integer-array-form of a table
+     *
+     * @param intTable the int array to print today (k that one's maybe a stretch)
+     * @return the nice string
+     */
     public static String niceFormat(int[] intTable) {
         StringBuilder builder = new StringBuilder();
 
@@ -626,20 +663,6 @@ public class Table {
 
             builder.append("\n");
         }
-
-        return builder.toString();
-    }
-
-    public static String niceIntBinaryFormat(int i) {
-        StringBuilder builder = new StringBuilder();
-
-        String unjust = Integer.toBinaryString(i);
-        String justified = "0".repeat(32 - unjust.length()) + unjust;
-        for (int j = 0; j < 7; j++) {
-            builder.append(justified, j * 4, (j * 4) + 4);
-            builder.append("_");
-        }
-        builder.append(justified.substring(28));
 
         return builder.toString();
     }
