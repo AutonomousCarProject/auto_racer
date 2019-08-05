@@ -1,13 +1,18 @@
 package org.avphs.driving.newDriving;
 
-public class DrivingTurns implements Driveable {
+import org.avphs.coreinterface.CarData;
+
+public class DrivingTurns implements Drivable {
+
+
+
     @Override
-    public int getSteeringAngle() {
+    public int getSteeringAngle(CarData carData) {
         return 0;
     }
 
     @Override
-    public int getThrottle() {
+    public int getThrottle(CarData carData) {
         return 0;
     }
 }
