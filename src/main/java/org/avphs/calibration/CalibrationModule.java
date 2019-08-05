@@ -13,8 +13,7 @@ import org.apache.commons.math3.analysis.polynomials.PolynomialFunctionLagrangeF
 import static java.lang.Short.parseShort;
 
 public class CalibrationModule {
-
-    public static void main(String[] args){
+   /* public static void main(String[] args){
             System.out.println("test start");
             System.out.println("getFishData: " + getFishData((short)0,(short)0));
             System.out.println("getMaxSpeed: " + getMaxSpeed((byte)0,(short)0));
@@ -24,6 +23,8 @@ public class CalibrationModule {
             System.out.println("getThrottle: " + getThrottle((short)0,(byte)0));
             System.out.println("getDist: " + getDist((short)0));
     }
+
+    */
 
 
     /*private static <TOUT> TOUT readTable(String filepath){
