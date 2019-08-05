@@ -1,11 +1,9 @@
 package org.avphs.image;
 
-import fly2cam.FlyCamera;
 import org.avphs.camera.Camera;
-import org.avphs.coreinterface.CarCommand;
 import org.avphs.coreinterface.CarData;
 import org.avphs.coreinterface.CarModule;
-import org.avphs.window.WindowModule;
+import org.avphs.image.tools.ImageWindowModule;
 
 /** Manages and executes image processing
  *
@@ -18,7 +16,7 @@ import org.avphs.window.WindowModule;
  */
 public class ImageModule implements CarModule {
 
-    WindowModule window;
+    ImageWindowModule window;
     public  int WINDOW_WIDTH = 912, WINDOW_HEIGHT = 480;
 
     byte[] bayerImage = new byte[4*WINDOW_HEIGHT*WINDOW_WIDTH];
@@ -33,9 +31,7 @@ public class ImageModule implements CarModule {
 
     @Override
     public void update(CarData carData) {
-        System.out.println("Image");
-
-        window = (WindowModule) carData.getModuleData("window");
+        window = (ImageWindowModule) carData.getModuleData("window");
         Camera camera = (Camera) carData.getModuleData("camera");
 
         WINDOW_HEIGHT = camera.getCamHeight();
