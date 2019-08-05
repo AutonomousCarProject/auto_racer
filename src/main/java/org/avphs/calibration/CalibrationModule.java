@@ -46,10 +46,10 @@ public class CalibrationModule {
     public static final int SERVO_ANGLE_MAX = 44; //maximum servo angle for steering (right angle turn)
     //Camera view angle width in degrees
     //TODO:Find real value
-    public static final float CAMERA_VIEW_ANGLE = 100;
+    public static final float CAMERA_VIEW_ANGLE = 100; //viewing angle of the camera
 
     //Axel dist in cm
-    public static final double WHEEL_BASE = 32.5;
+    public static final double WHEEL_BASE = 32.5; //distance between front axle and back axle
 
     public static final double  RIM_TO_RIM = 26.4;
 
@@ -68,7 +68,7 @@ public class CalibrationModule {
         try (BufferedReader br = new BufferedReader(new FileReader("src\\main\\java\\org\\avphs\\calibration\\DistanceCalculations.txt"))) {
 
             short numFloors = parseShort(br.readLine()); //read the array lengths at the top of the file marked there ^
-            short initSpeeds = parseShort(br.readLine());
+            short initSpeeds = parseShort(br.readLine()); //these numbers give the array length
             short finalSpeeds = parseShort(br.readLine());
             rowList = new short[numFloors][initSpeeds][finalSpeeds];
 
@@ -217,7 +217,7 @@ public class CalibrationModule {
         return rowList;
     }
 
-    //Helper method to read radii data
+
     private static float[] readPixelData (){ //same as any other read file
         float[] rowList = null;
         try (BufferedReader br = new BufferedReader(new FileReader("src\\main\\java\\org\\avphs\\calibration\\PixelData.txt"))) {
@@ -244,26 +244,32 @@ public class CalibrationModule {
     //same as all others in this locale
 
 
-    //input floor type, radius of turn, get max velocity
+    //input floor type, radius of turn, get max velocity that can be taken around that curve
     private static final short[][] MAX_SPEEDS = readMaxSpeedData();
 
-    //input x and y
+    //input x and y, get defishing
     private static final FishData[][] DEFISHER = readFishData();
 
-    //input radius
+    //input radius, get angle required to turn that radius
     private static final HashMap<Integer, Integer> ANGLES = readAngleData();
 
-    //input angle
+    //input angle, get radius that the car will turn at that angle
     private static final short[] RADII = readRadiiData();
 
-    //
+    //input floor surface and a given turn radius and get the throttle required to get that speed
     private static final short[][] THROTTLES = readThrottleData();
 
     private static final float[] PIXEL_DISTS = readPixelData();
 
+
+
+
+
     public static final FishData getFishData(short x, short y) {
         return DEFISHER[x][y];
     }
+
+
 
     public static final short getMaxSpeed(short floor, short rad) {
         return MAX_SPEEDS[floor][rad];
