@@ -80,7 +80,7 @@ public class ImageWindowPanel extends JPanel implements MouseListener, MouseMoti
 
         }
 
-        var g2 = (Graphics2D) g;
+        Graphics2D g2 = (Graphics2D) g;
         g2.setStroke(new BasicStroke(3));
 
         if (lastPoint != null)
@@ -91,7 +91,7 @@ public class ImageWindowPanel extends JPanel implements MouseListener, MouseMoti
         if (selectionPoints != null)
         {
             g.setColor(Color.BLACK);
-            for (var point : selectionPoints)
+            for (Point point : selectionPoints)
             {
                 if (lastPoint != null)
                 {
