@@ -24,7 +24,7 @@ public class DrivingModule implements CarModule {
     public void init(CarData carData) {
         // TODO: Get RacingLine data
         // TODO: Initialize array of Straights and Turns
-        System.out.println("hello");
+        carData.addData("driving", currentWheelAngle);
 
     }
 

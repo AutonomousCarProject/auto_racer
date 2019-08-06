@@ -47,7 +47,7 @@ public class RacingCore extends CarCore {
         positionModule = new PositionModule();
         objectDetectionModule = new ObjectDetectionModule();
         racingLineModule = new RacingLineModule();
-        drivingModule = new DrivingModule();
+        drivingModule = new DrivingModule(car);
         mapModule = new MapRacingModule();
 
 
