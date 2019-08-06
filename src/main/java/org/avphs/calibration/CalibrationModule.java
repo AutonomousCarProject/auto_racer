@@ -65,7 +65,7 @@ public class CalibrationModule {
     //Helper method to read speed change distance data
     private static short[][][] readSpeedChangeDistData (){
         short[][][] rowList = null;
-        try (BufferedReader br = new BufferedReader(new FileReader("src\\main\\java\\org\\avphs\\calibration\\DistanceCalculations.txt"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("src/main/java/org/avphs/calibration/DistanceCalculations.txt"))) {
 
             short numFloors = parseShort(br.readLine()); //read the array lengths at the top of the file marked there ^
             short initSpeeds = parseShort(br.readLine()); //these numbers give the array length
@@ -94,7 +94,7 @@ public class CalibrationModule {
     //Helper method to read max speed data
     private static short[][] readMaxSpeedData (){
         short[][] rowList = null;//same as the other read files
-        try (BufferedReader br = new BufferedReader(new FileReader("src\\main\\java\\org\\avphs\\calibration\\MaxSpeeds.txt"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("src/main/java/org/avphs/calibration/MaxSpeeds.txt"))) {
 
             short numFloors = Short.parseShort(br.readLine());
             short numRads = Short.parseShort(br.readLine());
@@ -122,7 +122,7 @@ public class CalibrationModule {
     private static FishData[][] readFishData() { //same as the other read files
 
         FishData[][] rowList = null;
-        try (BufferedReader br = new BufferedReader(new FileReader("src\\main\\java\\org\\avphs\\calibration\\CameraData.txt"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("src/main/java/org/avphs/calibration/CameraData.txt"))) {
 
             short xCount = parseShort(br.readLine());
             short yCount = parseShort(br.readLine());
@@ -148,7 +148,7 @@ public class CalibrationModule {
     //Helper method to read angle data
     private static HashMap<Integer, Integer> readAngleData (){ //Same documentation as any other read file
         HashMap<Integer, Integer> hashMap = null; //set up a hashmap, hashmap's like a dictionary: one item to one item
-        try (BufferedReader br = new BufferedReader(new FileReader("src\\main\\java\\org\\avphs\\calibration\\AngleData.txt"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("src/main/java/org/avphs/calibration/AngleData.txt"))) {
 
             short radCount = parseShort(br.readLine());
             hashMap = new HashMap<>();
@@ -171,7 +171,7 @@ public class CalibrationModule {
     private static short[] readRadiiData (){ //same as any other read file
         //TODO: FIX
         short[] rowList = null;
-        try (BufferedReader br = new BufferedReader(new FileReader("src\\main\\java\\org\\avphs\\calibration\\RadiiData.txt"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("src/main/java/org/avphs/calibration/RadiiData.txt"))) {
 
             short angleCount = parseShort(br.readLine());
             rowList = new short[angleCount];
@@ -195,7 +195,7 @@ public class CalibrationModule {
     private static short[][] readThrottleData(){
         short[][] rowList = null;//same as any other read file
 
-        try (BufferedReader br = new BufferedReader(new FileReader("src\\main\\java\\org\\avphs\\calibration\\ThrottleData.txt"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("src/main/java/org/avphs/calibration/ThrottleData.txt"))) {
 
             short radCount = parseShort(br.readLine());
             short desiredSpeedsCount = parseShort(br.readLine());
@@ -220,7 +220,7 @@ public class CalibrationModule {
 
     private static float[] readPixelData (){ //same as any other read file
         float[] rowList = null;
-        try (BufferedReader br = new BufferedReader(new FileReader("src\\main\\java\\org\\avphs\\calibration\\PixelData.txt"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("src/main/java/org/avphs/calibration/PixelData.txt"))) {
 
             short angleCount = parseShort(br.readLine());
             rowList = new float[angleCount];
@@ -283,14 +283,6 @@ public class CalibrationModule {
     }
 
     public static final int getAngles(int rad) {
-        System.out.println(rad);
-        int staaaahp = 0;
-        while(!ANGLES.containsKey(rad) && staaaahp <100){
-            rad++;
-        }
-        if(staaaahp>=100){
-            return STRAIGHT_ANGLE;
-        }
         return ANGLES.get(rad);
     }
 

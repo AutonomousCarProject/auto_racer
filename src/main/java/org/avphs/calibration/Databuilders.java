@@ -42,10 +42,10 @@ public class Databuilders {
                 radiusgrab[i]*=-1;
             }
         }
-        File final_filetasy_I = new File("src\\main\\java\\org\\avphs\\calibration\\AngleData.txt");
-        File final_filetasy_II = new File("src\\main\\java\\org\\avphs\\calibration\\DistanceCalculations.txt");
-        File final_filetasy_III = new File("src\\main\\java\\org\\avphs\\calibration\\MaxSpeeds.txt");
-        File final_filetasy_IV = new File("src\\main\\java\\org\\avphs\\calibration\\RadiiData.txt");
+        File final_filetasy_I = new File("src/main/java/org/avphs/calibration/AngleData.txt");
+        File final_filetasy_II = new File("src/main/java/org/avphs/calibration/DistanceCalculations.txt");
+        File final_filetasy_III = new File("src/main/java/org/avphs/calibration/MaxSpeeds.txt");
+        File final_filetasy_IV = new File("src/main/java/org/avphs/calibration/RadiiData.txt");
         //<-------------files correspond alphabetically in filepath
         try {
             writer = new BufferedWriter(new FileWriter(final_filetasy_I));//open writer
