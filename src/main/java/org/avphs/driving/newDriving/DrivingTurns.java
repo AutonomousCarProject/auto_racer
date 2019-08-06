@@ -27,6 +27,9 @@ public class DrivingTurns implements Drivable {
 
     }
 
+    //TODO: Test with actual car movement on actual wall.
+    //TODO: Make adjustments to steering so we don't oversteer and the car doesn't update the angle and acceleration every frame.
+
     public int adjustThrottle(int[] imgWallBottoms)//Changes throttle along turns
     {
 
