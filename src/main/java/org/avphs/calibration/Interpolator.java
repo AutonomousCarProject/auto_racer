@@ -98,7 +98,6 @@ public class Interpolator {
 			output[i] = z[i];
 		}
 		//Scanner in = new Scanner(System.in);
-
 		initializebots();
 		double err = maxError + 100;
 		int iteration = 0;
