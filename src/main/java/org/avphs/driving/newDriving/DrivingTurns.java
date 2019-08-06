@@ -1,49 +1,106 @@
 package org.avphs.driving.newDriving;
 
 import org.avphs.coreinterface.CarData;
+import org.avphs.image.ImageData;
 
 public class DrivingTurns implements Drivable {
 
 
 
     @Override
-    public int getSteeringAngle(CarData carData) {
-        return 0;
+    public int getSteeringAngle(CarData data) {
+        return adjustSteeringAngle( ( (ImageData) data.getModuleData("image") ).wallBottom);
     }
 
     @Override
-    public int getThrottle(CarData carData) {
-        return 0;
+    public int getThrottle(CarData data)
+    {
+        return adjustThrottle( ( (ImageData) data.getModuleData("image") ).wallBottom);
     }
 
-    private int direction = 1; //0 = Right, 1 = Left
+    private int direction = 1; //0 = Right, 1 = Left. 8/5/2019 18:30 - Set to 1 for debugging purposes. TODO: Figure out how I'm getting the turn direction of each turn.
 
-    private final int MAX_STEERING_ANGLE_INCREASE = 60;
+    private final int MAX_STEERING_ANGLE_LEFT = -74; private final int MAX_STEERING_ANGLE_RIGHT = 88;
 
     public DrivingTurns()
     {
 
     }
 
-    public int adjustSteeringAngle(int[] imgWallBottoms) {
+    public int adjustThrottle(int[] imgWallBottoms)//Changes throttle along turns
+    {
+
+        //This method adjusts the steering angle of the car based on the danger level (Distance) of the turn's outside wall.
+        int newThrottle;
+                switch (getWallDanger(imgWallBottoms)) {
+                    case 0://Speed up slightly
+                        newThrottle = 2;
+                        return newThrottle;
+                    case 1://Slow down slightly
+                        newThrottle = -2;
+                        return newThrottle;
+                    case 2://Slow down significantly
+                        newThrottle = -3;
+                        return newThrottle;
+                    case 3://Slow down as much as possible
+                        newThrottle = -4;
+                        return newThrottle;
+                    default:
+                        return 0;
+                }
+    }
+
+    /*8/5/2019 18:26 - Currently I'm thinking that using this method of keeping a certain distance from the wall will allow for the car to drive
+    around turns, however it will probably drive pretty wobbly. TODO: Add case for which the car is in the sweet spot and can continue on its turn path.
+     */
+
+    public int adjustSteeringAngle(int[] imgWallBottoms) //Returns a number to add to the current steering angle of the car.
+    {
+        //This method adjusts the steering angle of the car based on the danger level (Distance) of the turn's outside wall.
         int newSteeringAngle;
-        switch (getWallDanger(imgWallBottoms)) {
-            case 0:
-                //newSteeringAngle = currentSteeringAngle() - (MAX_STEERING_ANGLE_INCREASE >> 2);
-                //Lower steering angle
+        switch (direction)//Check turn direction
+        {
+            case 0://If the car is turning right
+                switch (getWallDanger(imgWallBottoms)) {
+                    case 0://Steer to the left slightly
+                        newSteeringAngle = -10;
+                        return newSteeringAngle;
+                    case 1://Steer to the right slightly
+                        newSteeringAngle = 10;
+                        return newSteeringAngle;
+                    case 2://Steer to the right significantly
+                        newSteeringAngle = 40;
+                        return newSteeringAngle;
+                    case 3://Steer to the right as much as possible
+                        newSteeringAngle = MAX_STEERING_ANGLE_RIGHT;
+                        return newSteeringAngle;
+                        default:
+                            break;
+                }
                 break;
-            case 1:
-               // newSteeringAngle = currentSteeringAngle() + (MAX_STEERING_ANGLE_INCREASE >> 2);
-                //Slightly raise steering angle
+
+            case 1://If the car is turning left
+                switch (getWallDanger(imgWallBottoms))
+                {
+                    case 0://Steer to the right slightly
+                        newSteeringAngle = 10;
+                        return newSteeringAngle;
+                    case 1://Steer to the left slightly
+                        newSteeringAngle = -10;
+                        return newSteeringAngle;
+                    case 2://Steer to the left significantly
+                        newSteeringAngle = -40;
+                        return newSteeringAngle;
+                    case 3://Steer to the left as much as possible
+                        newSteeringAngle = MAX_STEERING_ANGLE_LEFT;
+                        return newSteeringAngle;
+                        default:
+                            break;
+                }
                 break;
-            case 2:
-               // newSteeringAngle = currentSteeringAngle() + (MAX_STEERING_ANGLE_INCREASE >> 1);
-                //Raise steering angle and slow down a bit.
-                break;
-            case 3:
-              //  newSteeringAngle = currentSteeringAngle() + (MAX_STEERING_ANGLE_INCREASE);
-                //Raise steering angle as much as possible and slow down a lot.
-                break;
+
+                default:
+                    break;
         }
         return 0;
     }
@@ -51,12 +108,13 @@ public class DrivingTurns implements Drivable {
 
     /*Evaluates the how close the outside wall of the turn is to the car.
     Danger level varies from 0 to 3
-    0: Greater than 1.5m away (Far)
-    1: Between 1.2 and 1.5m away (Medium)
-    2: Between 0.9 and 1.2m away (Close)
-    3. Less than 0.9m away (Very Close)
+    0:Wall is far away and you should probably move a little closer to it.
+    1: Wall is somewhat close and you should probably steer a little away from it.
+    2: Wall is close and you need to steer away from it.
+    3. Wall is very close and you need to steer away from it as much as possible..
      */
-    public int getWallDanger(int[] imgWallBottoms) {
+    public int getWallDanger(int[] imgWallBottoms)
+    {
         int pixHeight;
 
         switch (direction) {
@@ -79,7 +137,7 @@ public class DrivingTurns implements Drivable {
                 }
                 break;
             case 1://Left Turn
-                for (int i = 640; i > 630; i--)//Looks at 10 closest wall pixels to the right edge of the image.
+                for (int i = 639; i > 629; i--)//Looks at 10 closest wall pixels to the right edge of the image.
                 {
                     pixHeight = 480 - imgWallBottoms[i];
 
