@@ -4,17 +4,20 @@ import org.avphs.coreinterface.CarData;
 import org.avphs.coreinterface.CarModule;
 import org.avphs.driving.newDriving.DrivingTurns;
 import org.avphs.image.ImageData;
+import org.avphs.car.Car;
 
 public class DrivingModule implements CarModule {
 
     public int currentWheelAngle = 0;
+    public int currentThrottle = 14;
 
     private ImageData imageData;
+    private final Car car;
 
     private DrivingTurns turns = new DrivingTurns();
 
-    public DrivingModule() {
-
+    public DrivingModule(Car car) {
+        this.car = car;
     }
 
     @Override
@@ -22,6 +25,7 @@ public class DrivingModule implements CarModule {
         // TODO: Get RacingLine data
         // TODO: Initialize array of Straights and Turns
         System.out.println("hello");
+
     }
 
     @Override
@@ -29,8 +33,35 @@ public class DrivingModule implements CarModule {
         // TODO: Determine if on straight or turn
         // TODO: Call either DrivingStraights or DrivingTurns
         // TODO: Set speed and steer angle in carData
-        System.out.println("Steering Angle " + turns.getSteeringAngle(carData));
-       System.out.println("Throttle: " + turns.getThrottle(carData));
+
+        //Update the wheel angle and throttle.
+        currentThrottle += turns.getThrottle(carData);
+        currentWheelAngle += turns.getSteeringAngle(carData);
+
+        //Makes sure the throttle and wheel angle don't surpass the maximum and minumum values. (Note: currentThrottle is only set to a max of 20 for debugging purposes to keep the car at a slow, steady speed.)
+        if(currentThrottle > 20)
+        {
+            currentThrottle = 20;
+        }
+        if (currentThrottle < 14)
+        {
+            currentThrottle = 14;
+        }
+        if (currentWheelAngle < -74)
+        {
+            currentWheelAngle = -74;
+        }
+        if (currentWheelAngle > 88)
+        {
+            currentWheelAngle = 88;
+        }
+
+        //Move the car now.
+        car.steer(true, currentWheelAngle);
+        //car.accelerate(true, currentThrottle);
+        System.out.println("Throttle: " + currentThrottle);
+        // System.out.println("Steering Angle " + currentWheelAngle);
+
 
 
     }
