@@ -24,7 +24,6 @@ public class PreRaceDrivingModule extends PreRaceModule {
     private float[] distances;
     private float[] lastDistances;
 
-    private Algs calcAngle = new Mid(minDistance, changeAmount);
     //private Algs calcAngle = new HugWall(minDistance, changeAmount);
 
     public PreRaceDrivingModule(Car car) {
@@ -39,7 +38,6 @@ public class PreRaceDrivingModule extends PreRaceModule {
     @Override
     public void update(CarData carData) {
         lastDistances = distances;
-        angle = calcAngle.getAngle(distances, lastDistances);
         car.accelerate(true, angle);
         car.steer(true, angle);
     }

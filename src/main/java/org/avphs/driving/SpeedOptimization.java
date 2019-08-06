@@ -1,4 +1,4 @@
-package org.avphs.driving.newDriving;
+package org.avphs.driving;
 
 import org.avphs.coreinterface.CarData;
 
