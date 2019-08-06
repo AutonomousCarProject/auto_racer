@@ -126,9 +126,9 @@ public class DrivingTurns implements Drivable {
                     //Evaluate how close the wall is
                     if (pixHeight > 200) {
                         return 0;
-                    } else if (pixHeight < 140 && pixHeight <= 200) {
+                    } else if (pixHeight > 140 && pixHeight <= 200) {
                         return 1;
-                    } else if (pixHeight < 80 && pixHeight <= 140) {
+                    } else if (pixHeight > 80 && pixHeight <= 140) {
                         return 2;
                     } else if (pixHeight <= 80) {
                         return 3;
@@ -144,9 +144,9 @@ public class DrivingTurns implements Drivable {
                     //Evaluate how close the wall is
                     if (pixHeight > 200) {
                         return 0;
-                    } else if (pixHeight < 140 && pixHeight <= 200) {
+                    } else if (pixHeight > 140 && pixHeight <= 200) {
                         return 1;
-                    } else if (pixHeight < 80 && pixHeight <= 140) {
+                    } else if (pixHeight > 80 && pixHeight <= 140) {
                         return 2;
                     } else if (pixHeight <= 80) {
                         return 3;
