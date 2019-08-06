@@ -28,13 +28,18 @@ public class DrivingModule implements CarModule {
 
     }
 
+
     @Override
     public void update(CarData carData) {
         // TODO: Determine if on straight or turn
         // TODO: Call either DrivingStraights or DrivingTurns
         // TODO: Set speed and steer angle in carData
 
+
+        //NOTE: EVERYTHING IN DRIVING UPDATE ON THIS BRANCH IS ONLY DESIGNED TO WORK FOR TURNS.
+        //8/6/2019 11:45 - UPDATE IS DESIGNED TO ONLY DRIVE ALONG TURNS AND ONLY USES IMG DATA.
         //Update the wheel angle and throttle.
+
         currentThrottle += turns.getThrottle(carData);
         currentWheelAngle += turns.getSteeringAngle(carData);
 
