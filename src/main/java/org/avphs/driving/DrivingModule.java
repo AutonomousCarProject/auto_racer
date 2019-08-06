@@ -61,10 +61,11 @@ public class DrivingModule implements CarModule {
             currentWheelAngle = 88;
         }
 
+        //UNCOMMENT STUFF FOR TESTING
         //Move the car now.
-        car.steer(true, currentWheelAngle);
+       // car.steer(true, currentWheelAngle);
         //car.accelerate(true, currentThrottle);
-        System.out.println("Throttle: " + currentThrottle);
+        //System.out.println("Throttle: " + currentThrottle);
         // System.out.println("Steering Angle " + currentWheelAngle);
 
 
