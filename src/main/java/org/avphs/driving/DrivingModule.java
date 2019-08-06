@@ -29,8 +29,8 @@ public class DrivingModule implements CarModule {
         // TODO: Determine if on straight or turn
         // TODO: Call either DrivingStraights or DrivingTurns
         // TODO: Set speed and steer angle in carData
-        //System.out.println("Steering Angle " + turns.getSteeringAngle(carData));
-        //System.out.println("Throttle: " + turns.getThrottle(carData));
+        System.out.println("Steering Angle " + turns.getSteeringAngle(carData));
+       System.out.println("Throttle: " + turns.getThrottle(carData));
 
 
     }
