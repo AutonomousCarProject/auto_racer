@@ -3,7 +3,7 @@ package org.avphs.driving.polynomialregression;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-class PolynomialEquation {
+public class PolynomialEquation {
 
     /**
      * The array that holds each coefficient ordered from x^0
@@ -12,7 +12,7 @@ class PolynomialEquation {
     protected BigDecimal[] terms;
     private int numTerms;
 
-    PolynomialEquation(int numTerms) {
+    public PolynomialEquation(int numTerms) {
         this.numTerms = numTerms;
         terms = new BigDecimal[numTerms];
     }
