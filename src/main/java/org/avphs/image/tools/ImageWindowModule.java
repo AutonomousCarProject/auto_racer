@@ -44,6 +44,18 @@ public class ImageWindowModule extends JFrame implements CarModule {
             return;
         }
 
+        try {
+            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                if ("com.sun.java.swing.plaf.gtk.GTKLookAndFeel".equals(info.getClassName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
+            e.printStackTrace();
+        }
+
+
         camWidth = camera.getCamWidth();
         camHeight = camera.getCamHeight();
 
@@ -62,27 +74,16 @@ public class ImageWindowModule extends JFrame implements CarModule {
         });
 
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(camWidth, camHeight + 25);
+        setSize(camWidth, camHeight);
         setResizable(true);
         setLocationRelativeTo(null);
         setIgnoreRepaint(true);
 
         setLayout(new BorderLayout());
 
-        add(imageSidePanel, BorderLayout.EAST);
         add(imageWindowPanel, BorderLayout.WEST);
+        add(imageSidePanel, BorderLayout.EAST);
         pack();
-
-        try {
-            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-                if ("com.sun.java.swing.plaf.gtk.GTKLookAndFeel".equals(info.getClassName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
-            e.printStackTrace();
-        }
 
         setVisible(true);
     }

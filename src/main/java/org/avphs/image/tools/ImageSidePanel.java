@@ -28,7 +28,7 @@ public class ImageSidePanel extends JPanel {
         });
 
         JButton finishImageButton = new JButton("Finished Marking Image");
-        finishImageButton.setSize(100, 100);
+        finishImageButton.setSize(100, 200);
         finishImageButton.addActionListener(actionEvent -> {
             imageWindowPanel.finishImage();
         });
@@ -43,13 +43,15 @@ public class ImageSidePanel extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
+invalidate();
+
         repaint();
     }
 
 
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension(100, 300);
+        return new Dimension(200, 300);
     }
 
     @Override

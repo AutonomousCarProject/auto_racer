@@ -20,7 +20,9 @@ public class ImageWindowPanel extends JPanel implements MouseListener, MouseMoti
     private AppState appState;
 
     private ArrayList<Point> selectionPoints;
+
     private ArrayList<Polygon> selections;
+    private ArrayList<Boolean> selected;
 
     private Point lastPoint;
     private Point mousePos;
@@ -36,6 +38,7 @@ public class ImageWindowPanel extends JPanel implements MouseListener, MouseMoti
 
         selectionPoints = new ArrayList<>();
         selections = new ArrayList<>();
+        selected = new ArrayList<>();
 
         displayImage = new BufferedImage(windowWidth, windowHeight, BufferedImage.TYPE_INT_RGB);
         bufferImage = new BufferedImage(windowWidth, windowHeight, BufferedImage.TYPE_INT_RGB);
@@ -93,13 +96,12 @@ public class ImageWindowPanel extends JPanel implements MouseListener, MouseMoti
         int width = right - left;
         int height = bottom - top;
 
-        //subImage = displayImage.getSubimage(left, top, width, height);
-
-        displayImage = getPolySubImage(displayImage, polygon);
+        subImage = getPolySubImage(displayImage, polygon);
 
         selections.add(polygon);
+        selected.add(false);
         lastPoint = null;
-        selectionPoints = null;
+        selectionPoints.clear();
     }
 
     private BufferedImage getPolySubImage(BufferedImage image, Polygon polygon) {
@@ -109,17 +111,26 @@ public class ImageWindowPanel extends JPanel implements MouseListener, MouseMoti
         int x = polygon.getBounds().x;
         int y = polygon.getBounds().y;
 
-        int[][] img = new int[width][height];
+        int[] img = new int[width * height];
 
-        for (int i = x; i < x + width; ++i) {
-            for (int j = y; j < y + height; ++j) {
+        for (int i = x; i < x + width - 1; ++i) {
+            for (int j = y; j < y + height - 1; ++j) {
                 if (polygon.contains(i, j)) {
-                    img[i - x][j - y] = image.getRGB(i - x, j - y);
+                    int index = (j - y) * width + (i - x);
+                    try {
+                        img[index] = image.getRGB(i, j);
+                    } catch (ArrayIndexOutOfBoundsException e) {
+                    }
                 }
             }
         }
 
-        return null;
+        BufferedImage polyImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+
+        final int[] a = ((DataBufferInt) polyImg.getRaster().getDataBuffer()).getData();
+        System.arraycopy(img, 0, a, 0, img.length);
+
+        return polyImg;
     }
 
     public void setAppState(AppState state) {
@@ -141,6 +152,7 @@ public class ImageWindowPanel extends JPanel implements MouseListener, MouseMoti
 
         //windowWidth = getWidth();
         //windowHeight = getHeight();
+
         if (pixels != null) {
             Insets insets = getInsets();
             g.drawImage(displayImage, insets.left, insets.top, windowWidth - insets.left - insets.right,
@@ -168,8 +180,12 @@ public class ImageWindowPanel extends JPanel implements MouseListener, MouseMoti
         }
 
         if (selections != null) {
-            g.setColor(Color.GRAY);
-            for (Polygon poly : selections) {
+            for (int i = 0, selectionsSize = selections.size(); i < selectionsSize; i++) {
+                Polygon poly = selections.get(i);
+                if (selected.get(i))
+                    g.setColor(new Color(0, 0, 0, .5f));
+                else
+                    g.setColor(new Color(0, 0, 0, .3f));
                 g.fillPolygon(poly);
             }
         }
@@ -217,12 +233,10 @@ public class ImageWindowPanel extends JPanel implements MouseListener, MouseMoti
 
     @Override
     public void mouseEntered(MouseEvent mouseEvent) {
-
     }
 
     @Override
     public void mouseExited(MouseEvent mouseEvent) {
-
     }
 
     @Override
@@ -233,6 +247,9 @@ public class ImageWindowPanel extends JPanel implements MouseListener, MouseMoti
     @Override
     public void mouseMoved(MouseEvent mouseEvent) {
         mousePos = mouseEvent.getPoint();
+        for (int i = 0, selectionsSize = selections.size(); i < selectionsSize; ++i) {
+            selected.set(i, selections.get(i).contains(mousePos));
+        }
     }
 
     public enum AppState {
