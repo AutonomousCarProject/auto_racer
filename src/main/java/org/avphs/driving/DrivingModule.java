@@ -2,7 +2,6 @@ package org.avphs.driving;
 
 import org.avphs.coreinterface.CarData;
 import org.avphs.coreinterface.CarModule;
-import org.avphs.driving.newDriving.DrivingTurns;
 import org.avphs.image.ImageData;
 import org.avphs.car.Car;
 
