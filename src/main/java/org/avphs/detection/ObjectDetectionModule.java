@@ -19,12 +19,12 @@ public class ObjectDetectionModule implements CarModule {
     }
 
     public void update(CarData carData) {
-        System.out.println("Detection");
+        //System.out.println("Detection");
         imageData = (ImageData)carData.getModuleData("image");
         map = (Map)carData.getModuleData("map");
         positionData = (PositionData)carData.getModuleData("position");
 
         carData.addData("objectDetection", data);
-        System.out.println("Detection END");
+        //System.out.println("Detection END");
     }
 }

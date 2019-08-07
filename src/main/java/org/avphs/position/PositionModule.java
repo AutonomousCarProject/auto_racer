@@ -86,7 +86,7 @@ public class PositionModule implements CarModule, CloseHook {
 
         //THIS WILL BE USED LATER
         prevPositionData.updateAll(positionData.getPosition(), positionData.getDirection(), positionData.getSpeed());
-        System.out.println("Position = (" + Math.round(positionData.getPosition()[0]) + "," + positionData.getPosition()[1] + ")");
+        //System.out.println("Position = (" + Math.round(positionData.getPosition()[0]) + "," + positionData.getPosition()[1] + ")");
 
     }
 

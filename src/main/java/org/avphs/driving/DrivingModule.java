@@ -2,6 +2,7 @@ package org.avphs.driving;
 
 import org.avphs.coreinterface.CarData;
 import org.avphs.coreinterface.CarModule;
+import org.avphs.driving.polynomialregression.ParametricEquation;
 import org.avphs.driving.polynomialregression.PolynomialEquation;
 import org.avphs.driving.polynomialregression.PolynomialRegression;
 import org.avphs.image.ImageData;
@@ -72,5 +73,9 @@ public class DrivingModule implements CarModule {
         car.accelerate(true, currentThrottle);
         //System.out.println("Throttle: " + currentThrottle);
         // System.out.println("Steering Angle " + currentWheelAngle);
+    }
+
+    private void initTurns(ParametricEquation equation) {
+
     }
 }
