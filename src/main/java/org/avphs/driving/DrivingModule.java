@@ -27,8 +27,8 @@ public class DrivingModule implements CarModule {
     @Override
     public void init(CarData carData) {
         // TODO: Get RacingLine data
-        ArrayList<Point> racingLinePoints = new ArrayList<>();
-        PolynomialEquation equation = new PolynomialRegression(racingLinePoints, 30);
+        //ArrayList<Point> racingLinePoints = new ArrayList<>();
+        //PolynomialEquation equation = new PolynomialRegression(racingLinePoints, 30);
 
         // TODO: Initialize array of Straights and Turns
 
