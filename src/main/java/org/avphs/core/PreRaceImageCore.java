@@ -5,6 +5,7 @@ import org.avphs.coreinterface.CarModule;
 import org.avphs.image.ImageModule;
 import org.avphs.image.tools.ImageWindowModule;
 
+import java.awt.image.BufferedImage;
 import java.util.concurrent.*;
 
 /**
@@ -22,10 +23,16 @@ public class PreRaceImageCore extends CarCore {
             new NamedThreadFactory("module runner"));
 
     public PreRaceImageCore(Car car) {
+        this(car, null);
+    }
+
+    public PreRaceImageCore(Car car, BufferedImage cameraImage) {
         super(car);
 
         imageModule = new ImageModule();
         imageWindowModule = new ImageWindowModule();
+        if (cameraImage != null)
+            ((ImageWindowModule) imageWindowModule).useGivenImage(cameraImage);
 
 
         // Add Run-time Modules

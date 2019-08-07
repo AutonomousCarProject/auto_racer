@@ -20,19 +20,22 @@ public class ImageWindowPanel extends JPanel implements MouseListener, MouseMoti
     private AppState appState;
 
     private ArrayList<Point> selectionPoints;
+    private ArrayList<Polygon> selections;
 
     private Point lastPoint;
     private Point mousePos;
 
     private boolean pictureTaken;
 
-    private BufferedImage takenImage;
+    private BufferedImage subImage;
+
 
     public ImageWindowPanel(int windowWidth, int windowHeight) {
         this.windowWidth = windowWidth;
         this.windowHeight = windowHeight;
 
         selectionPoints = new ArrayList<>();
+        selections = new ArrayList<>();
 
         displayImage = new BufferedImage(windowWidth, windowHeight, BufferedImage.TYPE_INT_RGB);
         bufferImage = new BufferedImage(windowWidth, windowHeight, BufferedImage.TYPE_INT_RGB);
@@ -42,8 +45,15 @@ public class ImageWindowPanel extends JPanel implements MouseListener, MouseMoti
         addMouseMotionListener(this);
     }
 
-    public void takePicture()
-    {
+    public void useImage(BufferedImage image) {
+        displayImage = image;
+    }
+
+    public void finishImage() {
+
+    }
+
+    public void takePicture() {
         if (pixels != null) {
             int[] displayPixels = ((DataBufferInt) bufferImage.getRaster().getDataBuffer()).getData();
             System.arraycopy(pixels, 0, displayPixels, 0, pixels.length);
@@ -52,6 +62,52 @@ public class ImageWindowPanel extends JPanel implements MouseListener, MouseMoti
             displayImage = bufferImage;
             bufferImage = tempImage;
         }
+    }
+
+    public void finishSelection()
+    {
+        appState = AppState.Default;
+
+        int[] xPoints = new int[selectionPoints.size()];
+        int[] yPoints = new int[selectionPoints.size()];
+
+        for (int i = 0; i < selectionPoints.size(); ++i) {
+            xPoints[i] = selectionPoints.get(i).x;
+            yPoints[i] = selectionPoints.get(i).y;
+        }
+
+        Polygon polygon = new Polygon(xPoints, yPoints, xPoints.length);
+
+        int left = selectionPoints.get(0).x;
+        int right = selectionPoints.get(0).x;
+        int top = selectionPoints.get(0).y;
+        int bottom = selectionPoints.get(0).y;
+
+        for (Point point : selectionPoints) {
+            left = Math.min(left, point.x);
+            right = Math.max(right, point.x);
+            top = Math.min(top, point.y);
+            bottom = Math.max(bottom, point.y);
+        }
+
+        int width = right - left;
+        int height = bottom - top;
+
+        int[][] img = new int[width][height];
+
+        //subImage = displayImage.getSubimage(left, top, width, height);
+
+        for (int i = 0; i < displayImage.getWidth(); ++i) {
+            for (int j = 0; j < displayImage.getHeight(); ++j) {
+                if (polygon.contains(i, j)) {
+                    img[width - i][height - j] = displayImage.getRGB(i, j);
+                }
+            }
+        }
+
+        selections.add(polygon);
+        lastPoint = null;
+        selectionPoints = null;
     }
 
     public void setAppState(AppState state) {
@@ -83,22 +139,33 @@ public class ImageWindowPanel extends JPanel implements MouseListener, MouseMoti
         Graphics2D g2 = (Graphics2D) g;
         g2.setStroke(new BasicStroke(3));
 
-        if (lastPoint != null)
-        {
-            g.drawLine(lastPoint.x, lastPoint.y, mousePos.x, mousePos.y);
+        if (appState == AppState.Selection) {
+            if (lastPoint != null) {
+                g.drawLine(lastPoint.x, lastPoint.y, mousePos.x, mousePos.y);
+            }
         }
 
-        if (selectionPoints != null)
-        {
+        if (selectionPoints != null) {
             g.setColor(Color.BLACK);
-            for (Point point : selectionPoints)
-            {
-                if (lastPoint != null)
-                {
+            for (Point point : selectionPoints) {
+                if (lastPoint != null) {
                     g.drawLine(lastPoint.x, lastPoint.y, point.x, point.y);
                 }
                 lastPoint = point;
             }
+        }
+
+        if (selections != null) {
+            g.setColor(Color.GRAY);
+            for (Polygon poly : selections) {
+                g.fillPolygon(poly);
+            }
+        }
+
+        if (subImage != null) {
+            Insets insets = getInsets();
+            //g.drawImage(subImage, insets.left, insets.top, windowWidth - insets.left - insets.right,
+              //      windowHeight - insets.top - insets.bottom, null);
         }
 
         repaint();
@@ -121,8 +188,7 @@ public class ImageWindowPanel extends JPanel implements MouseListener, MouseMoti
 
     @Override
     public void mouseClicked(MouseEvent mouseEvent) {
-        if (appState == AppState.Selection)
-        {
+        if (appState == AppState.Selection) {
             selectionPoints.add(mouseEvent.getPoint());
         }
     }
@@ -161,5 +227,4 @@ public class ImageWindowPanel extends JPanel implements MouseListener, MouseMoti
         Default,
         Selection
     }
-
 }

@@ -22,14 +22,21 @@ public class ImageSidePanel extends JPanel {
         });
 
         JButton finishSelectionButton = new JButton("Finish Selection");
-        snapButton.setSize(100, 100);
-        snapButton.addActionListener(actionEvent -> {
-            imageWindowPanel.setAppState(ImageWindowPanel.AppState.Default);
+        finishSelectionButton.setSize(100, 100);
+        finishSelectionButton.addActionListener(actionEvent -> {
+            imageWindowPanel.finishSelection();
+        });
+
+        JButton finishImageButton = new JButton("Finished Marking Image");
+        finishImageButton.setSize(100, 100);
+        finishImageButton.addActionListener(actionEvent -> {
+            imageWindowPanel.finishImage();
         });
 
         add(snapButton);
         add(selectButton);
         add(finishSelectionButton);
+        add(finishImageButton);
     }
 
     @Override

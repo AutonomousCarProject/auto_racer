@@ -9,8 +9,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
 
 public class ImageWindowModule extends JFrame implements CarModule {
+
     private Camera camera;
     private CarData carData;
     private ImageWindowPanel imageWindowPanel;
@@ -19,11 +21,17 @@ public class ImageWindowModule extends JFrame implements CarModule {
     private int camWidth;
     private int camHeight;
 
+    private BufferedImage givenImage = null;
+
     public ImageWindowModule(CarData carData) {
         this.carData = carData;
     }
 
     public ImageWindowModule() {
+    }
+
+    public void useGivenImage(BufferedImage image) {
+        givenImage = image;
     }
 
     @Override
@@ -41,6 +49,9 @@ public class ImageWindowModule extends JFrame implements CarModule {
 
         imageWindowPanel = new ImageWindowPanel(camWidth, camHeight);
         imageSidePanel = new ImageSidePanel(imageWindowPanel);
+
+        if (givenImage != null)
+            imageWindowPanel.useImage(givenImage);
 
         addWindowListener(new WindowAdapter() {
             @Override
