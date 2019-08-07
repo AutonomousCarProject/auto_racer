@@ -77,18 +77,18 @@ public class Car implements ClientInterface, CarModule {
 
     @Override
     public void accelerate(boolean absolute, int angle) {
-        //if (camera instanceof FlyCamera)
+        if (camera instanceof FlyCamera)
             arduino.servoWrite(camera.getSpeedServoPin(), angle + 90);
-        //else
-            //arduino.setServoAngle(camera.getSpeedServoPin(), angle + 90);
+        else
+            arduino.setServoAngle(camera.getSpeedServoPin(), angle + 90);
     }
 
     @Override
     public void steer(boolean absolute, int angle) {
-        //if (camera instanceof FlyCamera)
+        if (camera instanceof FlyCamera)
             arduino.servoWrite(camera.getSteerServoPin(), angle + 90);
-       // else
-            //arduino.setServoAngle(camera.getSteerServoPin(), angle + 90);
+        else
+            arduino.setServoAngle(camera.getSteerServoPin(), angle + 90);
     }
 
 
