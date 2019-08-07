@@ -93,21 +93,33 @@ public class ImageWindowPanel extends JPanel implements MouseListener, MouseMoti
         int width = right - left;
         int height = bottom - top;
 
-        int[][] img = new int[width][height];
-
         //subImage = displayImage.getSubimage(left, top, width, height);
 
-        for (int i = 0; i < displayImage.getWidth(); ++i) {
-            for (int j = 0; j < displayImage.getHeight(); ++j) {
-                if (polygon.contains(i, j)) {
-                    img[width - i][height - j] = displayImage.getRGB(i, j);
-                }
-            }
-        }
+        displayImage = getPolySubImage(displayImage, polygon);
 
         selections.add(polygon);
         lastPoint = null;
         selectionPoints = null;
+    }
+
+    private BufferedImage getPolySubImage(BufferedImage image, Polygon polygon) {
+
+        int width = polygon.getBounds().width;
+        int height = polygon.getBounds().height;
+        int x = polygon.getBounds().x;
+        int y = polygon.getBounds().y;
+
+        int[][] img = new int[width][height];
+
+        for (int i = x; i < x + width; ++i) {
+            for (int j = y; j < y + height; ++j) {
+                if (polygon.contains(i, j)) {
+                    img[i - x][j - y] = image.getRGB(i - x, j - y);
+                }
+            }
+        }
+
+        return null;
     }
 
     public void setAppState(AppState state) {
