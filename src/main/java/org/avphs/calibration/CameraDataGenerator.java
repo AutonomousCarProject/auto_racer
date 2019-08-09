@@ -12,28 +12,29 @@ import java.util.function.Predicate;
 public class CameraDataGenerator {
     private static int height;
     private static int width;
+
     public static void main(String[] args) {
         try {
             BufferedImage img = javax.imageio.ImageIO.read(new File("grid.png"));
-            width = img.getWidth();
-            height = img.getHeight();
+            width = img.getWidth();//grab image width
+            height = img.getHeight();//grab image height
             int runningTotal = 0;
-            int[][] darknesses = new int[width][height];
+            int[][] darknesses = new int[width][height];//set up darknesses
             for (int x = 0; x < width; x++) {
-                for (int y = 0; y < height; y++) {
-                    Color color = new Color(img.getRGB(x, y));
-                    int darkness = (color.getRed() + color.getGreen() + color.getBlue()) / 3;
+                for (int y = 0; y < height; y++) {//go through pixel by pixel
+                    Color color = new Color(img.getRGB(x, y));//grab the color on the pixel
+                    int darkness = (color.getRed() + color.getGreen() + color.getBlue()) / 3;//get darkness
                     runningTotal += darkness;
                     darknesses[x][y] = darkness;
                 }
             }
 
-            double threshhold = .75 * runningTotal / (width * height);
-            boolean[][] isDark = new boolean[width][height];
+            double threshhold = .75 * runningTotal / (width * height);//set up a definition of what "darkness" is: 3/4 of average darkness
+            boolean[][] isDark = new boolean[width][height]; //create an array pixel-by-pixel of what is dark and what isn't
 
             for (int x = 0; x < width; x++) {
                 for (int y = 0; y < height; y++) {
-                    isDark[x][y] = darknesses[x][y] < threshhold;
+                    isDark[x][y] = darknesses[x][y] < threshhold;//go through and create an array of dark vs. not dark
                 }
             }
             //true = dark!!
@@ -44,7 +45,7 @@ public class CameraDataGenerator {
 
             ArrayList<ArrayList<int[]>> hLineSlices = new ArrayList();
 
-            for (int x = 0; x < width; x++) {
+            for (int x = 0; x < width; x++) {//goes through image by width
 
 
                 int lineStart = 0;
@@ -54,21 +55,21 @@ public class CameraDataGenerator {
                 int length = 9;
 
                 for (int i = 0; i < length; i++) {
-                    window.add(false);
+                    window.add(false);//add nine non-darks to the beginning of each row
                 }
 
                 for (int y = 0; y < height; y++) {
-                    window.add(isDark[x][y]);
-                    window.remove(0);
+                    window.add(isDark[x][y]);//add darks & not darks to the array
+                    window.remove(0);//and remove 0 from the bottom
 
-                    int center = (length + 1) / 2 + y;
+                    int center = (length + 1) / 2 + y;//create center
 
                     if (writingLine && majority(window, i -> !i)) {
                         //if most pixels aren't stripes
                         writingLine = false;
                         int lineEnd = center;
                         int[] slice = new int[]{lineStart, lineEnd};
-                        hLineSlices.get(x).add(slice);
+                        hLineSlices.get(x).add(slice);//arraylist of slicebegins and sliceends for each x
 
 
                     } else if (!writingLine && majority(window, i -> i)) {
@@ -80,17 +81,17 @@ public class CameraDataGenerator {
                 }
             }
 
-            ArrayList<int[]> hLines = new ArrayList<>();
+            ArrayList<int[]> hLines = new ArrayList<>();//create new arraylist
 
 
             int minSlices = -1;
             int sliceIdx = -1;
-            for (int i = 0; i <width ; i++) {
+            for (int i = 0; i < width; i++) {
                 int newSize = hLineSlices.get(i).size();
-                if(minSlices<newSize){
+                if (minSlices < newSize) {
                     minSlices = newSize;
                     sliceIdx = i;
-                }
+                }//grab the length and index of hlineslices and put them into minSlices and sliceIdx, respectively
             }
 
             boolean linesVanishing = false;
@@ -98,18 +99,18 @@ public class CameraDataGenerator {
             int linesRemovedBottom = 0;
             int linesRemovedTop = 0;
 
-            int halfway = width/2;
-            List<ArrayList<int[]>> firstHalf = hLineSlices.subList(0, halfway-1);
-            List<ArrayList<int[]>> secondHalf = hLineSlices.subList(halfway, width-1);
+            int halfway = width / 2;
+            List<ArrayList<int[]>> firstHalf = hLineSlices.subList(0, halfway - 1);
+            List<ArrayList<int[]>> secondHalf = hLineSlices.subList(halfway, width - 1);//split hlineslices into half with a vertical slice
 
-            Collections.reverse(firstHalf);
+            Collections.reverse(firstHalf);//flip first half around
 
             int[][] lines = new int[minSlices][];
 
             lines = new int[minSlices][];
 
             int[][] firstClean = cleanLines(firstHalf, minSlices);
-            int[][] secondClean = cleanLines(firstHalf, minSlices);
+            int[][] secondClean = cleanLines(firstHalf, minSlices);//clean the array twice
 
             int[][] heightDiffs = new int[minSlices][];
 
@@ -118,8 +119,6 @@ public class CameraDataGenerator {
                 //int base = (firstClean[i][] + secondClean[i][])/2;
                 //int diff = firstClean[]
             }
-
-
 
 
             //connect lines to eachother
@@ -139,7 +138,7 @@ public class CameraDataGenerator {
         }
 
 
-    }
+    }//end msin
 
     private static <T> boolean majority(ArrayList<T> list, Predicate<T> p) {
         int pass = 0;
@@ -168,31 +167,28 @@ public class CameraDataGenerator {
             ArrayList<int[]> nxtSlices = lines.get(x + 1);
             int topRemoved = 0;
             int bottomRemoved = 0;
-            if(slices.get(0)[0]>0 && nxtSlices.get(0)[0]<=0){
+            if (slices.get(0)[0] > 0 && nxtSlices.get(0)[0] <= 0) {
                 removeTop++;
             }
-            if(slices.get(0)[0] <= 0){
+            if (slices.get(0)[0] <= 0) {
                 removeBottom++;
 
             }
 
 
-            while(slices.size()>minSlices){
+            while (slices.size() > minSlices) {
                 int bottomError = removeBottom - bottomRemoved;
-                if(removeTop - topRemoved>0) {
+                if (removeTop - topRemoved > 0) {
                     int topDist = slices.get(0)[0];
                     int bottomDist = height - slices.get(slices.size())[1];
-                    if (bottomError > 0 && bottomDist<topDist) {
+                    if (bottomError > 0 && bottomDist < topDist) {
                         slices.remove(slices.size());
 
                     }
 
-                }
-
-                else if(bottomError>0){
+                } else if (bottomError > 0) {
                     slices.remove(slices.size());
-                }
-                else {
+                } else {
                     int minDiff = height;
                     int diffIdx = 0;
                     int prev = 0;
@@ -201,8 +197,8 @@ public class CameraDataGenerator {
                         prev = slices.get(i)[1];
                     }
                     int[] newLine = new int[]{
-                      slices.get(diffIdx)[0],
-                      slices.get(diffIdx + 1)[1]
+                            slices.get(diffIdx)[0],
+                            slices.get(diffIdx + 1)[1]
                     };
 
                     slices.set(diffIdx, newLine);
@@ -212,7 +208,7 @@ public class CameraDataGenerator {
 
             for (int i = 0; i < slices.size(); i++) {
                 int[] slice = slices.get(i);
-                int mid = (slice[0] + slice[0])/2;
+                int mid = (slice[0] + slice[0]) / 2;
                 result[i][x] = mid;
             }
 
@@ -220,6 +216,6 @@ public class CameraDataGenerator {
 
 
         return result;
-}
+    }
 
 }
