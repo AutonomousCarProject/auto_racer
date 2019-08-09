@@ -6,9 +6,9 @@ import org.avphs.coreinterface.CarModule;
 import org.avphs.image.ImageData;
 
 public class PixelDistFinder {
-    public final static int base_x = 100;//todo: put distance to measured wall in cm here
-    public final static int base_y = 11;//todo: put height of measured wall in cm here
-    public final static int base_upsilon = 4;//todo: put height of measured wall in px here
+    public final static int[] base_x = {100};//todo: put distance to measured wall in cm here (ideally these should all be the same)
+    public final static int[] base_y = {100};//todo: put height of measured wall in cm here (ideally these should all be the same)
+    public final static int[] base_upsilon = {4};//todo: put height of measured wall in px here
 
     public static int getdistance_cm(CarData carData) {//uses an equation to grab distance to wall in centimeter
         ImageData image = (ImageData) carData.getModuleData("image");//access updated magicloop in ImageModule from CarData
@@ -34,12 +34,36 @@ public class PixelDistFinder {
         int x = -1;
         if (Onetypeofwall == true) {
                 int upsilon = wallbottoms[0] - walltops[0];
+                int wallType = 1;
+                //!!!!!wallType = ... waiting for walltypeidentification
             System.out.println("BASE UPSILON: "+ upsilon); //ONLY USE THIS LINE IF BASE_UPSILON NEEDS TO BE FOUND
-            x = Math.round(base_y / base_upsilon * (upsilon - base_upsilon) + base_x);//use formula to grab x
+            switch (wallType){
+                case 1: wallType = 0;
+                    break;
+                case 2: wallType = 1;
+                    break;
+                case 3: wallType = 2;
+                break;
+                case 4: wallType = 3;
+                break;
+                case 5: wallType = 4;
+                break;
+                case 6: wallType = 5;
+                break;
+                case 7: wallType = 6;
+                break;
+                case 8: wallType = 7;
+                break;
+                case 9: wallType = 8;
+                break;
+                case 10: wallType = 9;
+                break;
+            }
+            x = Math.round(base_y[wallType] / base_upsilon[wallType] * (upsilon - base_upsilon[wallType]) + base_x[wallType]);//use formula to grab x
         }
         return x;
     }
-   /* public static void main(String[] args){
+    /*public static void main(String[] args){
         int y = 0;
         CarData carData = new CarData();
         y = getdistance_cm(carData);
